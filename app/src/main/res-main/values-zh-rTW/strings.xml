@@ -1,79 +1,39 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Ace探索者</string>
-    <string name="action_settings">設置</string>
+<string name="app_name">王牌探險家</string>
+    <string name="image_viewer_title">Ace圖像查看器</string>
+    <string name="action_settings">設定值</string>
     <string name="nav_menu_internal_storage">內部存儲器</string>
     <string name="nav_menu_root">根</string>
     <string name="nav_menu_ext_storage">外部SD</string>
     <string name="nav_menu_music">音樂</string>
-    <string name="nav_menu_video">視頻</string>
+    <string name="nav_menu_video">影片</string>
     <string name="nav_menu_image">圖片</string>
-    <string name="nav_menu_docs">文件</string>
-    <string name="nav_header_storages">存儲</string>
-    <string name="nav_header_favourites">收藏</string>
+    <string name="nav_menu_docs">文件資料</string>
+    <string name="downloads">資料下載</string>
+    <string name="nav_header_storages">儲物櫃</string>
+    <string name="nav_header_favourites">收藏夾</string>
     <string name="nav_header_collections">圖書館</string>
-    <string name="empty">空</string>
-    <plurals name="number_of_files">
-        <item quantity="other">%d 文件</item>
-    </plurals>
-    <string name="downloads">下載</string>
+    <string name="app_manager">應用程式管理員</string>
+    <string name="unlock_full_version">解鎖完整版</string>
+    <string name="full_version_buy_ask">完整版可刪除煩人的廣告。你要買嗎？</string>
+    <string name="img_accessibility_icon_lib">圖書館圖標</string>
+    <string name="empty">空的</string>
     <string name="action_rename">改名</string>
-    <string name="action_info">屬性</string>
-    <string name="action_archive">存檔</string>
-    <string name="action_cut">切</string>
-    <string name="action_copy">複製</string>
-    <string name="action_paste">糊</string>
+    <string name="action_info">物產</string>
+    <string name="action_archive">封存</string>
     <string name="action_delete">刪除</string>
     <string name="action_share">分享</string>
-    <string name="msg_cut_copy">文件複製到剪貼板</string>
-    <string name="msg_delete_success">已成功刪除</string>
+    <string name="msg_delete_success">成功刪除</string>
     <string name="msg_delete_failure">刪除操作失敗</string>
-    <string name="dialog_skip">跳躍</string>
-    <string name="dialog_replace">更換</string>
-    <string name="dialog_keep_both">保留這兩個文件</string>
-    <string name="dialog_cancel">取消</string>
-    <string name="msg_file_exists">文件已存在</string>
-    <string name="dialog_from_placeholder">從</string>
-    <string name="dialog_to_placeholder">至</string>
-    <string name="background">背景</string>
-    <string name="dialog_delete_title">您確定要刪除%d個文件嗎？</string>
-    <string name="msg_ok">好</string>
-    <string name="no_files">沒有文件</string>
-    <string name="msg_error_invalid_name">輸入有效的名稱</string>
-    <string name="path">路徑：</string>
-    <string name="size">尺寸：</string>
-    <string name="date_modified">修改日期：</string>
-    <string name="permissions">權限</string>
-    <string name="yes">是</string>
-    <string name="no">沒有</string>
-    <string name="properties">屬性</string>
-    <string name="new_folder">新文件夾</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">您確定要刪除％d個文件嗎？</string>
+    <string name="new_folder">新建文件夾</string>
     <string name="new_file">新文件</string>
     <string name="add_fav">加入“最喜歡的</string>
-    <string name="msg_added_to_fav">已添加到收藏夾</string>
-    <string name="msg_error_not_supported">沒有應用程序處理操作</string>
-    <string name="permission_request">需要存儲權限才能顯示所有文件</string>
-    <string name="action_grant">GRANT</string>
-    <string name="action_view_list">列表顯示</string>
-    <string name="action_view_grid">網格視圖</string>
+    <string name="msg_added_to_fav">添加到收藏夾</string>
     <string name="extract_to">解壓到</string>
     <string name="open">打開</string>
-    <string name="extracting">提取..</string>
+    <string name="extracting">正在提取..</string>
     <string name="dialog_current_path">當前路徑</string>
     <string name="dialog_specify_path">指定路徑</string>
     <string name="enter_file_name">輸入文件名</string>
@@ -81,103 +41,173 @@
     <string name="dialog_title_browse">選擇文件夾</string>
     <string name="action_select_all">全選</string>
     <string name="delete_fav">刪除收藏夾</string>
-    <string name="action_search">搜索</string>
-    <string name="pref_title_theme">主題</string>
-    <string name="pref_subs_light">光</string>
-    <string name="pref_subs_dark">黑暗</string>
-    <string name="pref_title_reset_fav">重置收藏夾</string>
-    <string name="pref_title_show_hidden">顯示隱藏文件</string>
-    <string name="pref_title_disable_dual">橫向的雙窗格</string>
-    <string name="pref_title_change_lang">語言</string>
-
     <string name="hide">隱藏</string>
     <string name="unhide">取消隱藏</string>
-    <string name="drag">拖動</string>
-    <string name="move">移動</string>
-    <string name="msg_fav_reset">收藏已重置為默認值。</string>
-    <string name="home_docs">文件</string>
-    <string name="compressed">壓縮</string>
-    <string name="apk">應用</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">大文件</string>
-    <string name="open_as">打開為</string>
-    <string name="text">文本</string>
-    <string name="image">圖片</string>
-    <string name="audio">音頻</string>
-    <string name="other">其他</string>
     <string name="create">創建</string>
-    <string name="zip_progress_title">創建zip</string>
-    <string name="needsaccess">需要寫訪問</string>
-    <string name="needs_access_summary">請選擇 %1$s 的根目錄以授予操作的寫入權限</string>
-    <string name="error">錯誤</string>
+    <string name="zip_progress_title">建立郵遞區號</string>
+    <string name="fav_exists">收藏夾已經存在。</string>
+    <string name="msg_file_exists">文件已存在</string>
+    <string name="dialog_from_placeholder">從</string>
+    <string name="dialog_to_placeholder">至</string>
+    <string name="msg_error_invalid_name">輸入一個有效的名字</string>
     <string name="msg_operation_failed">手術失敗</string>
-    <string name="enter_name">輸入名字</string>
-    <string name="paste_conflict_remember">記得</string>
-    <string name="copying">正在復製文件</string>
-    <string name="moving">移動文件</string>
-    <string name="package_installer">軟件包安裝程序</string>
-    <string name="view">視圖</string>
-    <string name="install">安裝</string>
-    <string name="package_installer_content">你想做哪個動作？</string>
-    <string name="permission_setting_hint">點擊設置 - >權限，然後打開存儲。</string>
-    <string name="access_denied_external">未授予對外部SD的寫訪問權限</string>
     <string name="permission_read">讀</string>
     <string name="permission_write">寫</string>
     <string name="permission_execute">執行</string>
     <string name="permission_owner">所有者</string>
     <string name="permission_group">組</string>
-    <string name="next">下一個</string>
-    <string name="skip">跳躍</string>
-    <string name="start">得到它了</string>
-    <string name="slide_1_title">組織圖書館</string>
-    <string name="slide_1_desc">一次單擊從主屏幕媒體庫。</string>
-    <string name="slide_2_title">偷看和流行</string>
-    <string name="slide_2_desc">偷看並彈出您的圖片和視頻。</string>
-    <string name="slide_3_title">拖放</string>
-    <string name="slide_3_desc">將文件從一個文件夾拖動到另一個！</string>
-    <string name="action_sort">分類</string>
-    <string name="slide_4_title">主題</string>
-    <string name="slide_4_desc">黑暗或光的方式！你的選擇。</string>
-    <string name="no_music"> 無音樂文件</string>
-    <string name="img_accessibility_back">背部</string>
-    <string name="img_accessibility_permission">授予權限</string>
-    <string name="img_accessibility_icon_lib">圖書館圖標</string>
-    <string name="unlock_full_version">解鎖完整版本</string>
-    <string name="full_version_buy_ask">完整版本刪除煩人的廣告。 你想買嗎？</string>
+    <string name="header_source">資源</string>
+    <string name="header_destination">目的地</string>
+    <string name="enter_name">輸入名字</string>
+    <string name="open_as">打開為</string>
+    <string name="text">文本</string>
+    <string name="image">圖片</string>
+    <string name="audio">音訊</string>
+    <string name="other">其他</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">背景</string>
+    <string name="error">錯誤</string>
     <string name="dialog_title_picker">選擇音樂文件</string>
-
     <string name="browse">瀏覽</string>
     <string name="action_more">更多</string>
     <string name="directory">目錄</string>
-    <string name="operation">手術</string>
-    <string name="clipboard">%d在剪貼板中</string>
-    <string name="fav_exists">收藏已存在。</string>
-    <string name="header_source">資源</string>
-    <string name="header_destination">目的地</string>
+    <string name="operation">運作方式</string>
     <string name="error_unsupported">不支持</string>
-    <string name="copy_path">複製路徑</string>
+    <string name="action_cut">切</string>
+    <string name="action_copy">複製</string>
+    <string name="action_paste">糊</string>
+    <string name="msg_cut_copy">文件複製到剪貼板</string>
+    <string name="dialog_skip">跳躍</string>
+    <string name="dialog_replace">更換</string>
+    <string name="dialog_keep_both">保留兩個</string>
+    <string name="drag">拖動</string>
+    <string name="move">移動</string>
+    <string name="copying">複製文件</string>
+    <string name="moving">移動文件</string>
+    <string name="clipboard">在剪貼板中％d</string>
     <string name="text_copied_clipboard">複製到剪貼板。</string>
-    <string name="analytics_text">發送分析</string>
-    <string name="analytics_summary">通過發送匿名使用數據幫助我們改進應用程序。</string>
+    <string name="dialog_cancel">取消</string>
+    <string name="msg_ok">好</string>
+    <string name="msg_error_not_supported">沒有應用程序可以處理該操作</string>
+    <string name="needsaccess">需要寫訪問權限</string>
+    <string name="needs_access_summary">請選擇％1 $ s的根目錄以授予對         操作</string>
+    <string name="img_accessibility_back">背部</string>
+    <string name="action_search">搜索</string>
 
+    <string name="albums">專輯</string>
+    <string name="artists">藝人</string>
+    <string name="genres">體裁</string>
+    <string name="all_tracks">所有歌曲</string>
+    <string name="podcasts">播客</string>
+    <string name="unknown">未知</string>
+    <string name="enabled">已啟用</string>
+    <string name="package_installer">軟件包安裝程序</string>
+    <string name="view">視圖</string>
+    <string name="install">安裝</string>
+    <string name="package_installer_content">您想採取什麼行動？</string>
+    <string name="no_music"> 沒有音樂文件</string>
+    <string name="no_files">沒有文件</string>
+
+    <string name="action_view_list">列表顯示</string>
+    <string name="action_view_grid">網格視圖</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">記得</string>
+    <string name="move_trash">移到廢紙簍</string>
+    <string name="path">路徑</string>
+    <string name="size">尺寸</string>
+    <string name="date_modified">修改日期</string>
+    <string name="permissions">權限</string>
+    <string name="yes">是</string>
+    <string name="no">沒有</string>
+    <string name="properties">物產</string>
+    <string name="copy_path">複製路徑</string>
+    <string name="permission_setting_hint">點擊設置-&gt;權限，然後打開存儲。</string>
+    <string name="access_denied_external">未授予對外部SD的寫訪問權限</string>
+    <string name="permission_request">需要存儲權限才能顯示所有文件</string>
+    <string name="action_grant">格蘭特</string>
+    <string name="img_accessibility_permission">授予權限</string>
+    <string name="next">下一個</string>
+    <string name="skip">跳躍</string>
+    <string name="start">得到它了</string>
+    <string name="slide_1_title">有組織的圖書館</string>
+    <string name="slide_1_desc">從主屏幕一鍵單擊到媒體庫。</string>
+    <string name="slide_2_title">窺視與流行</string>
+    <string name="slide_2_desc">窺視並彈出您的圖像和視頻。</string>
+    <string name="slide_3_title">拖放</string>
+    <string name="slide_3_desc">將文件從一個文件夾拖到另一個文件夾！</string>
+    <string name="action_sort">分類</string>
+    <string name="slide_4_title">主題</string>
+    <string name="slide_4_desc">黑暗或光明的方式！你的選擇。</string>
     <string name="dual_pane_intro_title">雙窗格</string>
-    <string name="dual_pane_intro_subtitle">雙模式更好的可用性。</string>
-    <string name="sort_name">名稱</string>
+    <string name="dual_pane_intro_subtitle">雙模式，以提高可用性。</string>
+    <string name="pref_title_theme">主題</string>
+    <string name="pref_subs_light">光</string>
+    <string name="pref_subs_dark">暗</string>
+    <string name="device_theme">設備主題</string>
+    <string name="pref_title_reset_fav">重置收藏夾</string>
+    <string name="pref_title_show_hidden">顯示隱藏文件</string>
+    <string name="pref_title_disable_dual">橫向中的雙窗格</string>
+    <string name="pref_title_change_lang">語言</string>
+    <string name="msg_fav_reset">收藏夾重置為默認值。</string>
+    <string name="analytics_text">發送分析</string>
+    <string name="analytics_summary">通過發送匿名使用情況數據幫助我們改善應用程序。</string>
+    <string name="home_docs">文件</string>
+    <string name="compressed">壓縮的</string>
+    <string name="apk">應用</string>
+    <string name="pdf">PDF格式</string>
+    <string name="library_large">大文件</string>
+    <string name="library_recent">最近</string>
+    <string name="sort_name">Name</string>
     <string name="sort_type">類型</string>
     <string name="sort_size">尺寸</string>
     <string name="sort_date">日期</string>
     <string name="ascending">上升</string>
-    <string name="library_recent">最近</string>
-    <string name="albums">相冊</string>
-    <string name="artists">藝術家</string>
-    <string name="genres">流派</string>
-    <string name="all_tracks">所有歌曲</string>
-    <string name="podcasts">播客</string>
     <string name="mute">靜音</string>
     <string name="unmute">取消靜音</string>
-    <string name="app_manager">應用管理器</string>
-    <string name="unknown">未知</string>
-    <string name="enabled">啟用</string>
-    <string name="move_trash">移到廢紙簍</string>
+    <string name="peek_button_prev">以前</string>
+    <string name="peek_button_next">下一個</string>
+    <string name="saved_category">已保存</string>
+    <string name="other_category">其他</string>
+
+    <string name="category_whatsapp">Whatsapp的</string>
+    <string name="category_telegram">電報</string>
+    <string name="category_camera">相機</string>
+    <string name="category_screenshot">屏幕截圖</string>
+    <string name="category_max_min_items_error">保存的類別可以最少3個，最多12個</string>
+
+    <string name="category_all">所有</string>
+    <string name="categories">分類目錄</string>
+    <string name="categories_folder">夾</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">啟用根訪問</string>
+    <string name="info_name">文件名</string>
+    <string name="info_resolution">解析度</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">％d個文件已移動</string>
+    <string name="copied" tools:ignore="PluralsCandidate">已復制％d個文件</string>
+    <string name="action_view">視圖</string>
+    <string name="action_view_gallery">圖庫視圖</string>
+    <string name="update_available">有可用更新</string>
+    <string name="restart">重新開始</string>
+    <string name="update_downloading">正在下載更新…</string>
+    <string name="update_downloaded">更新下載</string>
+    <string name="install_update">點擊安裝</string>
+    <string name="connect_internet_download_update">連接到互聯網以下載更新</string>
+    <string name="recent_today">今天</string>
+    <string name="recent_yesterday">昨天</string>
+    <string name="recent_this_week">本星期</string>
+    <string name="recent_this_month">這個月</string>
+    <string name="search_type_other"> 其他</string>
+    <string name="search_clear">明確</string>
+    <string name="recently_searched">最近搜尋</string>
+    <string name="version_code">版本碼</string>
+    <string name="tab_home">家</string>
+    <string name="tab_tools">工具類</string>
+    <string name="tab_settings">設定值</string>
+    <string name="privacy_policy">隱私政策</string>
+
+
 
 </resources>

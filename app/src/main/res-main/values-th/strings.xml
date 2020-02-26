@@ -1,21 +1,6 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
-
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Ace Explorer ที่</string>
+    <string name="image_viewer_title">Ace Image Viewer</string>
     <string name="action_settings">การตั้งค่า</string>
     <string name="nav_menu_internal_storage">หน่วยความจำภายใน</string>
     <string name="nav_menu_root">ราก</string>
@@ -180,5 +165,47 @@
     <string name="unknown">ไม่ทราบ</string>
     <string name="enabled">เปิดการใช้งาน</string>
     <string name="move_trash">ย้ายไปที่ถังขยะ</string>
+    <string name="peek_button_prev">ก่อน</string>
+    <string name="peek_button_next">ต่อไป</string>
+    <string name="saved_category">รอด</string>
+    <string name="other_category">อื่น ๆ</string>
 
+    <string name="category_whatsapp">Whatsapp</string>
+    <string name="category_telegram">โทรเลข</string>
+    <string name="category_camera">กล้อง</string>
+    <string name="category_screenshot">ภาพหน้าจอ</string>
+    <string name="category_max_min_items_error">หมวดหมู่ที่บันทึกไว้สามารถมีอย่างน้อย 3, สูงสุด 12</string>
+
+    <string name="category_all">ทั้งหมด</string>
+    <string name="categories">หมวดหมู่</string>
+    <string name="categories_folder">โฟลเดอร์</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">เปิดใช้งานการเข้าถึงรูท</string>
+    <string name="info_name">ชื่อไฟล์</string>
+    <string name="info_resolution">มติ</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">ย้ายไฟล์ %d ไฟล์แล้ว</string>
+    <string name="copied" tools:ignore="PluralsCandidate">คัดลอก %d ไฟล์</string>
+    <string name="action_view">ดู</string>
+    <string name="action_view_gallery">มุมมองแกลเลอรี่</string>
+    <string name="update_available">อัปเดตที่มีอยู่</string>
+    <string name="restart">เริ่มต้นใหม่</string>
+    <string name="update_downloading">กำลังดาวน์โหลดอัปเดต &#8230;</string>
+    <string name="update_downloaded">อัปเดตการดาวน์โหลดแล้ว</string>
+    <string name="install_update">คลิกเพื่อติดตั้ง</string>
+    <string name="connect_internet_download_update">เชื่อมต่ออินเทอร์เน็ตเพื่อดาวน์โหลดอัปเดต</string>
+    <string name="recent_today">ในวันนี้</string>
+    <string name="recent_yesterday">เมื่อวาน</string>
+    <string name="recent_this_week">ในสัปดาห์นี้</string>
+    <string name="recent_this_month">เดือนนี้</string>
+    <string name="search_type_other">อื่น ๆ</string>
+    <string name="search_clear">ชัดเจน</string>
+    <string name="recently_searched">ค้นหาล่าสุด</string>
+    <string name="version_code">รหัสเวอร์ชั่น</string>
+    <string name="tab_home">บ้าน</string>
+    <string name="tab_tools">เครื่องมือ</string>
+    <string name="tab_settings">การตั้งค่า</string>
+    <string name="privacy_policy">นโยบายความเป็นส่วนตัว</string>
+    <string name="device_theme">ชุดรูปแบบของอุปกรณ์</string>
 </resources>

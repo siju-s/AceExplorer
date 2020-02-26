@@ -1,185 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Аце Explorer</string>
-    <string name="action_settings">Подесувања</string>
-    <string name="nav_menu_internal_storage">внатрешна меморија</string>
-    <string name="nav_menu_root">root</string>
-    <string name="nav_menu_ext_storage">надворешна SD</string>
-    <string name="nav_menu_music">музика</string>
-    <string name="nav_menu_video">видеа</string>
-    <string name="nav_menu_image">слики</string>
-    <string name="nav_menu_docs">документи</string>
-    <string name="nav_header_storages">складишта</string>
+<string name="app_name">Аце Explorer</string>
+    <string name="image_viewer_title">Прегледувач на слики на Аце</string>
+    <string name="action_settings">Поставки</string>
+    <string name="nav_menu_internal_storage">Внатрешно складирање</string>
+    <string name="nav_menu_root">Корен</string>
+    <string name="nav_menu_ext_storage">Надворешно SD</string>
+    <string name="nav_menu_music">Музика</string>
+    <string name="nav_menu_video">Видеа</string>
+    <string name="nav_menu_image">Слики</string>
+    <string name="nav_menu_docs">Документи</string>
+    <string name="downloads">Преземања</string>
+    <string name="nav_header_storages">Магацини</string>
     <string name="nav_header_favourites">Омилени</string>
-    <string name="nav_header_collections">библиотека</string>
-    <string name="empty">Испразни</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d датотека</item>
-        <item quantity="other">%d додадени фајлови:</item>
-    </plurals>
-    <string name="downloads">Превземања</string>
-    <string name="action_rename">Преименувај</string>
-    <string name="action_info">својства</string>
+    <string name="nav_header_collections">Библиотека</string>
+    <string name="app_manager">Менаџер на апликации</string>
+    <string name="unlock_full_version">Отклучи ја целосната верзија</string>
+    <string name="full_version_buy_ask">Целосната верзија ги отстранува досадните реклами. Дали сакате да го купите?</string>
+    <string name="img_accessibility_icon_lib">Икона на библиотека</string>
+    <string name="empty">Празен</string>
+    <string name="action_rename">Преименување</string>
+    <string name="action_info">Својства</string>
     <string name="action_archive">Архива</string>
-    <string name="action_cut">Намали</string>
-    <string name="action_copy">копија</string>
-    <string name="action_paste">Залепи</string>
     <string name="action_delete">Избриши</string>
     <string name="action_share">Сподели</string>
-    <string name="msg_cut_copy">датотека (и) се копира на таблата со исечоци</string>
-    <string name="msg_delete_success">успешно избришана</string>
-    <string name="msg_delete_failure">Избришете операција не успеа</string>
-    <string name="dialog_skip">Скокни</string>
-    <string name="dialog_replace">Заменете</string>
-    <string name="dialog_keep_both">Задржи двете датотеки</string>
-    <string name="dialog_cancel">Откажи</string>
-    <string name="msg_file_exists">постои датотека</string>
-    <string name="dialog_from_placeholder">од</string>
-    <string name="dialog_to_placeholder">До</string>
-    <string name="background">позадина</string>
-    <string name="dialog_delete_title">Дали сте сигурни дека сакате да ги избришете %d датотеките?</string>
-    <string name="msg_ok">добро</string>
-    <string name="no_files">Нема датотеки</string>
-    <string name="msg_error_invalid_name">Внесете валидно име</string>
-    <string name="path">патека:</string>
-    <string name="size">големина:</string>
-    <string name="date_modified">Датум на промена:</string>
-    <string name="permissions">дозволи</string>
-    <string name="yes">Да</string>
-    <string name="no">Не</string>
-    <string name="properties">својства</string>
-    <string name="new_folder">нова папка</string>
-    <string name="new_file">нова датотека</string>
-    <string name="add_fav">Додади во омилени</string>
-    <string name="msg_added_to_fav">Додаден во омилени</string>
-    <string name="msg_error_not_supported">Не апликација за да се справи со акција</string>
-    <string name="permission_request">Треба дозвола за складирање за да се прикажат сите датотеки</string>
-    <string name="action_grant">GRANT</string>
-    <string name="action_view_list">приказ на листа</string>
-    <string name="action_view_grid">Приказ на мрежа</string>
-    <string name="extract_to">екстракт</string>
+    <string name="msg_delete_success">избришано успешно</string>
+    <string name="msg_delete_failure">Операцијата за бришење не успеа</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Дали сте сигурни дека сакате да ги избришете %d датотеките?</string>
+    <string name="new_folder">Нова папка</string>
+    <string name="new_file">Нова датотека</string>
+    <string name="add_fav">Додај во Омилени</string>
+    <string name="msg_added_to_fav">Додадено на Омилени</string>
+    <string name="extract_to">Екстракт на</string>
     <string name="open">Отворено</string>
-    <string name="extracting">Вадење ..</string>
-    <string name="dialog_current_path">сегашната патека</string>
-    <string name="dialog_specify_path">Одредете патека</string>
+    <string name="extracting">Извлекување ..</string>
+    <string name="dialog_current_path">Тековната патека</string>
+    <string name="dialog_specify_path">Наведете патека</string>
     <string name="enter_file_name">Внесете име на датотека</string>
-    <string name="extract">екстракт</string>
+    <string name="extract">Екстракт</string>
     <string name="dialog_title_browse">Изберете папка</string>
     <string name="action_select_all">Селектирај се</string>
-    <string name="delete_fav">Избриши омилени</string>
-    <string name="action_search">Барај</string>
-    <string name="pref_title_theme">тема</string>
-    <string name="pref_subs_light">светлина</string>
-    <string name="pref_subs_dark">темно</string>
-    <string name="pref_title_reset_fav">Ресетирај омилени</string>
-    <string name="pref_title_show_hidden">Прикажи ги скриените датотеки</string>
-    <string name="pref_title_disable_dual">Двојна панелот во пејзаж</string>
-    <string name="pref_title_change_lang">Јазик</string>
-
+    <string name="delete_fav">Избриши омилен</string>
     <string name="hide">Крие</string>
-    <string name="unhide">Изглед</string>
-    <string name="drag">повлечете</string>
-    <string name="move">потег</string>
-    <string name="msg_fav_reset">Омилени resetted на стандардно.</string>
-    <string name="home_docs">Документи</string>
-    <string name="compressed">компресирана</string>
-    <string name="apk">апликации</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">големи датотеки</string>
-    <string name="open_as">Отворете Како</string>
-    <string name="text">текст</string>
-    <string name="image">слика</string>
-    <string name="audio">Аудио</string>
-    <string name="other">други</string>
-    <string name="create">Креирајте</string>
-    <string name="zip_progress_title">креирање на zip</string>
-    <string name="needsaccess">Напиши потребен пристап</string>
-    <string name="needs_access_summary">Ве молиме изберете root директориумот на %1$s да се даде можност за
-        запишување на работа</string>
-    <string name="error">грешка</string>
-    <string name="msg_operation_failed">операцијата не успеа</string>
-    <string name="enter_name">внесете го името</string>
-    <string name="paste_conflict_remember">Запомнете</string>
-    <string name="copying">копирање на датотеки</string>
-    <string name="moving">пренос на датотеки</string>
-    <string name="package_installer">пакет Installer</string>
-    <string name="view">Види</string>
-    <string name="install">Инсталирај</string>
-    <string name="package_installer_content">Која акција би сакал да направам?</string>
-    <string name="permission_setting_hint">Допрете Settings -> Дозволи и потоа вклучете чување на.</string>
-    <string name="access_denied_external">Пристап за пишување Надворешен не SD доделена</string>
-    <string name="permission_read">Прочитај</string>
+    <string name="unhide">Откријте</string>
+    <string name="create">Креирај</string>
+    <string name="zip_progress_title">Создавање поштенски код</string>
+    <string name="fav_exists">Омилената веќе постои.</string>
+    <string name="msg_file_exists">Датотеката постои</string>
+    <string name="dialog_from_placeholder">Од</string>
+    <string name="dialog_to_placeholder">До</string>
+    <string name="msg_error_invalid_name">Внесете валидно име</string>
+    <string name="msg_operation_failed">Операцијата не успеа</string>
+    <string name="permission_read">Прочитајте</string>
     <string name="permission_write">Напиши</string>
-    <string name="permission_execute">изврши</string>
-    <string name="permission_owner">сопственикот</string>
-    <string name="permission_group">група</string>
-    <string name="next">NEXT</string>
-    <string name="skip">SKIP</string>
-    <string name="start">РАЗБРАВ</string>
-    <string name="slide_1_title">организираниот библиотека</string>
-    <string name="slide_1_desc">Со еден клик до медиумите библиотека од почетниот екран.</string>
-    <string name="slide_2_title">ѕиркаат и поп</string>
-    <string name="slide_2_desc">ѕиркајте и поп вашите слики и видеа.</string>
-    <string name="slide_3_title">Повлечи и пушти</string>
-    <string name="slide_3_desc">Одвлекувате датотеки од една папка на друг!</string>
-    <string name="action_sort">вид</string>
-    <string name="slide_4_title">теми</string>
-    <string name="slide_4_desc">Темно или светло начин! Твој избор.</string>
-    <string name="no_music"> Нема музички фајлови</string>
-    <string name="img_accessibility_back">назад</string>
-    <string name="img_accessibility_permission">дозвола за грант</string>
-    <string name="img_accessibility_icon_lib">икона библиотека</string>
-    <string name="unlock_full_version">Отклучите целосна верзија</string>
-    <string name="full_version_buy_ask">Целосна верзија отстранува досадни реклами. Дали сакате да го купите?</string>
+    <string name="permission_execute">Изврши</string>
+    <string name="permission_owner">Сопственик</string>
+    <string name="permission_group">Група</string>
+    <string name="header_source">Извор</string>
+    <string name="header_destination">Дестинација</string>
+    <string name="enter_name">Внесете име</string>
+    <string name="open_as">Отворете како</string>
+    <string name="text">Текст</string>
+    <string name="image">Слика</string>
+    <string name="audio">Аудио</string>
+    <string name="other">Друго</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">Позадина</string>
+    <string name="error">Грешка</string>
     <string name="dialog_title_picker">Изберете музичка датотека</string>
-
-    <string name="browse">Прегледај</string>
+    <string name="browse">Прелистајте</string>
     <string name="action_more">Повеќе</string>
     <string name="directory">Директориум</string>
     <string name="operation">Операција</string>
-    <string name="clipboard">%d во таблата со исечоци</string>
-    <string name="fav_exists">Омилена веќе постои.</string>
-    <string name="header_source">Извор</string>
-    <string name="header_destination">Дестинација</string>
     <string name="error_unsupported">Не се поддржани</string>
-    <string name="copy_path">Копирај патека</string>
-    <string name="text_copied_clipboard">Копирано на таблата со исечоци.</string>
-    <string name="analytics_text">Испрати аналитика</string>
-    <string name="analytics_summary">Помогнете ни да ја подобриме апликацијата со испраќање анонимни податоци за користење.</string>
+    <string name="action_cut">Исечете</string>
+    <string name="action_copy">Копирај</string>
+    <string name="action_paste">Залепи</string>
+    <string name="msg_cut_copy">датотека (и) копирани во клипборд</string>
+    <string name="dialog_skip">Прескокни</string>
+    <string name="dialog_replace">Заменете</string>
+    <string name="dialog_keep_both">Чувајте ги и двете</string>
+    <string name="drag">Повлечете</string>
+    <string name="move">Премести</string>
+    <string name="copying">Копирање на датотеки</string>
+    <string name="moving">Премести датотеки</string>
+    <string name="clipboard">%d во клипборд</string>
+    <string name="text_copied_clipboard">Копирано во таблата со исечоци.</string>
+    <string name="dialog_cancel">Откажи</string>
+    <string name="msg_ok">добро</string>
+    <string name="msg_error_not_supported">Нема апликација за да се справи со акцијата</string>
+    <string name="needsaccess">Запишете го потребниот пристап</string>
+    <string name="needs_access_summary">Изберете го root директориумот од %1$s за да дозволите пристап до пишување         работат</string>
+    <string name="img_accessibility_back">Назад</string>
+    <string name="action_search">Пребарај</string>
 
+    <string name="albums">Албуми</string>
+    <string name="artists">Уметници</string>
+    <string name="genres">Genанрови</string>
+    <string name="all_tracks">Сите песни</string>
+    <string name="podcasts">Подкасти</string>
+    <string name="unknown">Непознато</string>
+    <string name="enabled">Овозможено</string>
+    <string name="package_installer">Инсталатор за пакети</string>
+    <string name="view">Погледни</string>
+    <string name="install">Инсталирај</string>
+    <string name="package_installer_content">Која акција би сакале да ја направите?</string>
+    <string name="no_music">Нема музички датотеки</string>
+    <string name="no_files">Нема датотеки</string>
+
+    <string name="action_view_list">Приказ на список</string>
+    <string name="action_view_grid">Поглед на мрежа</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">Запомни</string>
+    <string name="move_trash">Премести во ѓубре</string>
+    <string name="path">Пат</string>
+    <string name="size">Големина</string>
+    <string name="date_modified">Датумот е изменет</string>
+    <string name="permissions">Дозволи</string>
+    <string name="yes">Да</string>
+    <string name="no">Не</string>
+    <string name="properties">Својства</string>
+    <string name="copy_path">Копија патека</string>
+    <string name="permission_setting_hint">Допрете го Поставки -&gt; Дозволи и потоа вклучете Складирање.</string>
+    <string name="access_denied_external">Напишете пристап до надворешно SD не е одобрен</string>
+    <string name="permission_request">Потребна е дозвола за складирање за да ги прикажете сите датотеки</string>
+    <string name="action_grant">Грант</string>
+    <string name="img_accessibility_permission">Дозвола за грант</string>
+    <string name="next">СЛЕДНО</string>
+    <string name="skip">СКИП</string>
+    <string name="start">РАЗБРАВ</string>
+    <string name="slide_1_title">Организирана библиотека</string>
+    <string name="slide_1_desc">Еден клик до библиотеката за медиуми од почетниот екран.</string>
+    <string name="slide_2_title">Ekиркаат и поп</string>
+    <string name="slide_2_desc">Peирнете и поп-вашата слика и видеа.</string>
+    <string name="slide_3_title">Повлечи и пушти</string>
+    <string name="slide_3_desc">Повлечете датотеки од една папка во друга!</string>
+    <string name="action_sort">Сортирајте</string>
+    <string name="slide_4_title">Теми</string>
+    <string name="slide_4_desc">Темен или лесен начин! Твој избор.</string>
     <string name="dual_pane_intro_title">Двоен панел</string>
-    <string name="dual_pane_intro_subtitle">Двоен режим за подобра употреба.</string>
+    <string name="dual_pane_intro_subtitle">Двоен режим за подобра употребливост.</string>
+    <string name="pref_title_theme">Тема</string>
+    <string name="pref_subs_light">Светлина</string>
+    <string name="pref_subs_dark">Темно</string>
+    <string name="device_theme">Тема на уредот</string>
+    <string name="pref_title_reset_fav">Ресетирајте ги омилените</string>
+    <string name="pref_title_show_hidden">Прикажи скриени датотеки</string>
+    <string name="pref_title_disable_dual">Двоен панел на пејзаж</string>
+    <string name="pref_title_change_lang">Јазик</string>
+    <string name="msg_fav_reset">Омилените се ресетираа на стандардните.</string>
+    <string name="analytics_text">Испратете аналитика</string>
+    <string name="analytics_summary">Помогнете ни да ја подобриме апликацијата со испраќање на анонимни податоци за употреба.</string>
+    <string name="home_docs">Документи</string>
+    <string name="compressed">Компресиран</string>
+    <string name="apk">Апликации</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">Големи датотеки</string>
+    <string name="library_recent">Неодамнешни</string>
     <string name="sort_name">Име</string>
     <string name="sort_type">Тип</string>
     <string name="sort_size">Големина</string>
     <string name="sort_date">Датум</string>
     <string name="ascending">Растечки</string>
-    <string name="library_recent">Неодамнешни</string>
-    <string name="albums">Албуми</string>
-    <string name="artists">Уметници</string>
-    <string name="genres">Жанрови</string>
-    <string name="all_tracks">Сите песни</string>
-    <string name="podcasts">Подкасти</string>
-    <string name="mute">Исклучи</string>
-    <string name="unmute">Вклучи</string>
-    <string name="app_manager">Управител на апликации</string>
-    <string name="unknown">Непознат</string>
-    <string name="enabled">Овозможено</string>
-    <string name="move_trash">Премести во корпата</string>
+    <string name="mute">Неми</string>
+    <string name="unmute">Исклучете се</string>
+    <string name="peek_button_prev">Претходно</string>
+    <string name="peek_button_next">Следно</string>
+    <string name="saved_category">Спасен</string>
+    <string name="other_category">ДРУГО</string>
+
+    <string name="category_whatsapp">Whatsapp</string>
+    <string name="category_telegram">Телеграма</string>
+    <string name="category_camera">Камера</string>
+    <string name="category_screenshot">Слики од екранот</string>
+    <string name="category_max_min_items_error">Зачуваните категории можат да бидат минимум 3, максимум 12</string>
+
+    <string name="category_all">Сите</string>
+    <string name="categories">Категории</string>
+    <string name="categories_folder">Папка</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Овозможи пристап до корен</string>
+    <string name="info_name">Име на датотека</string>
+    <string name="info_resolution">Резолуција</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d датотеки се преместија</string>
+    <string name="copied" tools:ignore="PluralsCandidate">Копирани %d датотеки</string>
+    <string name="action_view">Погледни</string>
+    <string name="action_view_gallery">Поглед на галерија</string>
+    <string name="update_available">Ажурирање е достапно</string>
+    <string name="restart">Рестарт</string>
+    <string name="update_downloading">Преземање ажурирање…</string>
+    <string name="update_downloaded">Преземено ажурирање</string>
+    <string name="install_update">Кликнете за да инсталирате</string>
+    <string name="connect_internet_download_update">Поврзете се на Интернет за да ја преземете ажурирањето</string>
+    <string name="recent_today">Денес</string>
+    <string name="recent_yesterday">Вчера</string>
+    <string name="recent_this_week">Оваа недела</string>
+    <string name="recent_this_month">Овој месец</string>
+    <string name="search_type_other">Друго</string>
+    <string name="search_clear">Јасно</string>
+    <string name="recently_searched">Неодамна претрес</string>
+    <string name="version_code">Код на верзија</string>
+    <string name="tab_home">Дома</string>
+    <string name="tab_tools">Алатки</string>
+    <string name="tab_settings">Поставки</string>
+    <string name="privacy_policy">Политика за приватност</string>
+
+
 
 </resources>

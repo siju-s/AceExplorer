@@ -1,184 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Ace Explorer</string>
+<string name="app_name">Ace Explorer- ը</string>
+    <string name="image_viewer_title">Ace Image Viewer</string>
     <string name="action_settings">Կարգավորումներ</string>
-    <string name="nav_menu_internal_storage">ներքին Storage</string>
-    <string name="nav_menu_root">արմատ</string>
+    <string name="nav_menu_internal_storage">Ներքին պահուստ</string>
+    <string name="nav_menu_root">Արմատ</string>
     <string name="nav_menu_ext_storage">Արտաքին SD</string>
-    <string name="nav_menu_music">երաժշտություն</string>
-    <string name="nav_menu_video">Videos</string>
+    <string name="nav_menu_music">Երաժշտություն</string>
+    <string name="nav_menu_video">Տեսանյութեր</string>
     <string name="nav_menu_image">Նկարներ</string>
-    <string name="nav_menu_docs">փաստաթղթերը</string>
-    <string name="nav_header_storages">պահեստարաններ</string>
-    <string name="nav_header_favourites">ԸՆՏՐՅԱԼ ԹԵՄԱՆԵՐ</string>
-    <string name="nav_header_collections">գրադարան</string>
-    <string name="empty">դատարկ</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d ֆայլ</item>
-        <item quantity="other">%d ֆայլեր</item>
-    </plurals>
-    <string name="downloads">Downloads</string>
-    <string name="action_rename">վերանվանել</string>
+    <string name="nav_menu_docs">Փաստաթղթեր</string>
+    <string name="downloads">Ներլցումներ</string>
+    <string name="nav_header_storages">Պահեստներ</string>
+    <string name="nav_header_favourites">Ընտրյալներ</string>
+    <string name="nav_header_collections">Գրադարան</string>
+    <string name="app_manager">Ծրագրերի կառավարիչ</string>
+    <string name="unlock_full_version">Բացեք ամբողջական տարբերակը</string>
+    <string name="full_version_buy_ask">Ամբողջ տարբերակը հեռացնում է վրդովեցուցիչ գովազդները: Անկանու՞մ եք այն գնել:</string>
+    <string name="img_accessibility_icon_lib">Գրադարանի պատկերակը</string>
+    <string name="empty">Դատարկ</string>
+    <string name="action_rename">Անվանափոխել</string>
     <string name="action_info">Հատկություններ</string>
     <string name="action_archive">Արխիվ</string>
-    <string name="action_cut">Կտրել</string>
-    <string name="action_copy">պատճեն</string>
-    <string name="action_paste">մածուկ</string>
-    <string name="action_delete">ջնջել</string>
-    <string name="action_share">բաժնետոմս</string>
-    <string name="msg_cut_copy">ֆայլ (եր) պատճենահանվել է clipboard</string>
-    <string name="msg_delete_success">ջնջվել հաջողությամբ</string>
-    <string name="msg_delete_failure">Ջնջել գործողությունը ձախողվեց</string>
-    <string name="dialog_skip">ցատկել</string>
-    <string name="dialog_replace">փոխարինել</string>
-    <string name="dialog_keep_both">Պահպանեք երկու ֆայլեր</string>
-    <string name="dialog_cancel">վերացնել</string>
-    <string name="msg_file_exists">ֆայլը գոյություն ունի</string>
-    <string name="dialog_from_placeholder">Ից</string>
-    <string name="dialog_to_placeholder">To:</string>
-    <string name="background">ետին պլան</string>
-    <string name="dialog_delete_title">Վստահ եք, որ ուզում եք ջնջել %d ֆայլեր:</string>
-    <string name="msg_ok">լավ</string>
-    <string name="no_files">Ոչ ֆայլեր</string>
-    <string name="msg_error_invalid_name">Մուտքագրեք վավերական անուն</string>
-    <string name="path">path:</string>
-    <string name="size">Չափ:</string>
-    <string name="date_modified">Ամսաթիվ Փոփոխված:</string>
-    <string name="permissions">թույլտվությունները</string>
-    <string name="yes">այո</string>
-    <string name="no">Ոչ</string>
-    <string name="properties">Հատկություններ</string>
+    <string name="action_delete">Նջել</string>
+    <string name="action_share">Կիսվիր</string>
+    <string name="msg_delete_success">հաջողությամբ ջնջվեց</string>
+    <string name="msg_delete_failure">Deleteնջել գործողությունը ձախողվեց</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Համոզվա՞ծ եք, որ ցանկանում եք ջնջել %d ֆայլերը:</string>
     <string name="new_folder">Նոր թղթապանակ</string>
-    <string name="new_file">Նոր ֆայլի</string>
-    <string name="add_fav">Ավելացնել նախընտրածում</string>
-    <string name="msg_added_to_fav">Ավելացված է նախընտրածում</string>
-    <string name="msg_error_not_supported">Ոչ ծրագիրը կարգավորել ակցիան</string>
-    <string name="permission_request">Հաղորդագրություն փակցնելուց համար պետք պահեստային թույլտվություն է ցույց տալ բոլոր ֆայլերը</string>
-    <string name="action_grant">GRANT</string>
-    <string name="action_sort">տեսակավորել</string>
-    <string name="action_view_list">ցուցակ տեսություն</string>
-    <string name="action_view_grid">Ցանց տեսություն</string>
-    <string name="extract_to">Քաղվածք է</string>
-    <string name="open">բաց</string>
-    <string name="extracting">Արտահանվում է ..</string>
+    <string name="new_file">Նոր ֆայլ</string>
+    <string name="add_fav">Ավելացնել ընտրվածների մեջ</string>
+    <string name="msg_added_to_fav">Ավելացնել սիրվածին</string>
+    <string name="extract_to">Քաղվածք դեպի</string>
+    <string name="open">Բացեք</string>
+    <string name="extracting">Արդյունահանման ..</string>
     <string name="dialog_current_path">Ընթացիկ ուղին</string>
-    <string name="dialog_specify_path">նշեք ուղին</string>
+    <string name="dialog_specify_path">Նշեք ուղին</string>
     <string name="enter_file_name">Մուտքագրեք ֆայլի անունը</string>
-    <string name="extract">քաղվածք</string>
-    <string name="dialog_title_browse">Ընտրեք թղթապանակը</string>
+    <string name="extract">Քաղվածք</string>
+    <string name="dialog_title_browse">Ընտրեք թղթապանակ</string>
     <string name="action_select_all">Ընտրել բոլորը</string>
-    <string name="delete_fav">ջնջել ֆավորիտ</string>
-    <string name="action_search">որոնում</string>
-    <string name="pref_title_theme">Թեմա</string>
-    <string name="pref_subs_light">թեթեւ</string>
-    <string name="pref_subs_dark">մութ</string>
-    <string name="pref_title_reset_fav">Զրոյացնել Ընտրվածներ</string>
-    <string name="pref_title_show_hidden">Ցույց տալ թաքնված ֆայլերը</string>
-    <string name="pref_title_disable_dual">Dual թրաշ է լանդշաֆտային</string>
-    <string name="pref_title_change_lang">Փոխել լեզուն</string>
-
-    <string name="hide">թաքցնել</string>
-    <string name="unhide">Բացահայտել</string>
-    <string name="drag">քաշել</string>
-    <string name="move">քայլ</string>
-    <string name="msg_fav_reset">ԸՆՏՐՅԱԼ ԹԵՄԱՆԵՐ resetted լռելյայն.</string>
-    <string name="home_docs">Docs</string>
-    <string name="compressed">սեղմված</string>
-    <string name="apk">Apps</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">խոշոր ֆայլեր</string>
-    <string name="open_as">Բաց Որպես</string>
-    <string name="text">տեքստ</string>
-    <string name="image">պատկեր</string>
-    <string name="audio">Աուդիո</string>
-    <string name="other">այլ</string>
-    <string name="create">ստեղծել</string>
-    <string name="zip_progress_title">Ստեղծվում ZIP</string>
-    <string name="needsaccess">Գրեք Access Պահանջվում</string>
-    <string name="needs_access_summary">Խնդրում ենք ընտրել արմատային դիրեկտորիայի %1$s շնորհել գրելու հնարավորությունը գործել</string>
-    <string name="error">սխալ</string>
-    <string name="msg_operation_failed">Operation ձախողվեց</string>
+    <string name="delete_fav">Deleteնջել ընտրվածը</string>
+    <string name="hide">Թաքցնել</string>
+    <string name="unhide">Թաքցրեք</string>
+    <string name="create">Ստեղծել</string>
+    <string name="zip_progress_title">Ստեղծում է zip</string>
+    <string name="fav_exists">Սիրվածն արդեն գոյություն ունի:</string>
+    <string name="msg_file_exists">Ֆայլը գոյություն ունի</string>
+    <string name="dialog_from_placeholder">Ից</string>
+    <string name="dialog_to_placeholder">Դեպի</string>
+    <string name="msg_error_invalid_name">Մուտքագրեք վավեր անուն</string>
+    <string name="msg_operation_failed">Գործողությունը ձախողվեց</string>
+    <string name="permission_read">Կարդացեք</string>
+    <string name="permission_write">Գրիր</string>
+    <string name="permission_execute">Կատարել</string>
+    <string name="permission_owner">Սեփականատերը</string>
+    <string name="permission_group">Խումբ</string>
+    <string name="header_source">Աղբյուր</string>
+    <string name="header_destination">Նպատակը</string>
     <string name="enter_name">Մուտքագրեք անունը</string>
-    <string name="paste_conflict_remember">Հիշել</string>
-    <string name="copying">Պատճենահանման ֆայլեր</string>
-    <string name="moving">Շարժվող ֆայլեր</string>
-    <string name="package_installer">Փաթեթ Installer</string>
-    <string name="view">տեսարան</string>
-    <string name="install">Տեղադրեք</string>
-    <string name="package_installer_content">Որ ակցիան կցանկանայիք անել:</string>
-    <string name="permission_setting_hint">Թակել Պարամետրեր -> Թույլտվություններ, ապա միացնել պահպանման:</string>
-    <string name="access_denied_external">Գրեք հասանելիության արտաքին SD չի տրամադրվում</string>
-    <string name="permission_read">կարդալ</string>
-    <string name="permission_write">գրել</string>
-    <string name="permission_execute">կատարել</string>
-    <string name="permission_owner">սեփականատեր</string>
-    <string name="permission_group">խումբ</string>
-    <string name="next">NEXT</string>
-    <string name="skip">SKIP</string>
-    <string name="start">ՀԱՍԿԱՑԱ</string>
-    <string name="slide_1_title">կազմակերպված Գրադարան</string>
-    <string name="slide_1_desc">Մեկ հպումով լրատվամիջոցների գրադարանում homescreen.</string>
-    <string name="slide_2_title">հայացք եւ փոփ</string>
-    <string name="slide_2_desc">հայացք եւ փոփ ձեր պատկերները եւ տեսանյութերը:</string>
-    <string name="slide_3_title">Քարշեք եւ բաց թողեք</string>
-    <string name="slide_3_desc">Քաշել ֆայլեր մեկ թղթապանակում մյուսը:</string>
-    <string name="slide_4_title">Թեմաներ</string>
-    <string name="slide_4_desc">Dark կամ թեթեւ ճանապարհ. Ձեր ընտրությունը.</string>
-    <string name="no_music"> Ոչ երաժշտական ​​ֆայլերը</string>
-    <string name="img_accessibility_back">Վերադառնալ</string>
-    <string name="img_accessibility_permission">Grant թույլտվություն</string>
-    <string name="img_accessibility_icon_lib">Գրադարան պատկերակը</string>
-    <string name="unlock_full_version">Բացել ամբողջական տարբերակը</string>
-    <string name="full_version_buy_ask">Ամբողջական հեռացնում annoying ազդերը. Դուք ցանկանում եք գնել այն.</string>
-    <string name="dialog_title_picker">Ընտրեք երաժշտությունը ֆայլ</string>
-
-    <string name="browse">Փնտրել</string>
+    <string name="open_as">Բացեք ինչպես</string>
+    <string name="text">Տեքստ</string>
+    <string name="image">Պատկեր</string>
+    <string name="audio">Աուդիո</string>
+    <string name="other">Այլ</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">Նախապատմություն</string>
+    <string name="error">Սխալ</string>
+    <string name="dialog_title_picker">Ընտրեք երաժշտական ​​ֆայլ</string>
+    <string name="browse">Զննել</string>
     <string name="action_more">Ավելին</string>
     <string name="directory">Տեղեկատու</string>
-    <string name="operation">Օպերացիա</string>
-    <string name="clipboard">%d ընդգրկույթում</string>
-    <string name="fav_exists">Սիրված արդեն գոյություն ունի:</string>
-    <string name="header_source">Աղբյուրը</string>
-    <string name="header_destination">Նպատակը</string>
+    <string name="operation">Գործողություն</string>
     <string name="error_unsupported">Չի ապահովվում</string>
-    <string name="copy_path">Պատճենեք պատճենը</string>
-    <string name="text_copied_clipboard">Պատճենված է clipboard:</string>
-    <string name="analytics_text">Վերլուծություն ուղարկեք</string>
-    <string name="analytics_summary">Օգնեք մեզ բարելավել ծրագիրը `ուղարկելով անանուն օգտագործման տվյալները:</string>
+    <string name="action_cut">Կտրել</string>
+    <string name="action_copy">Պատճենել</string>
+    <string name="action_paste">Կպցնել</string>
+    <string name="msg_cut_copy">ֆայլ (ներ) ը պատճենված է clipboard- ում</string>
+    <string name="dialog_skip">Բաց թողնել</string>
+    <string name="dialog_replace">Փոխարինեք</string>
+    <string name="dialog_keep_both">Պահպանեք երկուսն էլ</string>
+    <string name="drag">Քաշել</string>
+    <string name="move">Տեղափոխել</string>
+    <string name="copying">Պատճենել ֆայլերը</string>
+    <string name="moving">Տեղափոխվող ֆայլեր</string>
+    <string name="clipboard">%d- ը հենակետում</string>
+    <string name="text_copied_clipboard">Պատճենահանվել է clipboard- ում:</string>
+    <string name="dialog_cancel">Չեղարկել</string>
+    <string name="msg_ok">լավ</string>
+    <string name="msg_error_not_supported">Գործողություն կատարելու համար ոչ մի ծրագիր չկա</string>
+    <string name="needsaccess">Գրեք մուտքի անհրաժեշտությունը</string>
+    <string name="needs_access_summary">Խնդրում ենք ընտրել %1$s հիմնական գրացուցակը, որի մուտքը գրելու հնարավորություն կտաք         գործել</string>
+    <string name="img_accessibility_back">Ետ</string>
+    <string name="action_search">Որոնել</string>
 
-    <string name="dual_pane_intro_title">Երկակի խցիկ</string>
-    <string name="dual_pane_intro_subtitle">Երկակի ռեժիմ, ավելի հարմարավետության համար:</string>
-    <string name="sort_name">Անուն</string>
-    <string name="sort_type">Տիպ</string>
-    <string name="sort_size">Չափը</string>
-    <string name="sort_date">Ամսաթիվ</string>
-    <string name="ascending">Աճում է</string>
-    <string name="library_recent">Վերջերս</string>
     <string name="albums">Ալբոմներ</string>
     <string name="artists">Նկարիչներ</string>
     <string name="genres">Ժանրեր</string>
     <string name="all_tracks">Բոլոր երգերը</string>
-    <string name="podcasts">Ձայնագրություններ</string>
-    <string name="mute">Համր</string>
-    <string name="unmute">Մնացեք</string>
-    <string name="app_manager">Հավելվածի կառավարիչ</string>
+    <string name="podcasts">Podcasts</string>
     <string name="unknown">Անհայտ</string>
-    <string name="enabled">Հասանելի է</string>
-    <string name="move_trash">Տեղափոխեք աղբարկղ</string>
+    <string name="enabled">Միացված</string>
+    <string name="package_installer">Փաթեթի տեղադրիչ</string>
+    <string name="view">Տեսարան</string>
+    <string name="install">Տեղադրեք</string>
+    <string name="package_installer_content">Ո՞ր գործողությունն եք ուզում անել:</string>
+    <string name="no_music">Ոչ երաժշտական ​​ֆայլեր</string>
+    <string name="no_files">Ֆայլեր չկան</string>
+
+    <string name="action_view_list">Listանկի տեսք</string>
+    <string name="action_view_grid">Idանց տեսք</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">Հիշիր</string>
+    <string name="move_trash">Տեղափոխել աղբարկղ</string>
+    <string name="path">Ուղին</string>
+    <string name="size">Չափը</string>
+    <string name="date_modified">Ամսաթիվը փոփոխված է</string>
+    <string name="permissions">Թույլտվություններ</string>
+    <string name="yes">Այո</string>
+    <string name="no">Ոչ</string>
+    <string name="properties">Հատկություններ</string>
+    <string name="copy_path">Պատճենել ուղին</string>
+    <string name="permission_setting_hint">Հպեք Կարգավորումներ -&gt; Թույլտվությունները, ապա միացրեք Պահպանումը:</string>
+    <string name="access_denied_external">Գրեք մուտքը Արտաքին SD չի տրամադրվում</string>
+    <string name="permission_request">Բոլոր ֆայլերը ցուցադրելու համար անհրաժեշտ է պահպանման թույլտվություն</string>
+    <string name="action_grant">Դրամաշնորհ</string>
+    <string name="img_accessibility_permission">Դրամաշնորհի թույլտվություն</string>
+    <string name="next">Մոտակա</string>
+    <string name="skip">Բաց թողնել</string>
+    <string name="start">ՀԱՍԿԱՑԱ</string>
+    <string name="slide_1_title">Կազմակերպված գրադարան</string>
+    <string name="slide_1_desc">Մեկ կտտոց դեպի գլխավոր էջի մեդիա գրադարան:</string>
+    <string name="slide_2_title">Փեյք և փոփ</string>
+    <string name="slide_2_desc">Նայեք և փոփեք ձեր պատկերներն ու տեսանյութերը:</string>
+    <string name="slide_3_title">Քաշեք և թողեք</string>
+    <string name="slide_3_desc">Քաշեք ֆայլերը մեկ պանակից մյուսը:</string>
+    <string name="action_sort">Տեսակավորել</string>
+    <string name="slide_4_title">Թեմաներ</string>
+    <string name="slide_4_desc">Մութ կամ թեթև ճանապարհ: Ձեր ընտրությունը.</string>
+    <string name="dual_pane_intro_title">Երկակի վահանակ</string>
+    <string name="dual_pane_intro_subtitle">Երկակի ռեժիմ `ավելի լավ օգտագործման համար:</string>
+    <string name="pref_title_theme">Թեման</string>
+    <string name="pref_subs_light">Լույս</string>
+    <string name="pref_subs_dark">Մութ</string>
+    <string name="device_theme">Սարքի թեման</string>
+    <string name="pref_title_reset_fav">Վերականգնել ընտրյալները</string>
+    <string name="pref_title_show_hidden">Showույց տալ թաքնված ֆայլերը</string>
+    <string name="pref_title_disable_dual">Երկտեղանի վահանակ լանդշաֆտում</string>
+    <string name="pref_title_change_lang">Լեզու</string>
+    <string name="msg_fav_reset">Ընտրվածքները վերափոխված են լռելյայն:</string>
+    <string name="analytics_text">Ուղարկեք վերլուծություններ</string>
+    <string name="analytics_summary">Օգնեք մեզ բարելավել ծրագիրը ՝ ուղարկելով օգտագործման անանուն տվյալներ:</string>
+    <string name="home_docs">Փաստաթղթեր</string>
+    <string name="compressed">Սեղմված</string>
+    <string name="apk">Ծրագրեր</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">Խոշոր ֆայլեր</string>
+    <string name="library_recent">Վերջին</string>
+    <string name="sort_name">Անուն</string>
+    <string name="sort_type">Տիպ</string>
+    <string name="sort_size">Չափը</string>
+    <string name="sort_date">Ամսաթիվ</string>
+    <string name="ascending">Աճող</string>
+    <string name="mute">Համր</string>
+    <string name="unmute">Լռեցրեք</string>
+    <string name="peek_button_prev">Նախորդ</string>
+    <string name="peek_button_next">Հաջորդը</string>
+    <string name="saved_category">Փրկված</string>
+    <string name="other_category">ԱՅԼ</string>
+
+    <string name="category_whatsapp">Whatsapp- ը</string>
+    <string name="category_telegram">Հեռագիր</string>
+    <string name="category_camera">Տեսախցիկ</string>
+    <string name="category_screenshot">Պատկեր</string>
+    <string name="category_max_min_items_error">Պահպանված կատեգորիաները կարող են լինել նվազագույնը 3, առավելագույնը ՝ 12</string>
+
+    <string name="category_all">Բոլորը</string>
+    <string name="categories">Կատեգորիաներ</string>
+    <string name="categories_folder">Թղթապանակ</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Միացնել Root մուտքը</string>
+    <string name="info_name">Անուն</string>
+    <string name="info_resolution">Բանաձև</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d ֆայլերը տեղափոխվել են</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d ֆայլերը պատճենվել են</string>
+    <string name="action_view">Տեսարան</string>
+    <string name="action_view_gallery">Պատկերասրահի տեսքը</string>
+    <string name="update_available">Թարմացումը մատչելի է</string>
+    <string name="restart">Վերսկսել</string>
+    <string name="update_downloading">Ներբեռնման թարմացում &#8230;</string>
+    <string name="update_downloaded">Ներբեռնված ներբեռնումը</string>
+    <string name="install_update">Կտտացրեք տեղադրելու համար</string>
+    <string name="connect_internet_download_update">Թարմացումը ներբեռնելու համար միացեք ինտերնետին</string>
+    <string name="recent_today">Այսօր</string>
+    <string name="recent_yesterday">Երեկ</string>
+    <string name="recent_this_week">Այս շաբաթ</string>
+    <string name="recent_this_month">Այս ամիս</string>
+    <string name="search_type_other">Այլ</string>
+    <string name="search_clear">Մաքրել</string>
+    <string name="recently_searched">Վերջերս փնտրվեց</string>
+    <string name="version_code">Տարբերակի ծածկագիրը</string>
+    <string name="tab_home">տուն</string>
+    <string name="tab_tools">Գործիքներ</string>
+    <string name="tab_settings">Կարգավորումներ</string>
+    <string name="privacy_policy">Գաղտնիության քաղաքականություն</string>
+
+
 
 </resources>

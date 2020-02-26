@@ -1,185 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Ace Explorer</string>
+<string name="app_name">Ace Explorer</string>
+    <string name="image_viewer_title">Shikuesi i Imazhit Ace</string>
     <string name="action_settings">Cilësimet</string>
-    <string name="nav_menu_internal_storage">Storage brendshme</string>
+    <string name="nav_menu_internal_storage">Magazinimi i brendshëm</string>
     <string name="nav_menu_root">rrënjë</string>
-    <string name="nav_menu_ext_storage">SD të jashtme</string>
+    <string name="nav_menu_ext_storage">SD e jashtme</string>
     <string name="nav_menu_music">muzikë</string>
     <string name="nav_menu_video">Videos</string>
     <string name="nav_menu_image">images</string>
     <string name="nav_menu_docs">dokumentet</string>
+    <string name="downloads">Shkarkime</string>
     <string name="nav_header_storages">depo</string>
     <string name="nav_header_favourites">Favoritet</string>
     <string name="nav_header_collections">Librari</string>
+    <string name="app_manager">Menaxher i aplikacionit</string>
+    <string name="unlock_full_version">Hape versionin e plotë</string>
+    <string name="full_version_buy_ask">Versioni i plotë heq reklamat e bezdisshme. A doni ta blini atë?</string>
+    <string name="img_accessibility_icon_lib">Ikonë e bibliotekës</string>
     <string name="empty">bosh</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d skedar</item>
-        <item quantity="other">%d fotografi</item>
-    </plurals>
-    <string name="downloads">Shkarkime</string>
-    <string name="action_rename">riemërtoj</string>
+    <string name="action_rename">Rename</string>
     <string name="action_info">Vetitë</string>
     <string name="action_archive">Arkivi</string>
-    <string name="action_cut">Prerje</string>
-    <string name="action_copy">kopje</string>
-    <string name="action_paste">Ngjit</string>
-    <string name="action_delete">fshij</string>
+    <string name="action_delete">fshini</string>
     <string name="action_share">pjesë</string>
-    <string name="msg_cut_copy">file (s) kopjohet në clipboard</string>
-    <string name="msg_delete_success">fshi me sukses</string>
-    <string name="msg_delete_failure">Fshij Operacioni dështoi</string>
-    <string name="dialog_skip">Kalo</string>
-    <string name="dialog_replace">zëvendësoj</string>
-    <string name="dialog_keep_both">Mbajtur dy fotografi</string>
-    <string name="dialog_cancel">anuloj</string>
-    <string name="msg_file_exists">skedari ekziston</string>
-    <string name="dialog_from_placeholder">nga</string>
-    <string name="dialog_to_placeholder">Te</string>
-    <string name="background">Sfond</string>
-    <string name="dialog_delete_title">Jeni i sigurt që doni të fshini %d fotografi?</string>
-    <string name="msg_ok">Ne rregull</string>
-    <string name="no_files">Nuk ka fotografi</string>
-    <string name="msg_error_invalid_name">Futni një emër të saktë</string>
-    <string name="path">Rrugë:</string>
-    <string name="size">Size:</string>
-    <string name="date_modified">Date Modified:</string>
-    <string name="permissions">Permissions</string>
-    <string name="yes">po</string>
-    <string name="no">jo</string>
-    <string name="properties">Vetitë</string>
+    <string name="msg_delete_success">u fshi me sukses</string>
+    <string name="msg_delete_failure">Operacioni i fshirjes dështoi</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Jeni i sigurt që doni të fshini skedarët %d?</string>
     <string name="new_folder">Dosje e re</string>
-    <string name="new_file">fotografi të re</string>
-    <string name="add_fav">Shtoje tek Favoritet</string>
-    <string name="msg_added_to_fav">Shtuar tek Favoritet</string>
-    <string name="msg_error_not_supported">No app për të trajtuar veprimin</string>
-    <string name="permission_request">Duhet leje e magazinimit për të treguar të gjitha dosjet</string>
-    <string name="action_grant">GRANT</string>
-    <string name="action_view_list">Lista view</string>
-    <string name="action_view_grid">view Grid</string>
+    <string name="new_file">Dosje e re</string>
+    <string name="add_fav">Shtoni në të preferuarat</string>
+    <string name="msg_added_to_fav">Shtuar te të preferuarat</string>
     <string name="extract_to">Nxirr ne</string>
     <string name="open">hapur</string>
     <string name="extracting">Nxjerrjen ..</string>
-    <string name="dialog_current_path">rruga e tanishme</string>
-    <string name="dialog_specify_path">specifikoni shtegun</string>
-    <string name="enter_file_name">Shkruani emrin e file</string>
+    <string name="dialog_current_path">Rruga aktuale</string>
+    <string name="dialog_specify_path">Specifikoni shtegun</string>
+    <string name="enter_file_name">Vendosni emrin e skedarit</string>
     <string name="extract">ekstrakt</string>
-    <string name="dialog_title_browse">zgjidhni dosjen</string>
+    <string name="dialog_title_browse">Zgjidhni dosjen</string>
     <string name="action_select_all">Selektoj të gjitha</string>
-    <string name="delete_fav">Fshij preferuar</string>
-    <string name="action_search">kërkim</string>
-    <string name="pref_title_theme">temë</string>
-    <string name="pref_subs_light">dritë</string>
-    <string name="pref_subs_dark">i errët</string>
-    <string name="pref_title_reset_fav">Reset preferuarat</string>
-    <string name="pref_title_show_hidden">Trego Hidden Files</string>
-    <string name="pref_title_disable_dual">pane dyfishtë në Peisazhi</string>
-    <string name="pref_title_change_lang">Gjuhe</string>
-
-    <string name="hide">fsheh</string>
+    <string name="delete_fav">Fshij të preferuarin</string>
+    <string name="hide">Hide</string>
     <string name="unhide">Unhide</string>
-    <string name="drag">zvarrit</string>
-    <string name="move">veprim</string>
-    <string name="msg_fav_reset">Favoritet resetted të parazgjedhur.</string>
-    <string name="home_docs">Docs</string>
-    <string name="compressed">ngjeshur</string>
-    <string name="apk">Apps</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">fotografi të mëdha</string>
-    <string name="open_as">Si të hapura</string>
-    <string name="text">tekst</string>
-    <string name="image">imazh</string>
-    <string name="audio">Audio</string>
-    <string name="other">tjetër</string>
     <string name="create">krijoj</string>
-    <string name="zip_progress_title">Krijimi zip</string>
-    <string name="needsaccess">Shkruaj qasjen e kërkuar</string>
-    <string name="needs_access_summary">Ju lutemi zgjidhni dosjen rrënjë e %1$s për të dhënë lejen e shkrimit për
-        të vepruar</string>
-    <string name="error">gabim</string>
+    <string name="zip_progress_title">Krijimi i zipit</string>
+    <string name="fav_exists">E preferuar tashmë ekziston.</string>
+    <string name="msg_file_exists">Dosja ekziston</string>
+    <string name="dialog_from_placeholder">nga</string>
+    <string name="dialog_to_placeholder">në</string>
+    <string name="msg_error_invalid_name">Vendosni një emër të vlefshëm</string>
     <string name="msg_operation_failed">Operacioni dështoi</string>
-    <string name="enter_name">Shkruani emrin</string>
-    <string name="paste_conflict_remember">mbaj mend</string>
-    <string name="copying">Kopjoni skedarët</string>
-    <string name="moving">fotografi në lëvizje</string>
-    <string name="package_installer">Paketa Installer</string>
-    <string name="view">Pamje</string>
-    <string name="install">instaloj</string>
-    <string name="package_installer_content">Cili veprim do të ju pëlqen të bëni?</string>
-    <string name="permission_setting_hint">Takoni Cilësimet -> Permissions dhe pastaj të kthehet në Storage.</string>
-    <string name="access_denied_external">Shkruaj qasje në të jashtme jo SD dhënë</string>
-    <string name="permission_read">lexoj</string>
+    <string name="permission_read">Read</string>
     <string name="permission_write">Shkruaj</string>
     <string name="permission_execute">zbatoj</string>
     <string name="permission_owner">pronar</string>
     <string name="permission_group">grup</string>
-    <string name="next">NEXT</string>
-    <string name="skip">SKIP</string>
-    <string name="start">E KUPTOVA</string>
-    <string name="slide_1_title">Organized Library</string>
-    <string name="slide_1_desc">Një klik në bibliotekën e mediave nga homescreen.</string>
-    <string name="slide_2_title">përgjim dhe pop</string>
-    <string name="slide_2_desc">përgjim dhe pop imazhet dhe videot tuaja.</string>
-    <string name="slide_3_title">Tërhiq dhe lësho</string>
-    <string name="slide_3_desc">Drag fotografi nga një dosje në një tjetër!</string>
-    <string name="action_sort">lloj</string>
-    <string name="slide_4_title">Tema</string>
-    <string name="slide_4_desc">mënyrë të errët apo të lehta! Zgjedhja juaj.</string>
-    <string name="no_music"> Nuk ka fotografi Muzikë</string>
-    <string name="img_accessibility_back">prapa</string>
-    <string name="img_accessibility_permission">leje Grant</string>
-    <string name="img_accessibility_icon_lib">icon Library</string>
-    <string name="unlock_full_version">Zhbllokuar versionin e plotë</string>
-    <string name="full_version_buy_ask">Versioni i plotë i heq reklama bezdisshëm. A doni për të blerë atë?</string>
-    <string name="dialog_title_picker">Zgjidhni dosjen muzikë</string>
-
-    <string name="browse">shfletoj</string>
+    <string name="header_source">burim</string>
+    <string name="header_destination">destinacion</string>
+    <string name="enter_name">Shkruani emrin</string>
+    <string name="open_as">Hap si</string>
+    <string name="text">tekst</string>
+    <string name="image">imazh</string>
+    <string name="audio">Audio</string>
+    <string name="other">tjetër</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">sfond</string>
+    <string name="error">gabim</string>
+    <string name="dialog_title_picker">Zgjidhni skedarin muzikor</string>
+    <string name="browse">Shfleto</string>
     <string name="action_more">më shumë</string>
     <string name="directory">drejtori</string>
     <string name="operation">operacion</string>
-    <string name="clipboard">%d në clipboard</string>
-    <string name="fav_exists">Preferenca tashmë ekziston.</string>
-    <string name="header_source">burim</string>
-    <string name="header_destination">destinacion</string>
     <string name="error_unsupported">Nuk mbështetet</string>
-    <string name="copy_path">Kopjo rrugën</string>
-    <string name="text_copied_clipboard">Kopjohet në clipboard.</string>
-    <string name="analytics_text">Dërgo analytics</string>
-    <string name="analytics_summary">Na ndihmoni të përmirësojmë aplikacionin duke dërguar të dhëna anonime të përdorimit.</string>
+    <string name="action_cut">Prerje</string>
+    <string name="action_copy">kopje</string>
+    <string name="action_paste">Ngjit</string>
+    <string name="msg_cut_copy">skedar (et) e kopjuar në klipboard</string>
+    <string name="dialog_skip">Skip</string>
+    <string name="dialog_replace">zëvendësoj</string>
+    <string name="dialog_keep_both">Mbajini të dy</string>
+    <string name="drag">zvarrit</string>
+    <string name="move">veprim</string>
+    <string name="copying">Kopjimi i skedarëve</string>
+    <string name="moving">Skedarët lëvizës</string>
+    <string name="clipboard">%d në prapavijë</string>
+    <string name="text_copied_clipboard">Kopjuar në clipboard.</string>
+    <string name="dialog_cancel">anuloj</string>
+    <string name="msg_ok">Ne rregull</string>
+    <string name="msg_error_not_supported">Asnjë aplikacion për të trajtuar veprimin</string>
+    <string name="needsaccess">Shkruajeni hyrjen e kërkuar</string>
+    <string name="needs_access_summary">Ju lutemi zgjidhni drejtorinë rrënjësore të %1$s për t\'i dhënë hyrjen shkrimit         operoj</string>
+    <string name="img_accessibility_back">prapa</string>
+    <string name="action_search">Kërko</string>
 
-    <string name="dual_pane_intro_title">Dyshe e dyfishtë</string>
-    <string name="dual_pane_intro_subtitle">Modaliteti i dyfishtë për përdorim më të mirë.</string>
-    <string name="sort_name">emër</string>
-    <string name="sort_type">lloj</string>
-    <string name="sort_size">madhësi</string>
-    <string name="sort_date">data</string>
-    <string name="ascending">Në ngjitje</string>
-    <string name="library_recent">i fundit</string>
     <string name="albums">Albumet</string>
     <string name="artists">Artists</string>
     <string name="genres">zhanret</string>
     <string name="all_tracks">Të gjitha Këngët</string>
     <string name="podcasts">Podcasts</string>
-    <string name="mute">memec</string>
-    <string name="unmute">unmute</string>
-    <string name="app_manager">Menaxheri i aplikacioneve</string>
     <string name="unknown">i panjohur</string>
     <string name="enabled">enabled</string>
-    <string name="move_trash">Lëviz në Trash</string>
+    <string name="package_installer">Instaluesi i paketave</string>
+    <string name="view">Pamje</string>
+    <string name="install">instaloj</string>
+    <string name="package_installer_content">Cilin veprim dëshironi të bëni?</string>
+    <string name="no_music">Nuk ka skedarë Muzikë</string>
+    <string name="no_files">Nuk ka skedarë</string>
+
+    <string name="action_view_list">Pamja e listës</string>
+    <string name="action_view_grid">Pamja e rrjetit</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">mbaj mend</string>
+    <string name="move_trash">Kaloni në Trash</string>
+    <string name="path">Rrugë</string>
+    <string name="size">madhësi</string>
+    <string name="date_modified">Data e modifikuar</string>
+    <string name="permissions">Permissions</string>
+    <string name="yes">po</string>
+    <string name="no">jo</string>
+    <string name="properties">Vetitë</string>
+    <string name="copy_path">Rruga e kopjimit</string>
+    <string name="permission_setting_hint">Takoni Cilësimet -&gt; Lejet dhe më pas aktivizoni Storage.</string>
+    <string name="access_denied_external">Shkruajeni hyrjen në SD të Jashtme që nuk jepet</string>
+    <string name="permission_request">Keni nevojë për leje ruajtjeje për të treguar të gjitha skedarët</string>
+    <string name="action_grant">GRANT</string>
+    <string name="img_accessibility_permission">Leje për leje</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">E KUPTOVA</string>
+    <string name="slide_1_title">Biblioteka e organizuar</string>
+    <string name="slide_1_desc">Një klik në bibliotekën e mediave nga ekrani i shtëpisë.</string>
+    <string name="slide_2_title">Peek dhe Pop</string>
+    <string name="slide_2_desc">Shikoni dhe pop pamjet dhe videot tuaja.</string>
+    <string name="slide_3_title">Tërhiq dhe lësho</string>
+    <string name="slide_3_desc">Zvarrit skedarët nga një dosje në tjetrën!</string>
+    <string name="action_sort">lloj</string>
+    <string name="slide_4_title">Tema</string>
+    <string name="slide_4_desc">Mënyrë e errët ose e lehtë! Zgjedhja juaj.</string>
+    <string name="dual_pane_intro_title">Rresht i dyfishtë</string>
+    <string name="dual_pane_intro_subtitle">Modaliteti i dyfishtë për shfrytëzueshmëri më të mirë.</string>
+    <string name="pref_title_theme">temë</string>
+    <string name="pref_subs_light">dritë</string>
+    <string name="pref_subs_dark">i errët</string>
+    <string name="device_theme">Tema e pajisjes</string>
+    <string name="pref_title_reset_fav">Rivendosni të preferuarat</string>
+    <string name="pref_title_show_hidden">Shfaq skedarët e fshehur</string>
+    <string name="pref_title_disable_dual">Rresht i dyfishtë në Peisazhi</string>
+    <string name="pref_title_change_lang">Gjuhe</string>
+    <string name="msg_fav_reset">Favoritet e rivendosur në parazgjedhje.</string>
+    <string name="analytics_text">Dërgoni analitikë</string>
+    <string name="analytics_summary">Na ndihmoni të përmirësojmë aplikacionin duke dërguar të dhëna përdorimi anonim.</string>
+    <string name="home_docs">docs</string>
+    <string name="compressed">ngjeshur</string>
+    <string name="apk">Apps</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">Skedarë të mëdhenj</string>
+    <string name="library_recent">i fundit</string>
+    <string name="sort_name">emër</string>
+    <string name="sort_type">lloj</string>
+    <string name="sort_size">madhësi</string>
+    <string name="sort_date">data</string>
+    <string name="ascending">Në ngjitje</string>
+    <string name="mute">memec</string>
+    <string name="unmute">unmute</string>
+    <string name="peek_button_prev">i mëparshëm</string>
+    <string name="peek_button_next">tjetër</string>
+    <string name="saved_category">Saved</string>
+    <string name="other_category">TË TJERA</string>
+
+    <string name="category_whatsapp">whatsapp</string>
+    <string name="category_telegram">telegram</string>
+    <string name="category_camera">aparat fotografik</string>
+    <string name="category_screenshot">screenshot</string>
+    <string name="category_max_min_items_error">Kategoritë e ruajtura mund të jenë minimumi 3, maksimumi 12</string>
+
+    <string name="category_all">të gjithë</string>
+    <string name="categories">Kategoritë</string>
+    <string name="categories_folder">dosje</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Aktivizo qasjen Root</string>
+    <string name="info_name">Emri i skedarit</string>
+    <string name="info_resolution">zgjidhje</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d skedarët u zhvendosën</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d skedarë të kopjuar</string>
+    <string name="action_view">Pamje</string>
+    <string name="action_view_gallery">Pamja e galerisë</string>
+    <string name="update_available">Përditësimi në dispozicion</string>
+    <string name="restart">Rifillo, fillo përsëri</string>
+    <string name="update_downloading">Po shkarkohet azhurnimi…</string>
+    <string name="update_downloaded">Përditësimi i shkarkuar</string>
+    <string name="install_update">Klikoni për të instaluar</string>
+    <string name="connect_internet_download_update">Lidhu me internetin për të shkarkuar azhurnimin</string>
+    <string name="recent_today">sot</string>
+    <string name="recent_yesterday">Dje</string>
+    <string name="recent_this_week">Këtë javë</string>
+    <string name="recent_this_month">Këtë muaj</string>
+    <string name="search_type_other">tjetër</string>
+    <string name="search_clear">Qartë</string>
+    <string name="recently_searched">Kërkuar së fundmi</string>
+    <string name="version_code">Kodi i versionit</string>
+    <string name="tab_home">shtëpi</string>
+    <string name="tab_tools">Tools</string>
+    <string name="tab_settings">Cilësimet</string>
+    <string name="privacy_policy">Politika e privatësisë</string>
+
+
 
 </resources>

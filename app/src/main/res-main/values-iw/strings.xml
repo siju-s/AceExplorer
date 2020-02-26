@@ -1,186 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">אייס Explorer</string>
+<string name="app_name">אייס אקספלורר</string>
+    <string name="image_viewer_title">מציג אייס</string>
     <string name="action_settings">הגדרות</string>
     <string name="nav_menu_internal_storage">אחסון פנימי</string>
     <string name="nav_menu_root">שורש</string>
-    <string name="nav_menu_ext_storage">SD חיצוני</string>
-    <string name="nav_menu_music">מוּסִיקָה</string>
-    <string name="nav_menu_video">וידאו</string>
+    <string name="nav_menu_ext_storage">SD חיצונית</string>
+    <string name="nav_menu_music">מוזיקה</string>
+    <string name="nav_menu_video">סרטונים</string>
     <string name="nav_menu_image">תמונות</string>
     <string name="nav_menu_docs">מסמכים</string>
+    <string name="downloads">הורדות</string>
     <string name="nav_header_storages">מחסנים</string>
     <string name="nav_header_favourites">מועדפים</string>
-    <string name="nav_header_collections">סִפְרִיָה</string>
+    <string name="nav_header_collections">ספריה</string>
+    <string name="app_manager">מנהל אפליקציה</string>
+    <string name="unlock_full_version">בטל את נעילת הגרסה המלאה</string>
+    <string name="full_version_buy_ask">הגרסה המלאה מסירה מודעות מעצבנות. האם תרצה לקנות את זה?</string>
+    <string name="img_accessibility_icon_lib">סמל הספרייה</string>
     <string name="empty">ריק</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d קוֹבֶץ</item>
-        <item quantity="two">%d קוֹבֶץ</item>
-        <item quantity="many">%d קבצים</item>
-        <item quantity="other">%d קבצים</item>
-    </plurals>
-    <string name="downloads">הורדות</string>
-    <string name="action_rename">שינוי שם</string>
+    <string name="action_rename">שנה שם</string>
     <string name="action_info">נכסים</string>
     <string name="action_archive">ארכיון</string>
-    <string name="action_cut">גזירה</string>
-    <string name="action_copy">עותק</string>
-    <string name="action_paste">לְהַדבִּיק</string>
-    <string name="action_delete">לִמְחוֹק</string>
-    <string name="action_share">לַחֲלוֹק</string>
-    <string name="msg_cut_copy">קובץ (ים) הועתק ללוח</string>
+    <string name="action_delete">מחק</string>
+    <string name="action_share">שתף</string>
     <string name="msg_delete_success">נמחק בהצלחה</string>
     <string name="msg_delete_failure">פעולת המחיקה נכשלה</string>
-    <string name="dialog_skip">לדלג</string>
-    <string name="dialog_replace">החלף</string>
-    <string name="dialog_keep_both">שמור את שני הקבצים</string>
-    <string name="dialog_cancel">לְבַטֵל</string>
-    <string name="msg_file_exists">הקובץ קיים</string>
-    <string name="dialog_from_placeholder">מ</string>
-    <string name="dialog_to_placeholder">ל:</string>
-    <string name="background">רקע</string>
-    <string name="dialog_delete_title">האם אתה בטוח שברצונך למחוק %d קבצים?</string>
-    <string name="msg_ok">בסדר</string>
-    <string name="no_files">אין קבצים</string>
-    <string name="msg_error_invalid_name">זן שם חוקי</string>
-    <string name="path">נָתִיב:</string>
-    <string name="size">גודל:</string>
-    <string name="date_modified">תאריך שינוי:</string>
-    <string name="permissions">הרשאות</string>
-    <string name="yes">כן</string>
-    <string name="no">לא</string>
-    <string name="properties">נכסים</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">האם אתה בטוח שברצונך למחוק %d קבצים?</string>
     <string name="new_folder">תיקייה חדשה</string>
     <string name="new_file">קובץ חדש</string>
     <string name="add_fav">הוסף למועדפים</string>
     <string name="msg_added_to_fav">נוסף למועדפים</string>
-    <string name="msg_error_not_supported">אין אפליקציה להתמודד הפעולה</string>
-    <string name="permission_request">צריך אישור אחסון כדי להציג את כל הקבצים</string>
-    <string name="action_grant">מענק</string>
-    <string name="action_sort">סוג</string>
-    <string name="action_view_list">תצוגת רשימה</string>
-    <string name="action_view_grid">תצוגת רשת</string>
     <string name="extract_to">לחלץ ל</string>
-    <string name="open">לִפְתוֹחַ</string>
+    <string name="open">פתוח</string>
     <string name="extracting">חילוץ ..</string>
     <string name="dialog_current_path">נתיב נוכחי</string>
     <string name="dialog_specify_path">ציין נתיב</string>
-    <string name="enter_file_name">הזן שם קובץ</string>
+    <string name="enter_file_name">הזן את שם הקובץ</string>
     <string name="extract">לחלץ</string>
-    <string name="dialog_title_browse">בחר תיקייה</string>
+    <string name="dialog_title_browse">בחר תיקיה</string>
     <string name="action_select_all">בחר הכל</string>
-    <string name="delete_fav">מחק פריט מועדף</string>
-    <string name="action_search">לחפש</string>
-    <string name="pref_title_theme">נושא</string>
-    <string name="pref_subs_light">אוֹר</string>
-    <string name="pref_subs_dark">אפל</string>
-    <string name="pref_title_reset_fav">המועדפים איפוס</string>
-    <string name="pref_title_show_hidden">הצגקבציםמוסתרים</string>
-    <string name="pref_title_disable_dual">בחלונית כפול ב נוף</string>
-    <string name="pref_title_change_lang">שנה שפה</string>
-
+    <string name="delete_fav">מחק מועדף</string>
     <string name="hide">להתחבא</string>
-    <string name="unhide">בטל הסתרה</string>
-    <string name="drag">לִגרוֹר</string>
-    <string name="move">מהלך \ לזוז \ לעבור</string>
-    <string name="msg_fav_reset">מועדפים resetted לברירת המחדל.</string>
-    <string name="home_docs">Docs</string>
-    <string name="compressed">דָחוּס</string>
-    <string name="apk">Apps</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">קבצים גדולים</string>
-    <string name="open_as">כפי להרחיב</string>
-    <string name="text">טֶקסט</string>
-    <string name="image">תמונה</string>
-    <string name="audio">שֶׁמַע</string>
-    <string name="other">אַחֵר</string>
-    <string name="create">לִיצוֹר</string>
-    <string name="zip_progress_title">zip יצירה</string>
-    <string name="needsaccess">כתוב נדרשת גישה</string>
-    <string name="needs_access_summary">גישת כתיבה לפעול בחר בספריית השורש של %1$s  להעניק </string>
-    <string name="error">שְׁגִיאָה</string>
+    <string name="unhide">הסתר</string>
+    <string name="create">צור</string>
+    <string name="zip_progress_title">יוצר מיקוד</string>
+    <string name="fav_exists">המועדף כבר קיים.</string>
+    <string name="msg_file_exists">הקובץ קיים</string>
+    <string name="dialog_from_placeholder">מ</string>
+    <string name="dialog_to_placeholder">ל</string>
+    <string name="msg_error_invalid_name">הזן שם חוקי</string>
     <string name="msg_operation_failed">פעולה נכשלה</string>
-    <string name="enter_name">הכנס שם</string>
-    <string name="paste_conflict_remember">לִזכּוֹר</string>
-    <string name="copying">העתקת קבצים</string>
-    <string name="moving">העברת קבצים</string>
-    <string name="package_installer">מתקין חבילות</string>
-    <string name="view">נוף</string>
-    <string name="install">להתקין</string>
-    <string name="package_installer_content">איזו פעולה תרצה לעשות?</string>
-    <string name="permission_setting_hint">הקש על הגדרות -> הרשאות ולאחר מכן הפעל אחסון.</string>
-    <string name="access_denied_external">גישת כתיבה חיצונית לא SD כמובן מאליו</string>
     <string name="permission_read">לקרוא</string>
-    <string name="permission_write">לִכתוֹב</string>
+    <string name="permission_write">כתוב</string>
     <string name="permission_execute">לבצע</string>
     <string name="permission_owner">בעלים</string>
-    <string name="permission_group">קְבוּצָה</string>
-    <string name="next">הַבָּא</string>
-    <string name="skip">לדלג</string>
-    <string name="start">הבנתי</string>
-    <string name="slide_1_title">הספרייה מאורגנת</string>
-    <string name="slide_1_desc">לחיצה אחת לספריית המדיה ממסך הבית.</string>
-    <string name="slide_2_title">להציץ פופ</string>
-    <string name="slide_2_desc">להציץ ולפוצץ את התמונות ואת קטעי וידאו.</string>
-    <string name="slide_3_title">גרור ושחרר</string>
-    <string name="slide_3_desc">גרור קבצים מתיקיה אחת לאחרת!</string>
-    <string name="slide_4_title">ערכות נושא</string>
-    <string name="slide_4_desc">דרך כהה או בהירה! בחירה שלך.</string>
-    <string name="no_music"> אין קובצי מוסיקה</string>
-    <string name="img_accessibility_back">חזור</string>
-    <string name="img_accessibility_permission">מתן הרשאה</string>
-    <string name="img_accessibility_icon_lib">סמל הספרייה</string>
-    <string name="unlock_full_version">נעילת גרסה מלאה</string>
-    <string name="full_version_buy_ask">גרסה מלאה מסירה פרסומות מעצבנות. האם אתה רוצה לקנות את זה?</string>
+    <string name="permission_group">קבוצה</string>
+    <string name="header_source">מקור</string>
+    <string name="header_destination">יעד</string>
+    <string name="enter_name">הכנס שם</string>
+    <string name="open_as">פתח כ</string>
+    <string name="text">טקסט</string>
+    <string name="image">תמונה</string>
+    <string name="audio">שמע</string>
+    <string name="other">אחר</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">רקע כללי</string>
+    <string name="error">שגיאה</string>
     <string name="dialog_title_picker">בחר קובץ מוסיקה</string>
-
-    <string name="browse">לְדַפדֵף</string>
+    <string name="browse">דפדף</string>
     <string name="action_more">יותר</string>
-    <string name="directory">מַדרִיך</string>
+    <string name="directory">מדריך</string>
     <string name="operation">מבצע</string>
-    <string name="clipboard">%d בלוח</string>
-    <string name="fav_exists">מועדף כבר קיים.</string>
-    <string name="header_source">מָקוֹר</string>
-    <string name="header_destination">יַעַד</string>
     <string name="error_unsupported">אינו נתמך</string>
-    <string name="copy_path">נתיב העתק</string>
+    <string name="action_cut">גזירה</string>
+    <string name="action_copy">עותק</string>
+    <string name="action_paste">הדבק</string>
+    <string name="msg_cut_copy">קבצים שהועתקו ללוח</string>
+    <string name="dialog_skip">לדלג</string>
+    <string name="dialog_replace">החלף</string>
+    <string name="dialog_keep_both">שמור את שניהם</string>
+    <string name="drag">גרור</string>
+    <string name="move">מהלך \ לזוז \ לעבור</string>
+    <string name="copying">העתקת קבצים</string>
+    <string name="moving">העברת קבצים</string>
+    <string name="clipboard">%d בלוח</string>
     <string name="text_copied_clipboard">הועתק ללוח.</string>
-    <string name="analytics_text">שלח ניתוח נתונים</string>
-    <string name="analytics_summary">עזור לנו לשפר את האפליקציה על ידי שליחת נתוני שימוש אנונימיים.</string>
+    <string name="dialog_cancel">בטל</string>
+    <string name="msg_ok">בסדר</string>
+    <string name="msg_error_not_supported">אין אפליקציה שתטפל בפעולה</string>
+    <string name="needsaccess">דרוש גישה לכתיבה</string>
+    <string name="needs_access_summary">בחר בספריית השורש של %1$s להעניק גישה לכתיבה         לפעול</string>
+    <string name="img_accessibility_back">חזור</string>
+    <string name="action_search">לחפש</string>
 
-    <string name="dual_pane_intro_title">חלונית כפולה</string>
-    <string name="dual_pane_intro_subtitle">מצב כפול עבור שימושיות טובה יותר.</string>
-    <string name="sort_name">שֵׁם</string>
-    <string name="sort_type">סוּג</string>
-    <string name="sort_size">גודל</string>
-    <string name="sort_date">תַאֲרִיך</string>
-    <string name="ascending">עולה</string>
-    <string name="library_recent">לאחרונה</string>
     <string name="albums">אלבומים</string>
     <string name="artists">אמנים</string>
     <string name="genres">ז\'אנרים</string>
     <string name="all_tracks">כל השירים</string>
     <string name="podcasts">פודקאסטים</string>
-    <string name="mute">לְהַשְׁתִיק</string>
-    <string name="unmute">בטל השתקה</string>
-    <string name="app_manager">מנהל אפליקציה</string>
     <string name="unknown">לא ידוע</string>
     <string name="enabled">מופעל</string>
+    <string name="package_installer">מתקין חבילות</string>
+    <string name="view">נוף</string>
+    <string name="install">להתקין</string>
+    <string name="package_installer_content">איזו פעולה תרצה לעשות?</string>
+    <string name="no_music">אין קבצי מוזיקה</string>
+    <string name="no_files">אין קבצים</string>
+
+    <string name="action_view_list">תצוגת רשימה</string>
+    <string name="action_view_grid">נוף רשת</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">זכור</string>
     <string name="move_trash">העבר לאשפה</string>
+    <string name="path">נתיב</string>
+    <string name="size">גודל</string>
+    <string name="date_modified">תאריך שונה</string>
+    <string name="permissions">הרשאות</string>
+    <string name="yes">כן</string>
+    <string name="no">לא</string>
+    <string name="properties">נכסים</string>
+    <string name="copy_path">העתק נתיב</string>
+    <string name="permission_setting_hint">הקש על הגדרות -&gt; הרשאות ואז הפעל את האחסון.</string>
+    <string name="access_denied_external">גישה לכתיבה ל- SD חיצוני לא הוענקה</string>
+    <string name="permission_request">זקוק להרשאת אחסון כדי להציג את כל הקבצים</string>
+    <string name="action_grant">מענק</string>
+    <string name="img_accessibility_permission">תן אישור</string>
+    <string name="next">הבא</string>
+    <string name="skip">לדלג</string>
+    <string name="start">הבנת</string>
+    <string name="slide_1_title">ספרייה מאורגנת</string>
+    <string name="slide_1_desc">לחיצה אחת לספריית המדיה ממסך הבית.</string>
+    <string name="slide_2_title">הצצה ופופ</string>
+    <string name="slide_2_desc">הצץ ופופ את התמונות והסרטונים שלך.</string>
+    <string name="slide_3_title">גרור ושחרר</string>
+    <string name="slide_3_desc">גרור קבצים מתיקיה לתיקיה!</string>
+    <string name="action_sort">סוג</string>
+    <string name="slide_4_title">ערכות נושא</string>
+    <string name="slide_4_desc">דרך חשוכה או בהירה! בחירה שלך.</string>
+    <string name="dual_pane_intro_title">חלונית כפולה</string>
+    <string name="dual_pane_intro_subtitle">מצב כפול לשימושיות טובה יותר.</string>
+    <string name="pref_title_theme">נושא</string>
+    <string name="pref_subs_light">אור</string>
+    <string name="pref_subs_dark">אפל</string>
+    <string name="device_theme">נושא המכשיר</string>
+    <string name="pref_title_reset_fav">אפס מועדפים</string>
+    <string name="pref_title_show_hidden">הצג קבצים מוסתרים</string>
+    <string name="pref_title_disable_dual">חלונית כפולה בנוף</string>
+    <string name="pref_title_change_lang">שפה</string>
+    <string name="msg_fav_reset">המועדפים הוגדרו כברירת מחדל.</string>
+    <string name="analytics_text">שלח ניתוחים</string>
+    <string name="analytics_summary">עזור לנו לשפר את האפליקציה על ידי שליחת נתוני שימוש אנונימיים.</string>
+    <string name="home_docs">מסמכים</string>
+    <string name="compressed">דחוס</string>
+    <string name="apk">אפליקציות</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">קבצים גדולים</string>
+    <string name="library_recent">לאחרונה</string>
+    <string name="sort_name">שם</string>
+    <string name="sort_type">סוג</string>
+    <string name="sort_size">גודל</string>
+    <string name="sort_date">תאריך</string>
+    <string name="ascending">עולה</string>
+    <string name="mute">אילם</string>
+    <string name="unmute">בטל השתקה</string>
+    <string name="peek_button_prev">קודם</string>
+    <string name="peek_button_next">הבא</string>
+    <string name="saved_category">שמור</string>
+    <string name="other_category">אחר</string>
+
+    <string name="category_whatsapp">Whatsapp</string>
+    <string name="category_telegram">מברק</string>
+    <string name="category_camera">מצלמה</string>
+    <string name="category_screenshot">צילום מסך</string>
+    <string name="category_max_min_items_error">קטגוריות שמורות יכולות להיות מינימום 3, מקסימום 12</string>
+
+    <string name="category_all">את כל</string>
+    <string name="categories">קטגוריות</string>
+    <string name="categories_folder">תיקיה</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">אפשר גישה לשורש</string>
+    <string name="info_name">שם קובץ</string>
+    <string name="info_resolution">פתרון הבעיה</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d קבצים הועברו</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d קבצים הועתקו</string>
+    <string name="action_view">נוף</string>
+    <string name="action_view_gallery">תצוגת גלריה</string>
+    <string name="update_available">עדכון זמין</string>
+    <string name="restart">איתחול</string>
+    <string name="update_downloading">מוריד עדכון …</string>
+    <string name="update_downloaded">עדכון שהורד</string>
+    <string name="install_update">לחץ כדי להתקין</string>
+    <string name="connect_internet_download_update">התחבר לאינטרנט כדי להוריד עדכון</string>
+    <string name="recent_today">היום</string>
+    <string name="recent_yesterday">אתמול</string>
+    <string name="recent_this_week">השבוע</string>
+    <string name="recent_this_month">החודש</string>
+    <string name="search_type_other">אחר</string>
+    <string name="search_clear">ברור</string>
+    <string name="recently_searched">חיפש לאחרונה</string>
+    <string name="version_code">קוד גרסה</string>
+    <string name="tab_home">בית</string>
+    <string name="tab_tools">כלים</string>
+    <string name="tab_settings">הגדרות</string>
+    <string name="privacy_policy">מדיניות פרטיות</string>
+
+
 
 </resources>

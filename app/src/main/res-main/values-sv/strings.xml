@@ -1,184 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">ace Explorer</string>
+<string name="app_name">Ace Explorer</string>
+    <string name="image_viewer_title">Ace Image Viewer</string>
     <string name="action_settings">inställningar</string>
-    <string name="nav_menu_internal_storage">intern lagring</string>
+    <string name="nav_menu_internal_storage">Intern lagring</string>
     <string name="nav_menu_root">Rot</string>
-    <string name="nav_menu_ext_storage">extern SD</string>
+    <string name="nav_menu_ext_storage">Extern SD</string>
     <string name="nav_menu_music">musik</string>
-    <string name="nav_menu_video">videor</string>
+    <string name="nav_menu_video">videoklipp</string>
     <string name="nav_menu_image">Bilder</string>
     <string name="nav_menu_docs">Dokument</string>
+    <string name="downloads">Nedladdningar</string>
     <string name="nav_header_storages">förråd</string>
     <string name="nav_header_favourites">favoriter</string>
     <string name="nav_header_collections">Bibliotek</string>
+    <string name="app_manager">App hanterare</string>
+    <string name="unlock_full_version">Lås upp hela versionen</string>
+    <string name="full_version_buy_ask">Full version tar bort irriterande annonser. Vill du köpa det?</string>
+    <string name="img_accessibility_icon_lib">Bibliotek ikon</string>
     <string name="empty">Tömma</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d fil</item>
-        <item quantity="other">%d filer</item>
-    </plurals>
-    <string name="downloads">Nedladdningar</string>
-    <string name="action_rename">Döpa om</string>
+    <string name="action_rename">Döp om</string>
     <string name="action_info">Egenskaper</string>
     <string name="action_archive">arkiv</string>
-    <string name="action_cut">Skära</string>
-    <string name="action_copy">Kopiera</string>
-    <string name="action_paste">Klistra in</string>
     <string name="action_delete">Radera</string>
     <string name="action_share">Dela med sig</string>
-    <string name="msg_cut_copy">fil (er) kopieras till urklipp</string>
-    <string name="msg_delete_success">raderats</string>
-    <string name="msg_delete_failure">Radering misslyckades</string>
-    <string name="dialog_skip">Hoppa</string>
-    <string name="dialog_replace">Byta ut</string>
-    <string name="dialog_keep_both">Håll båda filerna</string>
-    <string name="dialog_cancel">Annullera</string>
-    <string name="msg_file_exists">fil existerar</string>
-    <string name="dialog_from_placeholder">Från</string>
-    <string name="dialog_to_placeholder">Till</string>
-    <string name="background">Bakgrund</string>
-    <string name="dialog_delete_title">Är du säker på att du vill ta bort %d-filer?</string>
-    <string name="msg_ok">ok</string>
-    <string name="no_files">Inga filer</string>
-    <string name="msg_error_invalid_name">Ange ett giltigt namn</string>
-    <string name="path">Väg:</string>
-    <string name="size">Storlek:</string>
-    <string name="date_modified">Datum ändrat:</string>
-    <string name="permissions">behörigheter</string>
-    <string name="yes">Ja</string>
-    <string name="no">Nej</string>
-    <string name="properties">Egenskaper</string>
+    <string name="msg_delete_success">raderas framgångsrikt</string>
+    <string name="msg_delete_failure">Ta bort åtgärden misslyckades</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Är du säker på att du vill ta bort %d filer?</string>
     <string name="new_folder">Ny mapp</string>
-    <string name="new_file">ny fil</string>
+    <string name="new_file">Ny fil</string>
     <string name="add_fav">Lägg till i favoriter</string>
-    <string name="msg_added_to_fav">Läggas till favoriter</string>
-    <string name="msg_error_not_supported">Ingen app för att hantera åtgärden</string>
-    <string name="permission_request">Behöver lagringstillåtelse att visa alla filer</string>
-    <string name="action_grant">BEVILJA</string>
-    <string name="action_view_list">Listvy</string>
-    <string name="action_view_grid">rutnät</string>
+    <string name="msg_added_to_fav">Tillagd till favoriter</string>
     <string name="extract_to">Extrahera till</string>
     <string name="open">Öppen</string>
-    <string name="extracting">Extrahering ..</string>
-    <string name="dialog_current_path">strömbana</string>
-    <string name="dialog_specify_path">ange sökvägen</string>
+    <string name="extracting">Utvinna ..</string>
+    <string name="dialog_current_path">Nuvarande väg</string>
+    <string name="dialog_specify_path">Ange sökväg</string>
     <string name="enter_file_name">Ange filnamn</string>
     <string name="extract">Extrahera</string>
     <string name="dialog_title_browse">Välj mapp</string>
     <string name="action_select_all">Välj alla</string>
-    <string name="delete_fav">radera favorit</string>
-    <string name="action_search">Sök</string>
-    <string name="pref_title_theme">Tema</string>
-    <string name="pref_subs_light">Ljus</string>
-    <string name="pref_subs_dark">Mörk</string>
-    <string name="pref_title_reset_fav">Återställ favoriter</string>
-    <string name="pref_title_show_hidden">Visa dolda filer</string>
-    <string name="pref_title_disable_dual">Dubbla rutan i landskaps</string>
-    <string name="pref_title_change_lang">Språk</string>
-
-    <string name="hide">Dölja</string>
+    <string name="delete_fav">Radera favorit</string>
+    <string name="hide">Dölj</string>
     <string name="unhide">Ta fram</string>
-    <string name="drag">Drag</string>
-    <string name="move">Flytta</string>
-    <string name="msg_fav_reset">Favoriter återställd till standard.</string>
-    <string name="home_docs">docs</string>
-    <string name="compressed">Komprimerad</string>
-    <string name="apk">appar</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">stora filer</string>
-    <string name="open_as">öppna Som</string>
+    <string name="create">Skapa</string>
+    <string name="zip_progress_title">Skapa zip</string>
+    <string name="fav_exists">Favorit finns redan.</string>
+    <string name="msg_file_exists">fil existerar</string>
+    <string name="dialog_from_placeholder">Från</string>
+    <string name="dialog_to_placeholder">Till</string>
+    <string name="msg_error_invalid_name">Ange ett giltigt namn</string>
+    <string name="msg_operation_failed">Operationen misslyckades</string>
+    <string name="permission_read">Läsa</string>
+    <string name="permission_write">Skriva</string>
+    <string name="permission_execute">Kör</string>
+    <string name="permission_owner">Ägare</string>
+    <string name="permission_group">Grupp</string>
+    <string name="header_source">Källa</string>
+    <string name="header_destination">Destination</string>
+    <string name="enter_name">Skriv namn</string>
+    <string name="open_as">Öppna som</string>
     <string name="text">Text</string>
     <string name="image">Bild</string>
     <string name="audio">Audio</string>
-    <string name="other">Andra</string>
-    <string name="create">Skapa</string>
-    <string name="zip_progress_title">skapa zip</string>
-    <string name="needsaccess">Skriv Åtkomst krävs</string>
-    <string name="needs_access_summary">Välj rotkatalogen på %1$s för att bevilja skriv att fungera</string>
+    <string name="other">Övrig</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">Bakgrund</string>
     <string name="error">Fel</string>
-    <string name="msg_operation_failed">Operationen misslyckades</string>
-    <string name="enter_name">Skriv namn</string>
-    <string name="paste_conflict_remember">Kom ihåg</string>
-    <string name="copying">kopiera filer</string>
-    <string name="moving">flytta filer</string>
-    <string name="package_installer">Package Installer</string>
-    <string name="view">Se</string>
-    <string name="install">Installera</string>
-    <string name="package_installer_content">Vilken åtgärd skulle du vilja göra?</string>
-    <string name="permission_setting_hint">Knacka på Inställningar -> Behörigheter och sedan slå Lagring på.</string>
-    <string name="access_denied_external">Skrivåtkomst till extern SD inte beviljas</string>
-    <string name="permission_read">Läsa</string>
-    <string name="permission_write">Skriva</string>
-    <string name="permission_execute">Avrätta</string>
-    <string name="permission_owner">Ägare</string>
-    <string name="permission_group">Grupp</string>
-    <string name="next">NÄSTA</string>
-    <string name="skip">HOPPA</string>
-    <string name="start">JAG FATTAR</string>
-    <string name="slide_1_title">organiserad Library</string>
-    <string name="slide_1_desc">Ett klick till mediebiblioteket från startskärmen.</string>
-    <string name="slide_2_title">titt och pop</string>
-    <string name="slide_2_desc">kika och pop dina bilder och videoklipp.</string>
-    <string name="slide_3_title">Dra och släpp</string>
-    <string name="slide_3_desc">Dra filer från en mapp till en annan!</string>
-    <string name="action_sort">Sortera</string>
-    <string name="slide_4_title">teman</string>
-    <string name="slide_4_desc">Mörk eller ljus sätt! Ditt val.</string>
-    <string name="no_music"> Inga Musikfiler</string>
-    <string name="img_accessibility_back">Tillbaka</string>
-    <string name="img_accessibility_permission">Grant tillstånd</string>
-    <string name="img_accessibility_icon_lib">bibliotek ikon</string>
-    <string name="unlock_full_version">Lås full version</string>
-    <string name="full_version_buy_ask">Fullständiga versionen tar bort irriterande annonser. Vill du köpa den?</string>
     <string name="dialog_title_picker">Välj musikfil</string>
-
     <string name="browse">Bläddra</string>
     <string name="action_more">Mer</string>
     <string name="directory">Directory</string>
     <string name="operation">Drift</string>
-    <string name="clipboard">%d i Urklipp</string>
-    <string name="fav_exists">Favorit finns redan.</string>
-    <string name="header_source">Källa</string>
-    <string name="header_destination">Destination</string>
     <string name="error_unsupported">Stöds inte</string>
-    <string name="copy_path">Kopiera sökvägen</string>
-    <string name="text_copied_clipboard">Kopieras till Urklipp.</string>
-    <string name="analytics_text">Skicka analys</string>
-    <string name="analytics_summary">Hjälp oss att förbättra appen genom att skicka anonyma användningsuppgifter.</string>
+    <string name="action_cut">Skära</string>
+    <string name="action_copy">Kopia</string>
+    <string name="action_paste">Klistra</string>
+    <string name="msg_cut_copy">fil (er) kopierade till urklipp</string>
+    <string name="dialog_skip">Hoppa</string>
+    <string name="dialog_replace">Byta ut</string>
+    <string name="dialog_keep_both">Behåll båda</string>
+    <string name="drag">Drag</string>
+    <string name="move">Flytta</string>
+    <string name="copying">Kopierar filer</string>
+    <string name="moving">Flytta filer</string>
+    <string name="clipboard">%d i urklipp</string>
+    <string name="text_copied_clipboard">Kopierade till urklipp.</string>
+    <string name="dialog_cancel">Annullera</string>
+    <string name="msg_ok">OK</string>
+    <string name="msg_error_not_supported">Ingen app som hanterar åtgärden</string>
+    <string name="needsaccess">Skrivåtkomst krävs</string>
+    <string name="needs_access_summary">Välj rotkatalogen för %1$s för att ge skrivåtkomst till         fungera</string>
+    <string name="img_accessibility_back">Tillbaka</string>
+    <string name="action_search">Sök</string>
 
-    <string name="dual_pane_intro_title">Dubbelruta</string>
-    <string name="dual_pane_intro_subtitle">Dubbelläge för bättre användbarhet.</string>
-    <string name="sort_name">namn</string>
-    <string name="sort_type">Typ</string>
-    <string name="sort_size">Storlek</string>
-    <string name="sort_date">Datum</string>
-    <string name="ascending">Stigande</string>
-    <string name="library_recent">Nyligen</string>
     <string name="albums">album</string>
     <string name="artists">artister</string>
     <string name="genres">genrer</string>
     <string name="all_tracks">Alla låtar</string>
     <string name="podcasts">podcasts</string>
-    <string name="mute">Stum</string>
-    <string name="unmute">Mikrofon</string>
-    <string name="app_manager">App hanterare</string>
     <string name="unknown">Okänd</string>
     <string name="enabled">Aktiverad</string>
+    <string name="package_installer">Paketinstallatör</string>
+    <string name="view">Se</string>
+    <string name="install">Installera</string>
+    <string name="package_installer_content">Vilken åtgärd vill du göra?</string>
+    <string name="no_music">Inga musikfiler</string>
+    <string name="no_files">Inga filer</string>
+
+    <string name="action_view_list">Listvy</string>
+    <string name="action_view_grid">Rastervy</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">Kom ihåg</string>
     <string name="move_trash">Flytta till papperskorgen</string>
+    <string name="path">Väg</string>
+    <string name="size">Storlek</string>
+    <string name="date_modified">Datum ändrat</string>
+    <string name="permissions">Behörigheter</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nej</string>
+    <string name="properties">Egenskaper</string>
+    <string name="copy_path">Kopiera sökvägen</string>
+    <string name="permission_setting_hint">Tryck på Inställningar -&gt; Behörigheter och slå sedan på Lagring.</string>
+    <string name="access_denied_external">Skrivåtkomst till extern SD inte beviljad</string>
+    <string name="permission_request">Behöver lagringstillstånd för att visa alla filer</string>
+    <string name="action_grant">BEVILJA</string>
+    <string name="img_accessibility_permission">Tillåta</string>
+    <string name="next">NÄSTA</string>
+    <string name="skip">HOPPA</string>
+    <string name="start">JAG FATTAR</string>
+    <string name="slide_1_title">Organiserat bibliotek</string>
+    <string name="slide_1_desc">Ett klick till mediebiblioteket från hemskärmen.</string>
+    <string name="slide_2_title">Peek and Pop</string>
+    <string name="slide_2_desc">Titta och pop dina bilder och videor.</string>
+    <string name="slide_3_title">Dra och släpp</string>
+    <string name="slide_3_desc">Dra filer från en mapp till en annan!</string>
+    <string name="action_sort">Sortera</string>
+    <string name="slide_4_title">teman</string>
+    <string name="slide_4_desc">Mörkt eller lätt sätt! Ditt val.</string>
+    <string name="dual_pane_intro_title">Dubbel ruta</string>
+    <string name="dual_pane_intro_subtitle">Dubbelt läge för bättre användbarhet.</string>
+    <string name="pref_title_theme">Tema</string>
+    <string name="pref_subs_light">Ljus</string>
+    <string name="pref_subs_dark">Mörk</string>
+    <string name="device_theme">Enhetens tema</string>
+    <string name="pref_title_reset_fav">Återställ favoriter</string>
+    <string name="pref_title_show_hidden">Visa gömda filer</string>
+    <string name="pref_title_disable_dual">Dubbel ruta i landskap</string>
+    <string name="pref_title_change_lang">Språk</string>
+    <string name="msg_fav_reset">Favoriter återställda till standard.</string>
+    <string name="analytics_text">Skicka analys</string>
+    <string name="analytics_summary">Hjälp oss att förbättra appen genom att skicka anonym användningsinformation.</string>
+    <string name="home_docs">Dokument</string>
+    <string name="compressed">Komprimerad</string>
+    <string name="apk">Apps</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">Stora filer</string>
+    <string name="library_recent">Nyligen</string>
+    <string name="sort_name">namn</string>
+    <string name="sort_type">Typ</string>
+    <string name="sort_size">Storlek</string>
+    <string name="sort_date">Datum</string>
+    <string name="ascending">Stigande</string>
+    <string name="mute">Stum</string>
+    <string name="unmute">Mikrofon</string>
+    <string name="peek_button_prev">Tidigare</string>
+    <string name="peek_button_next">Nästa</string>
+    <string name="saved_category">SPARAD</string>
+    <string name="other_category">ÖVRIG</string>
+
+    <string name="category_whatsapp">WhatsApp</string>
+    <string name="category_telegram">Telegram</string>
+    <string name="category_camera">Kamera</string>
+    <string name="category_screenshot">skärmdump</string>
+    <string name="category_max_min_items_error">Sparade kategorier kan vara minst 3, högst 12</string>
+
+    <string name="category_all">Allt</string>
+    <string name="categories">kategorier</string>
+    <string name="categories_folder">Mapp</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Aktivera root-åtkomst</string>
+    <string name="info_name">Filnamn</string>
+    <string name="info_resolution">Upplösning</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d filer flyttade</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d filer kopierade</string>
+    <string name="action_view">Se</string>
+    <string name="action_view_gallery">Gallerivyn</string>
+    <string name="update_available">Uppdatering tillgänglig</string>
+    <string name="restart">Omstart</string>
+    <string name="update_downloading">Hämtar uppdatering &#8230;</string>
+    <string name="update_downloaded">Uppdaterad nedladdad</string>
+    <string name="install_update">Klicka för att installera</string>
+    <string name="connect_internet_download_update">Anslut till internet för att ladda ner uppdateringen</string>
+    <string name="recent_today">I dag</string>
+    <string name="recent_yesterday">I går</string>
+    <string name="recent_this_week">Denna vecka</string>
+    <string name="recent_this_month">Den här månaden</string>
+    <string name="search_type_other">Övrig</string>
+    <string name="search_clear">Klar</string>
+    <string name="recently_searched">Nyligen sökt</string>
+    <string name="version_code">Versionskod</string>
+    <string name="tab_home">Hem</string>
+    <string name="tab_tools">Verktyg</string>
+    <string name="tab_settings">inställningar</string>
+    <string name="privacy_policy">Integritetspolicy</string>
+
+
 
 </resources>

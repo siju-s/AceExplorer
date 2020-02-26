@@ -1,22 +1,8 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Ace Explorer</string>
-    <string name="action_settings">Einstellungen</string>
+<string name="app_name">Ace Explorer</string>
+    <string name="image_viewer_title">Ace Image Viewer</string>
+    <string name="action_settings">die Einstellungen</string>
     <string name="nav_menu_internal_storage">Interne Speicher</string>
     <string name="nav_menu_root">Wurzel</string>
     <string name="nav_menu_ext_storage">Externe SD</string>
@@ -24,161 +10,203 @@
     <string name="nav_menu_video">Videos</string>
     <string name="nav_menu_image">Bilder</string>
     <string name="nav_menu_docs">Unterlagen</string>
-    <string name="nav_header_storages">Storages</string>
+    <string name="downloads">Downloads</string>
+    <string name="nav_header_storages">Speicher</string>
     <string name="nav_header_favourites">Favoriten</string>
     <string name="nav_header_collections">Bibliothek</string>
-    <string name="empty">Leer</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d Datei</item>
-        <item quantity="other">%d Dateien</item>
-    </plurals>
-    <string name="downloads">Downloads</string>
+    <string name="app_manager">App manager</string>
+    <string name="unlock_full_version">Unlock full version</string>
+    <string name="full_version_buy_ask">Die Vollversion entfernt lästige Anzeigen. Wollen sie es kaufen?</string>
+    <string name="img_accessibility_icon_lib">Bibliothekssymbol</string>
+    <string name="empty">Leeren</string>
     <string name="action_rename">Umbenennen</string>
     <string name="action_info">Eigenschaften</string>
-    <string name="action_archive">archivieren</string>
-    <string name="action_cut">Schneiden</string>
-    <string name="action_copy">Kopieren</string>
-    <string name="action_paste">Paste</string>
+    <string name="action_archive">Archiv</string>
     <string name="action_delete">Löschen</string>
-    <string name="action_share">Aktie</string>
-    <string name="msg_cut_copy">Datei (en) in die Zwischenablage kopiert</string>
-    <string name="msg_delete_success">erfolgreich gelöscht</string>
-    <string name="msg_delete_failure">Löschen Vorgang ist fehlgeschlagen</string>
-    <string name="dialog_skip">Überspringen</string>
-    <string name="dialog_replace">Ersetzen</string>
-    <string name="dialog_keep_both">Halten Sie beide Dateien</string>
-    <string name="dialog_cancel">Stornieren</string>
-    <string name="msg_file_exists">Datei existiert</string>
-    <string name="dialog_from_placeholder">Von</string>
-    <string name="dialog_to_placeholder">Nach:</string>
-    <string name="background">Hintergrund</string>
-    <string name="dialog_delete_title">Möchten Sie wirklich %d Dateien löschen?</string>
-    <string name="msg_ok">OK</string>
-    <string name="no_files">Keine Dateien</string>
-    <string name="msg_error_invalid_name">Geben Sie einen gültigen Namen</string>
-    <string name="path">Pfad:</string>
-    <string name="size">Größe:</string>
-    <string name="date_modified">Datum geändert:</string>
-    <string name="permissions">Berechtigungen</string>
-    <string name="yes">ja</string>
-    <string name="no">Nein</string>
-    <string name="properties">Eigenschaften</string>
+    <string name="action_share">Teilen</string>
+    <string name="msg_delete_success">Erfolgreich gelöscht</string>
+    <string name="msg_delete_failure">Löschvorgang fehlgeschlagen</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Möchten Sie %d-Dateien wirklich löschen?</string>
     <string name="new_folder">Neuer Ordner</string>
     <string name="new_file">Neue Datei</string>
     <string name="add_fav">Zu Favoriten hinzufügen</string>
-    <string name="msg_added_to_fav">Hinzu Favoriten</string>
-    <string name="msg_error_not_supported">Keine App, die Aktion zu behandeln</string>
-    <string name="permission_request">Sie benötigen Speicher Erlaubnis, alle Dateien zu zeigen,</string>
-    <string name="action_grant">GEWÄHREN</string>
-    <string name="action_sort">Sortieren</string>
-    <string name="action_view_list">Listenansicht</string>
-    <string name="action_view_grid">Rasteransicht</string>
+    <string name="msg_added_to_fav">Zu den Favoriten hinzugefügt</string>
     <string name="extract_to">Extrahieren, um</string>
     <string name="open">Öffnen</string>
     <string name="extracting">Extrahieren ..</string>
     <string name="dialog_current_path">Aktueller Pfad</string>
-    <string name="dialog_specify_path">Geben Sie den Pfad</string>
-    <string name="enter_file_name">Geben Sie den Dateinamen</string>
+    <string name="dialog_specify_path">Geben Sie den Pfad an</string>
+    <string name="enter_file_name">Geben Sie den Dateinamen ein</string>
     <string name="extract">Extrakt</string>
     <string name="dialog_title_browse">Wähle einen Ordner</string>
-    <string name="action_select_all">Alles auswählen</string>
+    <string name="action_select_all">Wählen Sie Alle</string>
     <string name="delete_fav">Favorit löschen</string>
-    <string name="action_search">Suche</string>
-    <string name="pref_title_theme">Thema</string>
-    <string name="pref_subs_light">Licht</string>
-    <string name="pref_subs_dark">Dunkel</string>
-    <string name="pref_title_reset_fav">Reset-Favoriten</string>
-    <string name="pref_title_show_hidden">Zeige versteckte Dateien</string>
-    <string name="pref_title_disable_dual">Dual-Fenster in Landschaft</string>
-    <string name="pref_title_change_lang">Sprache ändern</string>
-
-    <string name="hide">Verstecken</string>
-    <string name="unhide">Sichtbar machen</string>
-    <string name="drag">Ziehen</string>
-    <string name="move">Bewegung</string>
-    <string name="msg_fav_reset">Favoriten resetted auf Standard.</string>
-    <string name="home_docs">Text &amp; Tabellen</string>
-    <string name="compressed">Komprimierte</string>
-    <string name="apk">Apps</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">große Dateien</string>
-    <string name="open_as">Öffnen als</string>
-    <string name="text">Text</string>
-    <string name="image">Image</string>
-    <string name="audio">Audio</string>
-    <string name="other">Andere</string>
+    <string name="hide">Ausblenden</string>
+    <string name="unhide">Einblenden</string>
     <string name="create">Erstellen</string>
-    <string name="zip_progress_title">Erstellen zip</string>
-    <string name="needsaccess">Schreiben Sie Zugang erforderlich</string>
-    <string name="needs_access_summary">Bitte wählen Sie das Root-Verzeichnis %1$s Schreibzugriff zu gewähren, zu betreiben</string>
-    <string name="error">Fehler</string>
+    <string name="zip_progress_title">Zip erstellen</string>
+    <string name="fav_exists">Favorit existiert bereits.</string>
+    <string name="msg_file_exists">Datei existiert</string>
+    <string name="dialog_from_placeholder">Von</string>
+    <string name="dialog_to_placeholder">Zu</string>
+    <string name="msg_error_invalid_name">Geben Sie einen gültigen Namen ein</string>
     <string name="msg_operation_failed">Operation fehlgeschlagen</string>
-    <string name="enter_name">Name eingeben</string>
-    <string name="paste_conflict_remember">Merken</string>
-    <string name="copying">Kopieren von Dateien</string>
-    <string name="moving">Das Verschieben von Dateien</string>
-    <string name="package_installer">Package Installer</string>
-    <string name="view">Aussicht</string>
-    <string name="install">Installieren</string>
-    <string name="package_installer_content">Welche Aktion möchten Sie tun?</string>
-    <string name="permission_setting_hint">Tippen Sie auf Einstellungen -> Berechtigungen und schalten Lagerung auf.</string>
-    <string name="access_denied_external">Schreibzugriff auf externe SD nicht gewährt</string>
     <string name="permission_read">Lesen</string>
     <string name="permission_write">Schreiben</string>
     <string name="permission_execute">Ausführen</string>
-    <string name="permission_owner">Eigentümer</string>
+    <string name="permission_owner">Inhaber</string>
     <string name="permission_group">Gruppe</string>
-    <string name="next">NÄCHSTER</string>
-    <string name="skip">ÜBERSPRINGEN</string>
-    <string name="start">ICH HABS</string>
-    <string name="slide_1_title">Organisierte Bibliothek</string>
-    <string name="slide_1_desc">Ein Klick auf Medienbibliothek aus dem Homescreen.</string>
-    <string name="slide_2_title">spähen und pop</string>
-    <string name="slide_2_desc">Schau und platziere deine Bilder und Videos.</string>
-	<string name="slide_3_title">Drag and Drop</string>
-    <string name="slide_3_desc">Ziehen Sie Dateien von einem Ordner in einen anderen!</string>
-    <string name="slide_4_title">Themen</string>
-    <string name="slide_4_desc">Dunkel oder Hell Weg! Deine Entscheidung.</string>
-    <string name="no_music"> Keine Musikdateien</string>
-    <string name="img_accessibility_back">Zurück</string>
-    <string name="img_accessibility_permission">Erlaubnis erteilen</string>
-    <string name="img_accessibility_icon_lib">Bibliothek Symbol</string>
-    <string name="unlock_full_version">Vollversion freischalten</string>
-    <string name="full_version_buy_ask">Vollversion entfernt lästige Anzeigen. Wollen sie es kaufen?</string>
-    <string name="dialog_title_picker">Wählen Sie eine Musikdatei</string>
-
+    <string name="header_source">Quelle</string>
+    <string name="header_destination">Ziel</string>
+    <string name="enter_name">Name eingeben</string>
+    <string name="open_as">Öffnen als</string>
+    <string name="text">Text</string>
+    <string name="image">Bild</string>
+    <string name="audio">Audio</string>
+    <string name="other">Andere</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">Hintergrund</string>
+    <string name="error">Error</string>
+    <string name="dialog_title_picker">Musikdatei auswählen</string>
     <string name="browse">Durchsuche</string>
     <string name="action_more">Mehr</string>
     <string name="directory">Verzeichnis</string>
     <string name="operation">Betrieb</string>
-    <string name="clipboard">%d in der Zwischenablage</string>
-    <string name="fav_exists">Favorit existiert bereits.</string>
-    <string name="header_source">Quelle</string>
-    <string name="header_destination">Ziel</string>
     <string name="error_unsupported">Nicht unterstützt</string>
-    <string name="copy_path">Pfad kopieren</string>
+    <string name="action_cut">Schnitt</string>
+    <string name="action_copy">Kopieren</string>
+    <string name="action_paste">Einfügen</string>
+    <string name="msg_cut_copy">Datei (en) in die Zwischenablage kopiert</string>
+    <string name="dialog_skip">Überspringen</string>
+    <string name="dialog_replace">Ersetzen</string>
+    <string name="dialog_keep_both">Behalte beides</string>
+    <string name="drag">Ziehen</string>
+    <string name="move">Bewegung</string>
+    <string name="copying">Dateien kopieren</string>
+    <string name="moving">Dateien verschieben</string>
+    <string name="clipboard">%d in der Zwischenablage</string>
     <string name="text_copied_clipboard">In die Zwischenablage kopiert.</string>
-    <string name="analytics_text">Analyse senden</string>
-    <string name="analytics_summary">Helfen Sie uns, die App zu verbessern, indem Sie anonyme Nutzungsdaten senden.</string>
+    <string name="dialog_cancel">Stornieren</string>
+    <string name="msg_ok">in Ordnung</string>
+    <string name="msg_error_not_supported">Keine App für die Aktion</string>
+    <string name="needsaccess">Schreibzugriff erforderlich</string>
+    <string name="needs_access_summary">Bitte wählen Sie das Stammverzeichnis von %1$s, um Schreibzugriff zu gewähren         arbeiten</string>
+    <string name="img_accessibility_back">Zurück</string>
+    <string name="action_search">Suche</string>
 
-    <string name="dual_pane_intro_title">Doppelter Bereich</string>
-    <string name="dual_pane_intro_subtitle">Dual-Modus für bessere Benutzerfreundlichkeit.</string>
-    <string name="sort_name">Name</string>
-    <string name="sort_type">Art</string>
-    <string name="sort_size">Größe</string>
-    <string name="sort_date">Datum</string>
-    <string name="ascending">Aufsteigend</string>
-    <string name="library_recent">Kürzlich</string>
     <string name="albums">Alben</string>
     <string name="artists">Künstler</string>
     <string name="genres">Genres</string>
     <string name="all_tracks">Alle Lieder</string>
     <string name="podcasts">Podcasts</string>
-    <string name="mute">Stumm</string>
-    <string name="unmute">Unmute</string>
-    <string name="app_manager">App Manager</string>
-    <string name="unknown">unbekannte</string>
+    <string name="unknown">Unbekannt</string>
     <string name="enabled">aktiviert</string>
+    <string name="package_installer">Paket-Installationsprogramm</string>
+    <string name="view">Aussicht</string>
+    <string name="install">Installieren</string>
+    <string name="package_installer_content">Welche Aktion möchten Sie durchführen?</string>
+    <string name="no_music">Keine Musikdateien</string>
+    <string name="no_files">Keine Dateien</string>
+
+    <string name="action_view_list">Listenansicht</string>
+    <string name="action_view_grid">Rasteransicht</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">Merken</string>
     <string name="move_trash">Ab in den Müll</string>
+    <string name="path">Pfad</string>
+    <string name="size">Größe</string>
+    <string name="date_modified">Datum geändert</string>
+    <string name="permissions">Berechtigungen</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
+    <string name="properties">Eigenschaften</string>
+    <string name="copy_path">Pfad kopieren</string>
+    <string name="permission_setting_hint">Tippen Sie auf Einstellungen -&gt; Berechtigungen und aktivieren Sie dann Speicher.</string>
+    <string name="access_denied_external">Schreibzugriff auf externe SD nicht gewährt</string>
+    <string name="permission_request">Benötigen Sie eine Speicherberechtigung, um alle Dateien anzuzeigen</string>
+    <string name="action_grant">GEWÄHREN</string>
+    <string name="img_accessibility_permission">Erlaubnis erteilen</string>
+    <string name="next">NÄCHSTER</string>
+    <string name="skip">ÜBERSPRINGEN</string>
+    <string name="start">ICH HABS</string>
+    <string name="slide_1_title">Organisierte Bibliothek</string>
+    <string name="slide_1_desc">Ein Klick auf die Medienbibliothek vom Homescreen aus.</string>
+    <string name="slide_2_title">Peek and Pop</string>
+    <string name="slide_2_desc">Schauen Sie sich Ihre Bilder und Videos an.</string>
+    <string name="slide_3_title">Drag &amp; Drop</string>
+    <string name="slide_3_desc">Ziehen Sie Dateien von einem Ordner in einen anderen!</string>
+    <string name="action_sort">Sortieren</string>
+    <string name="slide_4_title">Themen</string>
+    <string name="slide_4_desc">Dunkler oder heller Weg! Deine Entscheidung.</string>
+    <string name="dual_pane_intro_title">Doppelscheibe</string>
+    <string name="dual_pane_intro_subtitle">Dual-Modus für bessere Benutzerfreundlichkeit.</string>
+    <string name="pref_title_theme">Thema</string>
+    <string name="pref_subs_light">Licht</string>
+    <string name="pref_subs_dark">Dunkel</string>
+    <string name="device_theme">Gerätethema</string>
+    <string name="pref_title_reset_fav">Favoriten zurücksetzen</string>
+    <string name="pref_title_show_hidden">Zeige versteckte Dateien</string>
+    <string name="pref_title_disable_dual">Doppelscheibe im Querformat</string>
+    <string name="pref_title_change_lang">Sprache</string>
+    <string name="msg_fav_reset">Favoriten auf Standard zurückgesetzt.</string>
+    <string name="analytics_text">Senden Sie Analysen</string>
+    <string name="analytics_summary">Helfen Sie uns, die App zu verbessern, indem Sie anonyme Nutzungsdaten senden.</string>
+    <string name="home_docs">Docs</string>
+    <string name="compressed">Komprimiert</string>
+    <string name="apk">Apps</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">Große Dateien</string>
+    <string name="library_recent">Kürzlich</string>
+    <string name="sort_name">Name</string>
+    <string name="sort_type">Art</string>
+    <string name="sort_size">Größe</string>
+    <string name="sort_date">Datum</string>
+    <string name="ascending">Aufsteigend</string>
+    <string name="mute">Stumm</string>
+    <string name="unmute">Stummschaltung aufheben</string>
+    <string name="peek_button_prev">Bisherige</string>
+    <string name="peek_button_next">Nächster</string>
+    <string name="saved_category">GERETTET</string>
+    <string name="other_category">ANDERE</string>
+
+    <string name="category_whatsapp">Whatsapp</string>
+    <string name="category_telegram">Telegramm</string>
+    <string name="category_camera">Kamera</string>
+    <string name="category_screenshot">Screenshot</string>
+    <string name="category_max_min_items_error">Gespeicherte Kategorien können mindestens 3, maximal 12 sein</string>
+
+    <string name="category_all">Alle</string>
+    <string name="categories">Kategorien</string>
+    <string name="categories_folder">Mappe</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Aktivieren Sie den Root-Zugriff</string>
+    <string name="info_name">Dateiname</string>
+    <string name="info_resolution">Auflösung</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d Dateien verschoben</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d Dateien kopiert</string>
+    <string name="action_view">Aussicht</string>
+    <string name="action_view_gallery">Galerieansicht</string>
+    <string name="update_available">Update verfügbar</string>
+    <string name="restart">Neustart</string>
+    <string name="update_downloading">Update wird heruntergeladen …</string>
+    <string name="update_downloaded">Update heruntergeladen</string>
+    <string name="install_update">Klicken Sie zum Installieren</string>
+    <string name="connect_internet_download_update">Stellen Sie eine Verbindung zum Internet her, um das Update herunterzuladen</string>
+    <string name="recent_today">Heute</string>
+    <string name="recent_yesterday">Gestern</string>
+    <string name="recent_this_week">Diese Woche</string>
+    <string name="recent_this_month">Diesen Monat</string>
+    <string name="search_type_other">Andere</string>
+    <string name="search_clear">klar</string>
+    <string name="recently_searched">Kürzlich gesucht</string>
+    <string name="version_code">Version code</string>
+    <string name="tab_home">Zuhause</string>
+    <string name="tab_tools">Werkzeuge</string>
+    <string name="tab_settings">die Einstellungen</string>
+    <string name="privacy_policy">Datenschutz-Bestimmungen</string>
+
 
 </resources>

@@ -1,183 +1,211 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Ace Explorer</string>
+<string name="app_name">Ace Explorer</string>
+    <string name="image_viewer_title">Ace Image Viewer</string>
     <string name="action_settings">Beállítások</string>
     <string name="nav_menu_internal_storage">Belső tároló</string>
     <string name="nav_menu_root">Gyökér</string>
-    <string name="nav_menu_ext_storage">külső SD</string>
+    <string name="nav_menu_ext_storage">Külső SD</string>
     <string name="nav_menu_music">Zene</string>
     <string name="nav_menu_video">Videók</string>
     <string name="nav_menu_image">képek</string>
-    <string name="nav_menu_docs">dokumentumok</string>
-    <string name="nav_header_storages">tárolók</string>
-    <string name="nav_header_favourites">Kedvencek</string>
-    <string name="nav_header_collections">Könyvtár</string>
-    <string name="empty">Üres</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d akta</item>
-        <item quantity="other">%d fájlok</item>
-    </plurals>
+    <string name="nav_menu_docs">Dokumentumok</string>
     <string name="downloads">Letöltések</string>
-    <string name="action_rename">átnevezése</string>
-    <string name="action_info">tulajdonságok</string>
+    <string name="nav_header_storages">tárolók</string>
+    <string name="nav_header_favourites">Érdekes</string>
+    <string name="nav_header_collections">Könyvtár</string>
+    <string name="app_manager">App manager</string>
+    <string name="unlock_full_version">Kinyit a teljes verziót</string>
+    <string name="full_version_buy_ask">A teljes verzió eltávolítja a bosszantó hirdetéseket. Meg akarja vásárolni?</string>
+    <string name="img_accessibility_icon_lib">Könyvtár ikonra</string>
+    <string name="empty">Üres</string>
+    <string name="action_rename">átnevezés</string>
+    <string name="action_info">Tulajdonságok</string>
     <string name="action_archive">Archív</string>
-    <string name="action_cut">Vágott</string>
-    <string name="action_copy">Másolat</string>
-    <string name="action_paste">Paszta</string>
     <string name="action_delete">Töröl</string>
-    <string name="action_share">Ossza meg</string>
-    <string name="msg_cut_copy">fájl (ok) a vágólapra másolva</string>
+    <string name="action_share">Részvény</string>
     <string name="msg_delete_success">sikeresen törölve</string>
-    <string name="msg_delete_failure">Törlése nem sikerült</string>
-    <string name="dialog_skip">Skip</string>
-    <string name="dialog_replace">Cserélje</string>
-    <string name="dialog_keep_both">Tartsa mindkét fájlt</string>
-    <string name="dialog_cancel">Megszünteti</string>
-    <string name="msg_file_exists">A fájl létezik</string>
-    <string name="dialog_from_placeholder">Ból ből</string>
-    <string name="dialog_to_placeholder">Nak nek:</string>
-    <string name="background">Háttér</string>
-    <string name="dialog_delete_title">Biztos benne, hogy törölni szeretne %d fájlt?</string>
-    <string name="msg_ok">rendben</string>
-    <string name="no_files">nincs fájl</string>
-    <string name="msg_error_invalid_name">Adjon meg egy érvényes nevet</string>
-    <string name="path">Pálya:</string>
-    <string name="size">Méret:</string>
-    <string name="date_modified">Módosítás dátuma:</string>
-    <string name="permissions">Engedélyek</string>
-    <string name="yes">Igen</string>
-    <string name="no">Nem</string>
-    <string name="properties">tulajdonságok</string>
+    <string name="msg_delete_failure">A törlés nem sikerült</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Biztosan törli a (z) %d fájlt?</string>
     <string name="new_folder">Új mappa</string>
-    <string name="new_file">új fájl</string>
+    <string name="new_file">Új fájl</string>
     <string name="add_fav">Hozzáadás a kedvencekhez</string>
-    <string name="msg_added_to_fav">Hozzáadva a Kedvencek</string>
-    <string name="msg_error_not_supported">Nem app kezeli a cselekvés</string>
-    <string name="permission_request">Kell tárolási engedélyt összes fájl</string>
-    <string name="action_grant">GRANT</string>
-    <string name="action_sort">Fajta</string>
-    <string name="action_view_list">Lista nézet</string>
-    <string name="action_view_grid">Rácsnézet</string>
-    <string name="extract_to">Kivonat az</string>
+    <string name="msg_added_to_fav">Hozzáadva a Kedvencekhez</string>
+    <string name="extract_to">Kivonat</string>
     <string name="open">Nyisd ki</string>
-    <string name="extracting">Kitermelésével ..</string>
-    <string name="dialog_current_path">aktuális útvonal</string>
-    <string name="dialog_specify_path">meg az elérési utat</string>
-    <string name="enter_file_name">Írja fájlnevet</string>
+    <string name="extracting">Kibontása ..</string>
+    <string name="dialog_current_path">Jelenlegi út</string>
+    <string name="dialog_specify_path">Adja meg az elérési utat</string>
+    <string name="enter_file_name">Írja be a fájl nevét</string>
     <string name="extract">Kivonat</string>
-    <string name="dialog_title_browse">Válassz mappát</string>
+    <string name="dialog_title_browse">Válasszon mappát</string>
     <string name="action_select_all">Mindet kiválaszt</string>
-    <string name="delete_fav">Törlés kedvenc</string>
-    <string name="action_search">Keresés</string>
-    <string name="pref_title_theme">Téma</string>
-    <string name="pref_subs_light">Fény</string>
-    <string name="pref_subs_dark">Sötét</string>
-    <string name="pref_title_reset_fav">Reset kedvencek</string>
-    <string name="pref_title_show_hidden">Rejtett fájlok megjelenítése</string>
-    <string name="pref_title_disable_dual">Kettős ablaktábla Landscape</string>
-    <string name="pref_title_change_lang">Válts nyelvet</string>
+    <string name="delete_fav">Kedvenc törlése</string>
     <string name="hide">Elrejt</string>
     <string name="unhide">felfedése</string>
-    <string name="drag">ellenállás</string>
-    <string name="move">Mozog</string>
-    <string name="msg_fav_reset">Kedvencek resetted az alapértelmezett.</string>
-    <string name="home_docs">Docs</string>
-    <string name="compressed">sűrített</string>
-    <string name="apk">Alkalmazások</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">nagy fájlok</string>
-    <string name="open_as">Megnyitás</string>
-    <string name="text">Szöveg</string>
-    <string name="image">Kép</string>
-    <string name="audio">Hang</string>
-    <string name="other">Más</string>
-    <string name="create">Teremt</string>
-    <string name="zip_progress_title">létrehozása zip</string>
-    <string name="needsaccess">Írja hozzáférés szükséges</string>
-    <string name="needs_access_summary">Kérjük, válassza ki a gyökér könyvtárat: %1$s adhat írási működtetéséhez</string>
-    <string name="error">Hiba</string>
+    <string name="create">teremt</string>
+    <string name="zip_progress_title">Zip létrehozása</string>
+    <string name="fav_exists">Kedvenc már létezik.</string>
+    <string name="msg_file_exists">A fájl létezik</string>
+    <string name="dialog_from_placeholder">Tól től</string>
+    <string name="dialog_to_placeholder">Nak nek</string>
+    <string name="msg_error_invalid_name">Adjon meg egy érvényes nevet</string>
     <string name="msg_operation_failed">A művelet nem sikerült</string>
-    <string name="enter_name">Adja meg a nevet</string>
-    <string name="paste_conflict_remember">Emlékezik</string>
-    <string name="copying">A fájlok másolása</string>
-    <string name="moving">mozgó kép</string>
-    <string name="package_installer">Package Installer</string>
-    <string name="view">Kilátás</string>
-    <string name="install">Telepítse</string>
-    <string name="package_installer_content">Melyik műveletet szeretne tenni?</string>
-    <string name="permission_setting_hint">Érintse meg a Beállítások -> Engedélyek majd kapcsolja Tároló.</string>
-    <string name="access_denied_external">Írási hozzáférést külső SD nem részesülő</string>
     <string name="permission_read">Olvas</string>
     <string name="permission_write">Ír</string>
     <string name="permission_execute">kivégez</string>
     <string name="permission_owner">Tulajdonos</string>
     <string name="permission_group">Csoport</string>
-    <string name="next">KÖVETKEZŐ</string>
-    <string name="skip">SKIP</string>
-    <string name="start">MEGVAN</string>
-    <string name="slide_1_title">szervezett Könyvtár</string>
-    <string name="slide_1_desc">Egy kattintás a média könyvtárat a kezdőképernyőről.</string>
-    <string name="slide_2_title">bámulni és popozni</string>
-    <string name="slide_2_desc">böngésszen és felugrik a képek és videók.</string>
-    <string name="slide_3_title">Fogd és vidd</string>
-    <string name="slide_3_desc">Húzza a fájlokat egyik mappából a másikba!</string>
-    <string name="slide_4_title">témák</string>
-    <string name="slide_4_desc">Sötét vagy világos utat! A te döntésed.</string>
-    <string name="no_music"> Nem zenefájlok</string>
-    <string name="img_accessibility_back">Hát</string>
-    <string name="img_accessibility_permission">engedélyt adhat</string>
-    <string name="img_accessibility_icon_lib">könyvtár ikon</string>
-    <string name="unlock_full_version">Kinyit teljes verzió</string>
-    <string name="full_version_buy_ask">Teljes verzió eltávolítja idegesítő hirdetéseket. Szeretné megvenni?</string>
+    <string name="header_source">Forrás</string>
+    <string name="header_destination">Cél</string>
+    <string name="enter_name">Írja be a nevet</string>
+    <string name="open_as">Nyissa meg mint</string>
+    <string name="text">Szöveg</string>
+    <string name="image">Kép</string>
+    <string name="audio">Hang</string>
+    <string name="other">Egyéb</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">Háttér</string>
+    <string name="error">Hiba</string>
     <string name="dialog_title_picker">Válasszon zenefájlt</string>
-
-    <string name="browse">Böngésszen</string>
+    <string name="browse">Böngészés</string>
     <string name="action_more">Több</string>
     <string name="directory">Könyvtár</string>
     <string name="operation">Művelet</string>
-    <string name="clipboard">%d a vágólapra</string>
-    <string name="fav_exists">Már létezik a kedvenc.</string>
-    <string name="header_source">Forrás</string>
-    <string name="header_destination">Rendeltetési hely</string>
     <string name="error_unsupported">Nem támogatott</string>
-    <string name="copy_path">Másolási útvonal</string>
-    <string name="text_copied_clipboard">Másolva a vágólapra.</string>
-    <string name="analytics_text">Analitika küldése</string>
-    <string name="analytics_summary">Segítsen nekünk az alkalmazás tökéletesítésével névtelen használati adatok megadásával.</string>
+    <string name="action_cut">Vágott</string>
+    <string name="action_copy">Másolat</string>
+    <string name="action_paste">Paszta</string>
+    <string name="msg_cut_copy">a vágólapra másolt fájlokat</string>
+    <string name="dialog_skip">Skip</string>
+    <string name="dialog_replace">Cserélje</string>
+    <string name="dialog_keep_both">Megtartani mindkettőt</string>
+    <string name="drag">ellenállás</string>
+    <string name="move">Mozog</string>
+    <string name="copying">Fájlok másolása</string>
+    <string name="moving">Fájlok mozgatása</string>
+    <string name="clipboard">%d a vágólapra</string>
+    <string name="text_copied_clipboard">Másolja a vágólapra.</string>
+    <string name="dialog_cancel">Megszünteti</string>
+    <string name="msg_ok">OK</string>
+    <string name="msg_error_not_supported">Nincs alkalmazás a művelet kezelésére</string>
+    <string name="needsaccess">Írási hozzáférés szükséges</string>
+    <string name="needs_access_summary">Válassza ki a %1$s gyökérkönyvtárát, hogy engedélyezze az írási hozzáférést         működtet</string>
+    <string name="img_accessibility_back">Vissza</string>
+    <string name="action_search">Keresés</string>
 
-    <string name="dual_pane_intro_title">Kettős panel</string>
-    <string name="dual_pane_intro_subtitle">Kettős mód a jobb használhatóság érdekében.</string>
-    <string name="sort_name">Név</string>
-    <string name="sort_type">típus</string>
-    <string name="sort_size">Méret</string>
-    <string name="sort_date">Dátum</string>
-    <string name="ascending">növekvő</string>
-    <string name="library_recent">Friss</string>
     <string name="albums">Albumok</string>
     <string name="artists">művészek</string>
     <string name="genres">Műfajok</string>
     <string name="all_tracks">Minden dal</string>
     <string name="podcasts">podcastok</string>
-    <string name="mute">Néma</string>
-    <string name="unmute">Unmute</string>
-    <string name="app_manager">App manager</string>
     <string name="unknown">Ismeretlen</string>
     <string name="enabled">Bekapcsolt</string>
+    <string name="package_installer">Csomagtelepítő</string>
+    <string name="view">Kilátás</string>
+    <string name="install">Telepítés</string>
+    <string name="package_installer_content">Melyik akciót szeretne tenni?</string>
+    <string name="no_music">Nincs zenefájl</string>
+    <string name="no_files">Nincsenek fájlok</string>
+
+    <string name="action_view_list">Lista nézet</string>
+    <string name="action_view_grid">Rácsnézet</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">Emlékezik</string>
     <string name="move_trash">Kidobni a kukába</string>
+    <string name="path">Pálya</string>
+    <string name="size">Méret</string>
+    <string name="date_modified">Módosítás dátuma</string>
+    <string name="permissions">Engedélyek</string>
+    <string name="yes">Igen</string>
+    <string name="no">Nem</string>
+    <string name="properties">Tulajdonságok</string>
+    <string name="copy_path">Másolási útvonal</string>
+    <string name="permission_setting_hint">Koppintson a Beállítások -&gt; Engedélyek elemre, majd kapcsolja be a Tárolást.</string>
+    <string name="access_denied_external">Írásbeli hozzáférés a Külső SD-hez nem engedélyezett</string>
+    <string name="permission_request">Tárolási engedélyre van szüksége az összes fájl megjelenítéséhez</string>
+    <string name="action_grant">GRANT</string>
+    <string name="img_accessibility_permission">Adjon engedélyt</string>
+    <string name="next">KÖVETKEZŐ</string>
+    <string name="skip">SKIP</string>
+    <string name="start">MEGVAN</string>
+    <string name="slide_1_title">Szervezett könyvtár</string>
+    <string name="slide_1_desc">Egy kattintás a médiakönyvtárhoz a kezdőképernyőn.</string>
+    <string name="slide_2_title">Peek és Pop</string>
+    <string name="slide_2_desc">Peek és pop a képeit és videóit.</string>
+    <string name="slide_3_title">Húzza és vidd</string>
+    <string name="slide_3_desc">Húzza a fájlokat az egyik mappából a másikba!</string>
+    <string name="action_sort">Fajta</string>
+    <string name="slide_4_title">Témák</string>
+    <string name="slide_4_desc">Sötét vagy világos út! A te döntésed.</string>
+    <string name="dual_pane_intro_title">Kettős ablaktábla</string>
+    <string name="dual_pane_intro_subtitle">Kettős üzemmód a jobb használhatóság érdekében.</string>
+    <string name="pref_title_theme">Téma</string>
+    <string name="pref_subs_light">Fény</string>
+    <string name="pref_subs_dark">Sötét</string>
+    <string name="device_theme">Eszköz téma</string>
+    <string name="pref_title_reset_fav">Kedvencek visszaállítása</string>
+    <string name="pref_title_show_hidden">Mutasd a rejtett fájlokat</string>
+    <string name="pref_title_disable_dual">Kettős panel fekvő helyzetben</string>
+    <string name="pref_title_change_lang">Nyelv</string>
+    <string name="msg_fav_reset">A kedvencek visszaálltak az alapértelmezett értékre.</string>
+    <string name="analytics_text">Küldjön elemzést</string>
+    <string name="analytics_summary">Segítsen nekünk az alkalmazás fejlesztésében anonim használati adatok küldésével.</string>
+    <string name="home_docs">Docs</string>
+    <string name="compressed">sűrített</string>
+    <string name="apk">Alkalmazások</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">Nagy fájlok</string>
+    <string name="library_recent">Friss</string>
+    <string name="sort_name">Név</string>
+    <string name="sort_type">típus</string>
+    <string name="sort_size">Méret</string>
+    <string name="sort_date">Dátum</string>
+    <string name="ascending">növekvő</string>
+    <string name="mute">Néma</string>
+    <string name="unmute">Unmute</string>
+    <string name="peek_button_prev">Előző</string>
+    <string name="peek_button_next">Következő</string>
+    <string name="saved_category">MENTETT</string>
+    <string name="other_category">EGYÉB</string>
+
+    <string name="category_whatsapp">WhatsApp</string>
+    <string name="category_telegram">Távirat</string>
+    <string name="category_camera">Kamera</string>
+    <string name="category_screenshot">Pillanatkép</string>
+    <string name="category_max_min_items_error">A mentett kategóriák minimum 3, maximum 12 lehetnek</string>
+
+    <string name="category_all">Összes</string>
+    <string name="categories">Kategóriák</string>
+    <string name="categories_folder">Folder</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Root hozzáférés engedélyezése</string>
+    <string name="info_name">Fájl név</string>
+    <string name="info_resolution">Felbontás</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d fájl áthelyezve</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d fájl másolva</string>
+    <string name="action_view">Kilátás</string>
+    <string name="action_view_gallery">Galéria nézet</string>
+    <string name="update_available">Frissítés elérhető</string>
+    <string name="restart">Újrakezd</string>
+    <string name="update_downloading">Frissítés letöltése</string>
+    <string name="update_downloaded">Frissítés letöltve</string>
+    <string name="install_update">Kattintson a telepítéshez</string>
+    <string name="connect_internet_download_update">Csatlakozzon az internethez a frissítés letöltéséhez</string>
+    <string name="recent_today">Ma</string>
+    <string name="recent_yesterday">Tegnap</string>
+    <string name="recent_this_week">Ezen a héten</string>
+    <string name="recent_this_month">Ebben a hónapban</string>
+    <string name="search_type_other">Egyéb</string>
+    <string name="search_clear">Egyértelmű</string>
+    <string name="recently_searched">Nemrégiben keresett</string>
+    <string name="version_code">Verziószám</string>
+    <string name="tab_home">itthon</string>
+    <string name="tab_tools">Eszközök</string>
+    <string name="tab_settings">Beállítások</string>
+    <string name="privacy_policy">Adatvédelmi irányelvek</string>
 
 </resources>

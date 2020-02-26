@@ -1,21 +1,7 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">آس اکسپلورر</string>
+<string name="app_name">آس اکسپلورر</string>
+    <string name="image_viewer_title">نمایشگر تصویر آس</string>
     <string name="action_settings">تنظیمات</string>
     <string name="nav_menu_internal_storage">حافظه داخلی</string>
     <string name="nav_menu_root">ریشه</string>
@@ -24,161 +10,203 @@
     <string name="nav_menu_video">فیلم های</string>
     <string name="nav_menu_image">تصاویر</string>
     <string name="nav_menu_docs">اسناد</string>
-    <string name="nav_header_storages">انبار</string>
-    <string name="nav_header_favourites">مورد علاقه ها</string>
+    <string name="downloads">بارگیری ها</string>
+    <string name="nav_header_storages">انبارها</string>
+    <string name="nav_header_favourites">موارد دلخواه</string>
     <string name="nav_header_collections">کتابخانه</string>
+    <string name="app_manager">مدیر برنامه</string>
+    <string name="unlock_full_version">نسخه کامل را باز کنید</string>
+    <string name="full_version_buy_ask">نسخه کامل تبلیغات آزار دهنده را حذف می کند. آیا می خواهید آن را بخرید؟</string>
+    <string name="img_accessibility_icon_lib">نماد کتابخانه</string>
     <string name="empty">خالی</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d پرونده</item>
-        <item quantity="other">%d فایل ها</item>
-    </plurals>
-    <string name="downloads">دانلود</string>
-    <string name="action_rename">تغییر نام</string>
-    <string name="action_info">خواص</string>
+    <string name="action_rename">تغییر نام دهید</string>
+    <string name="action_info">خصوصیات</string>
     <string name="action_archive">بایگانی</string>
-    <string name="action_cut">برش</string>
-    <string name="action_copy">نسخه</string>
-    <string name="action_paste">خمیر</string>
     <string name="action_delete">حذف</string>
     <string name="action_share">اشتراک گذاری</string>
-    <string name="msg_cut_copy">فایل (ها) کپی به کلیپ بورد</string>
-    <string name="msg_delete_success">حذف موفقیت</string>
-    <string name="msg_delete_failure">عملیات حذف ناموفق</string>
-    <string name="dialog_skip">رفتن</string>
-    <string name="dialog_replace">جایگزین کردن</string>
-    <string name="dialog_keep_both">هر دو فایل نگه دارید</string>
-    <string name="dialog_cancel">لغو کردن</string>
-    <string name="msg_file_exists">فایل وجود دارد</string>
-    <string name="dialog_from_placeholder">از جانب</string>
-    <string name="dialog_to_placeholder">به:</string>
-    <string name="background">زمینه</string>
-    <string name="dialog_delete_title">آیا مطمئنید که میخواهید %d فایل را حذف کنید؟</string>
-    <string name="msg_ok">خوب</string>
-    <string name="no_files">هیچ فایلی</string>
-    <string name="msg_error_invalid_name">یک نام معتبر وارد کنید</string>
-    <string name="path">مسیر:</string>
-    <string name="size">اندازه:</string>
-    <string name="date_modified">تاریخ اصلاح:</string>
-    <string name="permissions">مجوز</string>
-    <string name="yes">بله</string>
-    <string name="no">خیر</string>
-    <string name="properties">خواص</string>
+    <string name="msg_delete_success">با موفقیت حذف شد</string>
+    <string name="msg_delete_failure">عملیات حذف نشد</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">آیا مطمئن هستید که می خواهید پرونده٪ d را حذف کنید؟</string>
     <string name="new_folder">پوشه جدید</string>
-    <string name="new_file">فایل جدید</string>
+    <string name="new_file">پرونده جدید</string>
     <string name="add_fav">اضافه کردن به علاقه مندی ها</string>
-    <string name="msg_added_to_fav">اضافه شده به مورد علاقه ها</string>
-    <string name="msg_error_not_supported">برنامهای برای انجام عمل</string>
-    <string name="permission_request">نیاز به اجازه ذخیره سازی برای نشان دادن تمام فایل های</string>
-    <string name="action_grant">اعطا کردن</string>
-    <string name="action_sort">مرتب سازی</string>
-    <string name="action_view_list">مشاهده لیست</string>
-    <string name="action_view_grid">مشاهده شبکه</string>
+    <string name="msg_added_to_fav">به موارد دلخواه اضافه شد</string>
     <string name="extract_to">استخراج به</string>
     <string name="open">باز کن</string>
     <string name="extracting">استخراج ..</string>
     <string name="dialog_current_path">مسیر فعلی</string>
-    <string name="dialog_specify_path">تعیین مسیر</string>
-    <string name="enter_file_name">نام فایل را وارد کنید</string>
+    <string name="dialog_specify_path">مسیر را مشخص کنید</string>
+    <string name="enter_file_name">نام پرونده را وارد کنید</string>
     <string name="extract">استخراج کردن</string>
-    <string name="dialog_title_browse">انتخاب پوشه</string>
+    <string name="dialog_title_browse">پوشه را انتخاب کنید</string>
     <string name="action_select_all">انتخاب همه</string>
     <string name="delete_fav">حذف مورد علاقه</string>
-    <string name="action_search">جستجو کردن</string>
-    <string name="pref_title_theme">موضوع</string>
-    <string name="pref_subs_light">سبک</string>
-    <string name="pref_subs_dark">تاریک</string>
-    <string name="pref_title_reset_fav">مورد علاقه های تنظیم مجدد</string>
-    <string name="pref_title_show_hidden">نمایش فایلهای مخفی</string>
-    <string name="pref_title_disable_dual">پنجره دو در چشم انداز</string>
-    <string name="pref_title_change_lang">تغییر زبان</string>
-
     <string name="hide">پنهان شدن</string>
-    <string name="unhide">آشکار کردن</string>
-    <string name="drag">کشیدن</string>
-    <string name="move">حرکت</string>
-    <string name="msg_fav_reset">مورد علاقه ها ریست به طور پیش فرض.</string>
-    <string name="home_docs">اسناد</string>
-    <string name="compressed">فشرده</string>
-    <string name="apk">نرم افزار</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">فایل های بزرگ</string>
-    <string name="open_as">به عنوان باز</string>
+    <string name="unhide">لغو</string>
+    <string name="create">ايجاد كردن</string>
+    <string name="zip_progress_title">ایجاد پستی</string>
+    <string name="fav_exists">مورد علاقه قبلاً وجود دارد</string>
+    <string name="msg_file_exists">فایل وجود دارد</string>
+    <string name="dialog_from_placeholder">از جانب</string>
+    <string name="dialog_to_placeholder">به</string>
+    <string name="msg_error_invalid_name">یک نام معتبر وارد کنید</string>
+    <string name="msg_operation_failed">عملیات انجام نشد</string>
+    <string name="permission_read">خواندن</string>
+    <string name="permission_write">نوشتن</string>
+    <string name="permission_execute">اجرا کردن</string>
+    <string name="permission_owner">صاحب</string>
+    <string name="permission_group">گروه</string>
+    <string name="header_source">منبع</string>
+    <string name="header_destination">مقصد</string>
+    <string name="enter_name">نام را وارد کنید</string>
+    <string name="open_as">باز به عنوان</string>
     <string name="text">متن</string>
     <string name="image">تصویر</string>
     <string name="audio">سمعی</string>
     <string name="other">دیگر</string>
-    <string name="create">ايجاد كردن</string>
-    <string name="zip_progress_title">ایجاد فایل های فشرده</string>
-    <string name="needsaccess">ارسال دسترسی مورد نیاز</string>
-    <string name="needs_access_summary">لطفا پوشه ریشه از %1$s را انتخاب کنید تا اجازه دسترسی به این عمل</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">زمینه</string>
     <string name="error">خطا</string>
-    <string name="msg_operation_failed">عملیات شکست خورد</string>
-    <string name="enter_name">نام را وارد کنید</string>
-    <string name="paste_conflict_remember">یاد آوردن</string>
-    <string name="copying">کپی کردن فایل های</string>
-    <string name="moving">انتقال فایل ها</string>
-    <string name="package_installer">بسته نصب</string>
-    <string name="view">چشم انداز</string>
-    <string name="install">نصب</string>
-    <string name="package_installer_content">کدام عمل را می خواهید انجام دهید؟</string>
-    <string name="permission_setting_hint">تنظیمات ضربه بزنید -> مجوز و پس از آن نوبت ذخیره سازی است.</string>
-    <string name="access_denied_external">دسترسی برای نوشتن خارجی SD داده نمی</string>
-    <string name="permission_read">خواندن</string>
-    <string name="permission_write">نوشتن</string>
-    <string name="permission_execute">اجرا کردن</string>
-    <string name="permission_owner">مالک</string>
-    <string name="permission_group">گروه</string>
-    <string name="next">بعد</string>
-    <string name="skip">SKIP</string>
-    <string name="start">فهمیدم</string>
-    <string name="slide_1_title">سازماندهی کتابخانه</string>
-    <string name="slide_1_desc">با یک کلیک به کتابخانه رسانه از صفحه اصلی.</string>
-    <string name="slide_2_title">زیرچشمی نگاه کردن و پاپ</string>
-    <string name="slide_2_desc">زیرچشمی نگاه کردن و پاپ تصاویر و فیلم های خود را.</string>
-    <string name="slide_3_title">کشیدن و انداختن</string>
-    <string name="slide_3_desc">کشیدن فایل ها از یک پوشه به دیگری!</string>
-    <string name="slide_4_title">تم</string>
-    <string name="slide_4_desc">تیره یا روشن راه! انتخاب شما.</string>
-    <string name="no_music"> بدون فایل های موسیقی</string>
-    <string name="img_accessibility_back">بازگشت</string>
-    <string name="img_accessibility_permission">ارائه مجوز</string>
-    <string name="img_accessibility_icon_lib">آیکون کتابخانه</string>
-    <string name="unlock_full_version">باز کردن نسخه کامل</string>
-    <string name="full_version_buy_ask">نسخه کامل حذف تبلیغات مزاحم است. آیا می خواهید به آن را خرید؟</string>
-    <string name="dialog_title_picker">انتخاب فایل موسیقی</string>
-
+    <string name="dialog_title_picker">پرونده موسیقی را انتخاب کنید</string>
     <string name="browse">مرور کردن</string>
     <string name="action_more">بیشتر</string>
-    <string name="directory">دایرکتوری</string>
+    <string name="directory">فهرست راهنما</string>
     <string name="operation">عمل</string>
-    <string name="clipboard">%d در کلیپ بورد</string>
-    <string name="fav_exists">مورد علاقه در حال حاضر وجود دارد.</string>
-    <string name="header_source">منبع</string>
-    <string name="header_destination">مقصد</string>
     <string name="error_unsupported">پشتیبانی نشده</string>
-    <string name="copy_path">مسیر کپی کنید</string>
-    <string name="text_copied_clipboard">کپی به کلیپ بورد</string>
-    <string name="analytics_text">ارسال تجزیه و تحلیل</string>
-    <string name="analytics_summary">با ارسال دادههای استفاده ناشناس از ما برای بهبود برنامه کمک بگیرید.</string>
+    <string name="action_cut">قطع كردن</string>
+    <string name="action_copy">کپی 🀄</string>
+    <string name="action_paste">چسباندن</string>
+    <string name="msg_cut_copy">پرونده (های) کپی شده در کلیپ بورد</string>
+    <string name="dialog_skip">پرش</string>
+    <string name="dialog_replace">جایگزین کردن</string>
+    <string name="dialog_keep_both">هر دو را نگه دار</string>
+    <string name="drag">بکش</string>
+    <string name="move">حرکت</string>
+    <string name="copying">کپی کردن پرونده ها</string>
+    <string name="moving">انتقال پرونده ها</string>
+    <string name="clipboard">٪ d در کلیپ بورد</string>
+    <string name="text_copied_clipboard">در کلیپ بورد کپی شد.</string>
+    <string name="dialog_cancel">لغو</string>
+    <string name="msg_ok">خوب</string>
+    <string name="msg_error_not_supported">هیچ برنامه ای برای انجام این کار وجود ندارد</string>
+    <string name="needsaccess">دسترسی لازم را بنویسید</string>
+    <string name="needs_access_summary">لطفاً برای دسترسی به نوشتار ، فهرست اصلی٪ 1 $ s را انتخاب کنید         کار کردن</string>
+    <string name="img_accessibility_back">بازگشت</string>
+    <string name="action_search">جستجو کردن</string>
 
-    <string name="dual_pane_intro_title">دوگانه</string>
-    <string name="dual_pane_intro_subtitle">حالت دوگانه برای قابلیت استفاده بهتر.</string>
-    <string name="sort_name">نام</string>
-    <string name="sort_type">تایپ کنید</string>
-    <string name="sort_size">اندازه</string>
-    <string name="sort_date">تاریخ</string>
-    <string name="ascending">صعودی</string>
-    <string name="library_recent">اخیر</string>
     <string name="albums">آلبوم ها</string>
     <string name="artists">هنرمندان</string>
     <string name="genres">ژانرها</string>
     <string name="all_tracks">همه آهنگ ها</string>
     <string name="podcasts">پادکست ها</string>
-    <string name="mute">بی صدا</string>
-    <string name="unmute">خاموش کردن</string>
-    <string name="app_manager">مدیر برنامه</string>
     <string name="unknown">ناشناخته</string>
     <string name="enabled">فعال شده است</string>
+    <string name="package_installer">نصب بسته بندی</string>
+    <string name="view">چشم انداز</string>
+    <string name="install">نصب</string>
+    <string name="package_installer_content">دوست دارید کدام عملی را انجام دهید؟</string>
+    <string name="no_music">پرونده های موسیقی وجود ندارد</string>
+    <string name="no_files">هیچ فایلی</string>
+
+    <string name="action_view_list">نمای لیست</string>
+    <string name="action_view_grid">نمای شبکه</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">یاد آوردن</string>
     <string name="move_trash">انتقال به سطل زباله</string>
+    <string name="path">مسیر</string>
+    <string name="size">اندازه</string>
+    <string name="date_modified">تاریخ اصلاح شد</string>
+    <string name="permissions">مجوزها</string>
+    <string name="yes">آره</string>
+    <string name="no">نه</string>
+    <string name="properties">خصوصیات</string>
+    <string name="copy_path">مسیر کپی کردن</string>
+    <string name="permission_setting_hint">به تنظیمات ضربه بزنید -&gt; مجوزها و سپس Storage را روشن کنید.</string>
+    <string name="access_denied_external">دسترسی به SD خارجی را اعطا نکنید</string>
+    <string name="permission_request">برای نمایش همه پرونده ها به مجوز ذخیره نیاز دارید</string>
+    <string name="action_grant">اعطا کردن</string>
+    <string name="img_accessibility_permission">اجازه</string>
+    <string name="next">بعد</string>
+    <string name="skip">پرش</string>
+    <string name="start">فهمیدم</string>
+    <string name="slide_1_title">کتابخانه سازمان یافته</string>
+    <string name="slide_1_desc">با کلیک بر روی کتابخانه رسانه از صفحه اصلی.</string>
+    <string name="slide_2_title">Peek و Pop</string>
+    <string name="slide_2_desc">تصاویر و ویدیوهای خود را زیر نگاه و پاپ کنید.</string>
+    <string name="slide_3_title">کشیدن و انداختن</string>
+    <string name="slide_3_desc">پرونده ها را از یک پوشه به پوشه دیگر بکشید!</string>
+    <string name="action_sort">مرتب سازی</string>
+    <string name="slide_4_title">مضامین</string>
+    <string name="slide_4_desc">راه تاریک یا سبک! انتخاب شما</string>
+    <string name="dual_pane_intro_title">صفحه دوتایی</string>
+    <string name="dual_pane_intro_subtitle">حالت دوگانه برای استفاده بهتر.</string>
+    <string name="pref_title_theme">موضوع</string>
+    <string name="pref_subs_light">سبک</string>
+    <string name="pref_subs_dark">تاریک</string>
+    <string name="device_theme">موضوع دستگاه</string>
+    <string name="pref_title_reset_fav">تنظیم مجدد موارد دلخواه</string>
+    <string name="pref_title_show_hidden">نمایش فایلهای مخفی</string>
+    <string name="pref_title_disable_dual">صفحه دوتایی در Landscape</string>
+    <string name="pref_title_change_lang">زبان</string>
+    <string name="msg_fav_reset">موارد دلخواه به طور پیش فرض تنظیم شدند</string>
+    <string name="analytics_text">ارسال تجزیه و تحلیل</string>
+    <string name="analytics_summary">با ارسال داده های استفاده ناشناس ، به ما در بهبود برنامه کمک کنید.</string>
+    <string name="home_docs">اسناد</string>
+    <string name="compressed">فشرده</string>
+    <string name="apk">برنامه ها</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">پرونده های بزرگ</string>
+    <string name="library_recent">اخیر</string>
+    <string name="sort_name">نام</string>
+    <string name="sort_type">تایپ کنید</string>
+    <string name="sort_size">اندازه</string>
+    <string name="sort_date">تاریخ</string>
+    <string name="ascending">صعودی</string>
+    <string name="mute">بی صدا</string>
+    <string name="unmute">نادیده گرفتن</string>
+    <string name="peek_button_prev">قبلی</string>
+    <string name="peek_button_next">بعد</string>
+    <string name="saved_category">ذخیره</string>
+    <string name="other_category">دیگر</string>
+
+    <string name="category_whatsapp">واتساپ</string>
+    <string name="category_telegram">تلگرام</string>
+    <string name="category_camera">دوربین</string>
+    <string name="category_screenshot">عکس صفحه</string>
+    <string name="category_max_min_items_error">دسته های ذخیره شده می توانند حداقل 3 ، حداکثر 12 باشند</string>
+
+    <string name="category_all">همه</string>
+    <string name="categories">دسته بندی ها</string>
+    <string name="categories_folder">پوشه</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">دسترسی Root را فعال کنید</string>
+    <string name="info_name">نام فایل</string>
+    <string name="info_resolution">وضوح</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">پرونده٪ d منتقل شد</string>
+    <string name="copied" tools:ignore="PluralsCandidate">پرونده های٪ d کپی شدند</string>
+    <string name="action_view">چشم انداز</string>
+    <string name="action_view_gallery">نمای گالری</string>
+    <string name="update_available">به روزرسانی موجود</string>
+    <string name="restart">راه اندازی مجدد</string>
+    <string name="update_downloading">در حال بارگیری &#8230;</string>
+    <string name="update_downloaded">به روزرسانی بارگیری شد</string>
+    <string name="install_update">برای نصب کلیک کنید</string>
+    <string name="connect_internet_download_update">برای بارگیری به روزرسانی به اینترنت وصل شوید</string>
+    <string name="recent_today">امروز</string>
+    <string name="recent_yesterday">دیروز</string>
+    <string name="recent_this_week">این هفته</string>
+    <string name="recent_this_month">این ماه</string>
+    <string name="search_type_other">دیگر</string>
+    <string name="search_clear">پاک کردن</string>
+    <string name="recently_searched">اخیراً جستجو شده است</string>
+    <string name="version_code">کد نسخه</string>
+    <string name="tab_home">خانه</string>
+    <string name="tab_tools">ابزارها</string>
+    <string name="tab_settings">تنظیمات</string>
+    <string name="privacy_policy">سیاست حفظ حریم خصوصی</string>
+
 
 </resources>

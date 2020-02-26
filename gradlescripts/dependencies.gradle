@@ -1,7 +1,7 @@
 ext.deps = [:]
 def versions = [:]
 
-versions.android_gradle_plugin = '3.6.0-rc03'
+versions.android_gradle_plugin = '3.6.0'
 
 versions.firebase_core       = "16.0.7"
 versions.firebase_ads        = "18.3.0"

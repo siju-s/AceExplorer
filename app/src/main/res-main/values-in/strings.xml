@@ -1,184 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Ace Explorer</string>
-    <string name="action_settings">pengaturan</string>
+<string name="app_name">Ace Explorer</string>
+    <string name="image_viewer_title">Ace Image Viewer</string>
+    <string name="action_settings">Pengaturan</string>
     <string name="nav_menu_internal_storage">Penyimpanan internal</string>
     <string name="nav_menu_root">Akar</string>
-    <string name="nav_menu_ext_storage">eksternal SD</string>
+    <string name="nav_menu_ext_storage">SD eksternal</string>
     <string name="nav_menu_music">Musik</string>
-    <string name="nav_menu_video">video</string>
-    <string name="nav_menu_image">gambar</string>
-    <string name="nav_menu_docs">dokumen</string>
-    <string name="nav_header_storages">penyimpanan</string>
+    <string name="nav_menu_video">Video</string>
+    <string name="nav_menu_image">Gambar-gambar</string>
+    <string name="nav_menu_docs">Dokumen</string>
+    <string name="downloads">Unduhan</string>
+    <string name="nav_header_storages">Penyimpanan</string>
     <string name="nav_header_favourites">Favorit</string>
     <string name="nav_header_collections">Perpustakaan</string>
+    <string name="app_manager">Manajer aplikasi</string>
+    <string name="unlock_full_version">Buka versi lengkap</string>
+    <string name="full_version_buy_ask">Versi lengkap menghapus iklan yang mengganggu. Apakah Anda ingin membelinya?</string>
+    <string name="img_accessibility_icon_lib">Ikon perpustakaan</string>
     <string name="empty">Kosong</string>
-    <plurals name="number_of_files">
-        <item quantity="other">%d arsip</item>
-    </plurals>
-    <string name="downloads">download</string>
     <string name="action_rename">Ganti nama</string>
-    <string name="action_info">properti</string>
-    <string name="action_archive">arsip</string>
-    <string name="action_cut">Memotong</string>
-    <string name="action_copy">Salinan</string>
-    <string name="action_paste">Pasta</string>
+    <string name="action_info">Properti</string>
+    <string name="action_archive">Arsipkan</string>
     <string name="action_delete">Menghapus</string>
     <string name="action_share">Bagikan</string>
-    <string name="msg_cut_copy">file (s) disalin ke clipboard</string>
     <string name="msg_delete_success">berhasil dihapus</string>
-    <string name="msg_delete_failure">Hapus operasi gagal</string>
-    <string name="dialog_skip">Melewatkan</string>
-    <string name="dialog_replace">Menggantikan</string>
-    <string name="dialog_keep_both">Menjaga kedua file</string>
-    <string name="dialog_cancel">Membatalkan</string>
-    <string name="msg_file_exists">File ada</string>
-    <string name="dialog_from_placeholder">Dari</string>
-    <string name="dialog_to_placeholder">Untuk</string>
-    <string name="background">Latar Belakang</string>
-    <string name="dialog_delete_title">Yakin ingin menghapus file %d?</string>
-    <string name="msg_ok">baik</string>
-    <string name="no_files">Tidak ada data</string>
-    <string name="msg_error_invalid_name">Masukkan nama yang valid</string>
-    <string name="path">path:</string>
-    <string name="size">Ukuran:</string>
-    <string name="date_modified">Tanggal dimodifikasi:</string>
-    <string name="permissions">izin</string>
-    <string name="yes">iya nih</string>
-    <string name="no">Tidak</string>
-    <string name="properties">properti</string>
+    <string name="msg_delete_failure">Operasi penghapusan gagal</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Anda yakin ingin menghapus %d file?</string>
     <string name="new_folder">Folder baru</string>
     <string name="new_file">File baru</string>
     <string name="add_fav">Tambahkan ke Favorit</string>
     <string name="msg_added_to_fav">Ditambahkan ke Favorit</string>
-    <string name="msg_error_not_supported">Tidak ada aplikasi untuk menangani tindakan</string>
-    <string name="permission_request">Perlu izin penyimpanan untuk menampilkan semua file</string>
-    <string name="action_grant">HIBAH</string>
-    <string name="action_view_list">tampilan daftar</string>
-    <string name="action_view_grid">Tampilan bergaris</string>
-    <string name="extract_to">ekstrak ke</string>
+    <string name="extract_to">Ekstrak ke</string>
     <string name="open">Buka</string>
-    <string name="extracting">Penggalian ..</string>
-    <string name="dialog_current_path">jalan saat ini</string>
-    <string name="dialog_specify_path">Tentukan path</string>
+    <string name="extracting">Mengekstrak ..</string>
+    <string name="dialog_current_path">Jalan saat ini</string>
+    <string name="dialog_specify_path">Tentukan jalur</string>
     <string name="enter_file_name">Masukkan nama file</string>
     <string name="extract">Ekstrak</string>
     <string name="dialog_title_browse">Pilih folder</string>
     <string name="action_select_all">Pilih Semua</string>
     <string name="delete_fav">Hapus favorit</string>
-    <string name="action_search">Pencarian</string>
-    <string name="pref_title_theme">Tema</string>
-    <string name="pref_subs_light">Cahaya</string>
-    <string name="pref_subs_dark">Gelap</string>
-    <string name="pref_title_reset_fav">ulang favorit</string>
-    <string name="pref_title_show_hidden">Show Hidden Files</string>
-    <string name="pref_title_disable_dual">Dual pane di Landscape</string>
-    <string name="pref_title_change_lang">Bahasa</string>
-
     <string name="hide">Menyembunyikan</string>
-    <string name="unhide">unhide</string>
-    <string name="drag">Menyeret</string>
-    <string name="move">Pindah</string>
-    <string name="msg_fav_reset">Favorit resetted ke default.</string>
-    <string name="home_docs">Docs</string>
-    <string name="compressed">compressed</string>
-    <string name="apk">Apps</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">file besar</string>
-    <string name="open_as">Open As</string>
-    <string name="text">Teks</string>
-    <string name="image">Gambar</string>
-    <string name="audio">Audio</string>
-    <string name="other">Lain</string>
+    <string name="unhide">Tidak terlihat</string>
     <string name="create">Membuat</string>
-    <string name="zip_progress_title">membuat zip</string>
-    <string name="needsaccess">Menulis Access Diperlukan</string>
-    <string name="needs_access_summary">Silahkan pilih direktori root dari %1$s untuk memberikan akses tulis untuk
-        beroperasi</string>
-    <string name="error">Kesalahan</string>
+    <string name="zip_progress_title">Membuat zip</string>
+    <string name="fav_exists">Favorit sudah ada.</string>
+    <string name="msg_file_exists">File ada</string>
+    <string name="dialog_from_placeholder">Dari</string>
+    <string name="dialog_to_placeholder">Untuk</string>
+    <string name="msg_error_invalid_name">Masukkan nama yang valid</string>
     <string name="msg_operation_failed">Operasi gagal</string>
-    <string name="enter_name">Masukkan nama</string>
-    <string name="paste_conflict_remember">Ingat</string>
-    <string name="copying">menyalin file</string>
-    <string name="moving">memindahkan file</string>
-    <string name="package_installer">paket Installer</string>
-    <string name="view">Melihat</string>
-    <string name="install">Memasang</string>
-    <string name="package_installer_content">tindakan yang akan Anda lakukan?</string>
-    <string name="permission_setting_hint">Ketuk -> Permissions kemudian hidupkan Storage di.</string>
-    <string name="access_denied_external">Tulis akses ke eksternal tidak SD diberikan</string>
-    <string name="permission_read">Baca baca</string>
+    <string name="permission_read">Baca</string>
     <string name="permission_write">Menulis</string>
     <string name="permission_execute">Menjalankan</string>
     <string name="permission_owner">Pemilik</string>
     <string name="permission_group">Kelompok</string>
-    <string name="next">BERIKUTNYA</string>
-    <string name="skip">MELEWATKAN</string>
-    <string name="start">MENGERTI</string>
-    <string name="slide_1_title">terorganisir Perpustakaan</string>
-    <string name="slide_1_desc">Satu klik untuk perpustakaan media dari homescreen.</string>
-    <string name="slide_2_title">mengintip dan pop</string>
-    <string name="slide_2_desc">mengintip dan pop foto dan video Anda.</string>
-    <string name="slide_3_title">Drag dan Drop</string>
-    <string name="slide_3_desc">Drag file dari satu folder ke yang lain!</string>
-    <string name="action_sort">Menyortir</string>
-    <string name="slide_4_title">tema</string>
-    <string name="slide_4_desc">Gelap atau terang cara! Pilihanmu.</string>
-    <string name="no_music"> Tidak ada file musik</string>
-    <string name="img_accessibility_back">Kembali</string>
-    <string name="img_accessibility_permission">Memberikan ijin</string>
-    <string name="img_accessibility_icon_lib">ikon perpustakaan</string>
-    <string name="unlock_full_version">Membuka versi lengkap</string>
-    <string name="full_version_buy_ask">Versi lengkap menghilangkan iklan yang mengganggu. Apakah Anda ingin membelinya?</string>
+    <string name="header_source">Sumber</string>
+    <string name="header_destination">Tujuan</string>
+    <string name="enter_name">Masukkan nama</string>
+    <string name="open_as">Buka sebagai</string>
+    <string name="text">Teks</string>
+    <string name="image">Gambar</string>
+    <string name="audio">Audio</string>
+    <string name="other">Lain</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">Latar Belakang</string>
+    <string name="error">Kesalahan</string>
     <string name="dialog_title_picker">Pilih file musik</string>
-
-    <string name="browse">Jelajahi</string>
+    <string name="browse">Telusuri</string>
     <string name="action_more">Lebih</string>
     <string name="directory">Direktori</string>
     <string name="operation">Operasi</string>
-    <string name="clipboard">%d di clipboard</string>
-    <string name="fav_exists">Favorit sudah ada</string>
-    <string name="header_source">Sumber</string>
-    <string name="header_destination">Tujuan</string>
     <string name="error_unsupported">Tidak didukung</string>
-    <string name="copy_path">Salin jalan</string>
-    <string name="text_copied_clipboard">Disalin ke clipboard</string>
-    <string name="analytics_text">Kirim analytics</string>
-    <string name="analytics_summary">Bantu kami memperbaiki aplikasi dengan mengirimkan data penggunaan anonim.</string>
+    <string name="action_cut">Memotong</string>
+    <string name="action_copy">Salinan</string>
+    <string name="action_paste">Tempel</string>
+    <string name="msg_cut_copy">file disalin ke clipboard</string>
+    <string name="dialog_skip">Melewatkan</string>
+    <string name="dialog_replace">Menggantikan</string>
+    <string name="dialog_keep_both">Simpan keduanya</string>
+    <string name="drag">Menyeret</string>
+    <string name="move">Pindah</string>
+    <string name="copying">Menyalin file</string>
+    <string name="moving">Memindahkan file</string>
+    <string name="clipboard">%d di clipboard</string>
+    <string name="text_copied_clipboard">Disalin ke papan klip.</string>
+    <string name="dialog_cancel">Membatalkan</string>
+    <string name="msg_ok">baik</string>
+    <string name="msg_error_not_supported">Tidak ada aplikasi untuk menangani tindakan</string>
+    <string name="needsaccess">Diperlukan Akses Menulis</string>
+    <string name="needs_access_summary">Silakan pilih direktori root dari %1$s untuk memberikan akses tulis         beroperasi</string>
+    <string name="img_accessibility_back">Kembali</string>
+    <string name="action_search">Cari</string>
 
-    <string name="dual_pane_intro_title">Panel ganda</string>
-    <string name="dual_pane_intro_subtitle">Modus ganda untuk kegunaan yang lebih baik.</string>
-    <string name="sort_name">Nama</string>
-    <string name="sort_type">Mengetik</string>
-    <string name="sort_size">Ukuran</string>
-    <string name="sort_date">Tanggal</string>
-    <string name="ascending">Menaik</string>
-    <string name="library_recent">Baru</string>
     <string name="albums">Album</string>
-    <string name="artists">Seniman</string>
+    <string name="artists">Artis</string>
     <string name="genres">Genre</string>
     <string name="all_tracks">Semua lagu</string>
     <string name="podcasts">Podcast</string>
-    <string name="mute">Bisu</string>
-    <string name="unmute">Bersuara</string>
-    <string name="app_manager">Pengelola aplikasi</string>
-    <string name="unknown">Tidak diketahui</string>
+    <string name="unknown">Tidak dikenal</string>
     <string name="enabled">Diaktifkan</string>
+    <string name="package_installer">Pemasang Paket</string>
+    <string name="view">Melihat</string>
+    <string name="install">Install</string>
+    <string name="package_installer_content">Tindakan apa yang ingin Anda lakukan?</string>
+    <string name="no_music">Tidak ada file musik</string>
+    <string name="no_files">Tidak ada data</string>
+
+    <string name="action_view_list">Tampilan daftar</string>
+    <string name="action_view_grid">Tampilan bergaris</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">Ingat</string>
     <string name="move_trash">Pindah ke Sampah</string>
+    <string name="path">Path</string>
+    <string name="size">Ukuran</string>
+    <string name="date_modified">Tanggal Dimodifikasi</string>
+    <string name="permissions">Izin</string>
+    <string name="yes">Iya</string>
+    <string name="no">Tidak</string>
+    <string name="properties">Properti</string>
+    <string name="copy_path">Salin jalur</string>
+    <string name="permission_setting_hint">Ketuk Pengaturan -&gt; Izin dan kemudian nyalakan Penyimpanan.</string>
+    <string name="access_denied_external">Akses tulis ke SD eksternal tidak diberikan</string>
+    <string name="permission_request">Perlu izin penyimpanan untuk menampilkan semua file</string>
+    <string name="action_grant">HIBAH</string>
+    <string name="img_accessibility_permission">Memberikan ijin</string>
+    <string name="next">LANJUT</string>
+    <string name="skip">MELEWATKAN</string>
+    <string name="start">MENGERTI</string>
+    <string name="slide_1_title">Perpustakaan terorganisir</string>
+    <string name="slide_1_desc">Satu klik ke perpustakaan media dari homescreen.</string>
+    <string name="slide_2_title">Mengintip dan Pop</string>
+    <string name="slide_2_desc">Mengintip dan Pop gambar dan video Anda.</string>
+    <string name="slide_3_title">Seret dan Jatuhkan</string>
+    <string name="slide_3_desc">Seret file dari satu folder ke folder lain!</string>
+    <string name="action_sort">Menyortir</string>
+    <string name="slide_4_title">Tema</string>
+    <string name="slide_4_desc">Gelap atau Terang! Pilihanmu.</string>
+    <string name="dual_pane_intro_title">Panel ganda</string>
+    <string name="dual_pane_intro_subtitle">Mode ganda untuk kegunaan yang lebih baik.</string>
+    <string name="pref_title_theme">Tema</string>
+    <string name="pref_subs_light">Cahaya</string>
+    <string name="pref_subs_dark">Gelap</string>
+    <string name="device_theme">Tema perangkat</string>
+    <string name="pref_title_reset_fav">Setel ulang favorit</string>
+    <string name="pref_title_show_hidden">Tampilkan File Tersembunyi</string>
+    <string name="pref_title_disable_dual">Panel ganda dalam Lansekap</string>
+    <string name="pref_title_change_lang">Bahasa</string>
+    <string name="msg_fav_reset">Favorit disetel ulang ke default.</string>
+    <string name="analytics_text">Kirim analitik</string>
+    <string name="analytics_summary">Bantu kami meningkatkan aplikasi dengan mengirim data penggunaan anonim.</string>
+    <string name="home_docs">Documents</string>
+    <string name="compressed">Terkompresi</string>
+    <string name="apk">Aplikasi</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">File besar</string>
+    <string name="library_recent">Baru</string>
+    <string name="sort_name">Nama</string>
+    <string name="sort_type">Tipe</string>
+    <string name="sort_size">Ukuran</string>
+    <string name="sort_date">Tanggal</string>
+    <string name="ascending">Naik</string>
+    <string name="mute">Bisu</string>
+    <string name="unmute">Suarakan</string>
+    <string name="peek_button_prev">Sebelumnya</string>
+    <string name="peek_button_next">Lanjut</string>
+    <string name="saved_category">DISELAMATKAN</string>
+    <string name="other_category">LAIN</string>
+
+    <string name="category_whatsapp">Whatsapp</string>
+    <string name="category_telegram">Telegram</string>
+    <string name="category_camera">Kamera</string>
+    <string name="category_screenshot">Tangkapan layar</string>
+    <string name="category_max_min_items_error">Kategori yang disimpan dapat minimal 3, maksimal 12</string>
+
+    <string name="category_all">Semua</string>
+    <string name="categories">Kategori</string>
+    <string name="categories_folder">Folder</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Aktifkan akses Root</string>
+    <string name="info_name">Nama file</string>
+    <string name="info_resolution">Resolusi</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d file dipindahkan</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d file disalin</string>
+    <string name="action_view">Melihat</string>
+    <string name="action_view_gallery">Tampilan galeri</string>
+    <string name="update_available">Pembaruan tersedia</string>
+    <string name="restart">Restart</string>
+    <string name="update_downloading">Mengunduh pembaruan &#8230;</string>
+    <string name="update_downloaded">Perbarui Diunduh</string>
+    <string name="install_update">Klik untuk menginstal</string>
+    <string name="connect_internet_download_update">Sambungkan ke internet untuk mengunduh pembaruan</string>
+    <string name="recent_today">Hari ini</string>
+    <string name="recent_yesterday">Kemarin</string>
+    <string name="recent_this_week">Minggu ini</string>
+    <string name="recent_this_month">Bulan ini</string>
+    <string name="search_type_other">Lain</string>
+    <string name="search_clear">Bersih</string>
+    <string name="recently_searched">Baru saja dicari</string>
+    <string name="version_code">Kode versi</string>
+    <string name="tab_home">Rumah</string>
+    <string name="tab_tools">Alat</string>
+    <string name="tab_settings">Pengaturan</string>
+    <string name="privacy_policy">Kebijakan pribadi</string>
+
+
 
 </resources>

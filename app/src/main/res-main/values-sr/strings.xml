@@ -1,186 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">аце Екплорер</string>
+<string name="app_name">Аце Екплорер</string>
+    <string name="image_viewer_title">Аце Имаге Виевер</string>
     <string name="action_settings">Подешавања</string>
     <string name="nav_menu_internal_storage">Интерна меморија</string>
     <string name="nav_menu_root">Корен</string>
     <string name="nav_menu_ext_storage">Спољни СД</string>
-    <string name="nav_menu_music">музика</string>
+    <string name="nav_menu_music">Музика</string>
     <string name="nav_menu_video">Видео</string>
-    <string name="nav_menu_image">slike</string>
+    <string name="nav_menu_image">Слике</string>
     <string name="nav_menu_docs">Документи</string>
-    <string name="nav_header_storages">складишта</string>
+    <string name="downloads">Преузимања</string>
+    <string name="nav_header_storages">Складишта</string>
     <string name="nav_header_favourites">Фаворити</string>
-    <string name="nav_header_collections">библиотека</string>
-    <string name="empty">празан</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d фајл</item>
-        <item quantity="few">%d фајл</item>
-        <item quantity="other">%d фајлови</item>
-    </plurals>
-    <string name="downloads">преузимања</string>
-    <string name="action_rename">ренаме</string>
-    <string name="action_info">пропертиес</string>
+    <string name="nav_header_collections">Библиотека</string>
+    <string name="app_manager">Апп манагер</string>
+    <string name="unlock_full_version">Откључај пуну верзију</string>
+    <string name="full_version_buy_ask">Пуна верзија уклања досадне огласе. Да ли желите да га купите?</string>
+    <string name="img_accessibility_icon_lib">Икона библиотеке</string>
+    <string name="empty">Празно</string>
+    <string name="action_rename">Преименуј</string>
+    <string name="action_info">Својства</string>
     <string name="action_archive">Архива</string>
-    <string name="action_cut">рез</string>
-    <string name="action_copy">копија</string>
-    <string name="action_paste">паста</string>
-    <string name="action_delete">избрисати</string>
-    <string name="action_share">удео</string>
-    <string name="msg_cut_copy">фајл (а) копиран у привремену меморију</string>
-    <string name="msg_delete_success">успешно обрисан</string>
-    <string name="msg_delete_failure">Делете операција није успела</string>
-    <string name="dialog_skip">прескочити</string>
-    <string name="dialog_replace">Заменити</string>
-    <string name="dialog_keep_both">Држи обе датотеке</string>
-    <string name="dialog_cancel">отказати</string>
-    <string name="msg_file_exists">file екистс</string>
-    <string name="dialog_from_placeholder">од</string>
-    <string name="dialog_to_placeholder">До</string>
-    <string name="background">позадина</string>
-    <string name="dialog_delete_title">Да ли сте сигурни да желите да избришете %d д датотеке?</string>
-    <string name="msg_ok">ок</string>
-    <string name="no_files">Но филес</string>
-    <string name="msg_error_invalid_name">Унесите важећи назив</string>
-    <string name="path">патх:</string>
-    <string name="size">сизе:</string>
-    <string name="date_modified">Датум измене:</string>
-    <string name="permissions">Дозволе</string>
-    <string name="yes">да</string>
-    <string name="no">Не</string>
-    <string name="properties">пропертиес</string>
+    <string name="action_delete">Избриши</string>
+    <string name="action_share">Објави</string>
+    <string name="msg_delete_success">избрисано успешно</string>
+    <string name="msg_delete_failure">Операција брисања није успела</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Јесте ли сигурни да желите избрисати% д датотеке?</string>
     <string name="new_folder">Нова фасцикла</string>
-    <string name="new_file">Нови фајл</string>
+    <string name="new_file">Нова датотека</string>
     <string name="add_fav">Додај у омиљено</string>
-    <string name="msg_added_to_fav">Додато у фаворите</string>
-    <string name="msg_error_not_supported">Но апликација за руковање акцију</string>
-    <string name="permission_request">Потребна дозвола за складиштење да покаже све фајлове</string>
-    <string name="action_grant">ГРАНТ</string>
-    <string name="action_view_list">лист виев</string>
-    <string name="action_view_grid">Поглед мрежа</string>
+    <string name="msg_added_to_fav">Додато у Фаворите</string>
     <string name="extract_to">Екстрактовати у</string>
-    <string name="open">отворен</string>
-    <string name="extracting">Издвајање ..</string>
-    <string name="dialog_current_path">Струјни</string>
-    <string name="dialog_specify_path">Наведите путању</string>
-    <string name="enter_file_name">Унесите назив датотеке</string>
-    <string name="extract">екстракт</string>
+    <string name="open">Отвори</string>
+    <string name="extracting">Извлачење ..</string>
+    <string name="dialog_current_path">Тренутни пут</string>
+    <string name="dialog_specify_path">Наведите пут</string>
+    <string name="enter_file_name">Унесите име датотеке</string>
+    <string name="extract">Екстракт</string>
     <string name="dialog_title_browse">Изаберите фасциклу</string>
     <string name="action_select_all">Изабери све</string>
-    <string name="delete_fav">Обриши фаворите</string>
-    <string name="action_search">Претраживање</string>
-    <string name="pref_title_theme">тема</string>
-    <string name="pref_subs_light">светло</string>
-    <string name="pref_subs_dark">мрак</string>
-    <string name="pref_title_reset_fav">ресет фаворити</string>
-    <string name="pref_title_show_hidden">Схов хидден филес</string>
-    <string name="pref_title_disable_dual">Дуал панел у Ландсцапе</string>
-    <string name="pref_title_change_lang">језик</string>
-
+    <string name="delete_fav">Избриши омиљено</string>
     <string name="hide">Сакрити</string>
-    <string name="unhide">Откриј</string>
-    <string name="drag">вући</string>
-    <string name="move">потез</string>
-    <string name="msg_fav_reset">Фаворити ресеттед на дефаулт.</string>
-    <string name="home_docs">доцс</string>
-    <string name="compressed">компримовани</string>
-    <string name="apk">апликације</string>
-    <string name="pdf">пдф</string>
-    <string name="library_large">велике датотеке</string>
-    <string name="open_as">Отвори као</string>
-    <string name="text">текст</string>
-    <string name="image">Слика</string>
-    <string name="audio">звучни</string>
-    <string name="other">други</string>
-    <string name="create">створити</string>
-    <string name="zip_progress_title">kreiranje рар</string>
-    <string name="needsaccess">Врите тражени приступ</string>
-    <string name="needs_access_summary">Молимо изаберите роот директоријум %1$s да одобри приступ писања за
-        рад</string>
-    <string name="error">грешка</string>
+    <string name="unhide">Покажи</string>
+    <string name="create">Креирај</string>
+    <string name="zip_progress_title">Израда зип-а</string>
+    <string name="fav_exists">Омиљени већ постоји.</string>
+    <string name="msg_file_exists">Датотека постоји</string>
+    <string name="dialog_from_placeholder">Фром</string>
+    <string name="dialog_to_placeholder">До</string>
+    <string name="msg_error_invalid_name">Унесите важеће име</string>
     <string name="msg_operation_failed">Операција неуспела</string>
-    <string name="enter_name">Унесите име</string>
-    <string name="paste_conflict_remember">Запамтити</string>
-    <string name="copying">Копирање фајлова</string>
-    <string name="moving">померање фајлова</string>
-    <string name="package_installer">инсталациони пакет</string>
-    <string name="view">Поглед</string>
-    <string name="install">инсталирати</string>
-    <string name="package_installer_content">Коју радњу желите да урадите?</string>
-    <string name="permission_setting_hint">Тапните на Подешавања -> Дозволе и затим га Стораге на.</string>
-    <string name="access_denied_external">Врите приступ спољним не СД одобрено</string>
     <string name="permission_read">читати</string>
-    <string name="permission_write">писати</string>
-    <string name="permission_execute">извршити</string>
+    <string name="permission_write">Пиши</string>
+    <string name="permission_execute">Екецуте</string>
     <string name="permission_owner">Власник</string>
     <string name="permission_group">Група</string>
-    <string name="next">СЛЕДЕЋИ</string>
-    <string name="skip">СКИП</string>
-    <string name="start">РАЗУМЕМ</string>
-    <string name="slide_1_title">организовани Библиотека</string>
-    <string name="slide_1_desc">Један клик на библиотеке медија са почетном екрану.</string>
-    <string name="slide_2_title">пеек и поп</string>
-    <string name="slide_2_desc">погледајте и попишите своје слике и видео записе.</string>
-	<string name="slide_3_title">Превуци и отпусти</string>
-    <string name="slide_3_desc">Вући фајлове из једног фолдера у други!</string>
-    <string name="action_sort">Врста</string>
-    <string name="slide_4_title">Теме</string>
-    <string name="slide_4_desc">Светла или тамна пут! Ваш избор.</string>
-    <string name="no_music"> Но Музичке датотеке</string>
-    <string name="img_accessibility_back">Назад</string>
-    <string name="img_accessibility_permission">грант дозвола</string>
-    <string name="img_accessibility_icon_lib">biblioteka икона</string>
-    <string name="unlock_full_version">Унлоцк пуну верзију</string>
-    <string name="full_version_buy_ask">Пуна верзија уклања досадне рекламе. Да ли желите да га купи?</string>
-    <string name="dialog_title_picker">Изаберите музички фајл</string>
-
-    <string name="browse">Прегледајте</string>
+    <string name="header_source">Извор</string>
+    <string name="header_destination">Одредиште</string>
+    <string name="enter_name">Унесите име</string>
+    <string name="open_as">Отвори као</string>
+    <string name="text">Текст</string>
+    <string name="image">Слика</string>
+    <string name="audio">Аудио</string>
+    <string name="other">Остало</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">Позадина</string>
+    <string name="error">Грешка</string>
+    <string name="dialog_title_picker">Изаберите музичку датотеку</string>
+    <string name="browse">Претражите</string>
     <string name="action_more">Више</string>
     <string name="directory">Именик</string>
     <string name="operation">Операција</string>
-    <string name="clipboard">%d д у клипборду</string>
-    <string name="fav_exists">Фаворит већ постоји.</string>
-    <string name="header_source">Извор</string>
-    <string name="header_destination">Дестинација</string>
     <string name="error_unsupported">Није подржан</string>
-    <string name="copy_path">Копирај пут</string>
-    <string name="text_copied_clipboard">Копиран у клипборд.</string>
-    <string name="analytics_text">Пошаљите анализу</string>
-    <string name="analytics_summary">Помозите нам да побољшамо апликацију слањем анонимних података о коришћењу.</string>
+    <string name="action_cut">Сећи</string>
+    <string name="action_copy">Копирај</string>
+    <string name="action_paste">Налепите</string>
+    <string name="msg_cut_copy">датотека (е) копиране у међуспремник</string>
+    <string name="dialog_skip">Прескочи</string>
+    <string name="dialog_replace">Заменити</string>
+    <string name="dialog_keep_both">Задржи оба</string>
+    <string name="drag">Превуците</string>
+    <string name="move">Потез</string>
+    <string name="copying">Копирање датотека</string>
+    <string name="moving">Премештање датотека</string>
+    <string name="clipboard">% д у међуспремнику</string>
+    <string name="text_copied_clipboard">Копирано у међуспремник.</string>
+    <string name="dialog_cancel">Поништити, отказати</string>
+    <string name="msg_ok">ок</string>
+    <string name="msg_error_not_supported">Нема апликације која би управљала радњом</string>
+    <string name="needsaccess">Приступ за писање је потребан</string>
+    <string name="needs_access_summary">Изаберите коријенски директориј% 1 $ с да бисте дозволили приступ писању         оперишу</string>
+    <string name="img_accessibility_back">Назад</string>
+    <string name="action_search">Претрага</string>
 
-    <string name="dual_pane_intro_title">Дуал виндов</string>
-    <string name="dual_pane_intro_subtitle">Двоструки режим за бољу упорабност.</string>
+    <string name="albums">Албуми</string>
+    <string name="artists">Уметници</string>
+    <string name="genres">Жанрови</string>
+    <string name="all_tracks">Све песме</string>
+    <string name="podcasts">Подцасти</string>
+    <string name="unknown">Непознат</string>
+    <string name="enabled">Омогућено</string>
+    <string name="package_installer">Инсталлер пакета</string>
+    <string name="view">Поглед</string>
+    <string name="install">Инсталирај</string>
+    <string name="package_installer_content">Коју радњу бисте желели да предузмете?</string>
+    <string name="no_music">Нема музичких датотека</string>
+    <string name="no_files">Нема фајлова</string>
+
+    <string name="action_view_list">Лист лист</string>
+    <string name="action_view_grid">Поглед мрежа</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">Запамтити</string>
+    <string name="move_trash">Пошаљи у ђубре</string>
+    <string name="path">Стаза</string>
+    <string name="size">Величина</string>
+    <string name="date_modified">Датум измене</string>
+    <string name="permissions">Дозволе</string>
+    <string name="yes">да</string>
+    <string name="no">Не</string>
+    <string name="properties">Својства</string>
+    <string name="copy_path">Копирај стазу</string>
+    <string name="permission_setting_hint">Куцните на Поставке -&gt; Дозволе, а затим укључите Стораге.</string>
+    <string name="access_denied_external">Приступ писању спољном СД-у није одобрен</string>
+    <string name="permission_request">Потребна вам је дозвола за складиштење да бисте приказали све датотеке</string>
+    <string name="action_grant">ОДОБРИТИ</string>
+    <string name="img_accessibility_permission">Дајте дозволу</string>
+    <string name="next">СЛЕДЕЋИ</string>
+    <string name="skip">СКИП</string>
+    <string name="start">РАЗУМЕМ</string>
+    <string name="slide_1_title">Организована библиотека</string>
+    <string name="slide_1_desc">Један клик библиотеке медија са почетног екрана.</string>
+    <string name="slide_2_title">Пеек анд Поп</string>
+    <string name="slide_2_desc">Завирите и додајте своје слике и видео снимке.</string>
+    <string name="slide_3_title">Превуци и отпусти</string>
+    <string name="slide_3_desc">Превуците датотеке из једне мапе у другу!</string>
+    <string name="action_sort">Врста</string>
+    <string name="slide_4_title">Теме</string>
+    <string name="slide_4_desc">Мрачан или лаган начин! Твој избор.</string>
+    <string name="dual_pane_intro_title">Двоструко окно</string>
+    <string name="dual_pane_intro_subtitle">Двоструки режим за бољу употребљивост.</string>
+    <string name="pref_title_theme">Тема</string>
+    <string name="pref_subs_light">Светлост</string>
+    <string name="pref_subs_dark">Дарк</string>
+    <string name="device_theme">Тема уређаја</string>
+    <string name="pref_title_reset_fav">Ресет фаворита</string>
+    <string name="pref_title_show_hidden">Прикажи скривене датотеке</string>
+    <string name="pref_title_disable_dual">Двоструко окно у пејзажу</string>
+    <string name="pref_title_change_lang">Језик</string>
+    <string name="msg_fav_reset">Фаворити су враћени на подразумеване вредности.</string>
+    <string name="analytics_text">Пошаљите аналитику</string>
+    <string name="analytics_summary">Помозите нам да побољшамо апликацију слањем анонимних података о употреби.</string>
+    <string name="home_docs">Документи</string>
+    <string name="compressed">Компримовани</string>
+    <string name="apk">Аппс</string>
+    <string name="pdf">ПДФ</string>
+    <string name="library_large">Велике датотеке</string>
+    <string name="library_recent">Скорашњи</string>
     <string name="sort_name">Име</string>
     <string name="sort_type">Тип</string>
     <string name="sort_size">Величина</string>
     <string name="sort_date">Датум</string>
     <string name="ascending">Узлазни</string>
-    <string name="library_recent">Скорашњи</string>
-    <string name="albums">Албуми</string>
-    <string name="artists">Уметници</string>
-    <string name="genres">Жанрови</string>
-    <string name="all_tracks">Све песме</string>
-    <string name="podcasts">Подкастови</string>
-    <string name="mute">Муте</string>
-    <string name="unmute">Унмуте</string>
-    <string name="app_manager">Апп манагер</string>
-    <string name="unknown">Непознат</string>
-    <string name="enabled">Омогућено</string>
-    <string name="move_trash">Пошаљи у ђубре</string>
+    <string name="mute">Без звука</string>
+    <string name="unmute">Престани занемаривати</string>
+    <string name="peek_button_prev">Претходна</string>
+    <string name="peek_button_next">Следећи</string>
+    <string name="saved_category">УШТЕДЕНО</string>
+    <string name="other_category">ОСТАЛО</string>
+
+    <string name="category_whatsapp">Вхатсапп</string>
+    <string name="category_telegram">Телеграм</string>
+    <string name="category_camera">Камера</string>
+    <string name="category_screenshot">Снимак екрана</string>
+    <string name="category_max_min_items_error">Спремљене категорије могу бити најмање 3, максимално 12</string>
+
+    <string name="category_all">Све</string>
+    <string name="categories">Категорије</string>
+    <string name="categories_folder">Фолдер</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Омогући коријенски приступ</string>
+    <string name="info_name">Назив документа</string>
+    <string name="info_resolution">Резолуција</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">Премештено је% д датотека</string>
+    <string name="copied" tools:ignore="PluralsCandidate">Копиране су% д датотеке</string>
+    <string name="action_view">Поглед</string>
+    <string name="action_view_gallery">Приказ галерије</string>
+    <string name="update_available">Располагању новија верзија</string>
+    <string name="restart">Поново покренути</string>
+    <string name="update_downloading">Преузимање ажурирања…</string>
+    <string name="update_downloaded">Ажурирај преузето</string>
+    <string name="install_update">Кликните да бисте је инсталирали</string>
+    <string name="connect_internet_download_update">Повежите се на Интернет да бисте преузели ажурирање</string>
+    <string name="recent_today">Данас</string>
+    <string name="recent_yesterday">Јуче</string>
+    <string name="recent_this_week">Ове недеље</string>
+    <string name="recent_this_month">Овог месеца</string>
+    <string name="search_type_other">Остало</string>
+    <string name="search_clear">Јасно</string>
+    <string name="recently_searched">Недавно претражени</string>
+    <string name="version_code">Верзија код</string>
+    <string name="tab_home">Кућа</string>
+    <string name="tab_tools">Алати</string>
+    <string name="tab_settings">Подешавања</string>
+    <string name="privacy_policy">Правила о приватности</string>
+
+
 
 </resources>

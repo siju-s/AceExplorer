@@ -1,184 +1,211 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Ace Explorer</string>
+<string name="app_name">Ace Explorer</string>
+    <string name="image_viewer_title">Ace Image Viewer</string>
     <string name="action_settings">Indstillinger</string>
-    <string name="nav_menu_internal_storage">Internt lager</string>
+    <string name="nav_menu_internal_storage">Interne lager</string>
     <string name="nav_menu_root">Rod</string>
-    <string name="nav_menu_ext_storage">ekstern SD</string>
-    <string name="nav_menu_music">Musik</string>
+    <string name="nav_menu_ext_storage">Ekstern SD</string>
+    <string name="nav_menu_music">musik</string>
     <string name="nav_menu_video">Videoer</string>
     <string name="nav_menu_image">Billeder</string>
     <string name="nav_menu_docs">Dokumenter</string>
-    <string name="nav_header_storages">lagre</string>
-    <string name="nav_header_favourites">Favoritter</string>
-    <string name="nav_header_collections">Bibliotek</string>
-    <string name="empty">Tom</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d fil</item>
-        <item quantity="other">%d filer</item>
-    </plurals>
     <string name="downloads">Downloads</string>
+    <string name="nav_header_storages">lagre</string>
+    <string name="nav_header_favourites">foretrukne</string>
+    <string name="nav_header_collections">Bibliotek</string>
+    <string name="app_manager">App manager</string>
+    <string name="unlock_full_version">Lås den fulde version op</string>
+    <string name="full_version_buy_ask">Fuld version fjerner irriterende annoncer. Vil du købe det?</string>
+    <string name="img_accessibility_icon_lib">Bibliotek ikon</string>
+    <string name="empty">Tom</string>
     <string name="action_rename">Omdøb</string>
-    <string name="action_info">Egenskaber</string>
+    <string name="action_info">Ejendomme</string>
     <string name="action_archive">Arkiv</string>
-    <string name="action_cut">Skære</string>
-    <string name="action_copy">Kopi</string>
-    <string name="action_paste">Indsæt</string>
-    <string name="action_delete">Slette</string>
+    <string name="action_delete">Slet</string>
     <string name="action_share">Del</string>
-    <string name="msg_cut_copy">fil (er) kopieret til udklipsholderen</string>
-    <string name="msg_delete_success">slettet</string>
+    <string name="msg_delete_success">slettet med succes</string>
     <string name="msg_delete_failure">Slet operation mislykkedes</string>
-    <string name="dialog_skip">Springe</string>
-    <string name="dialog_replace">Erstatte</string>
-    <string name="dialog_keep_both">Hold begge filer</string>
-    <string name="dialog_cancel">Ophæve</string>
-    <string name="msg_file_exists">Fil eksisterer</string>
-    <string name="dialog_from_placeholder">Fra</string>
-    <string name="dialog_to_placeholder">Til:</string>
-    <string name="background">Baggrund</string>
-    <string name="dialog_delete_title">Er du sikker på, at du vil slette %d filer?</string>
-    <string name="msg_ok">Okay</string>
-    <string name="no_files">Ingen filer</string>
-    <string name="msg_error_invalid_name">Indtast et gyldigt navn</string>
-    <string name="path">Sti:</string>
-    <string name="size">Størrelse:</string>
-    <string name="date_modified">Dato Ændret:</string>
-    <string name="permissions">Tilladelser</string>
-    <string name="yes">Ja</string>
-    <string name="no">Ingen</string>
-    <string name="properties">Egenskaber</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Er du sikker på, at du vil slette %d filer?</string>
     <string name="new_folder">Ny mappe</string>
     <string name="new_file">Ny fil</string>
-    <string name="add_fav">Tilføj til Favoriter</string>
-    <string name="msg_added_to_fav">Tilføjet til favoritter</string>
-    <string name="msg_error_not_supported">Ingen app til at håndtere handling</string>
-    <string name="permission_request">Behov opbevaring tilladelse til at vise alle filer</string>
-    <string name="action_grant">GIVE</string>
-    <string name="action_sort">Sortere</string>
-    <string name="action_view_list">Se på liste</string>
-    <string name="action_view_grid">Grid view</string>
+    <string name="add_fav">Føj til favoritter</string>
+    <string name="msg_added_to_fav">Føjet til favoritter</string>
     <string name="extract_to">Uddrag til</string>
     <string name="open">Åben</string>
-    <string name="extracting">Udpakning ..</string>
-    <string name="dialog_current_path">Aktuel vej</string>
-    <string name="dialog_specify_path">Angiv stien</string>
-    <string name="enter_file_name">Indtast filnavn</string>
+    <string name="extracting">Udtræk ..</string>
+    <string name="dialog_current_path">Nuværende sti</string>
+    <string name="dialog_specify_path">Angiv sti</string>
+    <string name="enter_file_name">Indtast filnavnet</string>
     <string name="extract">Uddrag</string>
     <string name="dialog_title_browse">Vælg mappe</string>
     <string name="action_select_all">Vælg alle</string>
     <string name="delete_fav">Slet favorit</string>
-    <string name="action_search">Søge</string>
-    <string name="pref_title_theme">Tema</string>
-    <string name="pref_subs_light">Lys</string>
-    <string name="pref_subs_dark">Mørk</string>
-    <string name="pref_title_reset_fav">Nulstil favoritter</string>
-    <string name="pref_title_show_hidden">Vis skjulte filer</string>
-    <string name="pref_title_disable_dual">Dobbelt rude i Landskab</string>
-    <string name="pref_title_change_lang">Skift sprog</string>
-
     <string name="hide">Skjule</string>
     <string name="unhide">Vis igen</string>
-    <string name="drag">Træk</string>
-    <string name="move">Bevæge sig</string>
-    <string name="msg_fav_reset">Favoritter nulstillede til standard.</string>
-    <string name="home_docs">Dokumenter</string>
-    <string name="compressed">Komprimeret</string>
-    <string name="apk">Apps</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">Store filer</string>
-    <string name="open_as">Åbne Som</string>
-    <string name="text">Tekst</string>
-    <string name="image">Billede</string>
-    <string name="audio">Lyd</string>
-    <string name="other">Andre</string>
-    <string name="create">Skabe</string>
-    <string name="zip_progress_title">Oprettelse zip</string>
-    <string name="needsaccess">Skriv Access Påkrævet</string>
-    <string name="needs_access_summary">Vælg rodmappen på %1$s til at give skriveadgang til at fungere</string>
-    <string name="error">Fejl</string>
-    <string name="msg_operation_failed">Operation mislykkedes</string>
-    <string name="enter_name">Indtast navn</string>
-    <string name="paste_conflict_remember">Huske</string>
-    <string name="copying">Kopiering af filer</string>
-    <string name="moving">Flytning af filer</string>
-    <string name="package_installer">Package Installer</string>
-    <string name="view">Udsigt</string>
-    <string name="install">Installere</string>
-    <string name="package_installer_content">Hvilken handling vil du gerne gøre?</string>
-    <string name="permission_setting_hint">Tryk på Indstillinger -> Tilladelser og derefter slå Opbevaring på.</string>
-    <string name="access_denied_external">Skriveadgang til eksterne SD ikke ydet</string>
-    <string name="permission_read">Læse</string>
+    <string name="create">skab</string>
+    <string name="zip_progress_title">Opretter zip</string>
+    <string name="fav_exists">Favorit findes allerede.</string>
+    <string name="msg_file_exists">Filen findes</string>
+    <string name="dialog_from_placeholder">Fra</string>
+    <string name="dialog_to_placeholder">Til</string>
+    <string name="msg_error_invalid_name">Indtast et gyldigt navn</string>
+    <string name="msg_operation_failed">Betjening mislykkedes</string>
+    <string name="permission_read">Læs</string>
     <string name="permission_write">Skrive</string>
     <string name="permission_execute">Udfør</string>
     <string name="permission_owner">Ejer</string>
     <string name="permission_group">Gruppe</string>
-    <string name="next">NÆSTE</string>
-    <string name="skip">SPRINGE</string>
-    <string name="start">FORSTÅET</string>
-    <string name="slide_1_title">Organized Bibliotek</string>
-    <string name="slide_1_desc">Et klik til mediebibliotek fra homescreen.</string>
-    <string name="slide_2_title">kig og pop</string>
-    <string name="slide_2_desc">kig og pop dine billeder og videoer.</string>
-    <string name="slide_3_title">Træk og slip</string>
-    <string name="slide_3_desc">Træk filer fra en mappe til en anden!</string>
-    <string name="slide_4_title">Temaer</string>
-    <string name="slide_4_desc">Mørk eller Lys måde! Dit valg.</string>
-    <string name="no_music"> Ingen musikfiler</string>
-    <string name="img_accessibility_back">Tilbage</string>
-    <string name="img_accessibility_permission">Grant tilladelse</string>
-    <string name="img_accessibility_icon_lib">ikon Bibliotek</string>
-    <string name="unlock_full_version">Lås den fulde version</string>
-    <string name="full_version_buy_ask">Fuld version fjerner irriterende annoncer. Ønsker du at købe det?</string>
-    <string name="dialog_title_picker">Vælg musikfilen</string>
-
+    <string name="header_source">Kilde</string>
+    <string name="header_destination">Bestemmelsessted</string>
+    <string name="enter_name">Indtast navn</string>
+    <string name="open_as">Åben som</string>
+    <string name="text">Tekst</string>
+    <string name="image">Billede</string>
+    <string name="audio">Lyd</string>
+    <string name="other">Andet</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">Baggrund</string>
+    <string name="error">Fejl</string>
+    <string name="dialog_title_picker">Vælg musikfil</string>
     <string name="browse">Gennemse</string>
     <string name="action_more">Mere</string>
     <string name="directory">Vejviser</string>
     <string name="operation">Operation</string>
-    <string name="clipboard">%d i udklipsholder</string>
-    <string name="fav_exists">Favorit eksisterer allerede.</string>
-    <string name="header_source">Kilde</string>
-    <string name="header_destination">Bestemmelsessted</string>
     <string name="error_unsupported">Ikke understøttet</string>
-    <string name="copy_path">Kopier sti</string>
+    <string name="action_cut">Skære</string>
+    <string name="action_copy">Kopi</string>
+    <string name="action_paste">sæt ind</string>
+    <string name="msg_cut_copy">fil (er) kopieret til udklipsholder</string>
+    <string name="dialog_skip">Springe</string>
+    <string name="dialog_replace">Erstatte</string>
+    <string name="dialog_keep_both">Behold begge</string>
+    <string name="drag">Træk</string>
+    <string name="move">Bevæge sig</string>
+    <string name="copying">Kopiering af filer</string>
+    <string name="moving">Flytning af filer</string>
+    <string name="clipboard">%d i udklipsholder</string>
     <string name="text_copied_clipboard">Kopieret til udklipsholder.</string>
-    <string name="analytics_text">Send analytics</string>
-    <string name="analytics_summary">Hjælp os med at forbedre appen ved at sende anonyme brugsdata.</string>
+    <string name="dialog_cancel">Afbestille</string>
+    <string name="msg_ok">Okay</string>
+    <string name="msg_error_not_supported">Ingen app til at håndtere handlingen</string>
+    <string name="needsaccess">Skriveadgang kræves</string>
+    <string name="needs_access_summary">Vælg rodmappen på %1$s for at give skriveadgang til         betjene</string>
+    <string name="img_accessibility_back">Tilbage</string>
+    <string name="action_search">Søg</string>
 
-    <string name="dual_pane_intro_title">Dobbelt rude</string>
-    <string name="dual_pane_intro_subtitle">Dual mode for bedre brugervenlighed.</string>
-    <string name="sort_name">Navn</string>
-    <string name="sort_type">Type</string>
-    <string name="sort_size">Størrelse</string>
-    <string name="sort_date">Dato</string>
-    <string name="ascending">stigende</string>
-    <string name="library_recent">Nylig</string>
     <string name="albums">Albums</string>
     <string name="artists">Kunstnere</string>
     <string name="genres">Genrer</string>
     <string name="all_tracks">Alle sange</string>
     <string name="podcasts">Podcasts</string>
-    <string name="mute">Stum</string>
-    <string name="unmute">Lyd til</string>
-    <string name="app_manager">App manager</string>
     <string name="unknown">Ukendt</string>
     <string name="enabled">Aktiveret</string>
+    <string name="package_installer">Pakkeinstallatør</string>
+    <string name="view">Udsigt</string>
+    <string name="install">Installere</string>
+    <string name="package_installer_content">Hvilken handling vil du gerne gøre?</string>
+    <string name="no_music">Ingen musikfiler</string>
+    <string name="no_files">Ingen filer</string>
+
+    <string name="action_view_list">Listevisning</string>
+    <string name="action_view_grid">Ridevisning</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">Husk</string>
     <string name="move_trash">Flytte til skrald</string>
+    <string name="path">Sti</string>
+    <string name="size">Størrelse</string>
+    <string name="date_modified">Dato ændret</string>
+    <string name="permissions">Tilladelser</string>
+    <string name="yes">Ja</string>
+    <string name="no">Ingen</string>
+    <string name="properties">Ejendomme</string>
+    <string name="copy_path">Kopier sti</string>
+    <string name="permission_setting_hint">Tryk på Indstillinger -&gt; Tilladelser, og tænd derefter Lagring.</string>
+    <string name="access_denied_external">Skriveadgang til ekstern SD ikke tildelt</string>
+    <string name="permission_request">Brug for lagringstilladelse for at vise alle filerne</string>
+    <string name="action_grant">GIVE</string>
+    <string name="img_accessibility_permission">Giv tilladelse</string>
+    <string name="next">NÆSTE</string>
+    <string name="skip">SPRINGE</string>
+    <string name="start">FORSTÅET</string>
+    <string name="slide_1_title">Organiseret bibliotek</string>
+    <string name="slide_1_desc">Et klik til mediebibliotek fra hjemmeskærmen.</string>
+    <string name="slide_2_title">Kig og pop</string>
+    <string name="slide_2_desc">Kig og pop dine billeder og videoer.</string>
+    <string name="slide_3_title">Træk og slip</string>
+    <string name="slide_3_desc">Træk filer fra en mappe til en anden!</string>
+    <string name="action_sort">Sort</string>
+    <string name="slide_4_title">Temaer</string>
+    <string name="slide_4_desc">Mørk eller lys måde! Dit valg.</string>
+    <string name="dual_pane_intro_title">Dobbelt rude</string>
+    <string name="dual_pane_intro_subtitle">Dobbelttilstand for bedre brugervenlighed.</string>
+    <string name="pref_title_theme">Tema</string>
+    <string name="pref_subs_light">Lys</string>
+    <string name="pref_subs_dark">Mørk</string>
+    <string name="device_theme">Enhedstema</string>
+    <string name="pref_title_reset_fav">Nulstil favoritter</string>
+    <string name="pref_title_show_hidden">Vis skjulte filer</string>
+    <string name="pref_title_disable_dual">Dobbelt rude i landskab</string>
+    <string name="pref_title_change_lang">Sprog</string>
+    <string name="msg_fav_reset">Foretrukne er nulstillet til standard.</string>
+    <string name="analytics_text">Send analytics</string>
+    <string name="analytics_summary">Hjælp os med at forbedre appen ved at sende anonyme brugsdata.</string>
+    <string name="home_docs">Dokumenter</string>
+    <string name="compressed">komprimeret</string>
+    <string name="apk">Apps</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">Store filer</string>
+    <string name="library_recent">Nylig</string>
+    <string name="sort_name">Navn</string>
+    <string name="sort_type">Type</string>
+    <string name="sort_size">Størrelse</string>
+    <string name="sort_date">Dato</string>
+    <string name="ascending">stigende</string>
+    <string name="mute">Stum</string>
+    <string name="unmute">Lyd til</string>
+    <string name="peek_button_prev">Tidligere</string>
+    <string name="peek_button_next">Næste</string>
+    <string name="saved_category">GEMT</string>
+    <string name="other_category">ANDET</string>
+
+    <string name="category_whatsapp">Whatsapp</string>
+    <string name="category_telegram">Telegram</string>
+    <string name="category_camera">Kamera</string>
+    <string name="category_screenshot">screenshot</string>
+    <string name="category_max_min_items_error">Gemte kategorier kan være mindst 3, maksimum 12</string>
+
+    <string name="category_all">Alle</string>
+    <string name="categories">Kategorier</string>
+    <string name="categories_folder">Folder</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Aktivér rodadgang</string>
+    <string name="info_name">Filnavn</string>
+    <string name="info_resolution">Løsning</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d filer flyttet</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d filer kopieret</string>
+    <string name="action_view">Udsigt</string>
+    <string name="action_view_gallery">Gallerivisning</string>
+    <string name="update_available">Opdatering tilgængelig</string>
+    <string name="restart">Genstart</string>
+    <string name="update_downloading">Downloader opdatering &#8230;</string>
+    <string name="update_downloaded">Opdateret downloadet</string>
+    <string name="install_update">Klik for at installere</string>
+    <string name="connect_internet_download_update">Opret forbindelse til internettet for at downloade opdatering</string>
+    <string name="recent_today">I dag</string>
+    <string name="recent_yesterday">I går</string>
+    <string name="recent_this_week">Denne uge</string>
+    <string name="recent_this_month">Denne måned</string>
+    <string name="search_type_other">Andet</string>
+    <string name="search_clear">Klar</string>
+    <string name="recently_searched">For nylig søgte</string>
+    <string name="version_code">Versionskode</string>
+    <string name="tab_home">Hjem</string>
+    <string name="tab_tools">Værktøj</string>
+    <string name="tab_settings">Indstillinger</string>
+    <string name="privacy_policy">Fortrolighedspolitik</string>
 
 </resources>

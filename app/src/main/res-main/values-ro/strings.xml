@@ -1,186 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Ace Explorer</string>
-    <string name="action_settings">setările</string>
+<string name="app_name">Ace Explorer</string>
+    <string name="image_viewer_title">Ace Image Viewer</string>
+    <string name="action_settings">Setări</string>
     <string name="nav_menu_internal_storage">Stocare internă</string>
     <string name="nav_menu_root">Rădăcină</string>
     <string name="nav_menu_ext_storage">SD extern</string>
     <string name="nav_menu_music">Muzică</string>
     <string name="nav_menu_video">Videoclipuri</string>
-    <string name="nav_menu_image">imagini</string>
-    <string name="nav_menu_docs">documente</string>
+    <string name="nav_menu_image">Imagini</string>
+    <string name="nav_menu_docs">Documente</string>
+    <string name="downloads">Descărcări</string>
     <string name="nav_header_storages">Storages</string>
     <string name="nav_header_favourites">Favorite</string>
     <string name="nav_header_collections">Bibliotecă</string>
+    <string name="app_manager">Manager de aplicatie</string>
+    <string name="unlock_full_version">Deblocați versiunea completă</string>
+    <string name="full_version_buy_ask">Versiunea completă elimină anunțurile enervante. Vrei sa o cumperi?</string>
+    <string name="img_accessibility_icon_lib">Pictograma bibliotecii</string>
     <string name="empty">Gol</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d fişier</item>
-        <item quantity="few">%d fişier</item>
-        <item quantity="other">%d fișiere</item>
-    </plurals>
-    <string name="downloads">Download-uri</string>
-    <string name="action_rename">redenumire</string>
-    <string name="action_info">proprietăţi</string>
+    <string name="action_rename">Redenumire</string>
+    <string name="action_info">Proprietăți</string>
     <string name="action_archive">Arhiva</string>
-    <string name="action_cut">A taia</string>
-    <string name="action_copy">Copie</string>
-    <string name="action_paste">Pastă</string>
     <string name="action_delete">Șterge</string>
     <string name="action_share">Acțiune</string>
-    <string name="msg_cut_copy">fișier (e) copiat în clipboard</string>
-    <string name="msg_delete_success">eliminat cu succes</string>
-    <string name="msg_delete_failure">Șterge operațiune a eșuat</string>
-    <string name="dialog_skip">sări</string>
-    <string name="dialog_replace">A inlocui</string>
-    <string name="dialog_keep_both">Păstrați ambele fișiere</string>
-    <string name="dialog_cancel">Anulare</string>
+    <string name="msg_delete_success">șters cu succes</string>
+    <string name="msg_delete_failure">Operația de ștergere a eșuat</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Sigur doriți să ștergeți fișierele %d?</string>
+    <string name="new_folder">Dosar nou</string>
+    <string name="new_file">Fișier nou</string>
+    <string name="add_fav">Adaugă la favorite</string>
+    <string name="msg_added_to_fav">Adăugat la Favorite</string>
+    <string name="extract_to">Extract la</string>
+    <string name="open">Deschis</string>
+    <string name="extracting">.. Extracting</string>
+    <string name="dialog_current_path">Calea actuală</string>
+    <string name="dialog_specify_path">Precizați calea</string>
+    <string name="enter_file_name">Introduceți numele fișierului</string>
+    <string name="extract">Extrage</string>
+    <string name="dialog_title_browse">Alegeți folderul</string>
+    <string name="action_select_all">Selectează tot</string>
+    <string name="delete_fav">Delete favorite</string>
+    <string name="hide">Ascunde</string>
+    <string name="unhide">Unhide</string>
+    <string name="create">Crea</string>
+    <string name="zip_progress_title">Crearea de fermoar</string>
+    <string name="fav_exists">Favoritul există deja.</string>
     <string name="msg_file_exists">fisierul exista</string>
     <string name="dialog_from_placeholder">Din</string>
     <string name="dialog_to_placeholder">La</string>
-    <string name="background">fundal</string>
-    <string name="dialog_delete_title">Sigur doriți să ștergeți fișierele %d?</string>
-    <string name="msg_ok">O.K</string>
-    <string name="no_files">Nu există fișiere</string>
     <string name="msg_error_invalid_name">Introduceți un nume valid</string>
-    <string name="path">Cale:</string>
-    <string name="size">Mărimea:</string>
-    <string name="date_modified">Data modificata:</string>
-    <string name="permissions">permisiuni</string>
-    <string name="yes">da</string>
-    <string name="no">Nu</string>
-    <string name="properties">proprietăţi</string>
-    <string name="new_folder">Dosar nou</string>
-    <string name="new_file">fișier nou</string>
-    <string name="add_fav">Adaugă la favorite</string>
-    <string name="msg_added_to_fav">Adăugat la Favorite</string>
-    <string name="msg_error_not_supported">Nici o aplicație să se ocupe de acțiune</string>
-    <string name="permission_request">Nevoie de permisiunea de stocare pentru a afișa toate fișierele</string>
-    <string name="action_grant">ACORDA</string>
-    <string name="action_view_list">Vizualizare listă</string>
-    <string name="action_view_grid">Vizualizare grilă</string>
-    <string name="extract_to">Extract la</string>
-    <string name="open">Deschis</string>
-    <string name="extracting">Extracting ..</string>
-    <string name="dialog_current_path">cale de curent</string>
-    <string name="dialog_specify_path">specificaţi calea</string>
-    <string name="enter_file_name">Introdu numele de fișier</string>
-    <string name="extract">Extrage</string>
-    <string name="dialog_title_browse">alegeţi un dosar</string>
-    <string name="action_select_all">Selectează tot</string>
-    <string name="delete_fav">şterge favorit</string>
-    <string name="action_search">Căutare</string>
-    <string name="pref_title_theme">Temă</string>
-    <string name="pref_subs_light">Ușoară</string>
-    <string name="pref_subs_dark">Întuneric</string>
-    <string name="pref_title_reset_fav">favorite resetare</string>
-    <string name="pref_title_show_hidden">Afișare fișiere ascunse</string>
-    <string name="pref_title_disable_dual">geam dublu în peisajul</string>
-    <string name="pref_title_change_lang">Limba</string>
-
-    <string name="hide">Ascunde</string>
-    <string name="unhide">Reafișați</string>
-    <string name="drag">Trage</string>
-    <string name="move">Mișcare</string>
-    <string name="msg_fav_reset">Favorite resetate la valorile implicite.</string>
-    <string name="home_docs">Documente</string>
-    <string name="compressed">comprimat</string>
-    <string name="apk">aplicaţii</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">fișiere de mari dimensiuni</string>
-    <string name="open_as">Deschis Ca</string>
-    <string name="text">Text</string>
-    <string name="image">Imagine</string>
-    <string name="audio">Audio</string>
-    <string name="other">Alte</string>
-    <string name="create">Crea</string>
-    <string name="zip_progress_title">crearea de zip</string>
-    <string name="needsaccess">Este necesar accesul scrie</string>
-    <string name="needs_access_summary">Vă rugăm să selectați directorul rădăcină de %1$s pentru a acorda acces de
-        scriere pentru a opera</string>
-    <string name="error">Eroare</string>
     <string name="msg_operation_failed">Operația a eșuat</string>
-    <string name="enter_name">Introdu numele</string>
-    <string name="paste_conflict_remember">Tine minte</string>
-    <string name="copying">copierea fișierelor</string>
-    <string name="moving">mutarea fișierelor</string>
-    <string name="package_installer">pachetul de instalare</string>
-    <string name="view">vedere</string>
-    <string name="install">Instalare</string>
-    <string name="package_installer_content">Ce acțiune doriți să faceți?</string>
-    <string name="permission_setting_hint">Atingeți Setări -> Permisiuni și apoi porniți Storage.</string>
-    <string name="access_denied_external">acces de scriere la exterior nu SD acordat</string>
     <string name="permission_read">Citit</string>
     <string name="permission_write">Scrie</string>
     <string name="permission_execute">A executa</string>
     <string name="permission_owner">Proprietar</string>
     <string name="permission_group">grup</string>
-    <string name="next">URMĂTOR →</string>
-    <string name="skip">OCOLIRE</string>
-    <string name="start">AM ÎNŢELES</string>
-    <string name="slide_1_title">Biblioteca organizată</string>
-    <string name="slide_1_desc">Un singur clic pentru biblioteca media din homescreen.</string>
-    <string name="slide_2_title">peek și pop</string>
-    <string name="slide_2_desc">peek și pop imaginile și clipurile video.</string>
-    <string name="slide_3_title">Tragere și plasare</string>
-    <string name="slide_3_desc">Trageți fișiere dintr-un dosar în altul!</string>
-    <string name="action_sort">Fel</string>
-    <string name="slide_4_title">tematică</string>
-    <string name="slide_4_desc">Întuneric sau lumină drum! Alegerea ta.</string>
-    <string name="no_music"> Nu există fișiere de muzică</string>
-    <string name="img_accessibility_back">Înapoi</string>
-    <string name="img_accessibility_permission">Acordați permisiunea</string>
-    <string name="img_accessibility_icon_lib">pictograma bibliotecă</string>
-    <string name="unlock_full_version">Debloca versiunea completă</string>
-    <string name="full_version_buy_ask">versiune completa elimină anunțurile enervant. Vrei să-l cumpere?</string>
-    <string name="dialog_title_picker">Alegeți un fișier de muzică</string>
-
+    <string name="header_source">Sursă</string>
+    <string name="header_destination">Destinaţie</string>
+    <string name="enter_name">Introdu numele</string>
+    <string name="open_as">Deschide ca</string>
+    <string name="text">Text</string>
+    <string name="image">Imagine</string>
+    <string name="audio">Audio</string>
+    <string name="other">Alte</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">fundal</string>
+    <string name="error">Eroare</string>
+    <string name="dialog_title_picker">Alegeți fișierul muzical</string>
     <string name="browse">Naviga</string>
     <string name="action_more">Mai Mult</string>
     <string name="directory">Director</string>
-    <string name="operation">operație</string>
-    <string name="clipboard">%d în clipboard</string>
-    <string name="fav_exists">Favorite există deja.</string>
-    <string name="header_source">Sursă</string>
-    <string name="header_destination">Destinaţie</string>
+    <string name="operation">Operațiune</string>
     <string name="error_unsupported">Nu sunt acceptate</string>
-    <string name="copy_path">Calea de copiere</string>
+    <string name="action_cut">A tăia</string>
+    <string name="action_copy">Copie</string>
+    <string name="action_paste">Paste</string>
+    <string name="msg_cut_copy">fișiere (e) copiate în clipboard</string>
+    <string name="dialog_skip">Ocolire</string>
+    <string name="dialog_replace">A inlocui</string>
+    <string name="dialog_keep_both">Păstrați ambele</string>
+    <string name="drag">Drag</string>
+    <string name="move">Mișcare</string>
+    <string name="copying">Copiere fișiere</string>
+    <string name="moving">Mutarea fișierelor</string>
+    <string name="clipboard">%d în clipboard</string>
     <string name="text_copied_clipboard">Copiat în clipboard.</string>
-    <string name="analytics_text">Trimiteți analize</string>
-    <string name="analytics_summary">Ajutați-ne să îmbunătățim aplicația trimițând date de utilizare anonime.</string>
+    <string name="dialog_cancel">Anulare</string>
+    <string name="msg_ok">O.K</string>
+    <string name="msg_error_not_supported">Nicio aplicație care să se ocupe de acțiune</string>
+    <string name="needsaccess">Acces obligatoriu pentru scriere</string>
+    <string name="needs_access_summary">Vă rugăm să alegeți directorul rădăcină de %1$s pentru a acorda acces la scriere         a functiona</string>
+    <string name="img_accessibility_back">Înapoi</string>
+    <string name="action_search">Căutare</string>
 
-    <string name="dual_pane_intro_title">Geam dublu</string>
-    <string name="dual_pane_intro_subtitle">Modul dual pentru o utilizare mai bună.</string>
-    <string name="sort_name">Nume</string>
-    <string name="sort_type">Tip</string>
-    <string name="sort_size">mărimea</string>
-    <string name="sort_date">Data</string>
-    <string name="ascending">Ascendent</string>
-    <string name="library_recent">Recent</string>
     <string name="albums">Albume</string>
     <string name="artists">Artiști</string>
     <string name="genres">genuri</string>
     <string name="all_tracks">Toate cintecele</string>
     <string name="podcasts">Podcast-uri</string>
-    <string name="mute">Mut</string>
-    <string name="unmute">Activați sunetul</string>
-    <string name="app_manager">Manager de aplicatie</string>
     <string name="unknown">Necunoscut</string>
     <string name="enabled">Activat</string>
+    <string name="package_installer">Instalator de pachete</string>
+    <string name="view">Vedere</string>
+    <string name="install">Instalare</string>
+    <string name="package_installer_content">Ce acțiune ai dori să faci?</string>
+    <string name="no_music">Fără fișiere de muzică</string>
+    <string name="no_files">Fără fișiere</string>
+
+    <string name="action_view_list">Vizualizare listă</string>
+    <string name="action_view_grid">Vizualizare grilă</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">Tine minte</string>
     <string name="move_trash">Aruncă la gunoi</string>
+    <string name="path">cale</string>
+    <string name="size">mărimea</string>
+    <string name="date_modified">Data modificata</string>
+    <string name="permissions">Permisiuni</string>
+    <string name="yes">da</string>
+    <string name="no">Nu</string>
+    <string name="properties">Proprietăți</string>
+    <string name="copy_path">Calea de copiere</string>
+    <string name="permission_setting_hint">Atingeți Setări -&gt; Permisiuni și apoi porniți stocarea.</string>
+    <string name="access_denied_external">Accesul în scris la SD extern nu este acordat</string>
+    <string name="permission_request">Aveți nevoie de permisiunea de stocare pentru a afișa toate fișierele</string>
+    <string name="action_grant">ACORDA</string>
+    <string name="img_accessibility_permission">Permisie garantata</string>
+    <string name="next">URMĂTOR →</string>
+    <string name="skip">OCOLIRE</string>
+    <string name="start">AM ÎNȚELES</string>
+    <string name="slide_1_title">Biblioteca organizată</string>
+    <string name="slide_1_desc">Un singur clic pe biblioteca media de pe ecranul de pornire.</string>
+    <string name="slide_2_title">Peek și Pop</string>
+    <string name="slide_2_desc">Aruncați o privire și afișați-vă imaginile și videoclipurile.</string>
+    <string name="slide_3_title">Tragere și plasare</string>
+    <string name="slide_3_desc">Trageți fișierele dintr-un folder în altul!</string>
+    <string name="action_sort">Fel</string>
+    <string name="slide_4_title">tematică</string>
+    <string name="slide_4_desc">Mod întunecat sau luminos! Alegerea ta.</string>
+    <string name="dual_pane_intro_title">Panou dublu</string>
+    <string name="dual_pane_intro_subtitle">Mod dual pentru o mai bună utilizare.</string>
+    <string name="pref_title_theme">Temă</string>
+    <string name="pref_subs_light">Ușoară</string>
+    <string name="pref_subs_dark">Întuneric</string>
+    <string name="device_theme">Tema dispozitivului</string>
+    <string name="pref_title_reset_fav">Resetați favorite</string>
+    <string name="pref_title_show_hidden">Arată fișierele ascunse</string>
+    <string name="pref_title_disable_dual">Panou dublu în Peisaj</string>
+    <string name="pref_title_change_lang">Limba</string>
+    <string name="msg_fav_reset">Preferințele au fost resetate în mod implicit.</string>
+    <string name="analytics_text">Trimiteți analize</string>
+    <string name="analytics_summary">Ajută-ne să îmbunătățim aplicația trimițând date de utilizare anonime.</string>
+    <string name="home_docs">Documente</string>
+    <string name="compressed">comprimat</string>
+    <string name="apk">Aplicații</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">Fișiere mari</string>
+    <string name="library_recent">Recent</string>
+    <string name="sort_name">Nume</string>
+    <string name="sort_type">Tip</string>
+    <string name="sort_size">mărimea</string>
+    <string name="sort_date">Date</string>
+    <string name="ascending">Ascendent</string>
+    <string name="mute">Mute</string>
+    <string name="unmute">Activați sunetul</string>
+    <string name="peek_button_prev">Anterior</string>
+    <string name="peek_button_next">Următor →</string>
+    <string name="saved_category">SALVATE</string>
+    <string name="other_category">ALTE</string>
+
+    <string name="category_whatsapp">WhatsApp</string>
+    <string name="category_telegram">Telegramă</string>
+    <string name="category_camera">Camera</string>
+    <string name="category_screenshot">screenshot</string>
+    <string name="category_max_min_items_error">Categoriile salvate pot fi de minim 3, maximum 12</string>
+
+    <string name="category_all">Toate</string>
+    <string name="categories">Categorii</string>
+    <string name="categories_folder">Pliant</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Activați accesul Root</string>
+    <string name="info_name">Nume de fișier</string>
+    <string name="info_resolution">Rezoluţie</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d fișiere s-au mutat</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d fișiere copiate</string>
+    <string name="action_view">Vedere</string>
+    <string name="action_view_gallery">Vizualizare galerie</string>
+    <string name="update_available">Actualizare disponibila</string>
+    <string name="restart">Repornire</string>
+    <string name="update_downloading">Se descarcă actualizarea &#8230;</string>
+    <string name="update_downloaded">Actualizare descărcată</string>
+    <string name="install_update">Faceți clic pentru a instala</string>
+    <string name="connect_internet_download_update">Conectați-vă la internet pentru a descărca actualizarea</string>
+    <string name="recent_today">Astăzi</string>
+    <string name="recent_yesterday">Ieri</string>
+    <string name="recent_this_week">Săptămâna aceasta</string>
+    <string name="recent_this_month">Luna aceasta</string>
+    <string name="search_type_other">Alte</string>
+    <string name="search_clear">clar</string>
+    <string name="recently_searched">Căutări recente</string>
+    <string name="version_code">Codul versiunii</string>
+    <string name="tab_home">Acasă</string>
+    <string name="tab_tools">Unelte</string>
+    <string name="tab_settings">Setări</string>
+    <string name="privacy_policy">Politica de Confidențialitate</string>
+
+
 
 </resources>

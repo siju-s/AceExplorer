@@ -1,183 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">ऐस एक्सप्लोरर</string>
-    <string name="action_settings">सेटिंग्स</string>
+<string name="app_name">ऐस एक्सप्लोरर</string>
+    <string name="image_viewer_title">ऐस छवि दर्शक</string>
+    <string name="action_settings">समायोजन</string>
     <string name="nav_menu_internal_storage">आंतरिक स्टोरेज</string>
     <string name="nav_menu_root">जड़</string>
-    <string name="nav_menu_ext_storage">बाहरी एसडी</string>
+    <string name="nav_menu_ext_storage">बाहरी एस.डी.</string>
     <string name="nav_menu_music">संगीत</string>
     <string name="nav_menu_video">वीडियो</string>
     <string name="nav_menu_image">इमेजिस</string>
     <string name="nav_menu_docs">दस्तावेज़</string>
-    <string name="nav_header_storages">भंडारण</string>
+    <string name="downloads">डाउनलोड</string>
+    <string name="nav_header_storages">भंडार</string>
     <string name="nav_header_favourites">पसंदीदा</string>
     <string name="nav_header_collections">पुस्तकालय</string>
+    <string name="app_manager">एप्लिकेशन का प्रबंधक</string>
+    <string name="unlock_full_version">पूर्ण संस्करण अनलॉक करें</string>
+    <string name="full_version_buy_ask">पूर्ण संस्करण कष्टप्रद विज्ञापनों को हटा देता है। क्या आप इसे खरीदना चाहते हो?</string>
+    <string name="img_accessibility_icon_lib">लाइब्रेरी आइकन</string>
     <string name="empty">खाली</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d फ़ाइल</item>
-        <item quantity="other">%d फ़ाइलें</item>
-    </plurals>
-    <string name="downloads">डाउनलोड</string>
     <string name="action_rename">नाम बदलें</string>
     <string name="action_info">गुण</string>
-    <string name="action_archive">संग्रह</string>
-    <string name="action_cut">कट गया</string>
-    <string name="action_copy">प्रतिलिपि</string>
-    <string name="action_paste">Paste</string>
-    <string name="action_delete">मिटाना</string>
+    <string name="action_archive">पुरालेख</string>
+    <string name="action_delete">हटाएं</string>
     <string name="action_share">शेयर</string>
-    <string name="msg_cut_copy">फ़ाइल (s) क्लिपबोर्ड करने के लिए नकल</string>
     <string name="msg_delete_success">सफलतापूर्वक मिटाया गया</string>
-    <string name="msg_delete_failure">हटाने की कार्रवाई विफल रहा है</string>
-    <string name="dialog_skip">छोड़ें</string>
-    <string name="dialog_replace">की जगह</string>
-    <string name="dialog_keep_both">दोनों फ़ाइलों रखें</string>
-    <string name="dialog_cancel">रद्द करना</string>
-    <string name="msg_file_exists">फाइल मौजूद है</string>
-    <string name="dialog_from_placeholder">से</string>
-    <string name="dialog_to_placeholder">सेवा मेरे:</string>
-    <string name="background">पृष्ठभूमि</string>
-    <string name="dialog_delete_title">क्या आप वाकई %d फ़ाइलों को हटाना चाहते हैं?</string>
-    <string name="msg_ok">ठीक</string>
-    <string name="no_files">कोई फाइल नहीं</string>
-    <string name="msg_error_invalid_name">एक मान्य नाम दर्ज करें</string>
-    <string name="path">पथ:</string>
-    <string name="size">आकार:</string>
-    <string name="date_modified">तिथि संशोधित:</string>
-    <string name="permissions">अनुमतियां</string>
-    <string name="yes">हाँ</string>
-    <string name="no">नहीं</string>
-    <string name="properties">गुण</string>
+    <string name="msg_delete_failure">हटाएँ कार्रवाई विफल</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">क्या आप वाकई %d फ़ाइलों को हटाना चाहते हैं?</string>
     <string name="new_folder">नया फोल्डर</string>
     <string name="new_file">नई फ़ाइल</string>
     <string name="add_fav">पसंदीदा में जोड़ें</string>
-    <string name="msg_added_to_fav">पसंदीदा में जोड़ा</string>
-    <string name="msg_error_not_supported">कोई एप्लिकेशन कार्रवाई को संभालने के लिए</string>
-    <string name="permission_request">सभी फाइलों को दिखाने के लिए भंडारण की अनुमति की जरूरत</string>
-    <string name="action_grant">अनुदान</string>
-    <string name="action_sort">तरह</string>
-    <string name="action_view_list">सूची दृश्य</string>
-    <string name="action_view_grid">जाली देखना</string>
+    <string name="msg_added_to_fav">पसंदीदा में जोड़ा गया</string>
     <string name="extract_to">में उद्धरण करना</string>
-    <string name="open">खुला</string>
-    <string name="extracting">निकालने ..</string>
+    <string name="open">खुला हुआ</string>
+    <string name="extracting">निकाला जा रहा है ..</string>
     <string name="dialog_current_path">वर्तमान पथ</string>
     <string name="dialog_specify_path">पथ निर्दिष्ट करें</string>
-    <string name="enter_file_name">फ़ाइल नाम दर्ज करें</string>
+    <string name="enter_file_name">फ़ाइल का नाम दर्ज करें</string>
     <string name="extract">उद्धरण</string>
     <string name="dialog_title_browse">फोल्डर को चुनो</string>
     <string name="action_select_all">सभी का चयन करे</string>
     <string name="delete_fav">पसंदीदा हटाएं</string>
-    <string name="action_search">खोज</string>
-    <string name="pref_title_theme">विषय</string>
-    <string name="pref_subs_light">रोशनी</string>
-    <string name="pref_subs_dark">अंधेरा</string>
-    <string name="pref_title_reset_fav">रीसेट पसंदीदा</string>
-    <string name="pref_title_show_hidden">छिपी फ़ाइलें देखें</string>
-    <string name="pref_title_disable_dual">लैंडस्केप में दोहरी फलक</string>
-    <string name="pref_title_change_lang">भाषा बदलो</string>
     <string name="hide">छिपाना</string>
     <string name="unhide">सामने लाएँ</string>
-    <string name="drag">खींचें</string>
-    <string name="move">चाल</string>
-    <string name="msg_fav_reset">पसंदीदा करने के लिए डिफ़ॉल्ट resetted।</string>
-    <string name="home_docs">डॉक्स</string>
-    <string name="compressed">दबा हुआ</string>
-    <string name="apk">Apps</string>
-    <string name="pdf">पीडीएफ</string>
-    <string name="library_large">बड़े फ़ाइलें</string>
+    <string name="create">सृजन करना</string>
+    <string name="zip_progress_title">ज़िप बनाना</string>
+    <string name="fav_exists">पसंदीदा पहले से मौजूद है।</string>
+    <string name="msg_file_exists">फाइल मौजूद है</string>
+    <string name="dialog_from_placeholder">से</string>
+    <string name="dialog_to_placeholder">सेवा</string>
+    <string name="msg_error_invalid_name">एक मान्य नाम दर्ज करें</string>
+    <string name="msg_operation_failed">कार्रवाई विफल</string>
+    <string name="permission_read">पढ़ें</string>
+    <string name="permission_write">लिखना</string>
+    <string name="permission_execute">निष्पादित</string>
+    <string name="permission_owner">मालिक</string>
+    <string name="permission_group">समूह</string>
+    <string name="header_source">स्रोत</string>
+    <string name="header_destination">गंतव्य</string>
+    <string name="enter_name">नाम दर्ज</string>
     <string name="open_as">इस तरह खोलें</string>
     <string name="text">टेक्स्ट</string>
     <string name="image">छवि</string>
     <string name="audio">ऑडियो</string>
     <string name="other">अन्य</string>
-    <string name="create">सर्जन करना</string>
-    <string name="zip_progress_title">बनाना ज़िप</string>
-    <string name="needsaccess">प्रवेश के लिए आवश्यक लिखें</string>
-    <string name="needs_access_summary">कृपया संचालित करने के लिए उपयोग लिखने अनुदान के लिए %1$s के रूट निर्देशिका का चयन</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">पृष्ठभूमि</string>
     <string name="error">त्रुटि</string>
-    <string name="msg_operation_failed">कार्रवाई विफल</string>
-    <string name="enter_name">नाम दर्ज</string>
-    <string name="paste_conflict_remember">याद है</string>
-    <string name="copying">फाइलों में</string>
-    <string name="moving">फाइलों में चल रहा है</string>
-    <string name="package_installer">पैकेज संस्थापक</string>
-    <string name="view">राय</string>
-    <string name="install">इंस्टॉल करें</string>
-    <string name="package_installer_content">जो लड़ाई आप क्या करना चाहते हैं?</string>
-    <string name="permission_setting_hint">सेटिंग टैप करें -> अनुमतियां और फिर संग्रहण की बारी है।</string>
-    <string name="access_denied_external">बाहरी के लिए उपयोग लिखने के लिए दी नहीं SD</string>
-    <string name="permission_read">पढ़ना</string>
-    <string name="permission_write">लिखना</string>
-    <string name="permission_execute">निष्पादित</string>
-    <string name="permission_owner">मालिक</string>
-    <string name="permission_group">समूह</string>
-    <string name="next">अगला</string>
-    <string name="skip">छोड़ें</string>
-    <string name="start">समझ गया</string>
-    <string name="slide_1_title">संगठित लाइब्रेरी</string>
-    <string name="slide_1_desc">होमस्क्रीन से मीडिया लाइब्रेरी के लिए एक क्लिक करें।</string>
-    <string name="slide_2_title">झांकना और पॉप</string>
-    <string name="slide_2_desc">अपनी छवियों और वीडियो को झांकना और पॉप करें</string>
-    <string name="slide_3_title">खींचें और छोड़ें</string>
-    <string name="slide_3_desc">दूसरे के लिए एक फ़ोल्डर से फ़ाइलों को खींचें!</string>
-    <string name="slide_4_title">विषय-वस्तु</string>
-    <string name="slide_4_desc">अंधेरे या प्रकाश तरीका! आपकी पंसद।</string>
-    <string name="no_music"> No संगीत फ़ाइलें</string>
-    <string name="img_accessibility_back">वापस</string>
-    <string name="img_accessibility_permission">अनुदान अनुमति</string>
-    <string name="img_accessibility_icon_lib">लाइब्रेरी आइकन</string>
-    <string name="unlock_full_version">पूर्ण संस्करण अनलॉक</string>
-    <string name="full_version_buy_ask">पूर्ण संस्करण कष्टप्रद विज्ञापनों को हटा। क्या आप इसे खरीदना चाहते हैं?</string>
     <string name="dialog_title_picker">संगीत फ़ाइल चुनें</string>
-
-    <string name="browse">ब्राउज</string>
+    <string name="browse">ब्राउज़</string>
     <string name="action_more">अधिक</string>
     <string name="directory">निर्देशिका</string>
     <string name="operation">ऑपरेशन</string>
-    <string name="clipboard">क्लिपबोर्ड में %d</string>
-    <string name="fav_exists">पसंदीदा पहले से मौजूद है</string>
-    <string name="header_source">स्रोत</string>
-    <string name="header_destination">गंतव्य</string>
     <string name="error_unsupported">समर्थित नहीं</string>
-    <string name="copy_path">पथ कॉपी करें</string>
+    <string name="action_cut">कट गया</string>
+    <string name="action_copy">प्रतिलिपि</string>
+    <string name="action_paste">पेस्ट करें</string>
+    <string name="msg_cut_copy">फ़ाइल (ओं) को क्लिपबोर्ड पर कॉपी किया गया</string>
+    <string name="dialog_skip">छोड़ें</string>
+    <string name="dialog_replace">बदलने के</string>
+    <string name="dialog_keep_both">दोनों रखो</string>
+    <string name="drag">खींचना</string>
+    <string name="move">चाल</string>
+    <string name="copying">फ़ाइलों की प्रतिलिपि बनाना</string>
+    <string name="moving">चल रही फाइलें</string>
+    <string name="clipboard">क्लिपबोर्ड में %d</string>
     <string name="text_copied_clipboard">क्लिपबोर्ड पर नकल।</string>
-    <string name="analytics_text">विश्लेषिकी भेजें</string>
-    <string name="analytics_summary">अनाम उपयोग डेटा भेजकर एप्लिकेशन को बेहतर बनाने में हमारी सहायता करें।</string>
+    <string name="dialog_cancel">रद्द करना</string>
+    <string name="msg_ok">ठीक</string>
+    <string name="msg_error_not_supported">कार्रवाई को संभालने के लिए कोई ऐप नहीं</string>
+    <string name="needsaccess">पहुँच आवश्यक लिखें</string>
+    <string name="needs_access_summary">कृपया लेखन को पहुंच प्रदान करने के लिए कृपया %1$s की मूल निर्देशिका चुनें         संचालित</string>
+    <string name="img_accessibility_back">वापस</string>
+    <string name="action_search">खोज</string>
 
-    <string name="dual_pane_intro_title">दोहरी फलक</string>
-    <string name="dual_pane_intro_subtitle">बेहतर प्रयोज्यता के लिए दोहरी मोड</string>
-    <string name="sort_name">नाम</string>
-    <string name="sort_type">प्रकार</string>
-    <string name="sort_size">आकार</string>
-    <string name="sort_date">तारीख</string>
-    <string name="ascending">आरोही</string>
-    <string name="library_recent">हाल का</string>
     <string name="albums">एल्बम</string>
     <string name="artists">कलाकार की</string>
     <string name="genres">शैलियां</string>
     <string name="all_tracks">सभी गीत</string>
     <string name="podcasts">पॉडकास्ट</string>
-    <string name="mute">मूक</string>
-    <string name="unmute">अनम्यूट</string>
-    <string name="app_manager">एप्लिकेशन का प्रबंधक</string>
     <string name="unknown">अनजान</string>
     <string name="enabled">सक्रिय</string>
+    <string name="package_installer">पैकेज संस्थापक</string>
+    <string name="view">राय</string>
+    <string name="install">इंस्टॉल</string>
+    <string name="package_installer_content">आप कौन सी कार्रवाई करना चाहेंगे?</string>
+    <string name="no_music">कोई संगीत फ़ाइलें नहीं</string>
+    <string name="no_files">फ़ाइल नहीं</string>
+
+    <string name="action_view_list">सूची दृश्य</string>
+    <string name="action_view_grid">जाली देखना</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">याद है</string>
     <string name="move_trash">रद्दी में डालें</string>
+    <string name="path">पथ</string>
+    <string name="size">आकार</string>
+    <string name="date_modified">तिथि संशोधित</string>
+    <string name="permissions">अनुमतियां</string>
+    <string name="yes">हाँ</string>
+    <string name="no">नहीं</string>
+    <string name="properties">गुण</string>
+    <string name="copy_path">कॉपी पथ</string>
+    <string name="permission_setting_hint">सेटिंग्स टैप करें -&gt; अनुमतियाँ और फिर भंडारण चालू करें।</string>
+    <string name="access_denied_external">बाहरी एसडी तक पहुँच लिखिए</string>
+    <string name="permission_request">सभी फाइलों को दिखाने के लिए भंडारण की अनुमति चाहिए</string>
+    <string name="action_grant">GRANT</string>
+    <string name="img_accessibility_permission">अनुदान अनुमति</string>
+    <string name="next">आगे</string>
+    <string name="skip">छोड़ें</string>
+    <string name="start">समझ गया</string>
+    <string name="slide_1_title">पुस्तकालय का आयोजन किया</string>
+    <string name="slide_1_desc">होमस्क्रीन से मीडिया लाइब्रेरी के लिए एक क्लिक करें।</string>
+    <string name="slide_2_title">पीक और पॉप</string>
+    <string name="slide_2_desc">पीक और अपनी छवियों और वीडियो पॉप।</string>
+    <string name="slide_3_title">खींचें और छोड़ें</string>
+    <string name="slide_3_desc">फ़ाइलों को एक फ़ोल्डर से दूसरे में खींचें!</string>
+    <string name="action_sort">तरह</string>
+    <string name="slide_4_title">विषय-वस्तु</string>
+    <string name="slide_4_desc">गहरा या हल्का रास्ता! आपकी पंसद।</string>
+    <string name="dual_pane_intro_title">दोहरी फलक</string>
+    <string name="dual_pane_intro_subtitle">बेहतर प्रयोज्य के लिए दोहरे मोड।</string>
+    <string name="pref_title_theme">विषय</string>
+    <string name="pref_subs_light">रोशनी</string>
+    <string name="pref_subs_dark">अंधेरा</string>
+    <string name="device_theme">डिवाइस विषय</string>
+    <string name="pref_title_reset_fav">पसंदीदा रीसेट करें</string>
+    <string name="pref_title_show_hidden">छिपी फ़ाइलें देखें</string>
+    <string name="pref_title_disable_dual">लैंडस्केप में दोहरी फलक</string>
+    <string name="pref_title_change_lang">भाषा: हिन्दी</string>
+    <string name="msg_fav_reset">पसंदीदा डिफ़ॉल्ट पर रीसेट किया गया।</string>
+    <string name="analytics_text">एनालिटिक्स भेजें</string>
+    <string name="analytics_summary">अनाम उपयोग डेटा भेजकर ऐप को बेहतर बनाने में हमारी सहायता करें।</string>
+    <string name="home_docs">डॉक्स</string>
+    <string name="compressed">दबा हुआ</string>
+    <string name="apk">ऐप्स</string>
+    <string name="pdf">पीडीएफ</string>
+    <string name="library_large">बड़ी फाइलें</string>
+    <string name="library_recent">हाल का</string>
+    <string name="sort_name">नाम</string>
+    <string name="sort_type">प्रकार</string>
+    <string name="sort_size">आकार</string>
+    <string name="sort_date">दिनांक</string>
+    <string name="ascending">आरोही</string>
+    <string name="mute">मूक</string>
+    <string name="unmute">अनम्यूट</string>
+    <string name="peek_button_prev">पिछला</string>
+    <string name="peek_button_next">आगे</string>
+    <string name="saved_category">बचाया</string>
+    <string name="other_category">अन्य</string>
+
+    <string name="category_whatsapp">Whatsapp</string>
+    <string name="category_telegram">तार</string>
+    <string name="category_camera">कैमरा</string>
+    <string name="category_screenshot">स्क्रीनशॉट</string>
+    <string name="category_max_min_items_error">सहेजे गए श्रेणियां न्यूनतम 3, अधिकतम 12 हो सकती हैं</string>
+
+    <string name="category_all">सब</string>
+    <string name="categories">श्रेणियाँ</string>
+    <string name="categories_folder">फ़ोल्डर</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">रूट पहुँच सक्षम करें</string>
+    <string name="info_name">फ़ाइल का नाम</string>
+    <string name="info_resolution">संकल्प</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d फाइलें चली गईं</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d फाइलें कॉपी की गईं</string>
+    <string name="action_view">राय</string>
+    <string name="action_view_gallery">गैलरी का दृश्य</string>
+    <string name="update_available">अपडेट उपलब्ध</string>
+    <string name="restart">पुनर्प्रारंभ करें</string>
+    <string name="update_downloading">अद्यतन स्थिति डाउनलोड हो रही है …</string>
+    <string name="update_downloaded">अद्यतन डाउनलोड किया गया</string>
+    <string name="install_update">स्थापित करने के लिए क्लिक करो</string>
+    <string name="connect_internet_download_update">अपडेट डाउनलोड करने के लिए इंटरनेट से कनेक्ट करें</string>
+    <string name="recent_today">आज</string>
+    <string name="recent_yesterday">बिता कल</string>
+    <string name="recent_this_week">इस सप्ताह</string>
+    <string name="recent_this_month">इस महीने</string>
+    <string name="search_type_other">अन्य</string>
+    <string name="search_clear">स्पष्ट</string>
+    <string name="recently_searched">हाल ही में खोजा गया</string>
+    <string name="version_code">संस्करण कोड</string>
+    <string name="tab_home">घर</string>
+    <string name="tab_tools">उपकरण</string>
+    <string name="tab_settings">समायोजन</string>
+    <string name="privacy_policy">गोपनीयता नीति</string>
+
+
 
 </resources>

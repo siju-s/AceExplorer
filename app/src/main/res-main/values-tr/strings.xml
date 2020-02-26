@@ -1,184 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Ace Explorer</string>
+<string name="app_name">Ace Explorer</string>
+    <string name="image_viewer_title">Ace Resim Görüntüleyici</string>
     <string name="action_settings">Ayarlar</string>
     <string name="nav_menu_internal_storage">Dahili depolama</string>
     <string name="nav_menu_root">Kök</string>
-    <string name="nav_menu_ext_storage">harici SD</string>
+    <string name="nav_menu_ext_storage">Harici sd</string>
     <string name="nav_menu_music">Müzik</string>
     <string name="nav_menu_video">Videolar</string>
     <string name="nav_menu_image">Görüntüler</string>
     <string name="nav_menu_docs">evraklar</string>
+    <string name="downloads">İndirilenler</string>
     <string name="nav_header_storages">Depolar</string>
     <string name="nav_header_favourites">Favoriler</string>
     <string name="nav_header_collections">Kütüphane</string>
+    <string name="app_manager">Uygulama Yöneticisi</string>
+    <string name="unlock_full_version">Tam sürümün kilidini aç</string>
+    <string name="full_version_buy_ask">Tam sürüm can sıkıcı reklamları kaldırır. Satın almak ister misiniz?</string>
+    <string name="img_accessibility_icon_lib">Kütüphane simgesi</string>
     <string name="empty">Boş</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d dosya</item>
-        <item quantity="other">%d dosyaları</item>
-    </plurals>
-    <string name="downloads">İndirme</string>
     <string name="action_rename">Adını değiştirmek</string>
     <string name="action_info">Özellikleri</string>
     <string name="action_archive">Arşiv</string>
-    <string name="action_cut">kesim</string>
-    <string name="action_copy">kopya</string>
-    <string name="action_paste">Yapıştırmak</string>
-    <string name="action_delete">silmek</string>
-    <string name="action_share">Pay</string>
-    <string name="msg_cut_copy">dosya (lar) panoya kopyalandı</string>
+    <string name="action_delete">Sil</string>
+    <string name="action_share">Paylaş</string>
     <string name="msg_delete_success">başarıyla silindi</string>
-    <string name="msg_delete_failure">Sil işlemi başarısız oldu</string>
-    <string name="dialog_skip">atlamak</string>
-    <string name="dialog_replace">değiştirmek</string>
-    <string name="dialog_keep_both">Her iki dosyaları tutmak</string>
-    <string name="dialog_cancel">İptal etmek</string>
-    <string name="msg_file_exists">dosya var</string>
-    <string name="dialog_from_placeholder">itibaren</string>
-    <string name="dialog_to_placeholder">için</string>
-    <string name="background">Arka fon</string>
-    <string name="dialog_delete_title">%D dosyaları silmek istediğinizden emin misiniz?</string>
-    <string name="msg_ok">tamam</string>
-    <string name="no_files">Dosya yok</string>
-    <string name="msg_error_invalid_name">Geçerli bir ad girin</string>
-    <string name="path">Yol:</string>
-    <string name="size">Boyut:</string>
-    <string name="date_modified">Değiştirilme tarihi:</string>
-    <string name="permissions">İzinler</string>
-    <string name="yes">Evet</string>
-    <string name="no">Yok hayır</string>
-    <string name="properties">Özellikleri</string>
+    <string name="msg_delete_failure">Silme işlemi başarısız oldu</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">% D dosyayı silmek istediğinizden emin misiniz?</string>
     <string name="new_folder">Yeni dosya</string>
     <string name="new_file">Yeni dosya</string>
     <string name="add_fav">Favorilere ekle</string>
-    <string name="msg_added_to_fav">Sık eklendi</string>
-    <string name="msg_error_not_supported">Hiçbir uygulama eylemi işlemek için</string>
-    <string name="permission_request">tüm dosyaları göstermek için depolama iznine ihtiyacınız</string>
-    <string name="action_grant">HİBE</string>
-    <string name="action_view_list">Liste görünümü</string>
-    <string name="action_view_grid">ızgara görünümü</string>
-    <string name="extract_to">ayıklayın</string>
+    <string name="msg_added_to_fav">Favorilere eklendi</string>
+    <string name="extract_to">Şuraya çıkar</string>
     <string name="open">Açık</string>
-    <string name="extracting">Ayıklanıyor ..</string>
-    <string name="dialog_current_path">Geçerli yol</string>
-    <string name="dialog_specify_path">yolu belirtin</string>
+    <string name="extracting">Ayıklanıyor..</string>
+    <string name="dialog_current_path">Şuanki yol</string>
+    <string name="dialog_specify_path">Yolu belirtin</string>
     <string name="enter_file_name">Dosya adını girin</string>
-    <string name="extract">özüt</string>
-    <string name="dialog_title_browse">klasörü seçin</string>
+    <string name="extract">Ayıkla</string>
+    <string name="dialog_title_browse">Dosya Seç</string>
     <string name="action_select_all">Hepsini seç</string>
-    <string name="delete_fav">favori sil</string>
-    <string name="action_search">Arama</string>
-    <string name="pref_title_theme">Tema</string>
-    <string name="pref_subs_light">ışık</string>
-    <string name="pref_subs_dark">karanlık</string>
-    <string name="pref_title_reset_fav">sıfırlama sık</string>
-    <string name="pref_title_show_hidden">Gizli dosyaları göster</string>
-    <string name="pref_title_disable_dual">Manzara Çift bölmesi</string>
-    <string name="pref_title_change_lang">Dil</string>
-
-    <string name="hide">gizlemek</string>
-    <string name="unhide">Göster\'i</string>
-    <string name="drag">Sürüklemek</string>
-    <string name="move">Hareket</string>
-    <string name="msg_fav_reset">Favoriler varsayılan resetted.</string>
-    <string name="home_docs">Dokümanlar</string>
-    <string name="compressed">Sıkıştırılmış</string>
-    <string name="apk">Uygulamalar</string>
-    <string name="pdf">PDF</string>
-    <string name="library_large">büyük dosyaları</string>
-    <string name="open_as">Açık olduğu gibi</string>
-    <string name="text">Metin</string>
-    <string name="image">görüntü</string>
-    <string name="audio">Ses</string>
-    <string name="other">Diğer</string>
-    <string name="create">yaratmak</string>
-    <string name="zip_progress_title">oluşturma zip</string>
-    <string name="needsaccess">Erişim Gerekli yaz</string>
-    <string name="needs_access_summary">çalışmasına yazma erişimi vermek için %1$s kök dizinini seçiniz</string>
-    <string name="error">Hata</string>
+    <string name="delete_fav">Favoriyi sil</string>
+    <string name="hide">Saklamak</string>
+    <string name="unhide">unhide</string>
+    <string name="create">Oluşturmak</string>
+    <string name="zip_progress_title">Zip oluşturma</string>
+    <string name="fav_exists">Sık kullanılan zaten var.</string>
+    <string name="msg_file_exists">dosya var</string>
+    <string name="dialog_from_placeholder">itibaren</string>
+    <string name="dialog_to_placeholder">için</string>
+    <string name="msg_error_invalid_name">Geçerli bir ad girin</string>
     <string name="msg_operation_failed">Operasyon başarısız</string>
-    <string name="enter_name">İsim giriniz</string>
-    <string name="paste_conflict_remember">Hatırlamak</string>
-    <string name="copying">dosya kopyalama</string>
-    <string name="moving">hareketli dosyalar</string>
-    <string name="package_installer">paket Yükleyici</string>
-    <string name="view">Görünüm</string>
-    <string name="install">kurmak</string>
-    <string name="package_installer_content">Hangi eylem yapmak istersiniz?</string>
-    <string name="permission_setting_hint">Dokunun Ayarlar -> İzinler ve ardından Saklama açın.</string>
-    <string name="access_denied_external">Dış Yazma erişim izni olmayan SD</string>
-    <string name="permission_read">okumak</string>
+    <string name="permission_read">Okuma</string>
     <string name="permission_write">Yazmak</string>
     <string name="permission_execute">gerçekleştirmek</string>
     <string name="permission_owner">Sahip</string>
     <string name="permission_group">grup</string>
-    <string name="next">SONRAKİ</string>
-    <string name="skip">SKIP</string>
-    <string name="start">ANLADIM</string>
-    <string name="slide_1_title">Organize Kütüphanesi</string>
-    <string name="slide_1_desc">homescreen ortam kitaplığına Bir tıklayın.</string>
-    <string name="slide_2_title">gözetleme ve pop</string>
-    <string name="slide_2_desc">İnceleyin ve resimlerinizi ve videolarınızı açın.</string>
-	<string name="slide_3_title">Sürükle ve bırak</string>
-    <string name="slide_3_desc">başka bir klasördeki dosyaları sürükleyin!</string>
-    <string name="action_sort">çeşit</string>
-    <string name="slide_4_title">Temalar</string>
-    <string name="slide_4_desc">Koyu veya Açık yolu! Senin seçimin.</string>
-    <string name="no_music"> Hiçbir Müzik dosyaları</string>
-    <string name="img_accessibility_back">Arka</string>
-    <string name="img_accessibility_permission">hibe izni</string>
-    <string name="img_accessibility_icon_lib">Kütüphane simgesi</string>
-    <string name="unlock_full_version">Tam sürümün kilidini aç</string>
-    <string name="full_version_buy_ask">Tam sürüm rahatsız edici reklamları kaldırır. Satın almak istiyor musun</string>
-    <string name="dialog_title_picker">Müzik dosyası seçin</string>
-
+    <string name="header_source">Kaynak</string>
+    <string name="header_destination">Hedef</string>
+    <string name="enter_name">İsim giriniz</string>
+    <string name="open_as">Farklı aç</string>
+    <string name="text">Metin</string>
+    <string name="image">görüntü</string>
+    <string name="audio">Ses</string>
+    <string name="other">Diğer</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">Arka fon</string>
+    <string name="error">Hata</string>
+    <string name="dialog_title_picker">Müzik dosyasını seçin</string>
     <string name="browse">Araştır</string>
     <string name="action_more">Daha</string>
     <string name="directory">rehber</string>
     <string name="operation">Operasyon</string>
-    <string name="clipboard">%d panoya</string>
-    <string name="fav_exists">Favori zaten var.</string>
-    <string name="header_source">Kaynak</string>
-    <string name="header_destination">Hedef</string>
     <string name="error_unsupported">Desteklenmiyor</string>
-    <string name="copy_path">Yolu kopyala</string>
+    <string name="action_cut">Kesmek</string>
+    <string name="action_copy">kopya</string>
+    <string name="action_paste">Yapıştırmak</string>
+    <string name="msg_cut_copy">dosya panoya kopyalandı</string>
+    <string name="dialog_skip">Atla</string>
+    <string name="dialog_replace">değiştirmek</string>
+    <string name="dialog_keep_both">Her ikisini de sakla</string>
+    <string name="drag">Sürüklemek</string>
+    <string name="move">Hareket</string>
+    <string name="copying">Dosyalar kopyalanıyor</string>
+    <string name="moving">Dosyaları taşıma</string>
+    <string name="clipboard">Panodaki %d</string>
     <string name="text_copied_clipboard">Panoya kopyalandı.</string>
-    <string name="analytics_text">Analiz gönder</string>
-    <string name="analytics_summary">Anonim kullanım verileri göndererek uygulamayı iyileştirmemize yardımcı olun.</string>
+    <string name="dialog_cancel">İptal etmek</string>
+    <string name="msg_ok">tamam</string>
+    <string name="msg_error_not_supported">İşlemi gerçekleştirecek uygulama yok</string>
+    <string name="needsaccess">Yazma Erişimi Gerekli</string>
+    <string name="needs_access_summary">Yazma erişimi vermek için lütfen %1$s kök dizinini seçin         işletmek</string>
+    <string name="img_accessibility_back">Geri</string>
+    <string name="action_search">Arama</string>
 
-    <string name="dual_pane_intro_title">Çiftli bölme</string>
-    <string name="dual_pane_intro_subtitle">Daha iyi kullanılabilirlik için ikili mod.</string>
-    <string name="sort_name">isim</string>
-    <string name="sort_type">tip</string>
-    <string name="sort_size">Boyut</string>
-    <string name="sort_date">tarih</string>
-    <string name="ascending">yükselen</string>
-    <string name="library_recent">Son</string>
     <string name="albums">albümler</string>
     <string name="artists">Sanatçılar</string>
     <string name="genres">Türler</string>
     <string name="all_tracks">Tüm şarkılar</string>
     <string name="podcasts">Podcast</string>
-    <string name="mute">Sessiz</string>
-    <string name="unmute">Sesi aç</string>
-    <string name="app_manager">Uygulama Yöneticisi</string>
     <string name="unknown">Bilinmeyen</string>
     <string name="enabled">Etkin</string>
+    <string name="package_installer">Paket yükleyici</string>
+    <string name="view">Görünüm</string>
+    <string name="install">Yüklemek</string>
+    <string name="package_installer_content">Hangi eylemi yapmak istersiniz?</string>
+    <string name="no_music">Müzik dosyası yok</string>
+    <string name="no_files">Dosya yok</string>
+
+    <string name="action_view_list">Liste görünümü</string>
+    <string name="action_view_grid">Izgara görünümü</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">Hatırlamak</string>
     <string name="move_trash">Çöp kutusuna taşıyın</string>
+    <string name="path">yol</string>
+    <string name="size">Size</string>
+    <string name="date_modified">Değiştirilme tarihi</string>
+    <string name="permissions">İzinler</string>
+    <string name="yes">Evet</string>
+    <string name="no">Hayır</string>
+    <string name="properties">Özellikleri</string>
+    <string name="copy_path">Kopyalama yolu</string>
+    <string name="permission_setting_hint">Ayarlar -&gt; İzinler\'e dokunun ve ardından Depolama\'yı açın.</string>
+    <string name="access_denied_external">Harici SD\'ye yazma erişimi verilmiyor</string>
+    <string name="permission_request">Tüm dosyaları göstermek için depolama iznine ihtiyacınız var</string>
+    <string name="action_grant">HİBE</string>
+    <string name="img_accessibility_permission">İzin ver</string>
+    <string name="next">SONRAKİ</string>
+    <string name="skip">ATLA</string>
+    <string name="start">ANLADIM</string>
+    <string name="slide_1_title">Organize Kütüphane</string>
+    <string name="slide_1_desc">Ana ekrandan medya kitaplığına tek bir tıklama.</string>
+    <string name="slide_2_title">Peek ve Pop</string>
+    <string name="slide_2_desc">Resimlerinizi ve videolarınızı Peek ve Pop.</string>
+    <string name="slide_3_title">Sürükle ve bırak</string>
+    <string name="slide_3_desc">Dosyaları bir klasörden diğerine sürükleyin!</string>
+    <string name="action_sort">Çeşit</string>
+    <string name="slide_4_title">Temalar</string>
+    <string name="slide_4_desc">Karanlık veya Açık yol! Senin seçimin.</string>
+    <string name="dual_pane_intro_title">Çift bölme</string>
+    <string name="dual_pane_intro_subtitle">Daha iyi kullanılabilirlik için çift mod.</string>
+    <string name="pref_title_theme">Tema</string>
+    <string name="pref_subs_light">ışık</string>
+    <string name="pref_subs_dark">karanlık</string>
+    <string name="device_theme">Cihaz teması</string>
+    <string name="pref_title_reset_fav">Sık kullanılanları sıfırla</string>
+    <string name="pref_title_show_hidden">Gizli dosyaları göster</string>
+    <string name="pref_title_disable_dual">Yatay çift bölme</string>
+    <string name="pref_title_change_lang">Dil</string>
+    <string name="msg_fav_reset">Favoriler varsayılana sıfırlandı.</string>
+    <string name="analytics_text">Analitik gönderme</string>
+    <string name="analytics_summary">Anonim kullanım verileri göndererek uygulamayı geliştirmemize yardımcı olun.</string>
+    <string name="home_docs">Dokümanlar</string>
+    <string name="compressed">Sıkıştırılmış</string>
+    <string name="apk">Uygulamalar</string>
+    <string name="pdf">PDF</string>
+    <string name="library_large">Büyük dosyalar</string>
+    <string name="library_recent">Son</string>
+    <string name="sort_name">ad</string>
+    <string name="sort_type">tip</string>
+    <string name="sort_size">Size</string>
+    <string name="sort_date">tarih</string>
+    <string name="ascending">yükselen</string>
+    <string name="mute">Sessiz</string>
+    <string name="unmute">Sesi aç</string>
+    <string name="peek_button_prev">Önceki</string>
+    <string name="peek_button_next">Sonraki</string>
+    <string name="saved_category">KAYDEDİLDİ</string>
+    <string name="other_category">DİĞER</string>
+
+    <string name="category_whatsapp">Whatsapp</string>
+    <string name="category_telegram">Telgraf</string>
+    <string name="category_camera">Kamera</string>
+    <string name="category_screenshot">Ekran görüntüsü</string>
+    <string name="category_max_min_items_error">Kaydedilen kategoriler minimum 3, maksimum 12 olabilir</string>
+
+    <string name="category_all">Her şey</string>
+    <string name="categories">Kategoriler</string>
+    <string name="categories_folder">Klasör</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">Kök erişimini etkinleştir</string>
+    <string name="info_name">Dosya adı</string>
+    <string name="info_resolution">çözüm</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d dosya taşındı</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d dosya kopyalandı</string>
+    <string name="action_view">Görünüm</string>
+    <string name="action_view_gallery">Galeri görünümü</string>
+    <string name="update_available">Güncelleme uygun</string>
+    <string name="restart">Tekrar başlat</string>
+    <string name="update_downloading">Güncelleme indiriliyor …</string>
+    <string name="update_downloaded">Güncelleme İndirildi</string>
+    <string name="install_update">Kurmak için tıkla</string>
+    <string name="connect_internet_download_update">Güncellemeyi indirmek için internete bağlanın</string>
+    <string name="recent_today">Bugün</string>
+    <string name="recent_yesterday">Dün</string>
+    <string name="recent_this_week">Bu hafta</string>
+    <string name="recent_this_month">Bu ay</string>
+    <string name="search_type_other">Diğer</string>
+    <string name="search_clear">Açık</string>
+    <string name="recently_searched">Son arananlar</string>
+    <string name="version_code">Sürüm kodu</string>
+    <string name="tab_home">Ev</string>
+    <string name="tab_tools">Araçlar</string>
+    <string name="tab_settings">Ayarlar</string>
+    <string name="privacy_policy">Gizlilik Politikası</string>
+
+
 
 </resources>

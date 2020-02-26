@@ -1,185 +1,213 @@
-<!--
-  ~ Copyright (C) 2017 Ace Explorer owned by Siju Sakaria
-  ~
-  ~ Licensed under the Apache License, Version 2.0 (the "License");
-  ~ you may not use this file except in compliance with the License.
-  ~ You may obtain a copy of the License at
-  ~
-  ~     http://www.apache.org/licenses/LICENSE-2.0
-  ~
-  ~ Unless required by applicable law or agreed to in writing, software
-  ~ distributed under the License is distributed on an "AS IS" BASIS,
-  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  ~ See the License for the specific language governing permissions and
-  ~ limitations under the License.
-  -->
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-<resources>
-    <string name="app_name">Ace Explorer</string>
+<string name="app_name">Ace Explorer</string>
+    <string name="image_viewer_title">Ace Image Viewer</string>
     <string name="action_settings">პარამეტრები</string>
-    <string name="nav_menu_internal_storage">შიდა მეხსიერება</string>
-    <string name="nav_menu_root">root</string>
+    <string name="nav_menu_internal_storage">Შიდა მეხსიერება</string>
+    <string name="nav_menu_root">ფესვი</string>
     <string name="nav_menu_ext_storage">გარე SD</string>
     <string name="nav_menu_music">მუსიკა</string>
-    <string name="nav_menu_video">ვიდეოები</string>
-    <string name="nav_menu_image">სხვადასხვა</string>
+    <string name="nav_menu_video">ვიდეოებს</string>
+    <string name="nav_menu_image">სურათები</string>
     <string name="nav_menu_docs">დოკუმენტები</string>
-    <string name="nav_header_storages">მატარებლები</string>
-    <string name="nav_header_favourites">რჩეულები</string>
+    <string name="downloads">გადმოტვირთვები</string>
+    <string name="nav_header_storages">საწყობები</string>
+    <string name="nav_header_favourites">ფავორიტები</string>
     <string name="nav_header_collections">ბიბლიოთეკა</string>
-    <string name="empty">Empty</string>
-    <plurals name="number_of_files">
-        <item quantity="one">%d ფაილი</item>
-        <item quantity="other">%d ფაილი</item>
-    </plurals>
-    <string name="downloads">გადმოწერა</string>
-    <string name="action_rename">სახელის შეცვლა</string>
-    <string name="action_info">თვისებები</string>
+    <string name="app_manager">აპის მენეჯერი</string>
+    <string name="unlock_full_version">სრული ვერსიის გახსნა</string>
+    <string name="full_version_buy_ask">სრული ვერსია ხსნის შემაშფოთებელ განცხადებებს. გსურთ მისი ყიდვა?</string>
+    <string name="img_accessibility_icon_lib">ბიბლიოთეკის ხატი</string>
+    <string name="empty">ცარიელი</string>
+    <string name="action_rename">გადარქმევა</string>
+    <string name="action_info">Თვისებები</string>
     <string name="action_archive">არქივი</string>
-    <string name="action_cut">cut</string>
-    <string name="action_copy">ასლი</string>
-    <string name="action_paste">Paste</string>
     <string name="action_delete">წაშლა</string>
-    <string name="action_share">Share</string>
-    <string name="msg_cut_copy">ფაილ (ებ) კოპირება ბუფერში</string>
+    <string name="action_share">გაზიარება</string>
     <string name="msg_delete_success">წარმატებით წაიშალა</string>
-    <string name="msg_delete_failure">წაშლა ოპერაცია ვერ შედგა</string>
-    <string name="dialog_skip">Skip</string>
-    <string name="dialog_replace">ჩანაცვლება</string>
-    <string name="dialog_keep_both">შენარჩუნება ორივე ფაილი</string>
-    <string name="dialog_cancel">გაუქმება</string>
-    <string name="msg_file_exists">ფაილი არსებობს</string>
-    <string name="dialog_from_placeholder">მდებარეობა</string>
-    <string name="dialog_to_placeholder">იმისათვის, რომ</string>
-    <string name="background">Background</string>
-    <string name="dialog_delete_title">დარწმუნებული ხართ, რომ გსურთ %d ფაილების წაშლა?</string>
-    <string name="msg_ok">კარგი</string>
-    <string name="no_files">ფაილები არ არის</string>
-    <string name="msg_error_invalid_name">შეიყვანოთ სწორი სახელი</string>
-    <string name="path">Path:</string>
-    <string name="size">ზომა:</string>
-    <string name="date_modified">თარიღი შეცვლილია:</string>
-    <string name="permissions">ნებართვები</string>
-    <string name="yes">დიახ</string>
-    <string name="no">არარის</string>
-    <string name="properties">თვისებები</string>
-    <string name="new_folder">ახალი საქაღალდე</string>
+    <string name="msg_delete_failure">ოპერაციის წაშლა ვერ მოხერხდა</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">დარწმუნებული ხართ, რომ გსურთ %d ფაილის წაშლა?</string>
+    <string name="new_folder">Ახალი საქაღალდე</string>
     <string name="new_file">ახალი ფაილი</string>
     <string name="add_fav">რჩეულებში</string>
-    <string name="msg_added_to_fav">დაემატა რჩეულები</string>
-    <string name="msg_error_not_supported">არარის app გაუმკლავდეს აქცია</string>
-    <string name="permission_request">უნდა შენახვის ნებართვა ნახოთ ყველა ფაილი</string>
-    <string name="action_grant">GRANT</string>
-    <string name="action_view_list">სია</string>
-    <string name="action_view_grid">Grid კალენდარი</string>
-    <string name="extract_to">ექსტრაქტით</string>
-    <string name="open">ღია</string>
-    <string name="extracting">მოპოვების ..</string>
-    <string name="dialog_current_path">აქტუალური გზაზე</string>
-    <string name="dialog_specify_path">მიუთითეთ გზაზე</string>
+    <string name="msg_added_to_fav">რჩეულებში დამატება</string>
+    <string name="extract_to">ამონაწერი</string>
+    <string name="open">გახსნა</string>
+    <string name="extracting">მოპოვება ..</string>
+    <string name="dialog_current_path">მიმდინარე გზა</string>
+    <string name="dialog_specify_path">მიუთითეთ ბილიკი</string>
     <string name="enter_file_name">შეიყვანეთ ფაილის სახელი</string>
     <string name="extract">ამონაწერი</string>
-    <string name="dialog_title_browse">აირჩიეთ ფოლდერი</string>
-    <string name="action_select_all">მონიშნე ყველა</string>
-    <string name="delete_fav">წაშლა საყვარელი</string>
-    <string name="action_search">ძებნა</string>
-    <string name="pref_title_theme">თემა</string>
-    <string name="pref_subs_light">მსუბუქი</string>
-    <string name="pref_subs_dark">ბნელი</string>
-    <string name="pref_title_reset_fav">Reset დამატება</string>
-    <string name="pref_title_show_hidden">Show Hidden Files</string>
-    <string name="pref_title_disable_dual">Dual მინა Landscape</string>
-    <string name="pref_title_change_lang">ენა</string>
-
+    <string name="dialog_title_browse">აირჩიეთ საქაღალდე</string>
+    <string name="action_select_all">Მონიშნე ყველა</string>
+    <string name="delete_fav">ფავორიტის წაშლა</string>
     <string name="hide">დამალვა</string>
-    <string name="unhide">unhide</string>
-    <string name="drag">Drag</string>
-    <string name="move">Move</string>
-    <string name="msg_fav_reset">რჩეულები resetted დეფოლტის.</string>
-    <string name="home_docs">Docs</string>
+    <string name="unhide">გაუქმება</string>
+    <string name="create">Შექმნა</string>
+    <string name="zip_progress_title">Zip- ის შექმნა</string>
+    <string name="fav_exists">საყვარელი უკვე არსებობს.</string>
+    <string name="msg_file_exists">ფაილი არსებობს</string>
+    <string name="dialog_from_placeholder">აქედან</string>
+    <string name="dialog_to_placeholder">რომ</string>
+    <string name="msg_error_invalid_name">შეიყვანეთ სწორი სახელი</string>
+    <string name="msg_operation_failed">ოპერაცია ვერ მოხერხდა</string>
+    <string name="permission_read">წაიკითხეთ</string>
+    <string name="permission_write">დაწერე</string>
+    <string name="permission_execute">შეასრულოს</string>
+    <string name="permission_owner">მეპატრონე</string>
+    <string name="permission_group">ჯგუფი</string>
+    <string name="header_source">წყარო</string>
+    <string name="header_destination">დანიშნულების ადგილი</string>
+    <string name="enter_name">შეიყვანეთ სახელი</string>
+    <string name="open_as">გახსნა როგორც</string>
+    <string name="text">ტექსტი</string>
+    <string name="image">გამოსახულება</string>
+    <string name="audio">აუდიო</string>
+    <string name="other">სხვა</string>
+    <string name="count_placeholder" translatable="false">1/</string>
+    <string name="percent_placeholder" translatable="false">%</string>
+    <string name="background">ფონი</string>
+    <string name="error">შეცდომა</string>
+    <string name="dialog_title_picker">შეარჩიეთ მუსიკალური ფაილი</string>
+    <string name="browse">დაათვალიერეთ</string>
+    <string name="action_more">მეტი</string>
+    <string name="directory">დირექტორია</string>
+    <string name="operation">Ოპერაცია</string>
+    <string name="error_unsupported">Არ არის მხარდაჭერილი</string>
+    <string name="action_cut">გაჭრა</string>
+    <string name="action_copy">დააკოპირეთ</string>
+    <string name="action_paste">ჩასვით</string>
+    <string name="msg_cut_copy">ფაილი (ებ) ის კოპირებულია ბუფერში</string>
+    <string name="dialog_skip">გამოტოვეთ</string>
+    <string name="dialog_replace">შეცვალეთ</string>
+    <string name="dialog_keep_both">Ორივე დაიტოვე</string>
+    <string name="drag">გადაათრიეთ</string>
+    <string name="move">გადაადგილება</string>
+    <string name="copying">ფაილების კოპირება</string>
+    <string name="moving">ფაილების გადაადგილება</string>
+    <string name="clipboard">%d ბუფერში</string>
+    <string name="text_copied_clipboard">გადაწერა ბუფერში.</string>
+    <string name="dialog_cancel">გაუქმება</string>
+    <string name="msg_ok">კარგი</string>
+    <string name="msg_error_not_supported">არცერთი პროგრამა არ მოქმედებს ამ მოქმედების შესასრულებლად</string>
+    <string name="needsaccess">ჩაწერეთ საჭირო წვდომა</string>
+    <string name="needs_access_summary">გთხოვთ, აირჩიოთ %1$s ძირეული დირექტორია, რომელზეც შეგიძლიათ დაწეროთ დაწერა         მოქმედებს</string>
+    <string name="img_accessibility_back">უკან</string>
+    <string name="action_search">ძებნა</string>
+
+    <string name="albums">ალბომები</string>
+    <string name="artists">მხატვრები</string>
+    <string name="genres">ჟანრები</string>
+    <string name="all_tracks">Ყველა სიმღერა</string>
+    <string name="podcasts">პოდკასტები</string>
+    <string name="unknown">უცნობია</string>
+    <string name="enabled">ჩართულია</string>
+    <string name="package_installer">პაკეტის ინსტალერი</string>
+    <string name="view">ხედი</string>
+    <string name="install">Დაინსტალირება</string>
+    <string name="package_installer_content">რომელი მოქმედება გსურთ გააკეთოთ?</string>
+    <string name="no_music">არ არის მუსიკალური ფაილები</string>
+    <string name="no_files">ფაილები არ არის</string>
+
+    <string name="action_view_list">Ჩამონათვალი</string>
+    <string name="action_view_grid">ქსელის ხედი</string>
+    <string name="zero_percent" translatable="false">0%</string>
+    <string name="paste_conflict_remember">დაიმახსოვრე</string>
+    <string name="move_trash">გადატანა ნაგავში</string>
+    <string name="path">ბილიკი</string>
+    <string name="size">ზომა</string>
+    <string name="date_modified">Თარიღი შეცვლილია</string>
+    <string name="permissions">ნებართვები</string>
+    <string name="yes">დიახ</string>
+    <string name="no">არა</string>
+    <string name="properties">Თვისებები</string>
+    <string name="copy_path">კოპირების გზა</string>
+    <string name="permission_setting_hint">შეეხეთ პარამეტრები -&gt; ნებართვები და შემდეგ ჩართე შენახვა.</string>
+    <string name="access_denied_external">ჩაწერეთ წვდომა გარე SD– ზე</string>
+    <string name="permission_request">გჭირდებათ შენახვის ნებართვა, რომ ნახოთ ყველა ფაილი</string>
+    <string name="action_grant">საგრანტო</string>
+    <string name="img_accessibility_permission">ნებართვის გაცემა</string>
+    <string name="next">შემდეგი</string>
+    <string name="skip">გამოტოვება</string>
+    <string name="start">ᲒᲐᲕᲘᲒᲔ</string>
+    <string name="slide_1_title">ორგანიზებული ბიბლიოთეკა</string>
+    <string name="slide_1_desc">ერთი დაწკაპუნებით მედია ბიბლიოთეკაში საწყისი ეკრანიდან.</string>
+    <string name="slide_2_title">პეიკი და პოპი</string>
+    <string name="slide_2_desc">დაათვალიერეთ და ჩასვით თქვენი სურათები და ვიდეო.</string>
+    <string name="slide_3_title">Გადმოათრიე და ჩააგდე</string>
+    <string name="slide_3_desc">გადაიტანეთ ფაილები ერთი საქაღალდედან მეორეში!</string>
+    <string name="action_sort">დალაგება</string>
+    <string name="slide_4_title">თემები</string>
+    <string name="slide_4_desc">ბნელი ან მსუბუქი გზა! Შენი არჩევანი.</string>
+    <string name="dual_pane_intro_title">ორმაგი პანელი</string>
+    <string name="dual_pane_intro_subtitle">ორმაგი რეჟიმი უკეთესი გამოსაყენებლად.</string>
+    <string name="pref_title_theme">თემა</string>
+    <string name="pref_subs_light">Მსუბუქი</string>
+    <string name="pref_subs_dark">Ბნელი</string>
+    <string name="device_theme">მოწყობილობის თემა</string>
+    <string name="pref_title_reset_fav">გადატვირთვის რჩეული</string>
+    <string name="pref_title_show_hidden">დამალული ფაილების ჩვენება</string>
+    <string name="pref_title_disable_dual">ორმაგი პანელი ლანდშაფტში</string>
+    <string name="pref_title_change_lang">Ენა</string>
+    <string name="msg_fav_reset">რჩეულებში გადატვირთულია ნაგულისხმევი.</string>
+    <string name="analytics_text">გამოაგზავნეთ ანალიტიკა</string>
+    <string name="analytics_summary">დაგვეხმარეთ აპლიკაციის გაუმჯობესებაში, ანონიმური გამოყენების მონაცემების გაგზავნით.</string>
+    <string name="home_docs">დოკუმენტები</string>
     <string name="compressed">შეკუმშული</string>
     <string name="apk">პროგრამები</string>
     <string name="pdf">PDF</string>
-    <string name="library_large">დიდი ფაილი</string>
-    <string name="open_as">Open როგორც</string>
-    <string name="text">ტექსტი</string>
-    <string name="image">Image</string>
-    <string name="audio">აუდიო</string>
-    <string name="other">სხვა</string>
-    <string name="create">შექმნა</string>
-    <string name="zip_progress_title">შექმნა zip</string>
-    <string name="needsaccess">დაწერეთ წვდომა საჭირო</string>
-    <string name="needs_access_summary">გთხოვთ აირჩიოთ root დირექტორია %1$s მიანიჭოს ჩაწერის ხელმისაწვდომობა
-        მუშაობას</string>
-    <string name="error">შეცდომა</string>
-    <string name="msg_operation_failed">ოპერაცია ვერ</string>
-    <string name="enter_name">შეიყვანეთ სახელი</string>
-    <string name="paste_conflict_remember">დამახსოვრება</string>
-    <string name="copying">გადაწერა ფაილები</string>
-    <string name="moving">მოძრავი ფაილი</string>
-    <string name="package_installer">პაკეტი Installer</string>
-    <string name="view">კალენდარი</string>
-    <string name="install">დაინსტალირება</string>
-    <string name="package_installer_content">რომელი ქმედება გსურთ ამის გაკეთება?</string>
-    <string name="permission_setting_hint">Tap Settings -> ნებართვები და შემდეგ აქციოს შენახვის შესახებ.</string>
-    <string name="access_denied_external">ჩაწერის უფლება, გარე SD არ გაიცემა</string>
-    <string name="permission_read">დაწვრილებით</string>
-    <string name="permission_write">დაწერეთ</string>
-    <string name="permission_execute">შეასრულოს</string>
-    <string name="permission_owner">Owner</string>
-    <string name="permission_group">Group</string>
-    <string name="next">NEXT</string>
-    <string name="skip">SKIP</string>
-    <string name="start">გავიგე</string>
-    <string name="slide_1_title">ორგანიზებული ბიბლიოთეკაში</string>
-    <string name="slide_1_desc">ერთი დაჭერით მედია ბიბლიოთეკა საწყისი homescreen.</string>
-    <string name="slide_2_title">peek და pop</string>
-    <string name="slide_2_desc">peek და პოპ თქვენი სურათები და ვიდეოები.</string>
-    <string name="slide_3_title">გადმოათრიე და ჩააგდე</string>
-    <string name="slide_3_desc">გადაათრიეთ ფაილი ერთ საქაღალდეში და სხვა!</string>
-    <string name="action_sort">დალაგება</string>
-    <string name="slide_4_title">თემები</string>
-    <string name="slide_4_desc">მუქი ან ღია გზა! შენი არჩევანი.</string>
-    <string name="no_music"> მუსიკის ფაილი</string>
-    <string name="img_accessibility_back">უკან</string>
-    <string name="img_accessibility_permission">ნებართვის</string>
-    <string name="img_accessibility_icon_lib">ბიბლიოთეკა ხატი</string>
-    <string name="unlock_full_version">ზარალი სრული ვერსია</string>
-    <string name="full_version_buy_ask">სრული ვერსია ხსნის შემაშფოთებელი განცხადებები. გსურთ ყიდვა?</string>
-    <string name="dialog_title_picker">არჩევა მუსიკა ფაილი</string>
-
-    <string name="browse">იხილე</string>
-    <string name="action_more">სხვა</string>
-    <string name="directory">დირექტორია</string>
-    <string name="operation">ოპერაცია</string>
-    <string name="clipboard">%d ბუფერში</string>
-    <string name="fav_exists">საყვარელი უკვე არსებობს.</string>
-    <string name="header_source">წყარო</string>
-    <string name="header_destination">დანიშნულება</string>
-    <string name="error_unsupported">არ არის მხარდაჭერილი</string>
-    <string name="copy_path">დააკოპირეთ გზა</string>
-    <string name="text_copied_clipboard">გადაწერა ბუფერში.</string>
-    <string name="analytics_text">გააგზავნე ანალიტიკა</string>
-    <string name="analytics_summary">ადემანის გამოყენების მონაცემების გასაგზავნად აპლიკაციის გასაუმჯობესებლად.</string>
-
-    <string name="dual_pane_intro_title">ორმაგი სარკმელზე</string>
-    <string name="dual_pane_intro_subtitle">ორმაგი რეჟიმი უკეთესი გამოყენებადობა.</string>
+    <string name="library_large">დიდი ფაილები</string>
+    <string name="library_recent">Ბოლო</string>
     <string name="sort_name">სახელი</string>
     <string name="sort_type">ტიპი</string>
     <string name="sort_size">ზომა</string>
     <string name="sort_date">თარიღი</string>
     <string name="ascending">აღმავალი</string>
-    <string name="library_recent">ბოლო</string>
-    <string name="albums">ალბომები</string>
-    <string name="artists">მხატვრები</string>
-    <string name="genres">ჟანრები</string>
-    <string name="all_tracks">ყველა სიმღერა</string>
-    <string name="podcasts">პოდკასტი</string>
     <string name="mute">მუნჯი</string>
-    <string name="unmute">გათიშეთ</string>
-    <string name="app_manager">აპლიკაციის მენეჯერი</string>
-    <string name="unknown">უცნობი</string>
-    <string name="enabled">ჩართულია</string>
-    <string name="move_trash">გადატანა გადატანა</string>
+    <string name="unmute">გაუქმება</string>
+    <string name="peek_button_prev">წინა</string>
+    <string name="peek_button_next">შემდეგი</string>
+    <string name="saved_category">შენახული</string>
+    <string name="other_category">სხვა</string>
+
+    <string name="category_whatsapp">Whatsapp</string>
+    <string name="category_telegram">ტელეგრამა</string>
+    <string name="category_camera">კამერა</string>
+    <string name="category_screenshot">ეკრანის სურათი</string>
+    <string name="category_max_min_items_error">შენახული კატეგორიები შეიძლება იყოს მინიმუმ 3, მაქსიმუმ 12</string>
+
+    <string name="category_all">ყველა</string>
+    <string name="categories">კატეგორიები</string>
+    <string name="categories_folder">საქაღალდე</string>
+    <string name="storage_space" translatable="false">%s / %s</string>
+    <string name="storage_progress_percent" translatable="false">%d %%</string>
+    <string name="enable_root">ჩართეთ Root დაშვება</string>
+    <string name="info_name">Ფაილის სახელი</string>
+    <string name="info_resolution">რეზოლუცია</string>
+    <string name="resolution_format" translatable="false">%d X %d</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d ფაილი გადავიდა</string>
+    <string name="copied" tools:ignore="PluralsCandidate">კოპირებულია %d ფაილი</string>
+    <string name="action_view">ხედი</string>
+    <string name="action_view_gallery">გალერეის ხედი</string>
+    <string name="update_available">Განახლება შესაძლებელია</string>
+    <string name="restart">Რესტარტი</string>
+    <string name="update_downloading">განახლების ჩამოტვირთვა…</string>
+    <string name="update_downloaded">გადმოწერილი განახლება</string>
+    <string name="install_update">დააჭირეთ ინსტალაციას</string>
+    <string name="connect_internet_download_update">დაკავშირება ინტერნეტით, განახლების ჩამოტვირთვა</string>
+    <string name="recent_today">დღეს</string>
+    <string name="recent_yesterday">Გუშინ</string>
+    <string name="recent_this_week">Ამ კვირაში</string>
+    <string name="recent_this_month">Ეს თვე</string>
+    <string name="search_type_other">სხვა</string>
+    <string name="search_clear">ნათელია</string>
+    <string name="recently_searched">ახლახანს ჩხრეკა</string>
+    <string name="version_code">ვერსიის კოდი</string>
+    <string name="tab_home">მთავარი</string>
+    <string name="tab_tools">იარაღები</string>
+    <string name="tab_settings">პარამეტრები</string>
+    <string name="privacy_policy">Კონფიდენციალურობის პოლიტიკა</string>
+
+
 
 </resources>
