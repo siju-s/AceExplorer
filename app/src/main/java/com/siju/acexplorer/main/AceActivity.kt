@@ -67,6 +67,8 @@ private const val ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES"
 private const val ACTION_MUSIC = "android.intent.action.SHORTCUT_MUSIC"
 private const val ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS"
 private const val DEFAULT_TAB_ID = R.id.navigation_home
+private const val CRITERIA_INSTALL_NUM_DAYS = 10
+private const val CRITERIA_LAUNCH_TIMES = 25
 class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback, MainCommunicator {
 
     private lateinit var mainViewModel: MainViewModel
@@ -300,12 +302,15 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         mainViewModel.onPermissionResult()
     }
 
-
     override fun onStart() {
         super.onStart()
-        // Monitor launch times and interval from installation
+        setupRateDialog()
+    }
+
+    private fun setupRateDialog() {
+        val config = RateThisApp.Config(CRITERIA_INSTALL_NUM_DAYS, CRITERIA_LAUNCH_TIMES)
+        RateThisApp.init(config)
         RateThisApp.onCreate(this)
-        // If the criteria is satisfied, "Rate this app" dialog will be shown
         RateThisApp.showRateDialogIfNeeded(this)
     }
 

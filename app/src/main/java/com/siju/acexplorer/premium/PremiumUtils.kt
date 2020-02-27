@@ -71,12 +71,9 @@ class PremiumUtils {
         return if (optOut) {
             false
         } else {
-            if (launchTimes >= MAX_LAUNCH_TIMES) {
-                return true
-            }
-            val threshold = MAX_DAYS_MILLIS
-            Date().time - installDate.time >= threshold &&
-                    Date().time - askLaterDate.time >= threshold
+            val time = Date().time
+            time - installDate.time >= MAX_DAYS_MILLIS &&
+                    time - askLaterDate.time >= MAX_DAYS_MILLIS && launchTimes >= MAX_LAUNCH_TIMES
         }
     }
 
@@ -87,7 +84,7 @@ class PremiumUtils {
         private const val KEY_LAUNCH_TIMES = "launch_times"
         private const val KEY_ASK_LATER_DATE = "ask_later_date"
         private const val MAX_LAUNCH_TIMES = 15
-        private const val MAX_DAYS_MILLIS = 3 * 24 * 60 * 60 * 1000L
+        private const val MAX_DAYS_MILLIS = 7 * 24 * 60 * 60 * 1000L
         const val KEY_OPT_OUT = "opt_out"
 
         private fun printStatus(context: Context) {
