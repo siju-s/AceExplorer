@@ -262,7 +262,6 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
         fab.backgroundTintList = ColorStateList.valueOf(vibrantColor)
         settingsButton.setBackgroundColor(vibrantColor)
         uninstallButton.setBackgroundColor(vibrantColor)
-        window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.colorPrimaryDark)
     }
 
     public override fun onResume() {
