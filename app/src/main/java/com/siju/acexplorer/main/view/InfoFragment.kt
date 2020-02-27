@@ -220,10 +220,10 @@ class InfoFragment : BottomSheetDialogFragment() {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.media_info_menu, menu)
         if (::fileInfo.isInitialized) {
-            if (fileInfo.isDirectory) {
+            if (fileInfo.isDirectory || category == Category.APP_MANAGER) {
                 menu.findItem(R.id.action_share).isVisible = false
             }
-            if (fileInfo.filePath == null) {
+            if (fileInfo.filePath == null || category == Category.APP_MANAGER) {
                 menu.findItem(R.id.action_copy_path).isVisible = false
             }
         }
