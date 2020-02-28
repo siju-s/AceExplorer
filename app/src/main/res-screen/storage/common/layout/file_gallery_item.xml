@@ -68,6 +68,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:background="@color/gallery_item_text_background"
+        android:textColor="@color/white"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="2"
