@@ -146,7 +146,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         bindSize(sizeText)
 
         val context = context
-        if (CategoryHelper.isAnyImagesCategory(category) && path != null && context != null) {
+        if (CategoryHelper.isAnyImagesCategory(category) && path != null && context != null && fileInfo.width != 0L) {
             val resolutionText = sheetView?.findViewById<TextView>(R.id.textResolution)
             resolutionText?.text = String.format(Locale.getDefault(), context.getString(R.string.resolution_format),
                     fileInfo.width, fileInfo.height)
