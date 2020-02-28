@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/chipRecent"
         android:layout_marginStart="@dimen/margin_16"
-        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginTop="@dimen/padding_10"
         android:layout_marginEnd="@dimen/margin_16"
         app:singleLine="true"
         app:singleSelection="true">
@@ -72,7 +72,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/categoriesChipGroup"
         android:layout_marginStart="@dimen/margin_16"
-        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginTop="@dimen/padding_10"
         android:layout_marginEnd="@dimen/margin_16"
         app:singleSelection="true" />
 

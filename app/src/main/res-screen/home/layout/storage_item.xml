@@ -34,8 +34,6 @@
             android:id="@+id/containerProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/padding_5"
-            android:paddingBottom="@dimen/padding_5"
             android:background="@color/home_card_image_bg">
 
             <ProgressBar
@@ -56,6 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
+                android:textColor="@color/white"
                 android:text="@string/storage_progress_percent"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 tools:text="50%" />
