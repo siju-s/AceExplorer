@@ -320,7 +320,11 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     private fun toggleCompressedMenuVisibility(filePath: String?) {
-        if (FileUtils.isFileCompressed(filePath)) {
+        if (category == Category.COMPRESSED) {
+            extractItem.isVisible = false
+            archiveItem.isVisible = false
+        }
+        else if (FileUtils.isFileCompressed(filePath)) {
             extractItem.isVisible = true
             archiveItem.isVisible = false
         }
