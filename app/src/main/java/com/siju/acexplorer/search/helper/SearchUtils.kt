@@ -1,6 +1,7 @@
 package com.siju.acexplorer.search.helper
 
 import android.os.Environment
+import java.io.File
 
 object SearchUtils {
 
@@ -9,7 +10,16 @@ object SearchUtils {
     }
 
     fun getScreenshotDirectory() : String ? {
-        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/Screenshots"
+        val screenShotPath1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/Screenshots"
+        val screenShotPath2 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + "/Screenshots"
+
+        return if (File(screenShotPath1).exists()) {
+            screenShotPath1
+        }
+        else if (File(screenShotPath2).exists()) {
+            screenShotPath2
+        }
+        else screenShotPath1
     }
 
     fun getWhatsappDirectory() : String? {
