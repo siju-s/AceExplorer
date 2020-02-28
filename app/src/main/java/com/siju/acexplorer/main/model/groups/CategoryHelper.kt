@@ -39,7 +39,8 @@ object CategoryHelper {
                 category == TELEGRAM ||
                 category == SCREENSHOT ||
                 category == CAMERA_GENERIC ||
-                category == CAMERA
+                category == CAMERA ||
+                category == APP_MANAGER
     }
 
     fun isGenericMusic(category: Category?): Boolean {
@@ -113,7 +114,7 @@ object CategoryHelper {
         return category == LARGE_FILES
     }
 
-    fun isAppManager(category: Category): Boolean {
+    fun isAppManager(category: Category?): Boolean {
         return APP_MANAGER == category
     }
 

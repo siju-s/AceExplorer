@@ -115,10 +115,15 @@ class InfoFragment : BottomSheetDialogFragment() {
     private fun bindViews(fileInfo: FileInfo, category: Category?) {
         val path = fileInfo.filePath
         val pathText = sheetView?.findViewById<TextView>(R.id.textPath)
+        val pathPlaceholder =  sheetView?.findViewById<TextView>(R.id.textPathPlaceholder)
+
+        if (CategoryHelper.isAppManager(category)) {
+            pathPlaceholder?.text = getString(R.string.package_name)
+        }
 
         if (path == null) {
             pathText?.visibility = View.GONE
-            sheetView?.findViewById<TextView>(R.id.textPathPlaceholder)?.visibility = View.GONE
+            pathPlaceholder?.visibility = View.GONE
         } else {
             pathText?.text = path
         }
