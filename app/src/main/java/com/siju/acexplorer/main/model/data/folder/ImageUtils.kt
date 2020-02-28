@@ -41,6 +41,7 @@ object ImageUtils {
         return name?.toLowerCase(Locale.ROOT)?.endsWith(".jpg") == true ||
                 name?.toLowerCase(Locale.ROOT)?.endsWith(".jpeg") == true ||
                 name?.toLowerCase(Locale.ROOT)?.endsWith(".heif") == true ||
-                name?.toLowerCase(Locale.ROOT)?.endsWith(".heic") == true
+                name?.toLowerCase(Locale.ROOT)?.endsWith(".heic") == true ||
+                name?.toLowerCase(Locale.ROOT)?.endsWith(".png") == true
     }
 }
