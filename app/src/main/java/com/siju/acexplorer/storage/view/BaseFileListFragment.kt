@@ -933,7 +933,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     override fun handleItemClick(fileInfo: FileInfo, position: Int) {
-        if (isAppManager(category)) {
+        if (isAppManager(category) && !isActionModeActive()) {
             context?.let {
                 menuControls.endSearch()
                 AppDetailActivity.openAppInfo(it, fileInfo.filePath)
