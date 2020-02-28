@@ -79,7 +79,7 @@ object ShareHelper {
         if (uri == null) {
             val newUri = UriHelper.createContentUri(context, path)
             intent.putExtra(Intent.EXTRA_STREAM, newUri)
-            intent.clipData = ClipData.newUri(context.contentResolver, null, uri)
+            intent.clipData = ClipData.newUri(context.contentResolver, null, newUri)
         }
         else {
             intent.putExtra(Intent.EXTRA_STREAM, uri)
