@@ -866,6 +866,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         }
 
         override fun onOpenApkClicked(path: String?) {
+            openZipViewer(path)
         }
     }
 

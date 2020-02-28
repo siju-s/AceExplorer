@@ -157,10 +157,10 @@ object DialogHelper {
         return newSortMode
     }
 
-    fun showInputDialog(context: Context?, text: Array<String>,
+    fun showInputDialog(context: Context, text: Array<String>,
                         operation: Operations?,
                         textEdit: String?, dialogListener: DialogCallback) {
-        val builder = AlertDialog.Builder(context!!)
+        val builder = AlertDialog.Builder(context)
         val inflater = LayoutInflater.from(context)
         val dialogView = inflater.inflateLayout(R.layout.dialog_rename, null)
         builder.setView(dialogView)
@@ -190,9 +190,9 @@ object DialogHelper {
         alertDialog.show()
     }
 
-    fun showApkDialog(context: Context?, text: Array<String>, path: String?,
+    fun showApkDialog(context: Context, text: Array<String>, path: String?,
                       dialogListener: ApkDialogListener) {
-        val builder = AlertDialog.Builder(context!!)
+        val builder = AlertDialog.Builder(context)
         val inflater = LayoutInflater.from(context)
         val dialogView = inflater.inflateLayout(R.layout.alert_dialog, null)
         builder.setView(dialogView)
@@ -227,7 +227,7 @@ object DialogHelper {
             }
         }
         alertDialog.show()
-        alertDialog.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+        alertDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
     fun showSAFDialog(context: Context, path: String?, dialogListener: AlertDialogListener) {
@@ -423,9 +423,10 @@ object DialogHelper {
         val fileName = paths[0].fileName
         val filePath = paths[0].filePath
         filePath ?: return
+        fileName ?: return
         var zipName = fileName
         if (!File(filePath).isDirectory) {
-            zipName = fileName!!.substring(0, fileName.lastIndexOf("."))
+            zipName = fileName.substring(0, fileName.lastIndexOf("."))
         }
         val title = context.getString(R.string.action_archive)
         val builder = AlertDialog.Builder(context)

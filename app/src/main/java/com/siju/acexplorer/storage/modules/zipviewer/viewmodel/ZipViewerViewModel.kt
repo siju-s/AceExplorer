@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.main.model.FileConstants.EXT_ZIP
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.ViewHelper.EXT_APK
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.storage.model.ZipModel
 import com.siju.acexplorer.storage.model.task.ExtractZipEntry
@@ -75,7 +76,7 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
         }
     }
 
-    private fun isZipExtension(name: String?) = name?.endsWith(EXT_ZIP) == true
+    private fun isZipExtension(name: String?) = name?.endsWith(EXT_ZIP) == true || name?.endsWith(EXT_APK)== true
 
     fun endViewFileEvent() {
         _viewFileEvent.value = null
