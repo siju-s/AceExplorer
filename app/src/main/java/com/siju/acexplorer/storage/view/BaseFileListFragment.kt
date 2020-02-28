@@ -845,10 +845,11 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private val extractDialogListener = object : DialogHelper.ExtractDialogListener {
-        override fun onPositiveButtonClick(
+        override fun onPositiveButtonClick(dialog: Dialog?,
                 operation: Operations,
                 sourceFilePath: String,
                 newFileName: String, destinationDir: String) {
+            this@BaseFileListFragment.dialog = dialog
             fileListViewModel.onExtractOperation(newFileName, destinationDir)
         }
 

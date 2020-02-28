@@ -495,9 +495,8 @@ object DialogHelper {
             if (extractToPathButton.isChecked) {
                 newDir = selectPathButton.text.toString()
             }
-            extractDialogListener.onPositiveButtonClick(Operations.EXTRACT, zipFilePath, fileName,
+            extractDialogListener.onPositiveButtonClick(alertDialog, Operations.EXTRACT, zipFilePath, fileName,
                     newDir)
-            alertDialog.dismiss()
         }
         negativeButton.setOnClickListener { alertDialog.dismiss() }
         alertDialog.show()
@@ -566,7 +565,7 @@ object DialogHelper {
     }
 
     interface ExtractDialogListener {
-        fun onPositiveButtonClick(operation: Operations, sourceFilePath: String, newFileName: String,
+        fun onPositiveButtonClick(dialog: Dialog?, operation: Operations, sourceFilePath: String, newFileName: String,
                                   destinationDir: String)
 
         fun onSelectButtonClicked(dialog: Dialog)
