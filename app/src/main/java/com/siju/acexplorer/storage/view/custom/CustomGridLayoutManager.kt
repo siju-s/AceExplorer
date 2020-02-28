@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 
 class CustomGridLayoutManager(context: Context?, spanCount: Int) : GridLayoutManager(context, spanCount) {
-    override fun smoothScrollToPosition(recyclerView: RecyclerView, state: RecyclerView.State,
+    override fun smoothScrollToPosition(recyclerView: RecyclerView, state: RecyclerView.State?,
                                         position: Int) {
         val smoothScroller: LinearSmoothScroller = object : LinearSmoothScroller(recyclerView.context) {
             //This controls the direction in which smoothScroll looks for your view
