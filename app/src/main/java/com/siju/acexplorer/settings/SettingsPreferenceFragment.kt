@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.*
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
@@ -106,12 +107,21 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val preference = findPreference<Preference>(PREFS_FULL_VERSION)
         preference?.isVisible = !mainCommunicator.isPremiumVersion()
         preference?.setOnPreferenceClickListener {
-            val activity = activity as AppCompatActivity?
-            activity?.let {
+            onUnlockFullClicked()
+            true
+        }
+    }
+
+    private fun onUnlockFullClicked() {
+        val activity = activity as AppCompatActivity?
+        activity?.let {
+            if (NetworkHelper.isConnectedToInternet(it)) {
                 val premium = Premium(it, mainViewModel)
                 premium.showPremiumDialog(it)
             }
-            true
+            else {
+                view?.let { it1 -> Snackbar.make(it1, getString(R.string.connect_internet_download_update), Snackbar.LENGTH_SHORT).show() }
+            }
         }
     }
 

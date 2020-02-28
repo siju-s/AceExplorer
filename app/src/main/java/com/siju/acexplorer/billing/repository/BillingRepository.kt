@@ -315,8 +315,12 @@ import java.util.*
  *
  *  @param application the [Application] context
  */
+private const val MAX_RETRY_COUNT = 2
+
 class BillingRepository private constructor(private val application: Application) :
         PurchasesUpdatedListener, BillingClientStateListener {
+
+    private var retryAttemptCount = 0
 
     /**
      * The [BillingClient] is the most reliable and primary source of truth for all purchases
@@ -420,7 +424,7 @@ class BillingRepository private constructor(private val application: Application
         playStoreBillingClient.endConnection()
         // normally you don't worry about closing a DB connection unless you have more than
         // one DB open. so no need to call 'localCacheBillingClient.close()'
-        Log.d(LOG_TAG, "startDataSourceConnections")
+        Log.d(LOG_TAG, "endDataSourceConnections")
     }
 
     private fun instantiateAndConnectToPlayBillingService() {
@@ -453,6 +457,13 @@ class BillingRepository private constructor(private val application: Application
             BillingClient.BillingResponseCode.BILLING_UNAVAILABLE -> {
                 //Some apps may choose to make decisions based on this knowledge.
                 Log.d(LOG_TAG, billingResult.debugMessage)
+            }
+            BillingClient.BillingResponseCode.SERVICE_DISCONNECTED -> {
+                Log.d(LOG_TAG, billingResult.debugMessage + "Retry count:$retryAttemptCount")
+                retryAttemptCount++
+                if (retryAttemptCount <= MAX_RETRY_COUNT) {
+                    startDataSourceConnections()
+                }
             }
             else                                                  -> {
                 //do nothing. Someone else will connect it through retry policy.
@@ -670,8 +681,6 @@ class BillingRepository private constructor(private val application: Application
              }
         }
     }
-
-
 
     /**
      * This method is called by the [playStoreBillingClient] when new purchases are detected.
