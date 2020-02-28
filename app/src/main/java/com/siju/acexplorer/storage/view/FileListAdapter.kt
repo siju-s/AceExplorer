@@ -218,7 +218,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 isMusicCategory(category)         -> bindMusicCategory(context, fileInfo, pos, peekPopView)
                 isGenericImagesCategory(category) || isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
                                                                                    fileInfo, pos, peekPopView)
-                isAppManager(category)            -> bindAppManagerCategory(context, fileInfo, viewMode)
+                isAppManager(category)            -> bindAppManagerCategory(context, fileInfo, viewMode, pos, peekPopView)
                 isRecentCategory(category)        -> bindGenericRecent(context, fileInfo, category, pos, peekPopView)
                 isAnyLargeFilesCategory(category) -> bindLargeFilesGeneric(context, fileInfo, category, pos, peekPopView)
                 isAnyCameraCategory(category)     -> bindCameraGeneric(context, fileInfo, category, pos, peekPopView)
@@ -427,7 +427,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
-        private fun bindAppManagerCategory(context: Context, fileInfo: FileInfo, viewMode: ViewMode) {
+        private fun bindAppManagerCategory(context: Context, fileInfo: FileInfo, viewMode: ViewMode, pos: Int, peekPopView: PeekPopView?) {
 
             textFileName.text = fileInfo.fileName
             val size = fileInfo.size
@@ -440,6 +440,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
             displayThumb(context, fileInfo, fileInfo.category, imageIcon,
                     imageThumbIcon)
+            addPeekPop(peekPopView, imageIcon, pos, fileInfo.category)
         }
         companion object {
             fun from(parent: ViewGroup,
