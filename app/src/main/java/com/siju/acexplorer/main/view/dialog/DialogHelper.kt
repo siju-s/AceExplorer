@@ -478,13 +478,17 @@ object DialogHelper {
 
         editFileName.setText(currentFileName)
         radioGroupPath.setOnCheckedChangeListener { _, checkedId ->
+            editFileName.error = null
             if (checkedId == R.id.radioButtonCurrentPath) {
                 selectPathButton.visibility = View.GONE
             } else {
                 selectPathButton.visibility = View.VISIBLE
             }
         }
-        selectPathButton.setOnClickListener { extractDialogListener.onSelectButtonClicked(alertDialog) }
+        selectPathButton.setOnClickListener {
+            editFileName.error = null
+            extractDialogListener.onSelectButtonClicked(alertDialog)
+        }
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
         positiveButton.text = texts[0]
