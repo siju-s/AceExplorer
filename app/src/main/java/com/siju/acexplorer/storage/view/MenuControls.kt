@@ -180,7 +180,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         Log.d(TAG, "setupMenuItemVisibility:$category")
         searchItem.isVisible = true
         sortItem.isVisible = shouldShowSort(category)
-        if (Category.APP_MANAGER == category) {
+        if (Category.APP_MANAGER == category || CategoryHelper.checkIfLibraryCategory(category)) {
             hiddenMenuItem?.isVisible = false
         }
     }
@@ -254,7 +254,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
                                      externalSdList: ArrayList<String>) {
         renameItem.isVisible = true
         infoItem.isVisible = true
-        hideItem.isVisible = category != Category.FAVORITES
+        hideItem.isVisible = CategoryHelper.isFileBasedCategory(category)
         setHideItemProperties(fileInfo?.fileName)
 
         val isDir = fileInfo?.isDirectory

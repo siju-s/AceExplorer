@@ -26,6 +26,11 @@ object CategoryHelper {
                 category == FAVORITES
     }
 
+    fun isFileBasedCategory(category: Category?) : Boolean {
+        return category == FILES || category == DOWNLOADS || category == CAMERA ||
+                category == WHATSAPP || category == TELEGRAM || category == SCREENSHOT
+    }
+
     fun isDateInMs(category: Category?): Boolean {
 //        Log.d(this.javaClass.simpleName, "isDateInMs:category:$category")
         return category == FILES ||
