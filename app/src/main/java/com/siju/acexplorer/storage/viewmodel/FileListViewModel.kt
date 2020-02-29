@@ -15,6 +15,7 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.search.helper.SearchUtils
 import com.siju.acexplorer.storage.helper.RecentDataConverter.getRecentItemList
+import com.siju.acexplorer.storage.helper.RecentDataConverter.getRecentItemListWithoutHeader
 import com.siju.acexplorer.storage.model.*
 import com.siju.acexplorer.storage.model.backstack.BackStackInfo
 import com.siju.acexplorer.storage.model.operations.OperationAction
@@ -197,29 +198,50 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         refreshData = model._refreshData
     }
 
-    fun loadData(path: String?, category: Category) {
+    fun loadData(path: String?, category: Category, fromSearch: Boolean = false) {
         Log.d(this.javaClass.name, "loadData: path $path , category $category")
-        addNavigation(path, category)
-        addToBackStack(path, category)
-        setCategory(category)
+        val newCategory = if (fromSearch) {
+           getNewSearchCategory(category)
+        }
+        else {
+            category
+        }
+        addNavigation(path, newCategory)
+        addToBackStack(path, newCategory)
+        setCategory(newCategory)
         setCurrentDir(path)
-        if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+        if (RecentTimeHelper.isRecentTimeLineCategory(newCategory)) {
             uiScope.launch(Dispatchers.IO) {
-                val data = storageModel.loadRecentData(path, category)
+                val data = if (fromSearch) {
+                    storageModel.loadRecentData(path, newCategory)
+                }
+                else {
+                    storageModel.loadRecentData(path, newCategory)
+                }
                 Log.d(this.javaClass.name,
-                        "onDataloaded loadData: data ${data.size} , category $category")
-                _recentFileData.postValue(Pair(category, data))
+                        "onDataloaded loadData: data ${data.size} , category $newCategory")
+                _recentFileData.postValue(Pair(newCategory, data))
                 handleScrollPosition()
             }
         }
         else {
             uiScope.launch(Dispatchers.IO) {
-                val data = storageModel.loadData(path, category)
+                val data = storageModel.loadData(path, newCategory)
                 Log.d(this.javaClass.name,
-                        "onDataloaded loadData: data ${data.size} , category $category")
+                        "onDataloaded loadData: data ${data.size} , category $newCategory")
                 _fileData.postValue(data)
                 handleScrollPosition()
             }
+        }
+    }
+
+    private fun getNewSearchCategory(category: Category) : Category {
+        return when(category) {
+            RECENT_IMAGES -> SEARCH_RECENT_IMAGES
+            RECENT_VIDEOS -> SEARCH_RECENT_VIDEOS
+            RECENT_AUDIO -> SEARCH_RECENT_AUDIO
+            RECENT_DOCS -> SEARCH_RECENT_DOCS
+            else -> category
         }
     }
 
@@ -351,7 +373,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     fun shouldShowHiddenFiles() = storageModel.shouldShowHiddenFiles()
 
 
-    fun handleItemClick(fileInfo: FileInfo, position: Int) {
+    fun handleItemClick(fileInfo: FileInfo, position: Int, fromSearch : Boolean = false) {
         Log.d(TAG, "handleItemClick: category:$category")
         if (isActionModeActive()) {
             if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
@@ -368,7 +390,8 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             FOLDER_VIDEOS, ALL_TRACKS, RECENT_AUDIO, RECENT_DOCS, RECENT_IMAGES, RECENT_VIDEOS,
             IMAGES_ALL, VIDEO_ALL, RECENT_ALL, LARGE_FILES_AUDIO, LARGE_FILES_VIDEOS, LARGE_FILES_IMAGES,
             LARGE_FILES_DOC, CAMERA_IMAGES, CAMERA_VIDEO, SEARCH_FOLDER_IMAGES, SEARCH_FOLDER_VIDEOS, SEARCH_FOLDER_AUDIO,
-            SEARCH_FOLDER_DOCS, DOCS_OTHER, SCREENSHOT, RECENT_FOLDER, RECENT_IMAGES_FOLDER, RECENT_VIDEOS_FOLDER, RECENT_AUDIO_FOLDER, RECENT_DOC_FOLDER -> {
+            SEARCH_FOLDER_DOCS, DOCS_OTHER, SCREENSHOT, RECENT_FOLDER, RECENT_IMAGES_FOLDER, RECENT_VIDEOS_FOLDER, RECENT_AUDIO_FOLDER, RECENT_DOC_FOLDER,
+            SEARCH_RECENT_IMAGES, SEARCH_RECENT_VIDEOS, SEARCH_RECENT_AUDIO, SEARCH_RECENT_DOCS-> {
                 onFileClicked(fileInfo, position)
             }
             FILES, CAMERA, LARGE_FILES_ALL, LARGE_FILES_COMPRESSED, LARGE_FILES_APP, LARGE_FILES_OTHER, DOWNLOADS, COMPRESSED, FAVORITES, PDF, APPS, RECENT_APPS -> {
@@ -405,7 +428,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
             }
 
             RECENT, LARGE_FILES -> {
-                fileInfo.category?.let { loadData(null, it) }
+                fileInfo.category?.let { loadData(null, it, fromSearch) }
             }
 
             CAMERA_GENERIC ->  {
@@ -485,7 +508,13 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
                 zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
                 CategoryHelper.isAnyImagesCategory(fileInfo.category) -> {
                     recentFileData.value?.let {
-                        _viewImageFileEvent.postValue(Pair(getRecentItemList(it.second), position))
+                        val list = if (RecentTimeHelper.isRecentSearchCategory(category)) {
+                            getRecentItemListWithoutHeader(it.second)
+                        }
+                        else {
+                            getRecentItemList(it.second)
+                        }
+                        _viewImageFileEvent.postValue(Pair(list, position))
                     }
                 }
                 else -> {

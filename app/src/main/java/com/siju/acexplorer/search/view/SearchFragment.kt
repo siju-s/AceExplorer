@@ -338,7 +338,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
         }
         else {
             fileListViewModel.clearBackStack()
-            fileListViewModel.handleItemClick(fileInfo, position)
+            fileListViewModel.handleItemClick(fileInfo, position, true)
         }
     }
 

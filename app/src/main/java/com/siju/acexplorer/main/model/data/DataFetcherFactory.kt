@@ -36,10 +36,10 @@ object DataFetcherFactory {
             Category.GENRE_DETAIL -> return GenreDetailFetcher()
 
             Category.RECENT, Category.RECENT_ALL -> return RecentFetcher()
-            Category.RECENT_IMAGES -> return RecentImageFetcher()
-            Category.RECENT_AUDIO -> return RecentAudioFetcher()
-            Category.RECENT_VIDEOS -> return RecentVideoFetcher()
-            Category.RECENT_DOCS -> return RecentDocFetcher()
+            Category.RECENT_IMAGES, Category.SEARCH_RECENT_IMAGES -> return RecentImageFetcher()
+            Category.RECENT_AUDIO, Category.SEARCH_RECENT_AUDIO -> return RecentAudioFetcher()
+            Category.RECENT_VIDEOS, Category.SEARCH_RECENT_VIDEOS -> return RecentVideoFetcher()
+            Category.RECENT_DOCS, Category.SEARCH_RECENT_DOCS -> return RecentDocFetcher()
             Category.RECENT_APPS -> return RecentAppFetcher()
             Category.RECENT_FOLDER -> return RecentFolderFetcher()
 
