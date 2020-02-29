@@ -854,7 +854,9 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         if (dir != null && dir.isNotEmpty()) {
             setCurrentDir(dir)
         }
-        reloadData(dir, category)
+        if (category != SEARCH_RECENT_DOCS) {
+            reloadData(dir, category)
+        }
     }
 
     fun isDualModeEnabled() = storageModel.isDualModeEnabled()
