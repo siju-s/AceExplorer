@@ -123,6 +123,7 @@
         <activity
             android:name=".imageviewer.ImageViewerActivity"
             android:label="@string/image_viewer_title"
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
             android:theme="@style/BaseDarkTheme">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
