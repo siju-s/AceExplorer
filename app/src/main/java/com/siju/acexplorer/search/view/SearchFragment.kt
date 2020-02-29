@@ -337,7 +337,9 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
             fileListViewModel.handleItemClick(fileInfo, position)
         }
         else {
-            fileListViewModel.clearBackStack()
+            if (fileListViewModel.category == Category.RECENT || fileInfo.isDirectory) {
+                fileListViewModel.clearBackStack()
+            }
             fileListViewModel.handleItemClick(fileInfo, position, true)
         }
     }
