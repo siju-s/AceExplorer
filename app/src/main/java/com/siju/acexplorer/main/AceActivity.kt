@@ -227,6 +227,11 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     private fun disableDualPane() {
         Log.d(TAG, "disableDualPane")
+        //TODO 29 Feb 2020 Find why dual mode preference firing even  though value unchanged
+        // Happens when opening a file and returning back
+        if (frame_container_dual.visibility == View.GONE) {
+            return
+        }
         frame_container_dual.visibility = View.GONE
         viewSeparator.visibility = View.GONE
         if (isCurrentScreenStorage()) {

@@ -60,8 +60,8 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     fun onForeground() {
-        Log.d(TAG, "onForeground")
         if (permissionRationaleDialog?.isShowing == true) {
+            Log.d(TAG, "onForeground")
             if (hasPermissions(context)) {
                 dismissRationaleDialog()
                 permissionStatus.value = PermissionState.Granted
