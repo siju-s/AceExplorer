@@ -129,7 +129,25 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             R.id.action_select_all -> {
                 onSelectAllClicked()
             }
+
+            R.id.action_cancel -> {
+                onCancelClicked()
+            }
+
+            R.id.action_create_folder -> {
+                onCreateFolderForPasteClicked()
+            }
         }
+    }
+
+    private fun onCancelClicked() {
+        viewModel.endActionMode()
+        isPasteVisible = false
+        viewModel.showFab()
+    }
+
+    private fun onCreateFolderForPasteClicked() {
+         viewModel.onFABClicked(Operations.FOLDER_CREATION, viewModel.currentDir)
     }
 
     private fun onSelectAllClicked() {
@@ -259,6 +277,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             Analytics.logger.operationClicked(Analytics.Logger.EV_PASTE)
             val list = _multiSelectionOperationData.value?.second
             viewModel.endActionMode()
+            viewModel.showFab()
             list?.let {
                 pasteOpPresenter.createPasteOpData(operations, list, currentDir)
             }
@@ -276,6 +295,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             }
             viewModel.endActionMode()
             isPasteVisible = true
+            viewModel.hideFab()
             _multiSelectionOperationData.value = Pair(Operations.CUT, filesToMove)
         }
     }
@@ -291,6 +311,7 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             }
             viewModel.endActionMode()
             isPasteVisible = true
+            viewModel.hideFab()
             _multiSelectionOperationData.value = Pair(Operations.COPY, filesToCopy)
         }
     }

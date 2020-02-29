@@ -276,7 +276,9 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     fun setCategory(category: Category) {
         this.category = category
-        showFab.postValue(canShowFab(category))
+        if (operationPresenter.isNotPasteOperation()) {
+            showFab.postValue(canShowFab(category))
+        }
         operationPresenter.category = category
     }
 
@@ -852,6 +854,16 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     fun setFileData(data: ArrayList<FileInfo>?) {
         _fileData.postValue(data)
+    }
+
+    fun hideFab() {
+        showFab.postValue(false)
+    }
+
+    fun showFab() {
+        if (canShowFab(category)) {
+            showFab.postValue(true)
+        }
     }
 
     val apkDialogListener = object : DialogHelper.ApkDialogListener {
