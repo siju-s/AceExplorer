@@ -5,6 +5,7 @@ import android.util.Log
 import com.siju.acexplorer.storage.model.ViewMode
 
 object ConfigurationHelper {
+
     fun getHomeGridCols(configuration: Configuration): Int {
         val sw = configuration.smallestScreenWidthDp
         val width = configuration.screenWidthDp
@@ -23,6 +24,13 @@ object ConfigurationHelper {
                     HomeGridColumns.COL_600DP_LAND.value
                 } else {
                     HomeGridColumns.COL_600DP.value
+                }
+            }
+            sw < 360 -> {
+                columns = if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                    HomeGridColumns.COL_320DP_LAND.value
+                } else {
+                    HomeGridColumns.COL_320DP_PORT.value
                 }
             }
             else -> {
@@ -138,6 +146,8 @@ object ConfigurationHelper {
     }
 
     internal enum class HomeGridColumns(val value: Int) {
+        COL_320DP_PORT(2),
+        COL_320DP_LAND(4),
         COL_PORT(3),
         COL_LAND(5),
         COL_600DP(4),
