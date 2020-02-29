@@ -233,7 +233,7 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
             chipImages.isChecked -> Category.RECENT_IMAGES
             chipVideos.isChecked -> Category.RECENT_VIDEOS
             chipAudio.isChecked -> Category.RECENT_AUDIO
-            chipDocuments.isChecked -> Category.RECENT_AUDIO
+            chipDocuments.isChecked -> Category.RECENT_DOCS
             else -> {
                 throw IllegalArgumentException("We Shouldn't be here")
             }
