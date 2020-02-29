@@ -86,7 +86,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         draggedPosition = -1
     }
 
-    override fun setMainCategory(category: Category) {
+    override fun setMainCategory(category: Category?) {
         this.mainCategory = category
     }
 
@@ -289,8 +289,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        private fun bindDate(category: Category,
-                             fileInfo: FileInfo) {
+        private fun bindDate(category: Category, fileInfo: FileInfo) {
             dateText?.let {
                 val dateMs = if (isDateInMs(category)) {
                     fileInfo.date

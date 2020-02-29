@@ -178,6 +178,7 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
             fileListViewModel.clearBackStack()
             checkedChipList.clear()
         } else {
+            fragment.onChipDataLoaded(chipInfo.category)
             fileListViewModel.clearBackStack()
             fileListViewModel.loadData(chipInfo.path, chipInfo.category)
         }

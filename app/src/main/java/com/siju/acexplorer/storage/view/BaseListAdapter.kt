@@ -8,6 +8,6 @@ interface BaseListAdapter {
     fun getMultiSelectionHelper() : MultiSelectionHelper?
     fun setDraggedPosition(pos: Int)
     fun clearDragPosition()
-    fun setMainCategory(category: Category)
+    fun setMainCategory(category: Category?)
     fun refresh()
 }

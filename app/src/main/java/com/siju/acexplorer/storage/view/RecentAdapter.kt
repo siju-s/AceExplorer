@@ -51,7 +51,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
     override fun clearDragPosition() {
     }
 
-    override fun setMainCategory(category: Category) {
+    override fun setMainCategory(category: Category?) {
     }
 
     override fun refresh() {

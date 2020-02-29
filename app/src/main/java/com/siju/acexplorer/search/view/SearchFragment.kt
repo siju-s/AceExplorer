@@ -25,6 +25,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.inflateLayout
 import com.siju.acexplorer.helper.KeyboardHelper
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
@@ -124,7 +125,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
                 },
                 null
         )
-        fileListAdapter?.setMainCategory(Category.FILES)
+        fileListAdapter?.setMainCategory(null)
         filesList.adapter = fileListAdapter
     }
 
@@ -441,12 +442,22 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
 
     fun setEmptyList() {
         fileListAdapter?.submitList(ArrayList<FileInfo>())
+        fileListAdapter?.setMainCategory(Category.FILES)
         showRecentSearch()
     }
 
     fun performVoiceSearch(query: String?) {
         query?.let {
             searchView.setQuery(query, false)
+        }
+    }
+
+    fun onChipDataLoaded(category: Category?) {
+        if (CategoryHelper.isDateInMs(category)) {
+            fileListAdapter?.setMainCategory(Category.FILES)
+        }
+        else {
+            fileListAdapter?.setMainCategory(null)
         }
     }
 
