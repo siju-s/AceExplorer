@@ -64,8 +64,6 @@
     <string name="image">Imagine</string>
     <string name="audio">Audio</string>
     <string name="other">Alte</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">fundal</string>
     <string name="error">Eroare</string>
     <string name="dialog_title_picker">Alegeți fișierul muzical</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Vizualizare listă</string>
     <string name="action_view_grid">Vizualizare grilă</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Tine minte</string>
     <string name="move_trash">Aruncă la gunoi</string>
     <string name="path">cale</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Toate</string>
     <string name="categories">Categorii</string>
     <string name="categories_folder">Pliant</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Activați accesul Root</string>
     <string name="info_name">Nume de fișier</string>
     <string name="info_resolution">Rezoluţie</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d fișiere s-au mutat</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d fișiere copiate</string>
     <string name="action_view">Vedere</string>

@@ -64,8 +64,6 @@
     <string name="image">Imagen</string>
     <string name="audio">Audio</string>
     <string name="other">Otro</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Antecedentes</string>
     <string name="error">Error</string>
     <string name="dialog_title_picker">Elegir archivo de música</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Vista de la lista</string>
     <string name="action_view_grid">Vista en cuadrícula</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Recuerda</string>
     <string name="move_trash">Mover a la papelera</string>
     <string name="path">Camino</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Todos</string>
     <string name="categories">Categorias</string>
     <string name="categories_folder">Carpeta</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Habilitar acceso de root</string>
     <string name="info_name">Nombre del archivo</string>
     <string name="info_resolution">Resolución</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d archivos movidos</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d archivos copiados</string>
     <string name="action_view">Ver</string>

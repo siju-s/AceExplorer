@@ -64,8 +64,6 @@
     <string name="image">תמונה</string>
     <string name="audio">שמע</string>
     <string name="other">אחר</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">רקע כללי</string>
     <string name="error">שגיאה</string>
     <string name="dialog_title_picker">בחר קובץ מוסיקה</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">תצוגת רשימה</string>
     <string name="action_view_grid">נוף רשת</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">זכור</string>
     <string name="move_trash">העבר לאשפה</string>
     <string name="path">נתיב</string>
@@ -179,12 +176,9 @@
     <string name="category_all">את כל</string>
     <string name="categories">קטגוריות</string>
     <string name="categories_folder">תיקיה</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">אפשר גישה לשורש</string>
     <string name="info_name">שם קובץ</string>
     <string name="info_resolution">פתרון הבעיה</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d קבצים הועברו</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d קבצים הועתקו</string>
     <string name="action_view">נוף</string>

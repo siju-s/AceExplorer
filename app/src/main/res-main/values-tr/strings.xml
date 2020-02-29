@@ -64,8 +64,6 @@
     <string name="image">görüntü</string>
     <string name="audio">Ses</string>
     <string name="other">Diğer</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Arka fon</string>
     <string name="error">Hata</string>
     <string name="dialog_title_picker">Müzik dosyasını seçin</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Liste görünümü</string>
     <string name="action_view_grid">Izgara görünümü</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Hatırlamak</string>
     <string name="move_trash">Çöp kutusuna taşıyın</string>
     <string name="path">yol</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Her şey</string>
     <string name="categories">Kategoriler</string>
     <string name="categories_folder">Klasör</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Kök erişimini etkinleştir</string>
     <string name="info_name">Dosya adı</string>
     <string name="info_resolution">çözüm</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d dosya taşındı</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d dosya kopyalandı</string>
     <string name="action_view">Görünüm</string>

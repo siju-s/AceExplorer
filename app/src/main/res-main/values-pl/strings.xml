@@ -64,8 +64,6 @@
     <string name="image">Wizerunek</string>
     <string name="audio">Audio</string>
     <string name="other">Inny</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">tło</string>
     <string name="error">Błąd</string>
     <string name="dialog_title_picker">Wybierz plik muzyczny</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Widok listy</string>
     <string name="action_view_grid">Widok siatki</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Zapamiętaj</string>
     <string name="move_trash">Przenieść do kosza</string>
     <string name="path">Ścieżka</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Wszystko</string>
     <string name="categories">Kategorie</string>
     <string name="categories_folder">Folder</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Włącz dostęp root</string>
     <string name="info_name">Nazwa pliku</string>
     <string name="info_resolution">Rozkład</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">Przeniesiono %d plików</string>
     <string name="copied" tools:ignore="PluralsCandidate">Skopiowano %d plików</string>
     <string name="action_view">Widok</string>

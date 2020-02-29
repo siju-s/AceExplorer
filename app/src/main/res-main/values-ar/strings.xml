@@ -26,7 +26,7 @@
     <string name="action_share">شارك</string>
     <string name="msg_delete_success">حذف بنجاح</string>
     <string name="msg_delete_failure">فشلت عملية الحذف</string>
-    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">هل أنت متأكد من أنك تريد حذف ملفات٪ d؟</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">هل أنت متأكد من أنك تريد حذف ملفات% d؟</string>
     <string name="new_folder">ملف جديد</string>
     <string name="new_file">ملف جديد</string>
     <string name="add_fav">أضف إلى المفضلة</string>
@@ -64,8 +64,6 @@
     <string name="image">صورة</string>
     <string name="audio">سمعي</string>
     <string name="other">آخر</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">خلفية</string>
     <string name="error">خطأ</string>
     <string name="dialog_title_picker">اختيار ملف الموسيقى</string>
@@ -85,13 +83,13 @@
     <string name="move">نقل</string>
     <string name="copying">نسخ الملفات</string>
     <string name="moving">نقل الملفات</string>
-    <string name="clipboard">٪ d في الحافظة</string>
+    <string name="clipboard">%d في الحافظة</string>
     <string name="text_copied_clipboard">نسخ إلى الحافظة.</string>
     <string name="dialog_cancel">إلغاء</string>
     <string name="msg_ok">حسنا</string>
     <string name="msg_error_not_supported">لا يوجد تطبيق للتعامل مع العمل</string>
     <string name="needsaccess">اكتب الوصول مطلوب</string>
-    <string name="needs_access_summary">الرجاء اختيار الدليل الجذر لـ٪ 1 $ s لمنح حق الوصول للكتابة         العمل</string>
+    <string name="needs_access_summary">الرجاء اختيار الدليل الجذر لـ%1$s لمنح حق الوصول للكتابة         العمل</string>
     <string name="img_accessibility_back">عودة</string>
     <string name="action_search">بحث</string>
 
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">عرض القائمة</string>
     <string name="action_view_grid">عرض شبكي</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">تذكر</string>
     <string name="move_trash">ارسال الى سلة المحذوفات</string>
     <string name="path">مسار</string>
@@ -179,14 +176,11 @@
     <string name="category_all">الكل</string>
     <string name="categories">التصنيفات</string>
     <string name="categories_folder">مجلد</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">تمكين الوصول إلى الجذر</string>
     <string name="info_name">اسم الملف</string>
     <string name="info_resolution">الدقة</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
-    <string name="moved" tools:ignore="PluralsCandidate">٪ d تم نقل الملفات</string>
-    <string name="copied" tools:ignore="PluralsCandidate">٪ d تم نسخ الملفات</string>
+    <string name="moved" tools:ignore="PluralsCandidate">% d تم نقل الملفات</string>
+    <string name="copied" tools:ignore="PluralsCandidate">% d تم نسخ الملفات</string>
     <string name="action_view">رأي</string>
     <string name="action_view_gallery">عرض معرض</string>
     <string name="update_available">تحديث متوفر</string>

@@ -26,7 +26,7 @@
     <string name="action_share">共有</string>
     <string name="msg_delete_success">削除しました</string>
     <string name="msg_delete_failure">削除操作に失敗しました</string>
-    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">％dファイルを削除してもよろしいですか？</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">%dファイルを削除してもよろしいですか？</string>
     <string name="new_folder">新しいフォルダー</string>
     <string name="new_file">新しいファイル</string>
     <string name="add_fav">お気に入りに追加</string>
@@ -64,8 +64,6 @@
     <string name="image">画像</string>
     <string name="audio">オーディオ</string>
     <string name="other">その他</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">バックグラウンド</string>
     <string name="error">エラー</string>
     <string name="dialog_title_picker">音楽ファイルを選択</string>
@@ -85,13 +83,13 @@
     <string name="move">移動する</string>
     <string name="copying">ファイルをコピーする</string>
     <string name="moving">ファイルを移動する</string>
-    <string name="clipboard">クリップボードの％d</string>
+    <string name="clipboard">クリップボードの%d</string>
     <string name="text_copied_clipboard">クリップボードにコピーしました。</string>
     <string name="dialog_cancel">キャンセル</string>
     <string name="msg_ok">OK</string>
     <string name="msg_error_not_supported">アクションを処理するアプリがありません</string>
     <string name="needsaccess">書き込みアクセスが必要</string>
-    <string name="needs_access_summary">％1 $ sのルートディレクトリを選択して、書き込みアクセスを許可してください         作動する</string>
+    <string name="needs_access_summary">%1$sのルートディレクトリを選択して、書き込みアクセスを許可してください         作動する</string>
     <string name="img_accessibility_back">バック</string>
     <string name="action_search">探す</string>
 
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">リストビュー</string>
     <string name="action_view_grid">グリッドビュー</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">覚えている</string>
     <string name="move_trash">ゴミ箱に移動</string>
     <string name="path">道</string>
@@ -179,14 +176,11 @@
     <string name="category_all">すべて</string>
     <string name="categories">カテゴリー</string>
     <string name="categories_folder">フォルダ</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">ルートアクセスを有効にする</string>
     <string name="info_name">ファイル名</string>
     <string name="info_resolution">解決</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
-    <string name="moved" tools:ignore="PluralsCandidate">％d個のファイルを移動しました</string>
-    <string name="copied" tools:ignore="PluralsCandidate">％d個のファイルがコピーされました</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d個のファイルを移動しました</string>
+    <string name="copied" tools:ignore="PluralsCandidate">%d個のファイルがコピーされました</string>
     <string name="action_view">見る</string>
     <string name="action_view_gallery">ギャラリービュー</string>
     <string name="update_available">更新可能</string>

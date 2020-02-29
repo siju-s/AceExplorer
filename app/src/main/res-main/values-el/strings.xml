@@ -64,8 +64,6 @@
     <string name="image">Εικόνα</string>
     <string name="audio">Ήχος</string>
     <string name="other">Αλλα</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Ιστορικό</string>
     <string name="error">Λάθος</string>
     <string name="dialog_title_picker">Επιλέξτε μουσικό αρχείο</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Προβολή λίστας</string>
     <string name="action_view_grid">Προβολή πλέγματος</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Θυμάμαι</string>
     <string name="move_trash">Μετακίνηση σε Κάδο απορριμμάτων</string>
     <string name="path">Μονοπάτι</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Ολα</string>
     <string name="categories">Κατηγορίες</string>
     <string name="categories_folder">Ντοσιέ</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Ενεργοποίηση πρόσβασης ρίζας</string>
     <string name="info_name">Ονομα αρχείου</string>
     <string name="info_resolution">Ανάλυση</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">Τα %d αρχεία μετακινήθηκαν</string>
     <string name="copied" tools:ignore="PluralsCandidate">αντιγράφηκαν %d αρχεία</string>
     <string name="action_view">Θέα</string>

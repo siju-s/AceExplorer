@@ -64,8 +64,6 @@
     <string name="image">Hình ảnh</string>
     <string name="audio">Âm thanh</string>
     <string name="other">Khác</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Lý lịch</string>
     <string name="error">lỗi</string>
     <string name="dialog_title_picker">Chọn tập tin âm nhạc</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Danh sách xem</string>
     <string name="action_view_grid">Chế độ hiển thị theo ô</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Nhớ lại</string>
     <string name="move_trash">Di chuyển vào thùng rác</string>
     <string name="path">Con đường</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Tất cả</string>
     <string name="categories">Thể loại</string>
     <string name="categories_folder">Thư mục</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Cho phép truy cập Root</string>
     <string name="info_name">Tên tệp</string>
     <string name="info_resolution">Nghị quyết</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d tập tin được di chuyển</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d tập tin được sao chép</string>
     <string name="action_view">Lượt xem</string>

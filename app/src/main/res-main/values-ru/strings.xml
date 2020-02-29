@@ -64,8 +64,6 @@
     <string name="image">Образ</string>
     <string name="audio">аудио</string>
     <string name="other">Другой</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Фон</string>
     <string name="error">ошибка</string>
     <string name="dialog_title_picker">Выберите музыкальный файл</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Посмотреть список</string>
     <string name="action_view_grid">Вид сетки</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Помнить</string>
     <string name="move_trash">Переместить в корзину</string>
     <string name="path">Путь</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Все</string>
     <string name="categories">категории</string>
     <string name="categories_folder">скоросшиватель</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Включить рут-доступ</string>
     <string name="info_name">Имя файла</string>
     <string name="info_resolution">разрешение</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d файлы перемещены</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d скопированных файлов</string>
     <string name="action_view">Посмотреть</string>

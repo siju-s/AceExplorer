@@ -64,8 +64,6 @@
     <string name="image">छवि</string>
     <string name="audio">ऑडियो</string>
     <string name="other">अन्य</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">पृष्ठभूमि</string>
     <string name="error">त्रुटि</string>
     <string name="dialog_title_picker">संगीत फ़ाइल चुनें</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">सूची दृश्य</string>
     <string name="action_view_grid">जाली देखना</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">याद है</string>
     <string name="move_trash">रद्दी में डालें</string>
     <string name="path">पथ</string>
@@ -179,12 +176,9 @@
     <string name="category_all">सब</string>
     <string name="categories">श्रेणियाँ</string>
     <string name="categories_folder">फ़ोल्डर</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">रूट पहुँच सक्षम करें</string>
     <string name="info_name">फ़ाइल का नाम</string>
     <string name="info_resolution">संकल्प</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d फाइलें चली गईं</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d फाइलें कॉपी की गईं</string>
     <string name="action_view">राय</string>

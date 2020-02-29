@@ -64,8 +64,6 @@
     <string name="image">Kép</string>
     <string name="audio">Hang</string>
     <string name="other">Egyéb</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Háttér</string>
     <string name="error">Hiba</string>
     <string name="dialog_title_picker">Válasszon zenefájlt</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Lista nézet</string>
     <string name="action_view_grid">Rácsnézet</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Emlékezik</string>
     <string name="move_trash">Kidobni a kukába</string>
     <string name="path">Pálya</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Összes</string>
     <string name="categories">Kategóriák</string>
     <string name="categories_folder">Folder</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Root hozzáférés engedélyezése</string>
     <string name="info_name">Fájl név</string>
     <string name="info_resolution">Felbontás</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d fájl áthelyezve</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d fájl másolva</string>
     <string name="action_view">Kilátás</string>

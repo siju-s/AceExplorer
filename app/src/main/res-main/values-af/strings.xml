@@ -64,8 +64,6 @@
     <string name="image">Image</string>
     <string name="audio">Audio</string>
     <string name="other">ander</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">agtergrond</string>
     <string name="error">fout</string>
     <string name="dialog_title_picker">Kies musieklêer</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Lys sig</string>
     <string name="action_view_grid">Roosteruitsig</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">onthou</string>
     <string name="move_trash">Beweeg na rommel</string>
     <string name="path">pad</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Almal</string>
     <string name="categories">kategorieë</string>
     <string name="categories_folder">gids</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Aktiveer worteltoegang</string>
     <string name="info_name">Lêernaam</string>
     <string name="info_resolution">resolusie</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d lêers geskuif</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d lêers gekopieër</string>
     <string name="action_view">Beskou</string>

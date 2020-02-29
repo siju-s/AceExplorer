@@ -64,8 +64,6 @@
     <string name="image">Slika</string>
     <string name="audio">Zvok</string>
     <string name="other">Drugo</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Ozadje</string>
     <string name="error">Napaka</string>
     <string name="dialog_title_picker">Izberite glasbeno datoteko</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Pogled seznama</string>
     <string name="action_view_grid">Pogled mreže</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Ne pozabite</string>
     <string name="move_trash">Premakni v koš</string>
     <string name="path">Pot</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Vse</string>
     <string name="categories">Kategorije</string>
     <string name="categories_folder">Mapa</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Omogoči Root dostop</string>
     <string name="info_name">Ime datoteke</string>
     <string name="info_resolution">Resolucija</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">Premaknilo se je %d datotek</string>
     <string name="copied" tools:ignore="PluralsCandidate">Kopiranih %d datotek</string>
     <string name="action_view">Pogled</string>

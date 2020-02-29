@@ -64,8 +64,6 @@
     <string name="image">imazh</string>
     <string name="audio">Audio</string>
     <string name="other">tjetër</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">sfond</string>
     <string name="error">gabim</string>
     <string name="dialog_title_picker">Zgjidhni skedarin muzikor</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Pamja e listës</string>
     <string name="action_view_grid">Pamja e rrjetit</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">mbaj mend</string>
     <string name="move_trash">Kaloni në Trash</string>
     <string name="path">Rrugë</string>
@@ -179,12 +176,9 @@
     <string name="category_all">të gjithë</string>
     <string name="categories">Kategoritë</string>
     <string name="categories_folder">dosje</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Aktivizo qasjen Root</string>
     <string name="info_name">Emri i skedarit</string>
     <string name="info_resolution">zgjidhje</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d skedarët u zhvendosën</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d skedarë të kopjuar</string>
     <string name="action_view">Pamje</string>

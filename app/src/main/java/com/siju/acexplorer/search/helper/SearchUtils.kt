@@ -13,13 +13,15 @@ object SearchUtils {
         val screenShotPath1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/Screenshots"
         val screenShotPath2 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + "/Screenshots"
 
-        return if (File(screenShotPath1).exists()) {
-            screenShotPath1
+        return when {
+            File(screenShotPath1).exists() -> {
+                screenShotPath1
+            }
+            File(screenShotPath2).exists() -> {
+                screenShotPath2
+            }
+            else -> screenShotPath1
         }
-        else if (File(screenShotPath2).exists()) {
-            screenShotPath2
-        }
-        else screenShotPath1
     }
 
     fun getWhatsappDirectory() : String? {

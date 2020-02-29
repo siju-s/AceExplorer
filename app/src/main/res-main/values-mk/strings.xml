@@ -64,8 +64,6 @@
     <string name="image">Слика</string>
     <string name="audio">Аудио</string>
     <string name="other">Друго</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Позадина</string>
     <string name="error">Грешка</string>
     <string name="dialog_title_picker">Изберете музичка датотека</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Приказ на список</string>
     <string name="action_view_grid">Поглед на мрежа</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Запомни</string>
     <string name="move_trash">Премести во ѓубре</string>
     <string name="path">Пат</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Сите</string>
     <string name="categories">Категории</string>
     <string name="categories_folder">Папка</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Овозможи пристап до корен</string>
     <string name="info_name">Име на датотека</string>
     <string name="info_resolution">Резолуција</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d датотеки се преместија</string>
     <string name="copied" tools:ignore="PluralsCandidate">Копирани %d датотеки</string>
     <string name="action_view">Погледни</string>

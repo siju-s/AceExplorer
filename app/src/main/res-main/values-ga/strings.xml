@@ -64,8 +64,6 @@
     <string name="image">Íomha</string>
     <string name="audio">Fuaime</string>
     <string name="other">Eile</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Cúlra</string>
     <string name="error">Earráid</string>
     <string name="dialog_title_picker">Roghnaigh comhad ceoil</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Amharcliosta</string>
     <string name="action_view_grid">Amharc ar an eangach</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Cuimhnigh</string>
     <string name="move_trash">Bog chuig an Bhruscar</string>
     <string name="path">Conair</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Gach</string>
     <string name="categories">Catagóirí</string>
     <string name="categories_folder">Fillteán</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Cumasaigh rochtain Root</string>
     <string name="info_name">Ainm comhaid</string>
     <string name="info_resolution">Rún</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d comhaid ar athraíodh a ionad</string>
     <string name="copied" tools:ignore="PluralsCandidate">Cóipeáil %d comhad</string>
     <string name="action_view">Amharc</string>

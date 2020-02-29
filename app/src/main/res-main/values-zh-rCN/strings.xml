@@ -26,7 +26,7 @@
     <string name="action_share">分享</string>
     <string name="msg_delete_success">成功删除</string>
     <string name="msg_delete_failure">删除操作失败</string>
-    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">您确定要删除％d个文件吗？</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">您确定要删除%d个文件吗？</string>
     <string name="new_folder">新建文件夹</string>
     <string name="new_file">新文件</string>
     <string name="add_fav">加入“最喜欢的</string>
@@ -64,8 +64,6 @@
     <string name="image">图片</string>
     <string name="audio">音讯</string>
     <string name="other">其他</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">背景</string>
     <string name="error">错误</string>
     <string name="dialog_title_picker">选择音乐文件</string>
@@ -85,13 +83,13 @@
     <string name="move">移动</string>
     <string name="copying">复制文件</string>
     <string name="moving">移动文件</string>
-    <string name="clipboard">在剪贴板中％d</string>
+    <string name="clipboard">在剪贴板中%d</string>
     <string name="text_copied_clipboard">复制到剪贴板。</string>
     <string name="dialog_cancel">取消</string>
     <string name="msg_ok">好</string>
     <string name="msg_error_not_supported">没有应用程序可以处理该操作</string>
     <string name="needsaccess">需要写访问权限</string>
-    <string name="needs_access_summary">请选择％1 $ s的根目录以授予对         操作</string>
+    <string name="needs_access_summary">请选择%1$s的根目录以授予对         操作</string>
     <string name="img_accessibility_back">背部</string>
     <string name="action_search">搜索</string>
 
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">列表显示</string>
     <string name="action_view_grid">网格视图</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">记得</string>
     <string name="move_trash">移到废纸篓</string>
     <string name="path">路径</string>
@@ -179,14 +176,11 @@
     <string name="category_all">所有</string>
     <string name="categories">分类目录</string>
     <string name="categories_folder">夹</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">启用根访问</string>
     <string name="info_name">文件名</string>
     <string name="info_resolution">解析度</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
-    <string name="moved" tools:ignore="PluralsCandidate">％d个文件已移动</string>
-    <string name="copied" tools:ignore="PluralsCandidate">已复制％d个文件</string>
+    <string name="moved" tools:ignore="PluralsCandidate">%d个文件已移动</string>
+    <string name="copied" tools:ignore="PluralsCandidate">已复制%d个文件</string>
     <string name="action_view">视图</string>
     <string name="action_view_gallery">图库视图</string>
     <string name="update_available">有可用更新</string>

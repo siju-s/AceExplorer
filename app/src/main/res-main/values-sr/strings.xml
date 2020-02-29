@@ -64,8 +64,6 @@
     <string name="image">Слика</string>
     <string name="audio">Аудио</string>
     <string name="other">Остало</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Позадина</string>
     <string name="error">Грешка</string>
     <string name="dialog_title_picker">Изаберите музичку датотеку</string>
@@ -85,13 +83,13 @@
     <string name="move">Потез</string>
     <string name="copying">Копирање датотека</string>
     <string name="moving">Премештање датотека</string>
-    <string name="clipboard">% д у међуспремнику</string>
+    <string name="clipboard">%d у међуспремнику</string>
     <string name="text_copied_clipboard">Копирано у међуспремник.</string>
     <string name="dialog_cancel">Поништити, отказати</string>
     <string name="msg_ok">ок</string>
     <string name="msg_error_not_supported">Нема апликације која би управљала радњом</string>
     <string name="needsaccess">Приступ за писање је потребан</string>
-    <string name="needs_access_summary">Изаберите коријенски директориј% 1 $ с да бисте дозволили приступ писању         оперишу</string>
+    <string name="needs_access_summary">Изаберите коријенски директориј%1$s да бисте дозволили приступ писању         оперишу</string>
     <string name="img_accessibility_back">Назад</string>
     <string name="action_search">Претрага</string>
 
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Лист лист</string>
     <string name="action_view_grid">Поглед мрежа</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Запамтити</string>
     <string name="move_trash">Пошаљи у ђубре</string>
     <string name="path">Стаза</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Све</string>
     <string name="categories">Категорије</string>
     <string name="categories_folder">Фолдер</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Омогући коријенски приступ</string>
     <string name="info_name">Назив документа</string>
     <string name="info_resolution">Резолуција</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">Премештено је% д датотека</string>
     <string name="copied" tools:ignore="PluralsCandidate">Копиране су% д датотеке</string>
     <string name="action_view">Поглед</string>

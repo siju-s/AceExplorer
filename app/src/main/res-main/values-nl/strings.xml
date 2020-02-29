@@ -64,8 +64,6 @@
     <string name="image">Beeld</string>
     <string name="audio">audio</string>
     <string name="other">anders</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Achtergrond</string>
     <string name="error">Fout</string>
     <string name="dialog_title_picker">Kies muziekbestand</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Lijstweergave</string>
     <string name="action_view_grid">Rasterweergave</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Onthouden</string>
     <string name="move_trash">Verplaatsen naar prullenmand</string>
     <string name="path">Pad</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Allemaal</string>
     <string name="categories">Categorieën</string>
     <string name="categories_folder">Folder</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Schakel root-toegang in</string>
     <string name="info_name">Bestandsnaam</string>
     <string name="info_resolution">Resolutie</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d bestanden verplaatst</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d bestanden gekopieerd</string>
     <string name="action_view">Visie</string>

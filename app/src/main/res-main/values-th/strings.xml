@@ -179,12 +179,9 @@
     <string name="category_all">ทั้งหมด</string>
     <string name="categories">หมวดหมู่</string>
     <string name="categories_folder">โฟลเดอร์</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">เปิดใช้งานการเข้าถึงรูท</string>
     <string name="info_name">ชื่อไฟล์</string>
     <string name="info_resolution">มติ</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">ย้ายไฟล์ %d ไฟล์แล้ว</string>
     <string name="copied" tools:ignore="PluralsCandidate">คัดลอก %d ไฟล์</string>
     <string name="action_view">ดู</string>

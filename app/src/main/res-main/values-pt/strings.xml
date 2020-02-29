@@ -64,8 +64,6 @@
     <string name="image">Imagem</string>
     <string name="audio">Áudio</string>
     <string name="other">De outros</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">fundo</string>
     <string name="error">Erro</string>
     <string name="dialog_title_picker">Escolha o arquivo de música</string>
@@ -91,7 +89,7 @@
     <string name="msg_ok">Está bem</string>
     <string name="msg_error_not_supported">Nenhum aplicativo para lidar com a ação</string>
     <string name="needsaccess">Acesso de gravação necessário</string>
-    <string name="needs_access_summary">Escolha o diretório raiz de %1$s para conceder acesso de gravação a         operar</string>
+    <string name="needs_access_summary">Escolha o diretório raiz de %1$s para conceder acesso de gravação a operar</string>
     <string name="img_accessibility_back">Costas</string>
     <string name="action_search">Procurar</string>
 
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Exibição de lista</string>
     <string name="action_view_grid">Visualização em grade</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Lembrar</string>
     <string name="move_trash">Mover para lixeira</string>
     <string name="path">Caminho</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Todos</string>
     <string name="categories">Categorias</string>
     <string name="categories_folder">Pasta</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Ativar acesso raiz</string>
     <string name="info_name">Nome do arquivo</string>
     <string name="info_resolution">Resolução</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d arquivos movidos</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d arquivos copiados</string>
     <string name="action_view">Visão</string>

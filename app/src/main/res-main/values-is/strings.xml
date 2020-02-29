@@ -64,8 +64,6 @@
     <string name="image">Mynd</string>
     <string name="audio">Hljóð</string>
     <string name="other">Annað</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Bakgrunnur</string>
     <string name="error">Villa</string>
     <string name="dialog_title_picker">Veldu tónlistarskrá</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Listasýn</string>
     <string name="action_view_grid">Rist útsýni</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Mundu</string>
     <string name="move_trash">Fara í ruslið</string>
     <string name="path">Leið</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Allt</string>
     <string name="categories">Flokkar</string>
     <string name="categories_folder">Mappa</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Virkja rótaraðgang</string>
     <string name="info_name">Skráarnafn</string>
     <string name="info_resolution">Upplausn</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d skrár fluttar</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d skrár afritaðar</string>
     <string name="action_view">Útsýni</string>

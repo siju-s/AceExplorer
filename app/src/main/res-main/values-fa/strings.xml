@@ -26,7 +26,7 @@
     <string name="action_share">اشتراک گذاری</string>
     <string name="msg_delete_success">با موفقیت حذف شد</string>
     <string name="msg_delete_failure">عملیات حذف نشد</string>
-    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">آیا مطمئن هستید که می خواهید پرونده٪ d را حذف کنید؟</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">آیا مطمئن هستید که می خواهید پرونده% d را حذف کنید؟</string>
     <string name="new_folder">پوشه جدید</string>
     <string name="new_file">پرونده جدید</string>
     <string name="add_fav">اضافه کردن به علاقه مندی ها</string>
@@ -64,8 +64,6 @@
     <string name="image">تصویر</string>
     <string name="audio">سمعی</string>
     <string name="other">دیگر</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">زمینه</string>
     <string name="error">خطا</string>
     <string name="dialog_title_picker">پرونده موسیقی را انتخاب کنید</string>
@@ -85,13 +83,13 @@
     <string name="move">حرکت</string>
     <string name="copying">کپی کردن پرونده ها</string>
     <string name="moving">انتقال پرونده ها</string>
-    <string name="clipboard">٪ d در کلیپ بورد</string>
+    <string name="clipboard">%d در کلیپ بورد</string>
     <string name="text_copied_clipboard">در کلیپ بورد کپی شد.</string>
     <string name="dialog_cancel">لغو</string>
     <string name="msg_ok">خوب</string>
     <string name="msg_error_not_supported">هیچ برنامه ای برای انجام این کار وجود ندارد</string>
     <string name="needsaccess">دسترسی لازم را بنویسید</string>
-    <string name="needs_access_summary">لطفاً برای دسترسی به نوشتار ، فهرست اصلی٪ 1 $ s را انتخاب کنید         کار کردن</string>
+    <string name="needs_access_summary">لطفاً برای دسترسی به نوشتار ، فهرست اصلی%1$s را انتخاب کنید         کار کردن</string>
     <string name="img_accessibility_back">بازگشت</string>
     <string name="action_search">جستجو کردن</string>
 
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">نمای لیست</string>
     <string name="action_view_grid">نمای شبکه</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">یاد آوردن</string>
     <string name="move_trash">انتقال به سطل زباله</string>
     <string name="path">مسیر</string>
@@ -179,14 +176,11 @@
     <string name="category_all">همه</string>
     <string name="categories">دسته بندی ها</string>
     <string name="categories_folder">پوشه</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">دسترسی Root را فعال کنید</string>
     <string name="info_name">نام فایل</string>
     <string name="info_resolution">وضوح</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
-    <string name="moved" tools:ignore="PluralsCandidate">پرونده٪ d منتقل شد</string>
-    <string name="copied" tools:ignore="PluralsCandidate">پرونده های٪ d کپی شدند</string>
+    <string name="moved" tools:ignore="PluralsCandidate">پرونده% d منتقل شد</string>
+    <string name="copied" tools:ignore="PluralsCandidate">پرونده های% d کپی شدند</string>
     <string name="action_view">چشم انداز</string>
     <string name="action_view_gallery">نمای گالری</string>
     <string name="update_available">به روزرسانی موجود</string>

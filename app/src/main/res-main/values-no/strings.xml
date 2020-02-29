@@ -64,8 +64,6 @@
     <string name="image">Bilde</string>
     <string name="audio">Audio</string>
     <string name="other">Annen</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">Bakgrunn</string>
     <string name="error">Feil</string>
     <string name="dialog_title_picker">Velg musikkfil</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Listevisning</string>
     <string name="action_view_grid">Rutenett visning</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">Huske</string>
     <string name="move_trash">Flytt til søppel</string>
     <string name="path">Sti</string>
@@ -179,12 +176,9 @@
     <string name="category_all">Alle</string>
     <string name="categories">kategorier</string>
     <string name="categories_folder">Mappe</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">Aktiver rottilgang</string>
     <string name="info_name">Filnavn</string>
     <string name="info_resolution">Vedtak</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d filer flyttet</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d filer kopiert</string>
     <string name="action_view">Utsikt</string>

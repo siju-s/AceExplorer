@@ -64,8 +64,6 @@
     <string name="image">გამოსახულება</string>
     <string name="audio">აუდიო</string>
     <string name="other">სხვა</string>
-    <string name="count_placeholder" translatable="false">1/</string>
-    <string name="percent_placeholder" translatable="false">%</string>
     <string name="background">ფონი</string>
     <string name="error">შეცდომა</string>
     <string name="dialog_title_picker">შეარჩიეთ მუსიკალური ფაილი</string>
@@ -111,7 +109,6 @@
 
     <string name="action_view_list">Ჩამონათვალი</string>
     <string name="action_view_grid">ქსელის ხედი</string>
-    <string name="zero_percent" translatable="false">0%</string>
     <string name="paste_conflict_remember">დაიმახსოვრე</string>
     <string name="move_trash">გადატანა ნაგავში</string>
     <string name="path">ბილიკი</string>
@@ -179,12 +176,9 @@
     <string name="category_all">ყველა</string>
     <string name="categories">კატეგორიები</string>
     <string name="categories_folder">საქაღალდე</string>
-    <string name="storage_space" translatable="false">%s / %s</string>
-    <string name="storage_progress_percent" translatable="false">%d %%</string>
     <string name="enable_root">ჩართეთ Root დაშვება</string>
     <string name="info_name">Ფაილის სახელი</string>
     <string name="info_resolution">რეზოლუცია</string>
-    <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d ფაილი გადავიდა</string>
     <string name="copied" tools:ignore="PluralsCandidate">კოპირებულია %d ფაილი</string>
     <string name="action_view">ხედი</string>
