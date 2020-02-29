@@ -883,6 +883,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     fun setFileData(data: ArrayList<FileInfo>?) {
         _fileData.postValue(data)
+        setCategory(FILES)
     }
 
     fun hideFab() {

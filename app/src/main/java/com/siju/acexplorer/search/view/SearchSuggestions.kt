@@ -83,6 +83,7 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
         folderChipGroup.visibility = View.GONE
         categoryChipGroup.visibility = View.GONE
         chipRecent.visibility = View.GONE
+        clearAllCheckedItems()
     }
 
     fun showChipGroup() {

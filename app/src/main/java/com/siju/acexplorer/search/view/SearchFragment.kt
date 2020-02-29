@@ -105,7 +105,6 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
         clearRecentButton = view.findViewById(R.id.buttonClear)
         recentSearchAdapter = RecentSearchAdapter {
             hideRecentSearch()
-//            filesList.adapter = fileListAdapter
             searchView.setQuery(it, false)
         }
         recentSearchList.adapter = recentSearchAdapter
