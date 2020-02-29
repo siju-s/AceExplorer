@@ -27,7 +27,7 @@ object RecentCursorData {
             do {
                 val path = cursor.getString(pathIndex)
                 val file = File(path)
-                if (HiddenFileHelper.shouldSkipHiddenFiles(file, showHidden)) {
+                if (HiddenFileHelper.shouldSkipHiddenFiles(file, showHidden) || File(path).isDirectory) {
                     continue
                 }
                 val fileName = cursor.getString(titleIndex)
