@@ -26,7 +26,7 @@
     <string name="action_share">Објави</string>
     <string name="msg_delete_success">избрисано успешно</string>
     <string name="msg_delete_failure">Операција брисања није успела</string>
-    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Јесте ли сигурни да желите избрисати% д датотеке?</string>
+    <string name="dialog_delete_title" tools:ignore="PluralsCandidate">Јесте ли сигурни да желите избрисати%d д датотеке?</string>
     <string name="new_folder">Нова фасцикла</string>
     <string name="new_file">Нова датотека</string>
     <string name="add_fav">Додај у омиљено</string>
@@ -179,8 +179,8 @@
     <string name="enable_root">Омогући коријенски приступ</string>
     <string name="info_name">Назив документа</string>
     <string name="info_resolution">Резолуција</string>
-    <string name="moved" tools:ignore="PluralsCandidate">Премештено је% д датотека</string>
-    <string name="copied" tools:ignore="PluralsCandidate">Копиране су% д датотеке</string>
+    <string name="moved" tools:ignore="PluralsCandidate">Премештено је%d д датотека</string>
+    <string name="copied" tools:ignore="PluralsCandidate">Копиране су%d д датотеке</string>
     <string name="action_view">Поглед</string>
     <string name="action_view_gallery">Приказ галерије</string>
     <string name="update_available">Располагању новија верзија</string>

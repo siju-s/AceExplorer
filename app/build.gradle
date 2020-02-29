@@ -40,6 +40,9 @@ android {
         versionName versionValue
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField 'boolean', 'ENABLE_CRASHLYTICS', 'true'
+        resConfigs "en", "af", "ar", "bg", "da", "de", "el", "es", "fa", "fr", "ga", "hi", "hr", "hu",
+                "hy", "in", "is", "it", "iw", "ja", "ka", "ko", "mk", "nl", "no", "pl", "pt", "ro", "ru",
+                "sl", "sq", "sr", "sv", "th", "tr", "uk", "vi", "zh", "zh-rCN", "zh-rTW"
     }
 
     dexOptions {
