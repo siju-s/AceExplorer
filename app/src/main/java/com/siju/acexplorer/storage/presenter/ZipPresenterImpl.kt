@@ -31,7 +31,12 @@ class ZipPresenterImpl(private val viewModel: FileListViewModel, private val nav
 
         override fun onZipModeEnd(dir: String?) {
             isZipMode = false
-            backStackInfo.removeLastEntry()
+            if (dir == null) {
+                backStackInfo.removeLastEntry()
+            }
+            else {
+                removeBackStackEntry(dir)
+            }
             viewModel.onZipModeEnd(backStackInfo.getCurrentBackStack()?.first)
         }
 
@@ -62,6 +67,22 @@ class ZipPresenterImpl(private val viewModel: FileListViewModel, private val nav
             navigation.setInitialDir(path, Category.FILES)
         }
 
+    }
+
+    private fun removeBackStackEntry(dir: String?) {
+        var pos = 0
+        val backStack = backStackInfo.getBackStack()
+        for (index in 0 until backStack.size) {
+            if (backStack[index].filePath == dir) {
+                pos = index
+                break
+            }
+        }
+        for (index in backStack.size - 1 downTo pos) {
+            if (index > 0) {
+                backStackInfo.removeEntryAtIndex(index)
+            }
+        }
     }
 
     override val zipOperationCallback = object : OperationHelper.ZipOperationCallback {
