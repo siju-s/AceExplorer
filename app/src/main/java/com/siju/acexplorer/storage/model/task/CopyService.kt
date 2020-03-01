@@ -449,6 +449,7 @@ class CopyService : Service() {
 
         if (fileList.isEmpty()) {
             sendBroadcast(100, 0, totalBytes, 1)
+            filesCopied++
             return
         }
 
