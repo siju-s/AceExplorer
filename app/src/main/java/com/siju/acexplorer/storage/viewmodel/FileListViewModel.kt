@@ -148,8 +148,6 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     private var scrollPosition = hashMapOf<String?, ScrollInfo>()
 
-    private var scrollToTop = false
-
     private val _homeClicked = MutableLiveData<Boolean>()
 
     val homeClicked: LiveData<Boolean>
@@ -267,11 +265,6 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     }
 
     private fun handleScrollPosition() {
-        if (scrollToTop) {
-            _scrollInfo.postValue(ScrollInfo(0, 0))
-            setScrollToTop(false)
-            return
-        }
         currentDir?.let {
             if (scrollPosition.containsKey(it)) {
                 val scrollInfo = scrollPosition[it]
@@ -363,7 +356,6 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     fun onHiddenFileSettingChanged(value: Boolean) {
         storageModel.saveHiddenFileSetting(value)
-        scrollToTop = true
         val backStack = backStackInfo.getCurrentBackStack()
         backStack?.let {
             reloadData(backStack.first, backStack.second)
@@ -676,12 +668,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     fun onSort(sortMode: SortMode) {
         storageModel.saveSortMode(sortMode)
-        setScrollToTop(true)
         refreshList()
-    }
-
-    private fun setScrollToTop(value: Boolean) {
-        this.scrollToTop = value
     }
 
     fun onFABClicked(operation: Operations, path: String?) {
