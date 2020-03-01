@@ -10,6 +10,7 @@ import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFi
 import com.siju.acexplorer.main.model.data.FileDataFetcher
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SortHelper
+import com.siju.acexplorer.search.helper.SearchUtils
 
 private const val TAG = "FolderGenericFetcher"
 
@@ -45,11 +46,22 @@ class FolderGenericFetcher : DataFetcher {
         if (!showHidden) {
             selection += HiddenFileHelper.constructionNoHiddenFilesArgs() + " AND "
         }
-        selection +=
-                MediaStore.Files.FileColumns.MEDIA_TYPE + " IN " +
-                        "(" + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO + "," +
-                        MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO + "," +
-                        MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE + ")" + " AND "
+        if (path == SearchUtils.getTelegramDirectory() || path == SearchUtils.getWhatsappDirectory()) {
+            selection += MediaStore.Files.FileColumns.MEDIA_TYPE + " IN " +
+                    "(" + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO + "," +
+                    MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO + "," +
+                    MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE + "," +
+                    MediaStore.Files.FileColumns.MEDIA_TYPE_NONE + ")" + " AND "
+            selection +=  "(" + MediaStore.Files.FileColumns.MIME_TYPE + " NOT NULL" + " AND " +
+                    MediaStore.Files.FileColumns.MIME_TYPE + " != " + "'image/webp'" + ")" + " AND "
+        }
+        else {
+            selection +=
+                    MediaStore.Files.FileColumns.MEDIA_TYPE + " IN " +
+                            "(" + MediaStore.Files.FileColumns.MEDIA_TYPE_AUDIO + "," +
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO + "," +
+                            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE + ")" + " AND "
+        }
         selection += MediaStore.Files.FileColumns.DATA + " LIKE ? "
         val selectionArgs = arrayOf("$path%")
         return context.contentResolver.query(uri, projection, selection, selectionArgs, null)
