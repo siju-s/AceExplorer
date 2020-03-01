@@ -305,7 +305,7 @@ class FilesList(private val fileListHelper: FileListHelper,
 
     fun isPeekMode() : Boolean {
         peekAndPop ?: return false
-        return peekAndPop!!.isPeekMode()
+        return peekAndPop?.isPeekMode() == true
     }
 
     fun endPeekMode() {

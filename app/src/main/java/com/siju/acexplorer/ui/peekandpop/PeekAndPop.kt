@@ -15,9 +15,12 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.isPeekPopCategory
 import com.siju.acexplorer.ui.autoplay.AutoPlayContainer
 import com.siju.acexplorer.ui.peekandpop.DimensionUtil.convertDpToPx
 
+private const val PEEK_VIEW_MARGIN_DP = 12
+private const val ANIMATION_PEEK_DURATION = 275
+private const val ANIMATION_POP_DURATION = 250
+
 open class PeekAndPop(var builder: Builder) {
     private lateinit var peekView: View
-    private var contentView: ViewGroup?= null
     private lateinit var peekLayout: ViewGroup
     private lateinit var thumbImage: ImageView
     private lateinit var autoPlayView: AutoPlayContainer
@@ -25,13 +28,15 @@ open class PeekAndPop(var builder: Builder) {
     private lateinit var infoButton: ImageButton
     private lateinit var previousButton: ImageButton
     private lateinit var nextButton: ImageButton
+
+    private var contentView: ViewGroup?= null
     private var peekViewOriginalPosition : FloatArray? = null
     private var peekAnimationHelper: PeekAnimationHelper? = null
-    var isEnabled = true
     private var onGeneralActionListener: OnGeneralActionListener? = null
     private var onClickListener: OnClickListener? = null
     private var orientation = 0
     private var peekViewMargin = 0
+    var isEnabled = true
 
     init {
         onGeneralActionListener = builder.onGeneralActionListener
@@ -134,16 +139,12 @@ open class PeekAndPop(var builder: Builder) {
      * @param index         the view that long clicked
      */
     private fun peek(longClickView: View, index: Int) {
-        if (onGeneralActionListener != null) {
-            onGeneralActionListener?.onPeek(longClickView, index)
-        }
+        onGeneralActionListener?.onPeek(longClickView, index)
         peekView.visibility = View.VISIBLE
         peekLayout.visibility = View.VISIBLE
         peekLayout.background.alpha = 240
         peekAnimationHelper?.animatePeek(ANIMATION_PEEK_DURATION)
-        if (builder.parentViewGroup != null) {
-            builder.parentViewGroup?.requestDisallowInterceptTouchEvent(true)
-        }
+        builder.parentViewGroup?.requestDisallowInterceptTouchEvent(true)
     }
 
     /**
@@ -287,11 +288,5 @@ open class PeekAndPop(var builder: Builder) {
     interface OnClickListener {
         fun onClick(view: View, position: Int, canShowPeek: Boolean)
         fun canShowPeek(): Boolean
-    }
-
-    companion object {
-        private const val PEEK_VIEW_MARGIN_DP = 12
-        private const val ANIMATION_PEEK_DURATION = 275
-        private const val ANIMATION_POP_DURATION = 250
     }
 }

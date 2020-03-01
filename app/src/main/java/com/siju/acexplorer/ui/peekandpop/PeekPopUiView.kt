@@ -36,7 +36,6 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
 
     override fun setFileList(list: ArrayList<FileInfo>) {
         this.fileList = list
-//        Log.d(TAG, "setFileList:${list.size}, this:$this")
     }
 
     override fun getFileData(): java.util.ArrayList<FileInfo> {
@@ -255,7 +254,6 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
             peekAndPop.resetViews()
         }
     }
-
 
     override fun stopAutoPlayVid() {
         val view = peekAndPop.getPeekView()
