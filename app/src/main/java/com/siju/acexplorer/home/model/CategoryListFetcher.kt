@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.home.types.HomeLibraryInfo
-import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.search.helper.SearchUtils
@@ -13,7 +12,7 @@ import java.io.File
 
 private const val COUNT_ZERO = 0
 private const val TAG = "CategoryListFetcher"
-
+private const val PREF_NEW_CATEGORY_LAYOUT = "new_category_layout"
 object CategoryListFetcher {
 
     private val resourceIds = listOf(R.drawable.ic_library_images, R.drawable.ic_library_music,
@@ -58,7 +57,7 @@ object CategoryListFetcher {
     }
 
     private fun persistFirstRunPref(context: Context) {
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(FileConstants.PREFS_FIRST_RUN, false).apply()
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putBoolean(PREF_NEW_CATEGORY_LAYOUT, false).apply()
     }
 
     private fun addToList(homeLibraryInfo: HomeLibraryInfo, homeLibraryInfoList: ArrayList<HomeLibraryInfo>) {
@@ -78,7 +77,7 @@ object CategoryListFetcher {
     }
 
     private fun isFirstRun(context: Context): Boolean {
-        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(FileConstants.PREFS_FIRST_RUN, true)
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_NEW_CATEGORY_LAYOUT, true)
     }
 
     private fun saveCategoriesToPrefs(context: Context, categoryIds: ArrayList<Int>) {
