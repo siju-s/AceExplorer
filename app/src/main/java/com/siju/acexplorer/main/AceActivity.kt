@@ -88,7 +88,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         initListeners()
         checkIfInAppShortcut(intent)
         setupSelectedTabPosition(savedInstanceState)
-        updateChecker = UpdateChecker(baseContext, this, updateCallback)
+        updateChecker = UpdateChecker(applicationContext, this, updateCallback)
         setupPremiumUtils()
     }
 
