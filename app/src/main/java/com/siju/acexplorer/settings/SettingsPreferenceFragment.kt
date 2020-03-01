@@ -63,6 +63,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private var connectivityManager : ConnectivityManager? = null
     private var networkHelper : NetworkHelper? = null
     private val handler = Handler(Looper.getMainLooper())
+    private var registeredNetworkCallback = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -186,10 +187,14 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
             updatePreference?.isVisible = false
             return
         }
+        updateChecker?.setUpdateCallback(updateCallback)
         networkHelper = NetworkHelper(networkChangeCallback)
         setupUpdatePrefText(NetworkHelper.isConnectedToInternet(context))
         connectivityManager = networkHelper?.getConnectivityManager(context)
-        networkHelper?.registerNetworkRequest(connectivityManager)
+        if (!registeredNetworkCallback) {
+            networkHelper?.registerNetworkRequest(connectivityManager)
+            registeredNetworkCallback = true
+        }
         updatePreference?.isVisible = true
         initUpdatePrefListener()
     }
@@ -220,7 +225,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun updateClicked() {
-        updateChecker?.setUpdateCallback(updateCallback)
         updateChecker?.startUpdate()
     }
 
@@ -270,8 +274,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun onUpdateDownloaded() {
-        updatePreference?.title = getString(R.string.update_downloaded)
-        updatePreference?.summary = getString(R.string.install_update)
+        context?.let {
+            updatePreference?.title = it.getString(R.string.update_downloaded)
+            updatePreference?.summary = it.getString(R.string.install_update)
+        }
     }
 
     private fun onUpdateDownloading() {
@@ -356,7 +362,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        networkHelper?.unregisterNetworkRequest(connectivityManager)
+        if (registeredNetworkCallback) {
+            registeredNetworkCallback = false
+            networkHelper?.unregisterNetworkRequest(connectivityManager)
+        }
     }
 
     companion object {
