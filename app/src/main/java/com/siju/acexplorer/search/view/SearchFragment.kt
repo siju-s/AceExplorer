@@ -333,6 +333,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
 
     override fun handleItemClick(fileInfo: FileInfo, position: Int) {
         KeyboardHelper.hideKeyboard(searchView)
+        searchView.clearFocus()
         if (searchSuggestions.isNoneChecked()) {
             fileListViewModel.handleItemClick(fileInfo, position)
         }
@@ -439,6 +440,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     fun onSearchSuggestionClicked() {
         hideRecentSearch()
         KeyboardHelper.hideKeyboard(searchView)
+        searchView.clearFocus()
         filesList.adapter = fileListAdapter
     }
 
