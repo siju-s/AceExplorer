@@ -165,6 +165,9 @@ object StorageUtils {
     private fun populateExternalFilesDirPaths(context: Context, paths: ArrayList<String>) {
         val externalFilesDirs = context.getExternalFilesDirs("external")
         for (file in externalFilesDirs) {
+            if (file == null) {
+                continue
+            }
             val index = file.absolutePath.lastIndexOf(ANDROID_DATA)
             if (index >= 0) {
                 var path = file.absolutePath.substring(0, index)
