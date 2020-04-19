@@ -31,12 +31,10 @@ object FileUtils {
     const val ACTION_KEEP = 3
     private const val EXT_APK = "apk"
 
-    fun isFileMusic(path: String?): Boolean {
-        path ?: return false
-        return path.toLowerCase(Locale.ROOT).endsWith(".mp3") ||
-                path.toLowerCase(Locale.ROOT).endsWith(".amr")
-                || path.toLowerCase(Locale.ROOT).endsWith(".wav")
-                || path.toLowerCase(Locale.ROOT).endsWith(".m4a")
+    fun isFileMusic(extension: String?): Boolean {
+        extension ?: return false
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: return false
+        return mimeType.startsWith("audio/")
     }
 
     fun getAbsolutePath(file: File?): String? {

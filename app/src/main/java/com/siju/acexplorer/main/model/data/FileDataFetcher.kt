@@ -99,7 +99,7 @@ class FileDataFetcher : DataFetcher {
                     size = file.length()
                     extension = FileUtils.getExtension(filePath)
                     category = getCategoryFromExtension(extension)
-                    if (isNotRingtoneFile(ringtonePicker, filePath)) {
+                    if (isNotRingtoneFile(ringtonePicker, extension)) {
                         continue
                     }
                 }
@@ -113,8 +113,8 @@ class FileDataFetcher : DataFetcher {
         }
 
         private fun isNotRingtoneFile(ringtonePicker: Boolean,
-                                      filePath: String?) =
-                ringtonePicker && !FileUtils.isFileMusic(filePath)
+                                      extension: String?) =
+                ringtonePicker && !FileUtils.isFileMusic(extension)
 
         fun getDirectorySize(file: File, showHidden: Boolean = false): Long {
             var childFileListSize = 0
