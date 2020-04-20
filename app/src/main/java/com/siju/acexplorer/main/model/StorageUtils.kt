@@ -163,7 +163,7 @@ object StorageUtils {
         }
 
     private fun populateExternalFilesDirPaths(context: Context, paths: ArrayList<String>) {
-        val externalFilesDirs = context.getExternalFilesDirs("external")
+        val externalFilesDirs = context.getExternalFilesDirs("external") ?: return
         for (file in externalFilesDirs) {
             if (file == null) {
                 continue
