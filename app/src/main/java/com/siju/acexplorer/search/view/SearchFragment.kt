@@ -287,7 +287,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
         val searchManager = context?.getSystemService(
                 SEARCH_SERVICE) as SearchManager
         searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(activity!!.componentName))
+                searchManager.getSearchableInfo(activity?.componentName))
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {

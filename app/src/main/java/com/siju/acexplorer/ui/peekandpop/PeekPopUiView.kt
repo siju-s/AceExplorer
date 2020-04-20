@@ -69,8 +69,10 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
             }
 
             override fun canShowPeek(): Boolean {
-                peekPopCallback ?: return false
-                return peekPopCallback!!.canShowPeek()
+                peekPopCallback?.let {
+                    return canShowPeek()
+                }
+                return false
             }
         })
     }
@@ -178,14 +180,14 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
             PeekPopView.PeekButton.NEXT -> {
                 val pos = getNextPeekPos(position)
                 if (pos == position) {
-                   disablePeekButton(view.findViewById<View>(R.id.buttonNext))
+                   disablePeekButton(view.findViewById(R.id.buttonNext))
                 }
                 pos
             }
             PeekPopView.PeekButton.PREVIOUS -> {
                 val pos = getPreviousPeekPos(position)
                 if (pos == position) {
-                    disablePeekButton(view.findViewById<View>(R.id.buttonPrev))
+                    disablePeekButton(view.findViewById(R.id.buttonPrev))
                 }
                 pos
             }

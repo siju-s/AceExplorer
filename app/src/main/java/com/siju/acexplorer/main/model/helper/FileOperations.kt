@@ -170,7 +170,7 @@ object FileOperations {
                 outputStream = FileOutputStream(target)
                 inChannel = inputStream.channel
                 outChannel = outputStream.channel
-                inChannel!!.transferTo(0, inChannel.size(), outChannel)
+                inChannel?.transferTo(0, inChannel.size(), outChannel)
             }
             else {
                 // Storage Access Framework

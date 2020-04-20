@@ -25,7 +25,7 @@ class ZipPresenterImpl(private val viewModel: FileListViewModel, private val nav
 
 
     override val zipCallback = object : ZipViewerCallback {
-        override fun removeZipScrollPos(newPath: String) {
+        override fun removeZipScrollPos(newPath: String?) {
 
         }
 

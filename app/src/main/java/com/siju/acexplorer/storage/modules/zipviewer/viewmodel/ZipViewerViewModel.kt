@@ -22,7 +22,6 @@ import java.io.File
 import java.util.*
 import java.util.zip.ZipEntry
 
-private const val TAG = "ZipViewerViewModel"
 private const val DELIMITER_SLASH = "/"
 class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallback: ZipViewerCallback) : ViewModel() {
 
@@ -93,7 +92,9 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
         if (isDirectory(zipEntryFileName)) {
             val dirPath = zipEntryFileName?.substringBeforeLast(DELIMITER_SLASH)
             scrollDir = parentZipPath + DELIMITER_SLASH + dirPath
-            zipViewerCallback.calculateZipScroll(scrollDir!!)
+            scrollDir?.let {
+                zipViewerCallback.calculateZipScroll(it)
+            }
         }
         else {
             scrollDir = null
@@ -146,9 +147,9 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
 
     private fun reloadData() {
         zipViewerCallback.removeFromBackStack()
-        zipViewerCallback.removeZipScrollPos(newPath!!)
-        if (currentDir != null) {
-            currentDir = File(currentDir!!).parent
+        zipViewerCallback.removeZipScrollPos(newPath)
+        currentDir?.let {
+            currentDir = File(it).parent
         }
         if (currentDir == File.separator) {
             currentDir = null

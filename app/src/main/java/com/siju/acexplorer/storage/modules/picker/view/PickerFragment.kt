@@ -376,18 +376,6 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
                              , DELAY_SCROLL_UPDATE_MS)
     }
 
-//    private fun computeScroll() {
-//        val vi = fileList.getChildAt(0)
-//        val top = vi?.top ?: 0
-//        val index = layoutManager!!.findFirstVisibleItemPosition()
-//
-//        val b = Bundle()
-//        b.putInt(INDEX, index)
-//        b.putInt(TOP, top)
-//        scrollPosition[currentPath] = b
-//    }
-
-
     override fun onDestroyView() {
         activity?.setResult(AppCompatActivity.RESULT_OK, null)
         super.onDestroyView()

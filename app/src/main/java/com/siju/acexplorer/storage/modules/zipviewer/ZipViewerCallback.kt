@@ -23,7 +23,7 @@ import java.util.*
 
 interface ZipViewerCallback {
 
-    fun removeZipScrollPos(newPath: String)
+    fun removeZipScrollPos(newPath: String?)
 
     fun onZipModeEnd(dir: String?)
 

@@ -5,10 +5,8 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
-import android.util.Log
 import com.siju.acexplorer.main.model.helper.SdkHelper
 
-private const val TAG = "NetworkHelper"
 class NetworkHelper(val networkChangeCallback: NetworkChangeCallback) {
 
     companion object {
@@ -28,19 +26,17 @@ class NetworkHelper(val networkChangeCallback: NetworkChangeCallback) {
 
     private var networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onLost(network: Network?) {
-            Log.e(TAG, "networkcallback called from onLost:$network")
-            //record wi-fi disconnect event
             networkChangeCallback.onNetworkUnavailable()
         }
+
         override fun onUnavailable() {
-            Log.e(TAG, "networkcallback called from onUnvailable")
             networkChangeCallback.onNetworkUnavailable()
         }
+
         override fun onLosing(network: Network?, maxMsToLive: Int) {
-            Log.e(TAG,"networkcallback called from onLosing")
         }
+
         override fun onAvailable(network: Network?) {
-            Log.e(TAG,"NetworkCallback network called from onAvailable ")
             networkChangeCallback.onNetworkAvailable()
         }
     }
@@ -63,7 +59,7 @@ class NetworkHelper(val networkChangeCallback: NetworkChangeCallback) {
         connectivityManager?.unregisterNetworkCallback(networkCallback)
     }
 
-    fun getConnectivityManager(context: Context?) : ConnectivityManager? {
+    fun getConnectivityManager(context: Context?): ConnectivityManager? {
         if (context == null) {
             return null
         }

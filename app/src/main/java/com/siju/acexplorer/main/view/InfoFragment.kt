@@ -162,18 +162,22 @@ class InfoFragment : BottomSheetDialogFragment() {
     }
 
     private fun bindSize(sizeText: TextView?) {
+        if (sizeText == null) {
+            return
+        }
+        val context = sizeText.context
         val isDirectory = fileInfo.isDirectory
         val fileNoOrSize: String
         fileNoOrSize = if (isDirectory) {
             when (val childFileListSize = fileInfo.size.toInt()) {
                 0 -> {
-                    context!!.getString(R.string.empty)
+                    context.getString(R.string.empty)
                 }
                 -1 -> {
                     ""
                 }
                 else -> {
-                    context!!.resources.getQuantityString(R.plurals.number_of_files,
+                    context.resources.getQuantityString(R.plurals.number_of_files,
                             childFileListSize,
                             childFileListSize)
                 }
@@ -182,7 +186,7 @@ class InfoFragment : BottomSheetDialogFragment() {
             val size = fileInfo.size
             Formatter.formatFileSize(context, size)
         }
-        sizeText?.text = fileNoOrSize
+        sizeText.text = fileNoOrSize
     }
 
     private fun setIconListener(icon: ImageView, path: String?, fileInfo: FileInfo) {
@@ -244,7 +248,9 @@ class InfoFragment : BottomSheetDialogFragment() {
             R.id.action_copy_path -> {
                 Analytics.logger.pathCopied()
                 Clipboard.copyTextToClipBoard(context, fileInfo.filePath)
-                Toast.makeText(context, context!!.getString(R.string.text_copied_clipboard), Toast.LENGTH_SHORT).show()
+                context?.let {
+                    Toast.makeText(it, it.getString(R.string.text_copied_clipboard), Toast.LENGTH_SHORT).show()
+                }
             }
         }
         return super.onOptionsItemSelected(item)

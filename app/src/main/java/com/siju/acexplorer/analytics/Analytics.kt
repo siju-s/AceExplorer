@@ -7,11 +7,11 @@ object Analytics {
     val logger: Logger = GoogleAnalytics()
 
     interface Logger {
-        fun register(context: Context?)
+        fun register(context: Context)
         fun reportDeviceName()
         fun addLibClicked()
-        fun homeStorageDisplayed(count: Int, paths: List<String?>?)
-        fun homeLibsDisplayed(count: Int, names: List<String?>?)
+        fun homeStorageDisplayed(count: Int, paths: List<String?>)
+        fun homeLibsDisplayed(count: Int, names: List<String?>)
         fun storageDisplayed()
         fun extStorageDisplayed()
         fun aboutDisplayed()
@@ -39,8 +39,8 @@ object Analytics {
         fun openAsDialogShown()
         fun pickerShown(isRingtonePicker: Boolean)
         fun sendAnalytics(isSent: Boolean)
-        fun logEvent(event: String?, params: Bundle?)
-        fun logEvent(event: String?)
+        fun logEvent(event: String, params: Bundle?)
+        fun logEvent(event: String)
         fun enterPeekMode()
 
         companion object {

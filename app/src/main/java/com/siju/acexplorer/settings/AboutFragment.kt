@@ -14,12 +14,18 @@ class AboutFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.pref_about, rootKey)
+        setupVersion()
+    }
 
+    private fun setupVersion() {
         val version: Preference? = findPreference(PREFS_VERSION)
         try {
-            version?.summary = activity?.packageManager
-                    ?.getPackageInfo(activity!!.packageName, 0)?.versionName
-        } catch (e: PackageManager.NameNotFoundException) {
+            activity?.let {
+                version?.summary = it.packageManager
+                        ?.getPackageInfo(it.packageName, 0)?.versionName
+            }
+        }
+        catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
         }
     }

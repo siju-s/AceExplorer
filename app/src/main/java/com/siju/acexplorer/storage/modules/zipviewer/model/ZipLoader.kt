@@ -122,7 +122,7 @@ class ZipLoader(val context: Context) {
             addFileZipEntry(entriesList, entryName, elements, entry)
         }
         else {
-            addDirectoryZipEntry(elements, entriesList, entry, entryName!!)
+            entryName?.let { addDirectoryZipEntry(elements, entriesList, entry, it) }
         }
     }
 

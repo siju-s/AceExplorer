@@ -150,11 +150,10 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
         if (permissionRationaleDialog == null) {
             createRationaleDialog()
         }
-
         val showSettings = !ActivityCompat.shouldShowRequestPermissionRationale(activity,
                                                                                 storagePermission)
-        val buttonGrant: Button = permissionRationaleDialog!!.findViewById(R.id.buttonGrant)
-        val textViewPermissionHint: TextView = permissionRationaleDialog!!.findViewById(
+        val buttonGrant: Button? = permissionRationaleDialog?.findViewById(R.id.buttonGrant)
+        val textViewPermissionHint: TextView? = permissionRationaleDialog?.findViewById(
                 R.id.textPermissionHint)
 
         permissionRationaleDialog?.setOnDismissListener {
@@ -162,10 +161,10 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
         }
 
         if (showSettings) {
-            buttonGrant.setText(R.string.action_settings)
-            textViewPermissionHint.visibility = View.VISIBLE
+            buttonGrant?.setText(R.string.action_settings)
+            textViewPermissionHint?.visibility = View.VISIBLE
         }
-        buttonGrant.setOnClickListener {
+        buttonGrant?.setOnClickListener {
             if (showSettings) {
                 openSettings()
             }

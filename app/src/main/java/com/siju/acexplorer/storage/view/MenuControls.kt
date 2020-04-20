@@ -373,7 +373,6 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     fun setTheme(theme: Theme) {
         this.theme = theme
-        Log.e(TAG, "setTheme:$theme")
         val darkColoredTheme = Theme.isDarkColoredTheme(fragment.resources, theme)
         if (darkColoredTheme) {
             toolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay

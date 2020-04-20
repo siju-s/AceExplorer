@@ -299,7 +299,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         })
 
         fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, Observer {
-            Log.e(TAG, "viewFileEVent:$it")
             it?.apply {
                 viewFile(it.first, it.second)
             }
@@ -1038,7 +1037,6 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
         override fun onDestroy() {
             super.onDestroy()
-            Log.e(TAG, "onDestroy")
             if (isAppManager(category)) {
                 unregisterPackageReceiver(AceApplication.appContext)
             }

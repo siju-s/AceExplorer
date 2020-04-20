@@ -11,8 +11,8 @@ class GoogleAnalytics : Analytics.Logger {
     private var firebaseAnalytics: FirebaseAnalytics? = null
     private var sendAnalytics = true
 
-    override fun register(context: Context?) {
-        firebaseAnalytics = FirebaseAnalytics.getInstance(context!!)
+    override fun register(context: Context) {
+        firebaseAnalytics = FirebaseAnalytics.getInstance(context)
     }
 
     override fun reportDeviceName() {
@@ -29,9 +29,9 @@ class GoogleAnalytics : Analytics.Logger {
         logEvent(Analytics.Logger.EV_HOME_ADD)
     }
 
-    override fun homeStorageDisplayed(count: Int, paths: List<String?>?) {
+    override fun homeStorageDisplayed(count: Int, paths: List<String?>) {
         val stringBuilder = StringBuilder()
-        for (i in paths!!.indices) {
+        for (i in paths.indices) {
             stringBuilder.append(paths[i])
             if (i != paths.size - 1) {
                 stringBuilder.append(",")
@@ -43,9 +43,9 @@ class GoogleAnalytics : Analytics.Logger {
         logEvent(Analytics.Logger.EV_HOMESCREEN, params)
     }
 
-    override fun homeLibsDisplayed(count: Int, names: List<String?>?) {
+    override fun homeLibsDisplayed(count: Int, names: List<String?>) {
         val stringBuilder = StringBuilder()
-        for (i in names!!.indices) {
+        for (i in names.indices) {
             stringBuilder.append(names[i])
             if (i != names.size - 1) {
                 stringBuilder.append(",")
@@ -204,15 +204,15 @@ class GoogleAnalytics : Analytics.Logger {
         sendAnalytics = isSent
     }
 
-    override fun logEvent(event: String?, params: Bundle?) {
+    override fun logEvent(event: String, params: Bundle?) {
         if (sendAnalytics && !BuildConfig.DEBUG && !BuildConfig.IS_DEV_VERSION) {
-            firebaseAnalytics!!.logEvent(event!!, params)
+            firebaseAnalytics?.logEvent(event, params)
         }
     }
 
-    override fun logEvent(event: String?) {
+    override fun logEvent(event: String) {
         if (sendAnalytics && !BuildConfig.DEBUG && !BuildConfig.IS_DEV_VERSION) {
-            firebaseAnalytics!!.logEvent(event!!, null)
+            firebaseAnalytics?.logEvent(event, null)
         }
     }
 }

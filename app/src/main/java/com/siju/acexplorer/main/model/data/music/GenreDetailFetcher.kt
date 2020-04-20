@@ -13,7 +13,10 @@ import java.util.*
 class GenreDetailFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?,
                            category: Category): ArrayList<FileInfo> {
-        val uri = MediaStore.Audio.Genres.Members.getContentUri("external", path!!.toLong())
+        if (path == null) {
+            return arrayListOf()
+        }
+        val uri = MediaStore.Audio.Genres.Members.getContentUri("external", path.toLong())
         val cursor = context.contentResolver.query(uri,
                                                    null, null, null, null)
         val data = getGenreDetailCursorData(cursor)

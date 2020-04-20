@@ -238,9 +238,11 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
             bitmap = Bitmap
                     .createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(),
                             Bitmap.Config.ARGB_8888)
-            val canvas = Canvas(bitmap!!)
-            drawable.setBounds(0, 0, canvas.width, canvas.height)
-            drawable.draw(canvas)
+            bitmap?.let {
+                val canvas = Canvas(bitmap)
+                drawable.setBounds(0, 0, canvas.width, canvas.height)
+                drawable.draw(canvas)
+            }
         }
         return bitmap
     }

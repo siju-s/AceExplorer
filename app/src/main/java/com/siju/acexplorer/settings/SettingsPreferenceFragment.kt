@@ -154,7 +154,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
     private fun setupThemePref() {
         val themePreference = findPreference<ListPreference>(PREFS_THEME)
-        theme = Theme.getUserThemeValue(activity!!)
+        theme = Theme.getUserThemeValue(context)
         bindPreferenceSummaryToValue(themePreference)
     }
 
@@ -181,7 +181,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupUpdatePref() {
-        updatePreference = findPreference<Preference?>(PREFS_UPDATE)
+        updatePreference = findPreference(PREFS_UPDATE)
         val updateAvailable = updateChecker?.isUpdateAvailable()
         if (updateChecker == null || updateAvailable == false) {
             updatePreference?.isVisible = false

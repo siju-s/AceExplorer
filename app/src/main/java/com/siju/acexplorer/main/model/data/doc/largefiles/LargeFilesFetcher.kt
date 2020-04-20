@@ -13,7 +13,7 @@ import com.siju.acexplorer.main.model.helper.SortHelper
 import com.siju.acexplorer.storage.model.SortMode
 import java.util.*
 
-private const val LARGE_FILES_MIN_SIZE_MB = 104857600 //100 MB
+private const val LARGE_FILES_MIN_SIZE_BYTES = 104857600 //100 MB
 
 class LargeFilesFetcher : DataFetcher {
 
@@ -40,7 +40,7 @@ class LargeFilesFetcher : DataFetcher {
             selection = constructionNoHiddenFilesArgs() + " AND "
         }
         selection += MediaStore.Files.FileColumns.SIZE + " >?"
-        val selectionArgs = arrayOf(LARGE_FILES_MIN_SIZE_MB.toString())
+        val selectionArgs = arrayOf(LARGE_FILES_MIN_SIZE_BYTES.toString())
         return context.contentResolver.query(uri, null, selection, selectionArgs,
                 null)
     }
