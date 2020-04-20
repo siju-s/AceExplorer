@@ -20,12 +20,10 @@ import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.webkit.MimeTypeMap
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.canHandleIntent
-import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfFileCategory
@@ -34,34 +32,50 @@ import java.util.*
 
 object ShareHelper {
 
-    fun shareFiles(context: Context, fileInfo: ArrayList<FileInfo>, category: Category) {
+    fun shareFiles(context: Context, filesList: ArrayList<FileInfo>, category: Category) {
         val intent = Intent()
-        intent.action = Intent.ACTION_SEND_MULTIPLE
+        val fileCount = filesList.size
+        if (filesList.isEmpty()) {
+            return
+        }
+        if (fileCount == 1) {
+            intent.action = Intent.ACTION_SEND
+        }
+        else {
+            intent.action = Intent.ACTION_SEND_MULTIPLE
+        }
         if (checkIfFileCategory(category)) {
             intent.type = "*/*"
         }
         else {
-            val extension = fileInfo[0].extension
+            val extension = filesList[0].extension
             val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
-            Logger.log("ShareHelper", "Mime:" + mimeType!!)
-            intent.type = mimeType
+            intent.type = mimeType ?: "*/*"
         }
 
-        val files = ArrayList<Uri>()
-
-        for (info in fileInfo) {
-            val uri = UriHelper.createContentUri(context, info.filePath)
-            uri?.let { files.add(it) }
+        if (fileCount == 1) {
+            val uri = getUri(context, filesList[0])
+            intent.putExtra(Intent.EXTRA_STREAM, uri)
+        }
+        else {
+            val files = ArrayList<Uri>()
+            for (info in filesList) {
+                val uri = getUri(context, info)
+                uri?.let { files.add(it) }
+            }
+            intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files)
         }
 
-        intent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, files)
         if (context.canHandleIntent(intent)) {
             context.startActivity(Intent.createChooser(intent, context.getString(R.string.action_share)))
         }
     }
 
-    fun shareMedia(context: Context, category: Category?, uri: Uri?, path : String? = null) {
-        Log.d("ShareHelper", "shareMedia:$path, category:$category, uri:$uri")
+    private fun getUri(context: Context, info: FileInfo): Uri? {
+        return UriHelper.createContentUri(context, info.filePath)
+    }
+
+    fun shareMedia(context: Context, category: Category?, uri: Uri?, path: String? = null) {
         if (uri == null && path == null) {
             return
         }
