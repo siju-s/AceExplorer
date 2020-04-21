@@ -69,10 +69,8 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
             }
 
             override fun canShowPeek(): Boolean {
-                peekPopCallback?.let {
-                    return canShowPeek()
-                }
-                return false
+                peekPopCallback ?: return false
+                return peekPopCallback!!.canShowPeek()
             }
         })
     }
