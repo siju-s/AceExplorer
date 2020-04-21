@@ -73,7 +73,6 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
     fun fetchStorageList() {
         uiScope.launch(Dispatchers.IO) {
             _storageList.postValue(model.getStorageList())
-
         }
     }
 
@@ -104,12 +103,12 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
         if (lastSavedRingtoneDir == null || !File(lastSavedRingtoneDir).exists()) {
             directory = StorageUtils.internalStorage
         }
-        _pickerInfo.postValue(Triple(PickerType.RINGTONE, directory, ringtoneType))
+        _pickerInfo.value = Triple(PickerType.RINGTONE, directory, ringtoneType)
         _currentPath.value = directory
     }
 
     override fun onFilePicker(path: String) {
-        _pickerInfo.postValue(Triple(PickerType.FILE, path, 0))
+        _pickerInfo.value  = Triple(PickerType.FILE, path, 0)
         _currentPath.value = path
     }
 
@@ -152,7 +151,6 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
         scrollPosition.remove(currentPath.value)
     }
 
-
     private fun setRootStorageList(value: Boolean) {
         rootStorageList = value
     }
@@ -162,9 +160,10 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
             return
         }
         uiScope.launch(Dispatchers.IO) {
+            val pickerInfo = pickerInfo.value
             val data = model.loadData(path, Category.FILES,
-                                      pickerInfo.value?.first == PickerType.RINGTONE)
-            pickerInfo.value?.let {
+                                      pickerInfo?.first == PickerType.RINGTONE)
+            pickerInfo?.let {
                 if (data.isEmpty()) {
                     _showEmptyText.postValue(Pair(it.first, true))
                 }
