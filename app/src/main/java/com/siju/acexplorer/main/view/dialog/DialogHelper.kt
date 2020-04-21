@@ -426,7 +426,10 @@ object DialogHelper {
         fileName ?: return
         var zipName = fileName
         if (!File(filePath).isDirectory) {
-            zipName = fileName.substring(0, fileName.lastIndexOf("."))
+            val dotIndex = fileName.lastIndexOf(".")
+            if (dotIndex >= 0) {
+                zipName = fileName.substring(0, dotIndex)
+            }
         }
         val title = context.getString(R.string.action_archive)
         val builder = AlertDialog.Builder(context)
