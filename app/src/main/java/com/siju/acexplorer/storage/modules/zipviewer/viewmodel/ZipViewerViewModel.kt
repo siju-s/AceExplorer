@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.modules.zipviewer.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.util.*
 import java.util.zip.ZipEntry
+import java.util.zip.ZipException
 
 private const val DELIMITER_SLASH = "/"
 class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallback: ZipViewerCallback) : ViewModel() {
@@ -47,9 +49,19 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
     private lateinit var parentZipPath: String
     private var zipEntryFileName : String? = null
     private var zipEntry : ZipEntry? = null
+    private val _zipFailEvent = MutableLiveData<Boolean>()
+
+    val zipFailEvent: LiveData<Boolean>
+        get() = _zipFailEvent
 
     fun populateTotalZipList(parentZipPath: String) {
-        model.populateZipList(parentZipPath)
+        try {
+            model.populateZipList(parentZipPath)
+        }
+        catch (ex : ZipException) {
+            ex.printStackTrace()
+            setZipFailEvent(true)
+        }
     }
 
     fun loadData(path : String?, parentZipPath : String) {
@@ -194,6 +206,10 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
 
     private fun addToBackStack(path: String, category: Category= Category.FILES) {
         zipViewerCallback.addToBackStack(path, category)
+    }
+
+    fun setZipFailEvent(value: Boolean) {
+        _zipFailEvent.postValue(value)
     }
 
     private val zipElementsResultCallback = object : ZipLoader.ZipElementsResultCallback {

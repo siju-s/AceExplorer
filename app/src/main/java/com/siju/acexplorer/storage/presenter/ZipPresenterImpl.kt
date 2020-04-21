@@ -28,7 +28,6 @@ class ZipPresenterImpl(private val viewModel: FileListViewModel, private val nav
         override fun removeZipScrollPos(newPath: String?) {
 
         }
-
         override fun onZipModeEnd(dir: String?) {
             isZipMode = false
             if (dir == null) {

@@ -12,6 +12,7 @@ import java.io.File
 import java.io.IOException
 import java.util.*
 import java.util.zip.ZipEntry
+import java.util.zip.ZipException
 import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 
@@ -45,7 +46,7 @@ class ZipLoader(val context: Context) {
     }
 
 
-    @Throws(IOException::class)
+    @Throws(IOException::class, ZipException::class)
     fun populateTotalZipList(parentZipPath: String): ArrayList<ZipModel> {
         totalZipList = arrayListOf()
         return if (File(parentZipPath).canRead()) {
@@ -58,13 +59,23 @@ class ZipLoader(val context: Context) {
 
     private fun getZipParentContents(parentZipPath: String,
                                      totalZipList: ArrayList<ZipModel>): ArrayList<ZipModel> {
-        val zipFile = ZipFile(parentZipPath)
-        val entries = zipFile.entries()
-        while (entries.hasMoreElements()) {
-            val entry = entries.nextElement() as ZipEntry
-            totalZipList.add(createZipModel(entry))
+        var zipFile : ZipFile? = null
+        try {
+            zipFile = ZipFile(parentZipPath)
+            val entries = zipFile.entries()
+            while (entries.hasMoreElements()) {
+                val entry = entries.nextElement() as ZipEntry
+                totalZipList.add(createZipModel(entry))
+            }
+            zipFile.close()
         }
-        zipFile.close()
+        catch (exception : ZipException) {
+             //TODO Handle opening encrypted zip file
+            throw ZipException("Cannot open this file")
+        }
+        finally {
+            zipFile?.close()
+        }
         return totalZipList
     }
 

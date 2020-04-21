@@ -8,6 +8,7 @@ import com.siju.acexplorer.storage.model.task.ExtractZipEntry
 import java.io.File
 import java.io.IOException
 import java.util.zip.ZipEntry
+import java.util.zip.ZipException
 import java.util.zip.ZipFile
 
 private const val NO_MEDIA_FILE_NAME = ".nomedia"
@@ -18,6 +19,7 @@ class ZipViewerModelImpl(val context: Context) : ZipViewerModel {
 
     private val zipLoader = ZipLoader(context)
 
+    @Throws(ZipException::class)
     override fun populateZipList(parentZipPath: String) {
         zipLoader.populateTotalZipList(parentZipPath)
     }
