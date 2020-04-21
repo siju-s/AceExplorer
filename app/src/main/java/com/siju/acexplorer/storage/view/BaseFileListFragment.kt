@@ -454,6 +454,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 fileListViewModel.saveScrollInfo(filesList.getScrollInfo())
                 val zipViewer = ZipViewerFragment(this@BaseFileListFragment, it.first,
                                                   it.second)
+                floatingView.hideFab()
                 fileListViewModel.setZipViewer(zipViewer)
             }
         })

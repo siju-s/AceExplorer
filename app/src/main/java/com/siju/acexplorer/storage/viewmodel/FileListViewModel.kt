@@ -844,6 +844,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         if (category != SEARCH_RECENT_DOCS) {
             reloadData(dir, category)
         }
+        showFab()
     }
 
     fun isDualModeEnabled() = storageModel.isDualModeEnabled()
