@@ -72,6 +72,34 @@ object DialogHelper {
         alertDialog.show()
     }
 
+    fun showDeleteDialog(context: Context, uri: Uri,
+                         deleteDialogListener: DeleteDialogListener) {
+        val title = context.getString(R.string.dialog_delete_title, 1)
+        val texts = arrayOf(title, context.getString(R.string.msg_ok), "", context
+                .getString(R.string.dialog_cancel))
+        val builder = AlertDialog.Builder(context)
+        val inflater = LayoutInflater.from(context)
+        val dialogView = inflater.inflateLayout(R.layout.dialog_delete, null)
+        builder.setView(dialogView)
+        builder.setCancelable(true)
+        val alertDialog = builder.create()
+        val textTitle = dialogView.findViewById<TextView>(R.id.textTitle)
+        val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
+        val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
+        val checkBoxTrash = dialogView.findViewById<CheckBox>(R.id.checkBoxTrash)
+        checkBoxTrash.isChecked = false
+        textTitle.text = title
+        positiveButton.text = texts[1]
+        negativeButton.text = texts[3]
+        positiveButton.setOnClickListener { view ->
+            val isChecked = false
+            deleteDialogListener.onPositiveButtonClick(view, isChecked, uri)
+            alertDialog.dismiss()
+        }
+        negativeButton.setOnClickListener { alertDialog.dismiss() }
+        alertDialog.show()
+    }
+
     fun showAlertDialog(context: Context, text: Array<String>, dialogListener: AlertDialogListener) {
         val builder = AlertDialog.Builder(context)
         val inflater = LayoutInflater.from(context)
@@ -607,6 +635,7 @@ object DialogHelper {
 
     interface DeleteDialogListener {
         fun onPositiveButtonClick(view: View, isTrashEnabled: Boolean, filesToDelete: ArrayList<FileInfo>)
+        fun onPositiveButtonClick(view: View?, isTrashEnabled: Boolean, filesToDelete: Uri)
     }
 
     interface DialogCallback {

@@ -20,6 +20,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
 import com.siju.acexplorer.main.view.InfoFragment
+import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.main.viewmodel.InfoSharedViewModel
 
 
@@ -107,8 +108,23 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
         viewModel.shareClicked(uriList[pager.currentItem])
     }
 
+    private fun showDeleteDialog(context: Context, uri: Uri) {
+        DialogHelper.showDeleteDialog(context, uri, deleteDialogListener)
+    }
+
+    private val deleteDialogListener = object : DialogHelper.DeleteDialogListener {
+        override fun onPositiveButtonClick(view: View, isTrashEnabled: Boolean, filesToDelete: java.util.ArrayList<FileInfo>) {
+
+        }
+
+        override fun onPositiveButtonClick(view: View?, isTrashEnabled: Boolean, filesToDelete: Uri) {
+            viewModel.deleteClicked(uriList[pager.currentItem])
+        }
+
+    }
+
     override fun deleteClicked() {
-        viewModel.deleteClicked(uriList[pager.currentItem])
+        uriList[pager.currentItem]?.let { showDeleteDialog(context, it) }
     }
 
     override fun infoClicked() {

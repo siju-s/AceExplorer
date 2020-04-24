@@ -70,7 +70,6 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     private fun hasPermissions(context: Context): Boolean {
-        Log.d(TAG, "hasPermissions")
         val packageInfo: PackageInfo
         try {
             packageInfo = context.packageManager.getPackageInfo(context.packageName,
@@ -177,7 +176,6 @@ class PermissionHelper(private val activity: AppCompatActivity, private val cont
     }
 
     private fun onRationaleDialogDismissed() {
-        Log.d(TAG, "onRationaleDialogDismissed")
         if (!hasPermissions(context)) {
             activity.finish()
         }

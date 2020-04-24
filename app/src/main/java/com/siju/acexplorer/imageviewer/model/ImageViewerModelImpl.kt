@@ -20,9 +20,10 @@ class ImageViewerModelImpl(val context: Context) : ImageViewerModel {
     }
 
     override fun deleteFile(uri: Any): Int {
-        val count = context.contentResolver.delete(uri as Uri, null, null)
+        val uri1 = uri as Uri
+        val count = context.contentResolver.delete(uri1, null, null)
         if (count > 0) {
-            context.contentResolver.notifyChange(uri, null)
+            context.contentResolver.notifyChange(uri1, null)
         }
         return count
     }

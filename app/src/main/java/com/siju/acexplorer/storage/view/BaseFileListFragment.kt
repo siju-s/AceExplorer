@@ -127,20 +127,22 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             filesList = FilesList(this, view, viewMode, category, mainViewModel.getSortMode())
             floatingView = FloatingView(view, this)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
-            val appbarView = if (!showNavigation) {
-                categoryMenuHelper?.getCategoryView()
-            }
-            else {
-                it
-            }
-            if (appbarView != null) {
-                menuControls = MenuControls(this, view, appbarView, category, viewMode)
-            }
+            val appbarView = getAppBarView(it) ?: return
+            menuControls = MenuControls(this, view, appbarView, category, viewMode)
+            setupMultiSelection()
+            setupNavigationView()
+            initObservers()
+            setupDualScreenMode()
         }
-        setupMultiSelection()
-        setupNavigationView()
-        initObservers()
-        setupDualScreenMode()
+    }
+
+    private fun getAppBarView(it: View): View? {
+        return if (showNavigation) {
+            it
+        }
+        else {
+            categoryMenuHelper?.getCategoryView()
+        }
     }
 
     private fun setupDualScreenMode() {
@@ -892,6 +894,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private val deleteDialogListener = object : DialogHelper.DeleteDialogListener {
         override fun onPositiveButtonClick(view: View, isTrashEnabled: Boolean, filesToDelete: ArrayList<FileInfo>) {
             fileListViewModel.deleteFiles(filesToDelete)
+        }
+
+        override fun onPositiveButtonClick(view: View?, isTrashEnabled: Boolean, filesToDelete: Uri) {
+
         }
     }
 
