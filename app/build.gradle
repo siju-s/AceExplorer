@@ -158,7 +158,4 @@ dependencies {
 
     testImplementation deps.testing.junit
     testImplementation deps.testing.mockito
-    androidTestImplementation(deps.testing.espresso, {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
 }
