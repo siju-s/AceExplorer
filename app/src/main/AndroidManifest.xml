@@ -149,7 +149,7 @@
         </provider>
         <provider
             android:name=".search.model.SearchSuggestionProvider"
-            android:authorities="com.siju.acexplorer.SearchSuggestionProvider"
+            android:authorities="${applicationId}.fileprovider"
             android:exported="false" />
 
         <meta-data
