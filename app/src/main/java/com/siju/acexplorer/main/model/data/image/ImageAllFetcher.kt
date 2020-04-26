@@ -1,6 +1,7 @@
 package com.siju.acexplorer.main.model.data.image
 
 import android.content.Context
+import android.content.Intent
 import android.database.Cursor
 import android.provider.MediaStore
 import com.siju.acexplorer.common.types.FileInfo
@@ -51,6 +52,10 @@ class ImageAllFetcher : DataFetcher {
             do {
                 val path = cursor.getString(pathIndex)
                 val file = File(path)
+                val exists = File(path).exists()
+                if (!exists) {
+                    continue
+                }
                 if (HiddenFileHelper.shouldSkipHiddenFiles(file, showHidden)) {
                     continue
                 }

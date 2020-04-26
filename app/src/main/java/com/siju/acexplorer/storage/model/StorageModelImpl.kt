@@ -36,9 +36,11 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
         get() = _operationData
     @Suppress("PropertyName")
     val _refreshData = MutableLiveData<Boolean>()
+    private var contentObserverRegistered = false
 
     override fun loadData(path: String?, category: Category): ArrayList<FileInfo> {
         this.category = category
+        registerContentObserver()
         return DataLoader.fetchDataByCategory(context,
                 DataFetcherFactory.createDataFetcher(category),
                 category, path)
@@ -178,6 +180,7 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
 
     override fun onExit() {
         operationHelper.cleanup()
+        unregisterContentObserver()
     }
 
     override fun onResume() {
@@ -185,11 +188,13 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
     }
 
     override fun onPause() {
-        unregisterContentObserver()
     }
 
     private fun registerContentObserver() {
         var uri: Uri? = null
+        if (contentObserverRegistered) {
+            return
+        }
         when (category) {
             Category.IMAGES_ALL, Category.GENERIC_IMAGES -> uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
             Category.VIDEO_ALL, Category.GENERIC_VIDEOS -> uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
@@ -200,10 +205,10 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
             }
         }
         uri?.let {
-            Log.d("Model", "registerContentObserver:category:$category, uri :$uri")
             context.contentResolver.registerContentObserver(uri, true, mediaObserver)
             mediaObserver.addMediaObserverListener(mediaObserverListener)
         }
+        contentObserverRegistered = true
     }
 
     fun setRefreshDataFalse() {
@@ -211,9 +216,13 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
     }
 
     private fun unregisterContentObserver() {
+        if (!contentObserverRegistered) {
+            return
+        }
         Log.d("Model", "unregisterContentObserver:category:$category")
         context.contentResolver.unregisterContentObserver(mediaObserver)
         mediaObserver.removeMediaObserverListener(mediaObserverListener)
+        contentObserverRegistered = false
 
     }
 

@@ -1,5 +1,6 @@
 package com.siju.acexplorer.imageviewer.presenter
 
+import android.app.RecoverableSecurityException
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.imageviewer.model.ImageViewerModel
 import com.siju.acexplorer.imageviewer.view.ImageViewerView
@@ -16,6 +17,7 @@ class ImageViewerPresenterImpl(private val view : ImageViewerView,
         return imageViewerModel.loadInfo(uri)
     }
 
+    @Throws(RecoverableSecurityException::class)
     override fun deleteFile(uri: Any) = imageViewerModel.deleteFile(uri)
 
     override fun shareClicked(uri: Any?) {

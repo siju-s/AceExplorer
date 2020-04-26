@@ -20,6 +20,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.core.content.FileProvider
+import com.siju.acexplorer.BuildConfig
 import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.helper.IntentResolver.canHandleIntent
 import java.io.File
@@ -31,7 +32,7 @@ object UriHelper {
             return null
         }
         return if (SdkHelper.isAtleastNougat) {
-            val authority = context.packageName + ".fileprovider"
+            val authority = BuildConfig.APPLICATION_ID + ".fileprovider"
             FileProvider.getUriForFile(context, authority, File(path))
         }
         else {
@@ -41,6 +42,7 @@ object UriHelper {
 
     fun canGrantUriPermission(context: Context, intent: Intent): Boolean {
         return if (canHandleIntent(context, intent)) {
+            intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             true

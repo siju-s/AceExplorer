@@ -1,5 +1,6 @@
 package com.siju.acexplorer.imageviewer.viewmodel
 
+import android.app.RecoverableSecurityException
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -32,6 +33,7 @@ class ImageViewerViewModel(private val view : ImageViewerView, private val prese
         }
     }
 
+    @Throws(RecoverableSecurityException::class)
     fun deleteClicked(uri: Uri?) {
       uri?.let {
           val deleted = presenter.deleteFile(uri)

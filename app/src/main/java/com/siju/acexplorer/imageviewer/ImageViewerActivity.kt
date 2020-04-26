@@ -12,6 +12,7 @@ import com.siju.acexplorer.imageviewer.presenter.ImageViewerPresenter
 import com.siju.acexplorer.imageviewer.presenter.ImageViewerPresenterImpl
 import com.siju.acexplorer.imageviewer.view.ImageViewerUiView
 import com.siju.acexplorer.imageviewer.view.ImageViewerView
+import com.siju.acexplorer.imageviewer.view.REQUEST_CODE_DELETE
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModelFactory
 
@@ -35,7 +36,6 @@ class ImageViewerActivity : AppCompatActivity() {
         }
     }
 
-
     @Suppress("UNCHECKED_CAST")
     private fun setup(intent: Intent) {
         var pos = 0
@@ -43,7 +43,11 @@ class ImageViewerActivity : AppCompatActivity() {
         var pathList = arrayListOf<String?>()
 
         if (intent.getIntExtra(KEY_POS, -1) == -1) {
-            val uri = intent.data
+            var uri = intent.data
+            val extras = intent.extras
+            if (extras != null && extras.containsKey(Intent.EXTRA_STREAM)) {
+                uri = extras.getParcelable(Intent.EXTRA_STREAM)
+            }
             if (uri == null) {
                 finish()
             }
@@ -91,6 +95,18 @@ class ImageViewerActivity : AppCompatActivity() {
         viewModel.fileData.observe(this, Observer{
             view.onFileInfoFetched(it)
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_DELETE) {
+            if (resultCode == RESULT_OK) {
+                view.onDeleteSuccess()
+            }
+            else {
+                view.onDeleteFailed()
+            }
+        }
     }
 
     override fun onDestroy() {

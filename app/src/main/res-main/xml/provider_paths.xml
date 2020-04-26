@@ -18,6 +18,7 @@
 <!--suppress AndroidElementNotAllowed  -->
 <paths>
     <external-path name="internal" path="."/>
+    <external-files-path name="internal" path="." />
     <!-- Required for root folder file sharing -->
     <root-path name="external" path=""/>
 </paths>

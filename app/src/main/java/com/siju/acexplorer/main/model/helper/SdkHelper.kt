@@ -21,6 +21,9 @@ import android.os.Build
 
 object SdkHelper {
 
+    val isAtleastAndroid10: Boolean
+        get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+
     val isAtleastOreo: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 

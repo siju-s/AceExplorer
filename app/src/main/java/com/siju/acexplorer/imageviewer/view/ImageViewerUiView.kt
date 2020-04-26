@@ -1,6 +1,7 @@
 package com.siju.acexplorer.imageviewer.view
 
 import android.annotation.SuppressLint
+import android.app.RecoverableSecurityException
 import android.content.Context
 import android.net.Uri
 import android.util.AttributeSet
@@ -18,12 +19,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
+import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.main.viewmodel.InfoSharedViewModel
 
 
+const val REQUEST_CODE_DELETE = 1000
 class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayout(context, attrs),
         ImageViewerView,
         ViewPager.OnPageChangeListener,
@@ -118,9 +122,23 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
         }
 
         override fun onPositiveButtonClick(view: View?, isTrashEnabled: Boolean, filesToDelete: Uri) {
-            viewModel.deleteClicked(uriList[pager.currentItem])
+            deleteDialogButtonClicked()
         }
 
+    }
+
+    private fun deleteDialogButtonClicked() {
+        try {
+            viewModel.deleteClicked(uriList[pager.currentItem])
+        }
+        catch (exception: SecurityException) {
+            if (SdkHelper.isAtleastAndroid10 && exception is RecoverableSecurityException) {
+                activity.startIntentSenderForResult(exception.userAction.actionIntent.intentSender, REQUEST_CODE_DELETE, null, 0, 0, 0)
+            }
+            else {
+                onDeleteFailed()
+            }
+        }
     }
 
     override fun deleteClicked() {
@@ -143,6 +161,9 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
     }
 
     override fun onDeleteSuccess() {
+        context?.showToast(resources.getQuantityString(R.plurals.number_of_files, 1,
+                1) +
+                " " + resources.getString(R.string.msg_delete_success))
         if (uriList.size == 1) {
             activity.finish()
         } else {
