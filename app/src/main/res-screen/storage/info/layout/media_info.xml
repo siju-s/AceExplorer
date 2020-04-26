@@ -77,14 +77,14 @@
             android:layout_marginTop="@dimen/margin_16"
             android:layout_marginEnd="@dimen/margin_16">
 
-            <TableRow>
+            <TableRow android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/textFileNamePlaceholder"
                     style="@style/InfoItem"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
+                    android:layout_weight="0.3"
                     android:gravity="end"
                     android:text="@string/info_name"
                     android:textStyle="bold" />
@@ -92,22 +92,24 @@
                 <TextView
                     android:id="@+id/textName"
                     style="@style/InfoItemDetail"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_marginStart="@dimen/padding_10"
+                    android:layout_weight="0.7"
                     android:textIsSelectable="true"
                     tools:text="/storage/0" />
             </TableRow>
 
-            <TableRow android:layout_marginTop="@dimen/info_item_margin_top">
+            <TableRow
+                android:layout_marginTop="@dimen/info_item_margin_top"
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/textPathPlaceholder"
                     style="@style/InfoItem"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
+                    android:layout_weight="0.3"
                     android:gravity="end"
                     android:text="@string/path"
                     android:textStyle="bold" />
@@ -115,21 +117,23 @@
                 <TextView
                     android:id="@+id/textPath"
                     style="@style/InfoItemDetail"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
                     android:layout_marginStart="@dimen/padding_10"
+                    android:layout_weight="0.7"
                     android:textIsSelectable="true"
                     tools:text="/storage/0" />
             </TableRow>
 
-            <TableRow android:layout_marginTop="@dimen/info_item_margin_top">
+            <TableRow
+                android:layout_marginTop="@dimen/info_item_margin_top"
+                android:layout_weight="1">
 
                 <TextView
                     style="@style/InfoItem"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
+                    android:layout_weight="0.3"
                     android:gravity="end"
                     android:text="@string/size"
                     android:textStyle="bold" />
@@ -137,20 +141,22 @@
                 <TextView
                     android:id="@+id/textFileSize"
                     style="@style/InfoItemDetail"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
-                    android:layout_marginStart="@dimen/padding_10" />
+                    android:layout_marginStart="@dimen/padding_10"
+                    android:layout_weight="0.7" />
 
             </TableRow>
 
-            <TableRow android:layout_marginTop="@dimen/info_item_margin_top">
+            <TableRow
+                android:layout_marginTop="@dimen/info_item_margin_top"
+                android:layout_weight="1">
 
                 <TextView
                     style="@style/InfoItem"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
+                    android:layout_weight="0.3"
                     android:gravity="end"
                     android:text="@string/date_modified"
                     android:textStyle="bold" />
@@ -158,21 +164,23 @@
                 <TextView
                     android:id="@+id/textDateModified"
                     style="@style/InfoItemDetail"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
-                    android:layout_marginStart="@dimen/padding_10" />
+                    android:layout_marginStart="@dimen/padding_10"
+                    android:layout_weight="0.7" />
 
             </TableRow>
 
-            <TableRow android:layout_marginTop="@dimen/info_item_margin_top">
+            <TableRow
+                android:layout_marginTop="@dimen/info_item_margin_top"
+                android:layout_weight="1">
 
                 <TextView
                     android:id="@+id/textResolutionPlaceholder"
                     style="@style/InfoItem"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
+                    android:layout_weight="0.3"
                     android:gravity="end"
                     android:text="@string/info_resolution"
                     android:textStyle="bold" />
@@ -180,10 +188,10 @@
                 <TextView
                     android:id="@+id/textResolution"
                     style="@style/InfoItemDetail"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_column="2"
-                    android:layout_marginStart="@dimen/padding_10" />
+                    android:layout_marginStart="@dimen/padding_10"
+                    android:layout_weight="0.7" />
 
             </TableRow>
 
