@@ -33,8 +33,11 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
     val pickerInfo: LiveData<Triple<PickerType, String?, Int>>
         get() = _pickerInfo
 
-    private var rootStorageList = false
+    private val rootStorageList = MutableLiveData<Boolean>()
     private val _currentPath = MutableLiveData<String>()
+
+    val isRootStorageList : LiveData<Boolean>
+    get() = rootStorageList
 
     val currentPath: LiveData<String>
         get() = _currentPath
@@ -112,6 +115,14 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
         _currentPath.value = path
     }
 
+    override fun onCopyPicker() {
+        _pickerInfo.value = Triple(PickerType.COPY, null, 0)
+    }
+
+    override fun onCutPicker() {
+        _pickerInfo.value = Triple(PickerType.CUT, null, 0)
+    }
+
     fun handleItemClick(fileInfo: FileInfo) {
         val filePath = fileInfo.filePath
         when {
@@ -120,7 +131,7 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
                 _directoryClicked.postValue(true)
                 _currentPath.postValue(filePath)
             }
-            rootStorageList            -> {
+            rootStorageList.value == true            -> {
                 setRootStorageList(false)
                 _currentPath.postValue(filePath)
             }
@@ -152,7 +163,7 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
     }
 
     private fun setRootStorageList(value: Boolean) {
-        rootStorageList = value
+        rootStorageList.value = value
     }
 
     fun loadData(path: String?) {
@@ -194,13 +205,12 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
                 if (isMainStorageList(storage, _currentPath.value)) {
                     setRootStorageList(true)
                     removeScrolledPos()
-                    _currentPath.value = ""
-                    _fileData.postValue(_storageList.value)
+                    onStorageList()
                     return
                 }
             }
         }
-        if (!rootStorageList) {
+        if (rootStorageList.value == false) {
             val path = _currentPath.value
             path?.let {
                 val parentPath = File(it).parent
@@ -210,11 +220,16 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
         }
     }
 
+    private fun onStorageList() {
+        _currentPath.value = ""
+        _fileData.postValue(_storageList.value)
+    }
+
     private fun isMainStorageList(storage: FileInfo,
                                   parentPath: String?) = storage.filePath == parentPath
 
     fun onBackPressed() {
-        if (rootStorageList) {
+        if (rootStorageList.value == true) {
             _pickerInfo.value?.first?.let { model.onCancelButtonClicked(it) }
         }
         else {

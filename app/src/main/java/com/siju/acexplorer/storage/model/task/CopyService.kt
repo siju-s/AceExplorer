@@ -45,6 +45,7 @@ import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_END
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILEPATH
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_FILES_COUNT
+import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_IS_MOVE
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_OPERATION
 import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT
 import com.siju.acexplorer.storage.model.operations.Operations.COPY
@@ -76,7 +77,7 @@ class CopyService : Service() {
     private var isCompleted = false
     private var filesCopied = 0
     private var time = System.nanoTime() / 500000000
-
+    private var isMove = false
 
     override fun onCreate() {
         super.onCreate()
@@ -100,8 +101,14 @@ class CopyService : Service() {
         val pendingCancelIntent = createCancelIntent()
         notifBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
         notifBuilder?.apply {
-            setContentTitle(resources.getString(R.string.copying))
-            setSmallIcon(R.drawable.ic_copy_white)
+            val icon = if (isMove) {
+                R.drawable.ic_cut_white
+            }
+            else {
+                R.drawable.ic_copy_white
+            }
+            setContentTitle(getTitle(isMove))
+            setSmallIcon(icon)
             setOnlyAlertOnce(true)
             setDefaults(0)
             addAction(NotificationCompat.Action(R.drawable.ic_cancel,
@@ -165,6 +172,7 @@ class CopyService : Service() {
         pasteActionInfo = intent.getParcelableArrayListExtra(KEY_CONFLICT_DATA)
 
         val currentDir = intent.getStringExtra(KEY_FILEPATH)
+        isMove = intent.getBooleanExtra(KEY_IS_MOVE, false)
 
         val msg = serviceHandler.obtainMessage()
         msg.arg1 = startId
@@ -370,9 +378,18 @@ class CopyService : Service() {
 
 
     private fun dismissProgressDialog() {
-        val intent = Intent(COPY_PROGRESS)
+        val intent = Intent(getOperationProgress())
         intent.putExtra(KEY_END, true)
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent)
+    }
+
+    private fun getOperationProgress(): String {
+        return if (isMove) {
+            MOVE_PROGRESS
+        }
+        else {
+            COPY_PROGRESS
+        }
     }
 
     private fun publishCompletionResult() {
@@ -385,10 +402,16 @@ class CopyService : Service() {
         if (stopService) {
             dismissProgressDialog()
         }
+        val operation = if (isMove) {
+            Operations.CUT
+        }
+        else {
+            COPY
+        }
         val intent = Intent(ACTION_OP_REFRESH)
         intent.putExtra(KEY_FILES_COUNT, filesCopied)
         intent.putExtra(KEY_RESULT, failedFiles.isEmpty())
-        intent.putExtra(KEY_OPERATION, COPY)
+        intent.putExtra(KEY_OPERATION, operation)
         MediaScannerHelper.scanFiles(AceApplication.appContext, filesToMediaIndex.toTypedArray())
         sendBroadcast(intent)
     }
@@ -450,6 +473,9 @@ class CopyService : Service() {
         if (fileList.isEmpty()) {
             sendBroadcast(100, 0, totalBytes, 1)
             filesCopied++
+            if (isMove) {
+                deleteFilePath(path)
+            }
             return
         }
 
@@ -463,11 +489,35 @@ class CopyService : Service() {
             destFile.filePath = targetPath + SEPARATOR + file.fileName
             startCopy(file, destFile)
         }
+        if (isMove) {
+            val sourceFileCount = fileList.size
+            val destDirList = destinationDir.list()
+            destDirList?.let {
+                if (sourceFileCount == destDirList.size && failedFiles.isEmpty()) {
+                    deleteFilePath(sourceFile.filePath)
+                }
+            }
+        }
+    }
+
+    private fun deleteFilePath(path: String?) {
+        path?.let {
+            DeleteOperation().delete(File(path))
+        }
+    }
+
+    private fun getTitle(isMove : Boolean) : String {
+        return if (isMove) {
+            resources.getString(R.string.moving)
+        }
+        else {
+            resources.getString(R.string.copying)
+        }
     }
 
     private fun sendBroadcast(progress: Int = 0, completed: Long, total: Long, count: Int = 0,
                               totalProgress: Int = 0) {
-        val intent = Intent(COPY_PROGRESS)
+        val intent = Intent(getOperationProgress())
         intent.putExtra(KEY_PROGRESS, progress)
         intent.putExtra(KEY_COMPLETED, completed)
         intent.putExtra(KEY_TOTAL, total)
@@ -505,13 +555,13 @@ class CopyService : Service() {
             failedFiles.add(sourceFile)
             return
         }
-        copy(`in`, out, size, sourceFile, targetPath)
+        copy(`in`, out, size, sourceFile, sourcePath, targetPath)
     }
 
 
     @Throws(IOException::class)
     private fun copy(inputStream: BufferedInputStream, out: BufferedOutputStream, size: Long,
-                     sourceFile: FileInfo,
+                     sourceFile: FileInfo, sourceFilePath : String,
                      targetPath: String) {
         val name = sourceFile.fileName
         var fileBytes = 0L
@@ -542,6 +592,10 @@ class CopyService : Service() {
             count++
             val targetFile = File(targetPath)
             filesCopied++
+
+            if (isMove) {
+                DeleteOperation().delete(File(sourceFilePath))
+            }
             if (isMediaScanningRequired(targetFile)) {
                 filesToMediaIndex.add(targetPath)
             }
@@ -566,11 +620,11 @@ class CopyService : Service() {
     private fun publishResults(fileName: String, totalProgress: Int, total: Long, done: Long) {
         Logger.log("CopyService", "Total bytes=" + totalBytes + "Copied=" + copiedBytes +
                 "Progress = " + totalProgress)
-        val title = R.string.copying
+        val title = getTitle(isMove)
         notifBuilder?.apply {
             setProgress(100, totalProgress, false)
             setOngoing(true)
-            setContentTitle(getString(title))
+            setContentTitle(title)
             setContentText(File(fileName).name + " " + FileUtils.formatSize(context,
                     done) + SEPARATOR + FileUtils
                     .formatSize(context, total))

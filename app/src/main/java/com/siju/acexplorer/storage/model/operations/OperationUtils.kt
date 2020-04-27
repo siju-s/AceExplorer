@@ -35,6 +35,7 @@ object OperationUtils {
     const val ACTION_OP_FAILED = "failed"
     const val KEY_RESULT = "result"
     const val KEY_FILES_COUNT = "files_count"
+    const val KEY_IS_MOVE = "is_move"
 
     const val KEY_END = "end"
 

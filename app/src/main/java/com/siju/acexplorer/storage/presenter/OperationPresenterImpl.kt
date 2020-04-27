@@ -44,8 +44,6 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     private val pasteOpPresenter = PasteOpPresenter(model)
     private val dragOperation = DragOperation(viewModel, this)
 
-    private var isPasteVisible = false
-
     override val getPasteConflictListener: DialogHelper.PasteConflictListener
         get() = pasteOpPresenter.pasteConflictListener
 
@@ -142,7 +140,6 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     private fun onCancelClicked() {
         viewModel.endActionMode()
-        isPasteVisible = false
         viewModel.showFab()
     }
 
@@ -284,6 +281,23 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
         }
     }
 
+    override fun onPaste(operation: Operations, destDir : String) {
+        if (operation == Operations.COPY || operation == Operations.CUT) {
+            if (operation == Operations.CUT) {
+                Analytics.logger.operationClicked(Analytics.Logger.EV_CUT)
+            }
+            else {
+                Analytics.logger.operationClicked(Analytics.Logger.EV_COPY)
+            }
+            val list = _multiSelectionOperationData.value?.second
+            viewModel.endActionMode()
+            viewModel.showFab()
+            list?.let {
+                pasteOpPresenter.createPasteOpData(operation, list, destDir)
+            }
+        }
+    }
+
     private fun onCutClicked() {
         if (hasSelectedItems()) {
             Analytics.logger.operationClicked(Analytics.Logger.EV_CUT)
@@ -294,8 +308,6 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
                 fileInfo?.let { filesToMove.add(it) }
             }
             viewModel.endActionMode()
-            isPasteVisible = true
-            viewModel.hideFab()
             _multiSelectionOperationData.value = Pair(Operations.CUT, filesToMove)
         }
     }
@@ -310,8 +322,6 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
                 fileInfo?.let { filesToCopy.add(it) }
             }
             viewModel.endActionMode()
-            isPasteVisible = true
-            viewModel.hideFab()
             _multiSelectionOperationData.value = Pair(Operations.COPY, filesToCopy)
         }
     }
@@ -503,11 +513,8 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     }
 
     override fun onDragEnded() {
-        isPasteVisible = false
         dragOperation.dragEnded()
     }
-
-    override fun isNotPasteOperation() = !isPasteVisible
 
     private fun hasSelectedItems() = multiSelectionHelper.hasSelectedItems()
 

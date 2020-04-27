@@ -37,5 +37,5 @@ interface OperationPresenter {
     fun setLongPressedTime(longPressedTime: Long)
     fun onDragStarted()
     fun onDragEnded()
-    fun isNotPasteOperation(): Boolean
+    fun onPaste(operation: Operations, destDir: String)
 }

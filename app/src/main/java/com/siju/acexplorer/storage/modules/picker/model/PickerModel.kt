@@ -28,5 +28,7 @@ interface PickerModel {
         fun onRingtonePicker(lastSavedRingtoneDir: String?, ringtoneType: Int)
         fun onPickerResultAction(pickerResultAction: PickerResultAction)
         fun onFilePicker(path: String)
+        fun onCopyPicker()
+        fun onCutPicker()
     }
 }

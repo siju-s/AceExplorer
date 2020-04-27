@@ -143,7 +143,7 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
                 {
                     viewModel.handleItemClick(it.first)
                 },
-                { _,_,_ ->
+                { _, _, _ ->
 
                 },
                 null
@@ -187,7 +187,10 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
 
         viewModel.storage.observe(viewLifecycleOwner, Observer {
             it?.apply {
-
+                val pickerType = viewModel.pickerInfo.value?.first
+                if (pickerType == PickerType.COPY || pickerType == PickerType.CUT) {
+                    onDataLoaded(it)
+                }
             }
         })
 
@@ -197,11 +200,21 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
                     PickerType.RINGTONE -> {
                         setupRingtonePicker()
                     }
-                    PickerType.FILE     -> {
+                    PickerType.FILE -> {
                         setupFilePicker()
                     }
-                    PickerType.NONE     -> {
+                    PickerType.NONE -> {
                         setTitle(getString(R.string.dialog_title_browse))
+                    }
+                    PickerType.COPY -> {
+                        okButton.text = getString(R.string.action_copy)
+                        toolbar.title = getString(R.string.dialog_title_browse)
+                        onStorageListScreen()
+                    }
+                    PickerType.CUT -> {
+                        okButton.text = getString(R.string.action_cut)
+                        toolbar.title = getString(R.string.dialog_title_browse)
+                        onStorageListScreen()
                     }
                 }
             }
@@ -237,8 +250,7 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
         viewModel.showEmptyText.observe(viewLifecycleOwner, Observer {
             if (it.second) {
                 showEmptyText(it.first)
-            }
-            else {
+            } else {
                 hideEmptyText()
             }
         })
@@ -254,6 +266,37 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
                 scrollToPosition(it)
             }
         })
+
+        viewModel.isRootStorageList.observe(viewLifecycleOwner, Observer {
+            it?.apply {
+                if (it) {
+                    onStorageListScreen()
+                }
+                else {
+                    onItemClicked()
+                }
+            }
+        })
+    }
+
+    private fun disableButton(view : View) {
+        view.isEnabled = false
+        view.alpha = 0.5f
+    }
+
+    private fun enableButton(view : View) {
+        view.isEnabled = true
+        view.alpha = 1f
+    }
+
+    private fun onItemClicked() {
+        enableButton(okButton)
+        enableButton(backButton)
+    }
+
+    private fun onStorageListScreen() {
+        disableButton(okButton)
+        disableButton(backButton)
     }
 
     private fun onCurrentPathChanged(path: String?) {
@@ -369,11 +412,11 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
 
     private fun scrollToPosition(scrollInfo: ScrollInfo) {
         fileList.postDelayed({
-                                 val layoutManager = fileList.layoutManager as LinearLayoutManager
-                                 layoutManager.scrollToPositionWithOffset(scrollInfo.position,
-                                                                          scrollInfo.offset)
-                             }
-                             , DELAY_SCROLL_UPDATE_MS)
+            val layoutManager = fileList.layoutManager as LinearLayoutManager
+            layoutManager.scrollToPositionWithOffset(scrollInfo.position,
+                    scrollInfo.offset)
+        }
+                , DELAY_SCROLL_UPDATE_MS)
     }
 
     override fun onDestroyView() {
@@ -403,7 +446,7 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
 
         fun newInstance(activity: AppCompatActivity, theme: Int, pickerType: PickerType,
                         ringtoneType: Int = -1): PickerFragment {
-            val dialogFragment = PickerFragment(activity )
+            val dialogFragment = PickerFragment(activity)
             dialogFragment.setStyle(STYLE_NORMAL, theme)
             val args = Bundle()
             with(args) {

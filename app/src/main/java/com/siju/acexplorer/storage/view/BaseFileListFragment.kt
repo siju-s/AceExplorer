@@ -86,6 +86,8 @@ const val KEY_SHOW_NAVIGATION = "show_navigation"
 private const val TAG = "BaseFileListFragment"
 private const val SAF_REQUEST = 2000
 private const val EXTRACT_PATH_REQUEST = 5000
+private const val COPY_PATH_REQUEST = 6000
+private const val CUT_PATH_REQUEST = 7000
 
 open class BaseFileListFragment : Fragment(), FileListHelper {
 
@@ -715,15 +717,12 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 context?.let { ShareHelper.shareFiles(it, operationData.second, category) }
             }
 
-            Operations.COPY, Operations.CUT -> {
-                val size = operationData.second.size
-                context?.let { context ->
-                    context.showToast(
-                            size.toString() + " " + context.getString(R.string.msg_cut_copy))
-                    menuControls.setToolbarTitle(
-                            String.format(context.getString(R.string.clipboard), size))
-                    menuControls.onPasteEnabled()
-                }
+            Operations.COPY -> {
+                showCopyToDialog()
+            }
+
+            Operations.CUT -> {
+                showCutToDialog()
             }
 
             Operations.COMPRESS -> {
@@ -868,6 +867,30 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 this@BaseFileListFragment.fragmentManager?.let { fragmentManager ->
                     dialogFragment.show(fragmentManager, "Browse Fragment")
                 }
+            }
+        }
+    }
+
+    private fun showCopyToDialog() {
+        val theme = mainViewModel.theme.value ?: return
+        activity?.let {
+            val dialogFragment = PickerFragment.newInstance(it as AppCompatActivity, getThemeStyle(theme),
+                    PickerType.COPY)
+            dialogFragment.setTargetFragment(this@BaseFileListFragment, COPY_PATH_REQUEST)
+            this@BaseFileListFragment.fragmentManager?.let { fragmentManager ->
+                dialogFragment.show(fragmentManager, "Browse Fragment")
+            }
+        }
+    }
+
+    private fun showCutToDialog() {
+        val theme = mainViewModel.theme.value ?: return
+        activity?.let {
+            val dialogFragment = PickerFragment.newInstance(it as AppCompatActivity, getThemeStyle(theme),
+                    PickerType.CUT)
+            dialogFragment.setTargetFragment(this@BaseFileListFragment, CUT_PATH_REQUEST)
+            this@BaseFileListFragment.fragmentManager?.let { fragmentManager ->
+                dialogFragment.show(fragmentManager, "Browse Fragment")
             }
         }
     }
@@ -1035,6 +1058,20 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                         val destDir = intent?.getStringExtra(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
                         val pathButton = dialog?.findViewById<Button>(R.id.buttonPathSelect)
                         pathButton?.text = destDir
+                    }
+                }
+
+                COPY_PATH_REQUEST -> {
+                    if (resultCode == RESULT_OK) {
+                        val destDir = intent?.getStringExtra(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
+                        fileListViewModel.copyTo(destDir)
+                    }
+                }
+
+                CUT_PATH_REQUEST -> {
+                    if (resultCode == RESULT_OK) {
+                        val destDir = intent?.getStringExtra(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
+                        fileListViewModel.cutTo(destDir)
                     }
                 }
             }

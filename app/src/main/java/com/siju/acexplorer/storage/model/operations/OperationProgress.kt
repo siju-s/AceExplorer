@@ -38,7 +38,6 @@ import com.siju.acexplorer.storage.model.operations.OperationUtils.KEY_RESULT
 import com.siju.acexplorer.storage.model.task.CopyService
 import com.siju.acexplorer.storage.model.task.CreateZipService
 import com.siju.acexplorer.storage.model.task.ExtractService
-import com.siju.acexplorer.storage.model.task.MoveService
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -65,7 +64,6 @@ class OperationProgress {
             handleMessage(intent)
         }
     }
-
 
     @SuppressLint("InflateParams")
     fun showPasteDialog(context: Context, destinationDir: String, files: ArrayList<FileInfo>,
@@ -251,26 +249,6 @@ class OperationProgress {
 
     }
 
-    //    private BroadcastReceiver operationFailureReceiver = new BroadcastReceiver() {
-    //        @Override
-    //        public void onReceive(Context context, Intent intent) {
-    //            Log.d(TAG, "operationFailureReceiver : onReceive: ");
-    //            if (intent.getAction().equals(ACTION_OP_FAILED)) {
-    //                Operations operation = (Operations) intent.getSerializableExtra(KEY_OPERATION);
-    //                switch (operation) {
-    //                    case EXTRACT:
-    ////                        Logger.log(TAG, "Failure broacast=" + isExtractServiceAlive);
-    ////                        if (isExtractServiceAlive) {
-    //                        unregisterReceiver(context);
-    //                        progressDialog.dismiss();
-    ////                            isExtractServiceAlive = false;
-    ////                        }
-    //                        break;
-    //                }
-    //            }
-    //        }
-    //    };
-
     private fun stopCopyService() {
         val context = AceApplication.appContext
         val intent = Intent(context, CopyService::class.java)
@@ -279,25 +257,11 @@ class OperationProgress {
         unregisterReceiver(context)
     }
 
-
-    private fun stopMoveService() {
-        val context = AceApplication.appContext
-        val intent = Intent(context, MoveService::class.java)
-        intent.action = ACTION_STOP
-        context.startService(intent)
-        unregisterReceiver(context)
-    }
-
     private fun unregisterReceiver(context: Context) {
         LocalBroadcastManager.getInstance(context).unregisterReceiver(operationProgressReceiver)
-        //        context.unregisterReceiver(operationFailureReceiver);
     }
 
-
     private fun registerReceiver(context: Context) {
-        //        IntentFilter filter = new IntentFilter(ACTION_OP_FAILED);
-        //        context.registerReceiver(operationFailureReceiver, filter);
-
         val filter1 = IntentFilter(COPY_PROGRESS)
         filter1.addAction(MOVE_PROGRESS)
         filter1.addAction(EXTRACT_PROGRESS)
@@ -319,7 +283,7 @@ class OperationProgress {
                 handleCopyProgress(intent)
             }
             MOVE_PROGRESS    -> {
-                handleMoveProgress(intent)
+                handleCopyProgress(intent)
             }
         }
     }
@@ -365,30 +329,6 @@ class OperationProgress {
 
         if (progress == 100 || isCopied(copiedBytes, totalBytes)) {
             stopExtractService()
-            progressDialog?.dismiss()
-        }
-        if (isCompleted) {
-            progressDialog?.dismiss()
-        }
-    }
-
-    private fun handleMoveProgress(intent: Intent) {
-        val copiedBytes = intent.getLongExtra(KEY_COMPLETED, 0)
-        val progress = intent.getIntExtra(KEY_TOTAL_PROGRESS, 0)
-        val isCompleted = intent.getBooleanExtra(KEY_END, false)
-
-        progressBarPaste?.progress = progress
-        textProgress?.text = String.format(Locale.getDefault(), "%d%s", progress,
-                                           context?.getString(R.string.percent_placeholder))
-        val movedCount = copiedBytes.toInt()
-        if (movedCount > 0) {
-            textFileFromPath?.text = copiedFileInfo[movedCount - 1].filePath
-            textFileName?.text = copiedFileInfo[movedCount - 1].fileName
-            textFileCount?.text = String.format(Locale.getDefault(), "%d/%d", movedCount,
-                                                copiedFilesSize)
-        }
-        if (progress == 100) {
-            stopMoveService()
             progressDialog?.dismiss()
         }
         if (isCompleted) {

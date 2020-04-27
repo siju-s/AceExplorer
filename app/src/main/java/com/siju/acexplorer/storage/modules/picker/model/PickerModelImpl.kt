@@ -56,6 +56,12 @@ class PickerModelImpl : PickerModel {
             PickerType.FILE -> {
                 listener?.onFilePicker(StorageUtils.internalStorage)
             }
+            PickerType.COPY -> {
+                listener?.onCopyPicker()
+            }
+            PickerType.CUT -> {
+                listener?.onCutPicker()
+            }
             else -> {}
         }
     }

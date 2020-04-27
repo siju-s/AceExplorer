@@ -19,7 +19,6 @@ import com.siju.acexplorer.storage.model.operations.OperationUtils.ACTION_OP_REF
 import com.siju.acexplorer.storage.model.task.CopyService
 import com.siju.acexplorer.storage.model.task.CreateZipService
 import com.siju.acexplorer.storage.model.task.ExtractService
-import com.siju.acexplorer.storage.model.task.MoveService
 import com.stericson.RootTools.RootTools
 import java.io.File
 
@@ -33,6 +32,8 @@ class OperationHelper(val context: Context) {
     private var zipOperationCallback: ZipOperationCallback? = null
     private val operationResultReceiver = OperationResultReceiver(this)
     private var receiverRegistered = false
+    private var pasteActionInfo = arrayListOf<PasteActionInfo>()
+    private var pasteOperationCallback : PasteOperationCallback? = null
 
     init {
         registerReceiver()
@@ -415,6 +416,12 @@ class OperationHelper(val context: Context) {
                 Operations.COMPRESS -> {
                     compress(context, operationInfo.operationData.arg1, operationInfo.operationData.filesList, zipOperationCallback)
                 }
+                Operations.COPY -> {
+                    copyFiles(context, operationInfo.operationData.arg1, operationInfo.operationData.filesList, pasteActionInfo, pasteOperationCallback)
+                }
+                Operations.CUT -> {
+                    moveFiles(context, operationInfo.operationData.arg1, operationInfo.operationData.filesList, pasteActionInfo, pasteOperationCallback)
+                }
                 else -> {}
             }
         }
@@ -452,31 +459,47 @@ class OperationHelper(val context: Context) {
                   pasteOperationCallback: PasteOperationCallback,
                   fileOperationCallback: FileOperationCallback) {
         setFileOperationCallback(fileOperationCallback)
+        addOperation(Operations.COPY,
+                OperationData.createCopyOperation(destinationDir, files))
+
         when (val writeMode = OperationUtils.getWriteMode(destinationDir)) {
             OperationUtils.WriteMode.INTERNAL, OperationUtils.WriteMode.ROOT -> {
-                addOperation(Operations.COPY,
-                        OperationData.createCopyOperation(destinationDir, files))
                 if (writeMode == OperationUtils.WriteMode.ROOT && RootUtils.isRooted(context) && !RootUtils.hasRootAccess()) {
                     fileOperationCallback.onOperationResult(Operations.COPY, getOperationAction(
                             OperationResult(OperationResultCode.FAIL, 0)))
                     removeOperation()
-                    return
-                }
-                pasteOperationCallback.onPasteActionStarted(Operations.COPY, destinationDir, files)
-
-                val intent = Intent(context, CopyService::class.java)
-                intent.apply {
-                    putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, pasteActionInfo)
-                    putParcelableArrayListExtra(OperationUtils.KEY_FILES, files)
-                    putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
-                }
-                if (SdkHelper.isAtleastOreo) {
-                    context.startForegroundService(intent)
                 }
                 else {
-                    context.startService(intent)
+                    copyFiles(context, destinationDir, files, pasteActionInfo, pasteOperationCallback)
                 }
             }
+            OperationUtils.WriteMode.EXTERNAL -> {
+                this.pasteActionInfo = pasteActionInfo
+                fileOperationCallback.onOperationResult(
+                        Operations.COPY,
+                        getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
+            }
+        }
+    }
+
+
+    private fun copyFiles(context: Context, destinationDir: String, files: ArrayList<FileInfo>,
+                          pasteActionInfo: ArrayList<PasteActionInfo>,
+                          pasteOperationCallback: PasteOperationCallback?) {
+        pasteOperationCallback?.onPasteActionStarted(Operations.COPY, destinationDir, files)
+
+        val intent = Intent(context, CopyService::class.java)
+        intent.apply {
+            putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, pasteActionInfo)
+            putParcelableArrayListExtra(OperationUtils.KEY_FILES, files)
+            putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
+            putExtra(OperationUtils.KEY_IS_MOVE, false)
+        }
+        if (SdkHelper.isAtleastOreo) {
+            context.startForegroundService(intent)
+        }
+        else {
+            context.startService(intent)
         }
     }
 
@@ -485,31 +508,44 @@ class OperationHelper(val context: Context) {
                   pasteOperationCallback: PasteOperationCallback,
                   fileOperationCallback: FileOperationCallback) {
         setFileOperationCallback(fileOperationCallback)
+        addOperation(Operations.CUT,
+                OperationData.createCopyOperation(destinationDir, files))
         when (val writeMode = OperationUtils.getWriteMode(destinationDir)) {
             OperationUtils.WriteMode.INTERNAL, OperationUtils.WriteMode.ROOT -> {
-                addOperation(Operations.CUT,
-                             OperationData.createCopyOperation(destinationDir, files))
                 if (writeMode == OperationUtils.WriteMode.ROOT && RootUtils.isRooted(context) && !RootUtils.hasRootAccess()) {
                     fileOperationCallback.onOperationResult(Operations.CUT, getOperationAction(
                             OperationResult(OperationResultCode.FAIL, 0)))
                     removeOperation()
-                    return
-                }
-                pasteOperationCallback.onPasteActionStarted(Operations.CUT, destinationDir, files)
-
-                val intent = Intent(context, MoveService::class.java)
-                intent.apply {
-                    putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, pasteActionInfo)
-                    putParcelableArrayListExtra(OperationUtils.KEY_FILES, files)
-                    putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
-                }
-                if (SdkHelper.isAtleastOreo) {
-                    context.startForegroundService(intent)
                 }
                 else {
-                    context.startService(intent)
+                    moveFiles(context, destinationDir, files, pasteActionInfo, pasteOperationCallback)
                 }
             }
+            OperationUtils.WriteMode.EXTERNAL -> {
+                this.pasteActionInfo = pasteActionInfo
+                fileOperationCallback.onOperationResult(
+                        Operations.CUT,
+                        getOperationAction(OperationResult(OperationResultCode.SAF, 0)))
+            }
+        }
+    }
+
+    private fun moveFiles(context: Context, destinationDir: String, files: ArrayList<FileInfo>,
+                          pasteActionInfo: ArrayList<PasteActionInfo>,
+                          pasteOperationCallback: PasteOperationCallback?) {
+        pasteOperationCallback?.onPasteActionStarted(Operations.CUT, destinationDir, files)
+
+        val intent = Intent(context, CopyService::class.java)
+        intent.apply {
+            putParcelableArrayListExtra(OperationUtils.KEY_CONFLICT_DATA, pasteActionInfo)
+            putParcelableArrayListExtra(OperationUtils.KEY_FILES, files)
+            putExtra(OperationUtils.KEY_FILEPATH, destinationDir)
+            putExtra(OperationUtils.KEY_IS_MOVE, true)
+        }
+        if (SdkHelper.isAtleastOreo) {
+            context.startForegroundService(intent)
+        } else {
+            context.startService(intent)
         }
     }
 

@@ -129,9 +129,7 @@ class PasteOpPresenter(val storageModel: StorageModel) {
 
         override fun onPasteActionStarted(operation: Operations, destinationDir: String,
                                           files: ArrayList<FileInfo>) {
-            if (operation == Operations.COPY) {
-                _showPasteDialog.postValue(Triple(operation, destinationDir, files))
-            }
+            _showPasteDialog.postValue(Triple(operation, destinationDir, files))
         }
     }
 

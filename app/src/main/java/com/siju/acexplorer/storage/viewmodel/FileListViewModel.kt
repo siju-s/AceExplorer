@@ -291,9 +291,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
 
     fun setCategory(category: Category) {
         this.category = category
-        if (operationPresenter.isNotPasteOperation()) {
-            showFab.postValue(canShowFab(category))
-        }
+        showFab.postValue(canShowFab(category))
         operationPresenter.category = category
     }
 
@@ -531,7 +529,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     }
 
     fun handleLongClick(fileInfo: FileInfo, position: Int) {
-        Log.d(TAG, "handleLongClick:position $position, canLongpress:${canLongPress()}, category:$category")
+        Log.d(TAG, "handleLongClick:position $position, canLongpress:${canLongPress()}, category:$category, actionMode:${actionModeState.value}")
         if (CategoryHelper.isSortOrActionModeUnSupported(category)) {
             return
         }
@@ -587,8 +585,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         return null
     }
 
-    private fun canLongPress() = !zipPresenter.isZipMode && operationPresenter.isNotPasteOperation()
-
+    private fun canLongPress() = !zipPresenter.isZipMode
 
     private fun addNavigation(path: String?, category: Category) {
         setupNavigation(path, category)
@@ -639,9 +636,8 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
     private fun handleActionModeBackPress(): Boolean {
         if (homeClicked.value == true) {
             return true
-        } else if (!isPasteOperationPending()) {
-            endActionMode()
         }
+        endActionMode()
         return false
     }
 
@@ -876,13 +872,21 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         setCategory(FILES)
     }
 
-    fun hideFab() {
-        showFab.postValue(false)
-    }
-
     fun showFab() {
         if (canShowFab(category)) {
             showFab.postValue(true)
+        }
+    }
+
+    fun copyTo(destDir: String?) {
+        destDir?.let {
+            operationPresenter.onPaste(Operations.COPY, destDir)
+        }
+    }
+
+    fun cutTo(destDir: String?) {
+        destDir?.let {
+            operationPresenter.onPaste(Operations.CUT, destDir)
         }
     }
 
