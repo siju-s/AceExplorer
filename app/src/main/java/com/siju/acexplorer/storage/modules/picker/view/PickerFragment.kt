@@ -41,6 +41,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.inflateLayout
+import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.modules.picker.model.PickerAction
@@ -148,6 +149,7 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
                 },
                 null
         )
+        adapter.setMainCategory(Category.FILES)
         fileList.adapter = adapter
     }
 
