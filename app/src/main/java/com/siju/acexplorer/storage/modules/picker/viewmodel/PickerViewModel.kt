@@ -210,7 +210,8 @@ class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listene
                 }
             }
         }
-        if (rootStorageList.value == false) {
+        val rootStorageList = rootStorageList.value
+        if (rootStorageList == null || rootStorageList == false) {
             val path = _currentPath.value
             path?.let {
                 val parentPath = File(it).parent
