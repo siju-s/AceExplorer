@@ -59,7 +59,9 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
             override fun onClick(view: View, position: Int, canShowPeek: Boolean) {
                 if (!canShowPeek) {
                     val pos = if (peekAndPop.isNextPrevIcon(view)) peekPos else position
-                    peekPopCallback?.onItemClick(view, fileList[pos], pos)
+                    if (pos >= 0 && pos < fileList.size) {
+                        peekPopCallback?.onItemClick(view, fileList[pos], pos)
+                    }
                     return
                 }
                 if (peekPos == INVALID_POS) {
