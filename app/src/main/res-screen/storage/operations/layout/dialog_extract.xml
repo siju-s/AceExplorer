@@ -59,12 +59,15 @@
         <Button
             android:id="@+id/buttonPathSelect"
             style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
             android:layout_below="@id/radioGroupPath"
+            android:textColor="@color/blue"
             android:text="@string/browse"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:textSize="14sp"
-            android:textStyle="bold"
             android:visibility="gone" />
 
         <EditText
