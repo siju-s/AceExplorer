@@ -1,12 +1,16 @@
 package com.siju.acexplorer.imageviewer
 
+import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Process
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.siju.acexplorer.R
+import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.imageviewer.model.ImageViewerModelImpl
 import com.siju.acexplorer.imageviewer.presenter.ImageViewerPresenter
 import com.siju.acexplorer.imageviewer.presenter.ImageViewerPresenterImpl
@@ -17,6 +21,7 @@ import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModelFactory
 
 const val KEY_POS       = "pos"
+const val SAF_REQUEST_ID = 6000
 
 class ImageViewerActivity : AppCompatActivity() {
 
@@ -42,6 +47,7 @@ class ImageViewerActivity : AppCompatActivity() {
         var list = arrayListOf<Uri?>()
         var pathList = arrayListOf<String?>()
 
+        var writePermission = PackageManager.PERMISSION_GRANTED
         if (intent.getIntExtra(KEY_POS, -1) == -1) {
             var uri = intent.data
             val extras = intent.extras
@@ -53,6 +59,7 @@ class ImageViewerActivity : AppCompatActivity() {
             }
             else {
                 list.add(uri)
+                writePermission = checkUriPermission(uri, Process.myPid(), Process.myUid(), Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             }
         }
         else {
@@ -66,14 +73,17 @@ class ImageViewerActivity : AppCompatActivity() {
                 pathList = imageViewerDataHolder.getPathList()
             }
         }
-        setupUI(pos, list, pathList)
+        setupUI(pos, list, pathList, writePermission == PackageManager.PERMISSION_GRANTED)
     }
 
-    private fun setupUI(pos: Int, list: ArrayList<Uri?>, pathList: ArrayList<String?>) {
+    private fun setupUI(pos: Int, list: ArrayList<Uri?>, pathList: ArrayList<String?>, hasWriteAccess: Boolean) {
         view = findViewById<ImageViewerUiView>(R.id.container)
         view.setActivity(this)
         view.setPosition(pos)
         view.setUriList(list)
+        if (!hasWriteAccess) {
+            view.setNoWriteAccess()
+        }
         if (pathList.isNotEmpty()) {
             view.setPathList(pathList)
         }
@@ -97,13 +107,28 @@ class ImageViewerActivity : AppCompatActivity() {
         })
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
         if (requestCode == REQUEST_CODE_DELETE) {
             if (resultCode == RESULT_OK) {
                 view.onDeleteSuccess()
             }
             else {
+                view.onDeleteFailed()
+            }
+        }
+        else if (requestCode == SAF_REQUEST_ID) {
+            if (resultCode == Activity.RESULT_OK) {
+                val uri = intent?.data
+                if (uri == null) {
+                    view.onDeleteFailed()
+                }
+                else {
+                    view.handleSafResult(uri, intent.flags)
+                }
+            }
+            else {
+                Analytics.logger.safResult(false)
                 view.onDeleteFailed()
             }
         }

@@ -5,12 +5,14 @@ import android.content.Context
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import androidx.documentfile.provider.DocumentFile
 import com.siju.acexplorer.BuildConfig
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.helper.MediaScannerHelper
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.main.model.helper.ShareHelper
+import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.storage.model.operations.DeleteOperation
 import java.io.File
 
@@ -38,16 +40,30 @@ class ImageViewerModelImpl(val context: Context) : ImageViewerModel {
         } catch (exception: SecurityException) {
             throw exception
         }
+        catch (exception : UnsupportedOperationException) {
+            0
+        }
     }
 
-    private fun getUriPath(uri: Uri): String? {
-        var path = uri.path
-        path ?: return null
-        val pathSegments: List<String> = uri.pathSegments
-        val firstSegment = pathSegments[0]
-        val index = path.indexOf(firstSegment)
-        path = path.substring(index + firstSegment.length)
-        return path
+    override fun deleteFile(uri: Uri, treeUri: Uri): Int {
+        val documentFile = DocumentFile.fromTreeUri(context, treeUri) ?: return 0
+        if (documentFile.isDirectory) {
+            val files = documentFile.listFiles()
+            if (files.isEmpty()) {
+                return 0
+            }
+            else {
+                for (file in files) {
+                    val result = file.delete()
+                    return if (result) {
+                        1
+                    } else {
+                        0
+                    }
+                }
+            }
+        }
+        return 0
     }
 
     private fun isOwnFileProvider(uri: Uri): Boolean {
@@ -65,11 +81,49 @@ class ImageViewerModelImpl(val context: Context) : ImageViewerModel {
         try {
             imageId.toLong()
         } catch (exception: NumberFormatException) {
-            count = context.contentResolver.delete(uri, null, null)
+            try {
+                count = context.contentResolver.delete(uri, null, null)
+            }
+            catch (exception : UnsupportedOperationException) {
+                if (UriHelper.isExternalStorageDocument(uri)) {
+                    return deletePath(UriHelper.getUriPath(uri))
+                }
+                return if (UriHelper.hasWritePermission(context, uri) && isOwnFileProvider(uri)) {
+                    deletePath(UriHelper.getUriPath(uri))
+                } else {
+                    0
+                }
+            }
             if (count > 0 && isOwnFileProvider(uri)) {
-                val encodedPath = getUriPath(uri)
+                val encodedPath = UriHelper.getUriPath(uri)
                 encodedPath ?: return 0
                 MediaScannerHelper.scanFiles(context, arrayOf(encodedPath))
+            }
+            else if (UriHelper.hasWritePermission(context, uri) && isOwnFileProvider(uri)) {
+                return deletePath(UriHelper.getUriPath(uri))
+            }
+            else if (isOwnFileProvider(uri) && context.contentResolver.persistedUriPermissions.isNotEmpty()) {
+                val list = context.contentResolver.persistedUriPermissions
+                for (permission in list) {
+                        var documentFile = DocumentFile.fromTreeUri(context, permission.uri)
+                        val uriPath = UriHelper.getUriPath(uri) ?: return 0
+                        val parts = uriPath.split("/")
+
+                    for (i in 3 until parts.size) {
+                        documentFile = documentFile?.findFile(parts[i])
+                    }
+                    if (documentFile != null) {
+                        val result =  documentFile.delete()
+                        if (result) {
+                            MediaScannerHelper.scanFiles(context, arrayOf(uriPath))
+                            return  1
+                        }
+                    }
+                }
+                return 0
+            }
+            else {
+                throw SecurityException(uri.toString())
             }
             return count
         }

@@ -1,7 +1,6 @@
 package com.siju.acexplorer.storage.model
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.os.Handler
 import android.provider.MediaStore
@@ -11,6 +10,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.helper.SafHelper.persistUriPermission
+import com.siju.acexplorer.helper.SafHelper.saveSafUri
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.data.DataFetcherFactory
 import com.siju.acexplorer.main.model.data.DataLoader
@@ -166,16 +167,10 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
     }
 
     override fun handleSafResult(uri: Uri, flags: Int) {
-        saveSafUri(uri)
-        val newFlags = flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent
-                .FLAG_GRANT_WRITE_URI_PERMISSION)
-        // Persist URI - this is required for verification of writability.
-        context.contentResolver.takePersistableUriPermission(uri, newFlags)
+        Log.d("StorageModel", "handleSafResult() called with: uri = $uri, flags = $flags")
+        saveSafUri(globalPreference, uri)
+        persistUriPermission(context, uri)
         operationHelper.onSafSuccess(fileOperationCallback)
-    }
-
-    private fun saveSafUri(uri: Uri) {
-        globalPreference.edit().putString(FileConstants.SAF_URI, uri.toString()).apply()
     }
 
     override fun onExit() {
@@ -201,6 +196,7 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
             Category.ALL_TRACKS, Category.GENERIC_MUSIC -> uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
             Category.RECENT, Category.RECENT_ALL, Category.DOCS, Category.PDF, Category.DOCS_OTHER,
             Category.COMPRESSED, Category.APPS, Category.LARGE_FILES_ALL, Category.LARGE_FILES -> uri = MediaStore.Files.getContentUri("external")
+            Category.FILES -> uri = MediaStore.Files.getContentUri("external")
             else -> {
             }
         }

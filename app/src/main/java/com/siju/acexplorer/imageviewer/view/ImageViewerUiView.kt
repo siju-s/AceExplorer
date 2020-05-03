@@ -15,25 +15,34 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
+import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.showToast
+import com.siju.acexplorer.helper.MediaScannerHelper
+import com.siju.acexplorer.helper.SafHelper
+import com.siju.acexplorer.imageviewer.SAF_REQUEST_ID
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
 import com.siju.acexplorer.main.model.helper.SdkHelper
+import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.main.viewmodel.InfoSharedViewModel
 
 
+
 const val REQUEST_CODE_DELETE = 1000
+
 class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayout(context, attrs),
         ImageViewerView,
         ViewPager.OnPageChangeListener,
         View.OnClickListener,
         PopupMenu.OnMenuItemClickListener {
 
+    private var noWriteAccess = false
     private lateinit var viewModel: ImageViewerViewModel
     private lateinit var infoSharedViewModel: InfoSharedViewModel
     private lateinit var activity: AppCompatActivity
@@ -44,11 +53,12 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
     private lateinit var shareButton: ImageButton
     private lateinit var overflowButton: ImageButton
     private lateinit var titleText: TextView
-
     private var uriList = arrayListOf<Uri?>()
-    private var pathList = arrayListOf<String?>()
+    private var safDocument: DocumentFile? = null
 
+    private var pathList = arrayListOf<String?>()
     private var pos = 0
+    private var safRequestComplete = false
 
     override fun setActivity(activity: AppCompatActivity) {
         this.activity = activity
@@ -64,6 +74,10 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
 
     override fun setPathList(pathList: ArrayList<String?>) {
         this.pathList = pathList
+    }
+
+    override fun setNoWriteAccess() {
+        noWriteAccess = true
     }
 
     override fun inflate() {
@@ -122,22 +136,77 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
         }
 
         override fun onPositiveButtonClick(view: View?, isTrashEnabled: Boolean, filesToDelete: Uri) {
-            deleteDialogButtonClicked()
+            deleteDialogButtonClicked(uriList[pager.currentItem])
         }
 
     }
 
-    private fun deleteDialogButtonClicked() {
+    private fun deleteDialogButtonClicked(uri: Uri?) {
+        uri ?: return
         try {
-            viewModel.deleteClicked(uriList[pager.currentItem])
-        }
-        catch (exception: SecurityException) {
+            viewModel.deleteClicked(uri)
+        } catch (exception: SecurityException) {
             if (SdkHelper.isAtleastAndroid10 && exception is RecoverableSecurityException) {
                 activity.startIntentSenderForResult(exception.userAction.actionIntent.intentSender, REQUEST_CODE_DELETE, null, 0, 0, 0)
-            }
-            else {
+            } else if (safRequestComplete) {
                 onDeleteFailed()
+                safRequestComplete = false
+            } else {
+                safDocument = DocumentFile.fromSingleUri(context, uri)
+                showSafDialog(UriHelper.getUriPath(uri))
             }
+        }
+    }
+
+    override fun handleSafResult(uri: Uri, flags: Int) {
+        Log.d("ImageViewerView", "handleSafResult() called with: uri = $uri, flags = $flags}, safUri:${safDocument?.uri}")
+        SafHelper.saveSafUri(PreferenceManager.getDefaultSharedPreferences(context), uri)
+        SafHelper.persistUriPermission(context, uri)
+        safRequestComplete = true
+        var documentFile = DocumentFile.fromTreeUri(context, uri)
+        val uriToDelete = uriList[pager.currentItem]
+        val uriPath = UriHelper.getUriPath(uriToDelete)
+        if (documentFile == null || uriToDelete == null || uriPath == null) {
+            onDeleteFailed()
+            return
+        }
+
+        val parts = uriPath.split("/")
+
+        for (i in 3 until parts.size) {
+            documentFile = documentFile?.findFile(parts[i])
+        }
+
+        if (documentFile == null) {
+            onDeleteFailed()
+        }
+        else {
+            if (documentFile.delete()) {
+                onDeleteSuccess()
+                MediaScannerHelper.scanFiles(context, arrayOf(uriPath))
+            }
+        }
+    }
+
+    private fun showSafDialog(path: String?) {
+        if (path == null) {
+            onDeleteFailed()
+        } else {
+            DialogHelper.showSAFDialog(context, path, dialogListener)
+        }
+    }
+
+    private val dialogListener = object : DialogHelper.AlertDialogListener {
+        override fun onPositiveButtonClick(view: View) {
+            SafHelper.triggerStorageAccessFramework(activity, SAF_REQUEST_ID)
+        }
+
+        override fun onNegativeButtonClick(view: View) {
+            onDeleteFailed()
+        }
+
+        override fun onNeutralButtonClick(view: View) {
+
         }
     }
 
@@ -195,6 +264,9 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
     private fun createPopupMenu(view: View) {
         val popupMenu = PopupMenu(context, view)
         popupMenu.menuInflater.inflate(R.menu.image_viewer, popupMenu.menu)
+        if (noWriteAccess) {
+            popupMenu.menu.findItem(R.id.action_delete).isVisible = false
+        }
         popupMenu.setOnMenuItemClickListener(this)
         popupMenu.show()
     }

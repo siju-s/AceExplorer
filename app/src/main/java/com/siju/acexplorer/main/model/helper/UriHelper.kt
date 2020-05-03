@@ -18,7 +18,9 @@ package com.siju.acexplorer.main.model.helper
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Process
 import androidx.core.content.FileProvider
 import com.siju.acexplorer.BuildConfig
 import com.siju.acexplorer.R
@@ -51,5 +53,26 @@ object UriHelper {
             FileUtils.showMessage(context, context.getString(R.string.msg_error_not_supported))
             false
         }
+    }
+
+    fun getUriPath(uri: Uri?): String? {
+        if (uri == null) {
+            return null
+        }
+        var path = uri.path
+        path ?: return null
+        val pathSegments: List<String> = uri.pathSegments
+        val firstSegment = pathSegments[0]
+        val index = path.indexOf(firstSegment)
+        path = path.substring(index + firstSegment.length)
+        return path
+    }
+
+    fun hasWritePermission(context: Context, uri: Uri): Boolean {
+        return context.checkUriPermission(uri, Process.myPid(), Process.myUid(), Intent.FLAG_GRANT_WRITE_URI_PERMISSION) == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun isExternalStorageDocument(uri: Uri): Boolean {
+        return "com.android.externalstorage.documents" == uri.authority
     }
 }

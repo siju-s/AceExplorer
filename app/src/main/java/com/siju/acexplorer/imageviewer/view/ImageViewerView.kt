@@ -19,4 +19,6 @@ interface ImageViewerView {
     fun onDeleteSuccess()
     fun onDeleteFailed()
     fun setPathList(pathList: ArrayList<String?>)
+    fun setNoWriteAccess()
+    fun handleSafResult(uri: Uri, flags: Int)
 }
