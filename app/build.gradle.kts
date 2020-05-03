@@ -70,9 +70,11 @@ android {
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
             applicationVariants.all {
-                this.outputs.all {
-                    this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
-                    this.outputFileName = "Ace_" + defaultConfig.versionName + ".apk"
+                if (this.buildType.name == "release") {
+                    this.outputs.all {
+                        this as com.android.build.gradle.internal.api.BaseVariantOutputImpl
+                        this.outputFileName = "Ace_" + defaultConfig.versionName + ".apk"
+                    }
                 }
             }
             signingConfig = signingConfigs.getByName("release")
