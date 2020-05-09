@@ -9,17 +9,18 @@ import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.data.FileDataFetcher
 import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.main.model.helper.SortHelper
 import com.siju.acexplorer.search.helper.SearchUtils
-
-private const val TAG = "FolderGenericFetcher"
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class FolderGenericFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?,
                            category: Category): ArrayList<FileInfo> {
         path?.let {
-            val data =  FileDataFetcher.getFilesList(it, false, canShowHiddenFiles(context))
+            val data = FileDataFetcher.getFilesList(it, false, canShowHiddenFiles(context))
             return SortHelper.sortFiles(data, getSortMode(context))
         }
         return ArrayList()
@@ -35,8 +36,24 @@ class FolderGenericFetcher : DataFetcher {
     }
 
     private fun getFileCount(context: Context, path: String, showHidden: Boolean): Int {
-        val cursor = getFolderCursor(context, path, showHidden)
-        return getCursorCount(cursor)
+        return if (SdkHelper.isAtleastAndroid10) {
+            Files.walk(Paths.get(path), 2).filter { pathName ->
+                val filePath = pathName.toString()
+                isMediaFile(filePath)
+            }.count().toInt()
+        } else {
+            val cursor = getFolderCursor(context, path, showHidden)
+            getCursorCount(cursor)
+        }
+    }
+
+    private fun isMediaFile(filePath: String): Boolean {
+        return filePath.endsWith(".jpg", true) ||
+                filePath.endsWith(".png", true) ||
+                filePath.endsWith(".mp4", true) ||
+                filePath.endsWith("pdf", true) ||
+                filePath.endsWith(".mp3", true) ||
+                filePath.endsWith(".wav", true)
     }
 
     private fun getFolderCursor(context: Context, path: String, showHidden: Boolean): Cursor? {

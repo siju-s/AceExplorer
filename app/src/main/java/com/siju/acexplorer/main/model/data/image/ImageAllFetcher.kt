@@ -1,7 +1,6 @@
 package com.siju.acexplorer.main.model.data.image
 
 import android.content.Context
-import android.content.Intent
 import android.database.Cursor
 import android.provider.MediaStore
 import com.siju.acexplorer.common.types.FileInfo
@@ -18,7 +17,7 @@ class ImageAllFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val cursor = fetchImages(context)
-        val data =  getImageAllDataFromCursor(cursor, category, canShowHiddenFiles(context))
+        val data = getImageAllDataFromCursor(cursor, category, canShowHiddenFiles(context))
         return SortHelper.sortFiles(data, getSortMode(context))
     }
 
@@ -34,7 +33,7 @@ class ImageAllFetcher : DataFetcher {
     }
 
     private fun getImageAllDataFromCursor(cursor: Cursor?, category: Category,
-                                        showHidden: Boolean): ArrayList<FileInfo> {
+                                          showHidden: Boolean): ArrayList<FileInfo> {
         val fileInfoList = ArrayList<FileInfo>()
         if (cursor == null) {
             return fileInfoList
@@ -44,7 +43,7 @@ class ImageAllFetcher : DataFetcher {
         val dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
         val imageIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
         val bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
-        val pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        val pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media .DATA)
         val widthIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)
         val heightIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)
 
@@ -71,8 +70,7 @@ class ImageAllFetcher : DataFetcher {
 
                 fileInfoList.add(FileInfo.createImagePropertiesInfo(category, imageId, bucketId, nameWithExt, path, date,
                         size, extension, width, height))
-            }
-            while (cursor.moveToNext())
+            } while (cursor.moveToNext())
         }
         cursor.close()
         return fileInfoList
