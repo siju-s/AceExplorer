@@ -60,3 +60,5 @@ fastlane/README.md
 
 .idea/dbnavigator.xml
 *.patch
+
+reports/

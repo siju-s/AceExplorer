@@ -167,7 +167,6 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
     }
 
     override fun handleSafResult(uri: Uri, flags: Int) {
-        Log.d("StorageModel", "handleSafResult() called with: uri = $uri, flags = $flags")
         saveSafUri(globalPreference, uri)
         persistUriPermission(context, uri)
         operationHelper.onSafSuccess(fileOperationCallback)
@@ -186,24 +185,20 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
     }
 
     private fun registerContentObserver() {
-        var uri: Uri? = null
         if (contentObserverRegistered) {
             return
         }
-        when (category) {
-            Category.IMAGES_ALL, Category.GENERIC_IMAGES -> uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-            Category.VIDEO_ALL, Category.GENERIC_VIDEOS -> uri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI
-            Category.ALL_TRACKS, Category.GENERIC_MUSIC -> uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-            Category.RECENT, Category.RECENT_ALL, Category.DOCS, Category.PDF, Category.DOCS_OTHER,
-            Category.COMPRESSED, Category.APPS, Category.LARGE_FILES_ALL, Category.LARGE_FILES -> uri = MediaStore.Files.getContentUri("external")
-            Category.FILES -> uri = MediaStore.Files.getContentUri("external")
-            else -> {
-            }
+        val uri: Uri? = when (category) {
+            Category.IMAGES_ALL, Category.GENERIC_IMAGES -> MediaStore.Images.Media.EXTERNAL_CONTENT_URI
+            Category.VIDEO_ALL, Category.GENERIC_VIDEOS -> MediaStore.Video.Media.EXTERNAL_CONTENT_URI
+            Category.ALL_TRACKS, Category.GENERIC_MUSIC -> MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            else -> MediaStore.Files.getContentUri("external")
         }
         uri?.let {
             context.contentResolver.registerContentObserver(uri, true, mediaObserver)
             mediaObserver.addMediaObserverListener(mediaObserverListener)
         }
+        Log.d("StorageModel", "registerContentObserver: $uri")
         contentObserverRegistered = true
     }
 

@@ -11,14 +11,9 @@ object MediaScannerHelper {
         Log.d("MediaScannerHelper", "scanFiles : ${pathList.size}")
         context?.let {
             if (pathList.isNotEmpty()) {
-                MediaScannerConnection.scanFile(context, pathList, null,
-                                                mediaScannerConnectionCallback)
+                MediaScannerConnection.scanFile(context, pathList, null, null)
             }
         }
-    }
-
-    private val mediaScannerConnectionCallback = MediaScannerConnection.OnScanCompletedListener { path, _ ->
-        Log.d("MediaScannerHelper", "scanned : $path")
     }
 
     fun isMediaScanningRequired(file: File): Boolean {
