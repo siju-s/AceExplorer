@@ -30,6 +30,7 @@
         <item name="android:textDirection">locale</item>
         <item name="android:textAlignment">gravity</item>
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
+        <item name="preferenceTheme">@style/PrefsTheme</item>
     </style>
 
     <style name="BaseDarkTheme" parent="Theme.MaterialComponents.NoActionBar">
@@ -49,6 +50,7 @@
         <item name="android:textDirection">locale</item>
         <item name="android:textAlignment">gravity</item>
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
+        <item name="preferenceTheme">@style/PrefsTheme</item>
     </style>
 
     <style name="BaseDeviceTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -67,6 +69,7 @@
         <item name="android:textDirection">locale</item>
         <item name="android:textAlignment">gravity</item>
         <item name="bottomSheetDialogTheme">@style/ThemeOverlay.App.BottomSheetDialog</item>
+        <item name="preferenceTheme">@style/PrefsTheme</item>
     </style>
 
     <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.MaterialComponents.Dialog">
@@ -125,5 +128,11 @@
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 
     <style name="Dark_AppTheme.PopupOverlay" parent="ThemeOverlay.MaterialComponents.Dark" />
+
+    <style name="PrefsTheme" parent="PreferenceThemeOverlay.v14.Material">
+        <item name="android:layout">@layout/pref_holder</item>
+        <item name="android:listPreferredItemPaddingLeft">@dimen/activity_horizontal_margin</item>
+        <item name="android:listPreferredItemPaddingRight">@dimen/activity_horizontal_margin</item>
+    </style>
 
 </resources>

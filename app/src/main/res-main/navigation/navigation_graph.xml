@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="com.siju.acexplorer.home.view.HomeScreenFragment"
+        android:label="HomeScreenFragment"
+        tools:layout="@layout/homescreen">
+        <action
+            android:id="@+id/action_homeScreenFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_fileListFragment"
+            app:destination="@id/fileListFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_category_edit"
+            app:destination="@id/category_edit" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.siju.acexplorer.search.view.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/search_main" />
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.siju.acexplorer.settings.SettingsPreferenceFragment"
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/action_navigation_settings_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_tools"
+        android:name="com.siju.acexplorer.tools.ToolsFragment"
+        android:label="ToolsFragment"
+        tools:layout="@layout/tools_list">
+        <action
+            android:id="@+id/action_navigation_tools_to_fileListFragment"
+            app:destination="@id/fileListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fileListFragment"
+        android:name="com.siju.acexplorer.storage.view.FileListFragment"
+        android:label="BaseFileListFragment"
+        tools:layout="@layout/main_list">
+        <action
+            android:id="@+id/action_baseFileListFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <argument
+            android:name="path"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="category"
+            app:argType="com.siju.acexplorer.main.model.groups.Category" />
+        <argument
+            android:name="show_navigation"
+            app:argType="boolean" />
+    </fragment>
+    <fragment
+        android:id="@+id/category_edit"
+        android:name="com.siju.acexplorer.home.edit.view.CategoryEditFragment"
+        android:label="CategoryEditFragment"
+        tools:layout="@layout/category_edit" />
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.siju.acexplorer.home.view.CategoryFragment"
+        android:label="CategoryFragment"
+        tools:layout="@layout/category_pager">
+        <argument
+            android:name="path"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="category"
+            app:argType="com.siju.acexplorer.main.model.groups.Category" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.siju.acexplorer.settings.AboutFragment"
+        android:label="AboutFragment" />
+</navigation>

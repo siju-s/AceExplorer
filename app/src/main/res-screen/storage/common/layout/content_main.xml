@@ -25,11 +25,14 @@
     android:fitsSystemWindows="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <FrameLayout
-        android:id="@+id/main_container"
-        android:layout_width="0dp"
+    <fragment
+        android:id="@+id/nav_host"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0.5"/>
+        android:layout_weight="1"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/navigation_graph" />
 
     <View
         android:id="@+id/viewSeparator"
@@ -44,4 +47,5 @@
         android:layout_height="match_parent"
         android:layout_weight="0.5"
         android:visibility="gone"/>
+
 </LinearLayout>

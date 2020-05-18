@@ -24,11 +24,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
-import com.siju.acexplorer.home.edit.view.CategoryEditFragment
 import com.siju.acexplorer.home.model.HomeModelImpl
 import com.siju.acexplorer.home.viewmodel.HomeViewModel
 import com.siju.acexplorer.home.viewmodel.HomeViewModelFactory
@@ -36,7 +36,6 @@ import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
-import com.siju.acexplorer.storage.view.FileListFragment
 import com.siju.acexplorer.theme.Theme
 import kotlinx.android.synthetic.main.home_categories.*
 import kotlinx.android.synthetic.main.home_storage.*
@@ -45,7 +44,6 @@ import kotlinx.android.synthetic.main.toolbar.*
 
 private const val TAG = "HomeScreenFragment"
 
-//TODO Add Navigation to this class
 class HomeScreenFragment : Fragment() {
 
     private lateinit var mainViewModel: MainViewModel
@@ -94,12 +92,8 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun showCategoryEditScreen() {
-        val transaction = activity?.supportFragmentManager?.beginTransaction()
-        transaction?.apply {
-            replace(R.id.main_container, CategoryEditFragment.newInstance())
-            addToBackStack(null)
-            commit()
-        }
+       val action = HomeScreenFragmentDirections.actionNavigationHomeToCategoryEdit()
+        findNavController().navigate(action)
     }
 
     private fun initObservers() {
@@ -194,29 +188,21 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun loadList(path: String?, category: Category) {
-        val transaction = activity?.supportFragmentManager?.beginTransaction()
-        transaction?.apply {
-            replace(R.id.main_container, FileListFragment.newInstance(path, category))
-            addToBackStack(null)
-            commit()
-        }
+        val actions = HomeScreenFragmentDirections.actionNavigationHomeToFileListFragment(path, category, true)
+        val navController = findNavController()
+        navController.navigate(actions)
     }
 
     private fun loadCategory(path: String?, category: Category) {
-        val transaction = activity?.supportFragmentManager?.beginTransaction()
-        transaction?.apply {
-            if (isCategorySplitRequired(category)) {
-                replace(R.id.main_container, CategoryFragment.newInstance(path, category))
-            }
-            else {
-                replace(R.id.main_container, FileListFragment.newInstance(path, category))
-            }
-            addToBackStack(null)
-            commit()
+        val action = if (isCategorySplitRequired(category)) {
+            HomeScreenFragmentDirections.actionNavigationHomeToCategoryFragment(path, category)
+        } else {
+            HomeScreenFragmentDirections.actionNavigationHomeToFileListFragment(path, category, true)
         }
+        findNavController().navigate(action)
     }
 
-    private fun isCategorySplitRequired(category: Category) : Boolean {
+    private fun isCategorySplitRequired(category: Category): Boolean {
         return category == Category.WHATSAPP || category == Category.TELEGRAM ||
                 category == Category.GENERIC_MUSIC || category == Category.GENERIC_IMAGES ||
                 category == Category.GENERIC_VIDEOS || category == Category.CAMERA_GENERIC ||
@@ -250,19 +236,11 @@ class HomeScreenFragment : Fragment() {
     }
 
     fun showUpdateSnackbar(updateChecker: UpdateChecker?) {
-       updateChecker?.showUpdateSnackbar(view?.findViewById(R.id.container))
+        updateChecker?.showUpdateSnackbar(view?.findViewById(R.id.container))
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         lifecycle.removeObserver(adView)
     }
-
-    companion object {
-
-        fun newInstance(): HomeScreenFragment {
-            return HomeScreenFragment()
-        }
-    }
-
 }

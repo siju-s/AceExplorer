@@ -26,9 +26,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -38,21 +40,19 @@ import com.kobakei.ratethisapp.RateThisApp
 import com.siju.acexplorer.R
 import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.extensions.isLandscape
-import com.siju.acexplorer.helper.ToolbarHelper
 import com.siju.acexplorer.home.view.CategoryFragment
 import com.siju.acexplorer.home.view.HomeScreenFragment
+import com.siju.acexplorer.home.view.HomeScreenFragmentDirections
 import com.siju.acexplorer.main.helper.REQUEST_CODE_UPDATE
 import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.view.FragmentsFactory
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.premium.PremiumUtils
 import com.siju.acexplorer.search.view.SearchFragment
-import com.siju.acexplorer.settings.AboutFragment
-import com.siju.acexplorer.settings.SettingsFragment
+import com.siju.acexplorer.settings.SettingsPreferenceFragment
 import com.siju.acexplorer.storage.view.BaseFileListFragment
 import com.siju.acexplorer.storage.view.DualPaneFragment
 import com.siju.acexplorer.storage.view.FileListFragment
@@ -66,19 +66,23 @@ private const val TAG = "AceActivity"
 private const val ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES"
 private const val ACTION_MUSIC = "android.intent.action.SHORTCUT_MUSIC"
 private const val ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS"
-private const val DEFAULT_TAB_ID = R.id.navigation_home
 private const val CRITERIA_INSTALL_NUM_DAYS = 10
 private const val CRITERIA_LAUNCH_TIMES = 25
-class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFragmentCallback, MainCommunicator {
+
+class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     private lateinit var mainViewModel: MainViewModel
+    private lateinit var navController: NavController
+
     private var premiumUtils: PremiumUtils? = null
-    private var category: Category? = null
     private var updateChecker: UpdateChecker? = null
+    private var category: Category? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        setupNavController()
 
         mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         mainViewModel.setPermissionHelper(PermissionHelper(this, applicationContext))
@@ -87,21 +91,16 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         initObservers()
         initListeners()
         checkIfInAppShortcut(intent)
-        setupSelectedTabPosition(savedInstanceState)
         updateChecker = UpdateChecker(applicationContext, this, updateCallback)
         setupPremiumUtils()
     }
 
-    private fun setupSelectedTabPosition(savedInstanceState: Bundle?) {
-        when (savedInstanceState) {
-            null -> {
-                setDefaultTab()
-            }
+    private fun setupNavController() {
+        navController = findNavController(R.id.nav_host)
+        bottom_navigation.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener{ _, dest, _ ->
+            Log.d(TAG, "setupNavController: destAdded:$dest")
         }
-    }
-
-    private fun setDefaultTab() {
-        bottom_navigation.selectedItemId = DEFAULT_TAB_ID
     }
 
     override fun getUpdateChecker(): UpdateChecker? {
@@ -174,7 +173,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
                 if (it) {
                     disableDualPane()
                     mainViewModel.setNavigatedToSearch()
-                    openFragment(SearchFragment.newInstance(), true)
+                    navController.navigate(R.id.searchFragment)
                 }
             }
         })
@@ -240,7 +239,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     private fun isCurrentScreenStorage(): Boolean {
-        val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
+        val fragment = getCurrentFragment()
         if (fragment is BaseFileListFragment) {
             return true
         }
@@ -248,39 +247,27 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
-        clearBackStack()
+        clearBackStack(menuItem.itemId)
         disableDualPane()
-        val fragment = FragmentsFactory.createFragment(menuItem.itemId)
-        openFragment(fragment)
+        navController.navigate(menuItem.itemId)
         true
     }
 
+    //
     private val navigationItemReselectedListener = BottomNavigationView.OnNavigationItemReselectedListener { menuItem ->
-        clearBackStack()
+        clearBackStack(menuItem.itemId)
         disableDualPane()
-        val fragment = if (category != null) {
-            CategoryFragment.newInstance(null, category!!)
+        if (category != null) {
+            val action = HomeScreenFragmentDirections.actionNavigationHomeToCategoryFragment(null, category!!)
+            navController.navigate(action)
         } else {
-            FragmentsFactory.createFragment(menuItem.itemId)
+            navController.navigate(menuItem.itemId)
         }
         setCategory(null)
-        openFragment(fragment)
     }
 
-    private fun clearBackStack() {
-        for (i in 0 until supportFragmentManager.backStackEntryCount) {
-            supportFragmentManager.popBackStack()
-        }
-    }
-
-
-    private fun openFragment(fragment: Fragment, addToBackStack: Boolean = false) {
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.main_container, fragment)
-        if (addToBackStack) {
-            transaction.addToBackStack(null)
-        }
-        transaction.commit()
+    private fun clearBackStack(id: Int, inclusive: Boolean = true) {
+        navController.popBackStack(id, inclusive)
     }
 
     private fun createDualFragment() {
@@ -294,8 +281,7 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
         super.onNewIntent(intent)
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
-            val fragment = supportFragmentManager.findFragmentById(R.id
-                    .main_container)
+            val fragment = getCurrentFragment()
             if (fragment is SearchFragment) {
                 fragment.performVoiceSearch(query)
             }
@@ -326,7 +312,9 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     override fun onBackPressed() {
-        when (val fragment = supportFragmentManager.findFragmentById(R.id.main_container)) {
+        val fragment = getCurrentFragment()
+        Log.d(TAG, "onBackPressed: getCUrrentFrag:$fragment")
+        when (fragment) {
             is BaseFileListFragment -> when (val focusedFragment = getCurrentFocusFragment(fragment)) {
                 is DualPaneFragment -> {
                     onDualPaneBackPress(focusedFragment)
@@ -343,16 +331,12 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
             }
             is SearchFragment -> onSearchBackPress(fragment)
             is ToolsFragment -> {
-                clearBackStack()
+                clearBackStack(R.id.navigation_tools)
                 switchToHomeScreen()
             }
-            is SettingsFragment -> {
-                if (supportFragmentManager.backStackEntryCount == 0) {
-                    clearBackStack()
-                    switchToHomeScreen()
-                } else {
-                    super.onBackPressed()
-                }
+            is SettingsPreferenceFragment -> {
+                clearBackStack(R.id.navigation_settings)
+                switchToHomeScreen()
             }
             else -> super.onBackPressed()
         }
@@ -395,22 +379,8 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     override fun onPreferenceStartFragment(caller: PreferenceFragmentCompat,
                                            pref: Preference): Boolean {
-        val args = pref.extras
-        val fragment = AboutFragment()
-        fragment.arguments = args
-        fragment.setTargetFragment(caller, 0)
-        replaceFragment(supportFragmentManager, fragment)
-        ToolbarHelper.setToolbarTitle(this, pref.title.toString())
-        ToolbarHelper.showToolbarAsUp(this)
+        navController.navigate(R.id.action_navigation_settings_to_aboutFragment)
         return true
-    }
-
-    private fun replaceFragment(fragmentManager: FragmentManager,
-                                fragment: Fragment) {
-        fragmentManager.beginTransaction()
-                .replace(R.id.frameSettings, fragment)
-                .addToBackStack(null)
-                .commit()
     }
 
     private val updateCallback = object : UpdateChecker.UpdateCallback {
@@ -452,11 +422,10 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
     }
 
     private fun showUpdateDownloadedSnackbar() {
-        val fragment = supportFragmentManager.findFragmentById(R.id.main_container)
+        val fragment = getCurrentFragment()
         if (fragment is HomeScreenFragment) {
             fragment.showUpdateSnackbar(updateChecker)
-        }
-        else if (fragment is BaseFileListFragment) {
+        } else if (fragment is BaseFileListFragment) {
             fragment.showUpdateSnackbar(updateChecker)
         }
     }
@@ -467,6 +436,11 @@ class AceActivity : BaseActivity(), PreferenceFragmentCompat.OnPreferenceStartFr
 
     private fun removeUpdateBadge() {
         bottom_navigation.removeBadge(R.id.navigation_settings)
+    }
+
+    private fun getCurrentFragment(): Fragment? {
+        val navHostFragment = supportFragmentManager.primaryNavigationFragment
+        return navHostFragment?.childFragmentManager?.fragments?.get(0)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

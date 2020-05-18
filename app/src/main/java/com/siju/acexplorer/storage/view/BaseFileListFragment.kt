@@ -194,9 +194,10 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private fun getArgs() {
         val args = arguments
         args?.let {
-            path = it.getString(KEY_PATH)
-            category = it.getSerializable(KEY_CATEGORY) as Category
-            showNavigation = it.getBoolean(KEY_SHOW_NAVIGATION)
+            val bundle = FileListFragmentArgs.fromBundle(args)
+            path = bundle.path
+            category =  bundle.category
+            showNavigation = bundle.showNavigation
         }
     }
 
@@ -864,7 +865,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 val dialogFragment = PickerFragment.newInstance(it as AppCompatActivity, getThemeStyle(theme),
                         PickerType.FILE)
                 dialogFragment.setTargetFragment(this@BaseFileListFragment, EXTRACT_PATH_REQUEST)
-                this@BaseFileListFragment.fragmentManager?.let { fragmentManager ->
+                this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                     dialogFragment.show(fragmentManager, "Browse Fragment")
                 }
             }
@@ -877,7 +878,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             val dialogFragment = PickerFragment.newInstance(it as AppCompatActivity, getThemeStyle(theme),
                     PickerType.COPY)
             dialogFragment.setTargetFragment(this@BaseFileListFragment, COPY_PATH_REQUEST)
-            this@BaseFileListFragment.fragmentManager?.let { fragmentManager ->
+            this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                 dialogFragment.show(fragmentManager, "Browse Fragment")
             }
         }
@@ -889,7 +890,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             val dialogFragment = PickerFragment.newInstance(it as AppCompatActivity, getThemeStyle(theme),
                     PickerType.CUT)
             dialogFragment.setTargetFragment(this@BaseFileListFragment, CUT_PATH_REQUEST)
-            this@BaseFileListFragment.fragmentManager?.let { fragmentManager ->
+            this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                 dialogFragment.show(fragmentManager, "Browse Fragment")
             }
         }

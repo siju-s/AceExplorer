@@ -9,17 +9,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.storage.view.FileListFragment
 
 class ToolsFragment : Fragment() {
-
-    companion object {
-
-        fun newInstance() = ToolsFragment()
-    }
 
     private lateinit var toolsList: RecyclerView
 
@@ -39,8 +34,8 @@ class ToolsFragment : Fragment() {
 
         context?.let { context ->
             toolsList.adapter = Adapter(context) {
-                val fragment = FileListFragment.newInstance(null, it.category)
-                openFragment(fragment)
+                val actions = ToolsFragmentDirections.actionNavigationToolsToFileListFragment(null, it.category, true)
+                findNavController().navigate(actions)
             }
         }
 
@@ -50,17 +45,6 @@ class ToolsFragment : Fragment() {
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         toolbar.title = view.context.getString(R.string.tab_tools)
     }
-
-    private fun openFragment(fragment: Fragment) {
-        val activity = activity ?: return
-        val transaction = activity.supportFragmentManager.beginTransaction()
-        transaction.apply {
-            replace(R.id.main_container, fragment)
-            addToBackStack(null)
-            commit()
-        }
-    }
-
 
     private class Adapter(context: Context, private val clickListener: (ToolsInfo) -> Unit) : RecyclerView.Adapter<Adapter.Holder>() {
         private val list = arrayListOf<ToolsInfo>()

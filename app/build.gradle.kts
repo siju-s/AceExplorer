@@ -10,6 +10,7 @@ plugins {
     kotlin(BuildPlugins.kotlinKapt)
     id(BuildPlugins.googleServicesPlugin)
     id(BuildPlugins.fabricPlugin)
+    id("androidx.navigation.safeargs")
 }
 android {
     compileSdkVersion(AndroidSdk.compile)
@@ -132,6 +133,8 @@ dependencies {
     implementation (Libraries.cardView)
     implementation (Libraries.palette)
     implementation (Libraries.preference)
+    implementation (Libraries.navigation)
+    implementation (Libraries.navigationUi)
     kapt (Libraries.annotation)
 
     implementation (Libraries.Firebase.ads)
@@ -152,7 +155,7 @@ dependencies {
     implementation (Libraries.ExternalLibs.photoView)
     implementation (Libraries.ExternalLibs.fastScrollRecyclerview)
 
-    debugImplementation (Libraries.ExternalLibs.leakCanary)
+//    debugImplementation (Libraries.ExternalLibs.leakCanary)
 
     implementation (Libraries.ExternalLibs.crashlytics)
 

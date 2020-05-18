@@ -22,8 +22,6 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.search.helper.SearchUtils
 import com.siju.acexplorer.storage.view.FileListFragment
-import com.siju.acexplorer.storage.view.KEY_CATEGORY
-import com.siju.acexplorer.storage.view.KEY_PATH
 import com.siju.acexplorer.theme.Theme
 import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
@@ -32,23 +30,9 @@ import java.util.*
 class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClickListener {
 
     private lateinit var pagerAdapter: CategoryPagerAdapter
-    private lateinit var viewPager   : ViewPager2
-    private lateinit var tabLayout   : TabLayout
+    private lateinit var viewPager: ViewPager2
+    private lateinit var tabLayout: TabLayout
     private var category = Category.GENERIC_IMAGES
-
-    companion object {
-
-        fun newInstance(path: String?, category: Category): CategoryFragment {
-            val bundle = Bundle()
-            bundle.apply {
-                putString(KEY_PATH, path)
-                putSerializable(KEY_CATEGORY, category)
-            }
-            val categoryFragment = CategoryFragment()
-            categoryFragment.arguments = bundle
-            return categoryFragment
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -106,8 +90,9 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     private fun setupAdapter() {
         val args = arguments
         args?.let {
-            val path = args.getString(KEY_PATH)
-            category = args.getSerializable(KEY_CATEGORY) as Category
+            val bundle = CategoryFragmentArgs.fromBundle(args)
+            val path = bundle.path
+            category = bundle.category
             createCategoryData(path, category)
             viewPager.adapter = pagerAdapter
         }
@@ -132,7 +117,10 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         viewPager.isUserInputEnabled = false
         val tabStrip: LinearLayout = tabLayout.getChildAt(0) as LinearLayout
         for (pos in 0 until pagerAdapter.itemCount) {
-            tabStrip.getChildAt(pos).setOnTouchListener { _, _ -> true }
+            tabStrip.getChildAt(pos).setOnTouchListener { view, _ ->
+                view.performClick()
+                true
+            }
         }
         tabLayout.alpha = 0.5f
     }
@@ -141,7 +129,10 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         viewPager.isUserInputEnabled = true
         val tabStrip: LinearLayout = tabLayout.getChildAt(0) as LinearLayout
         for (pos in 0 until pagerAdapter.itemCount) {
-            tabStrip.getChildAt(pos).setOnTouchListener { _, _ -> false }
+            tabStrip.getChildAt(pos).setOnTouchListener { view, _ ->
+                view.performClick()
+                false
+            }
         }
         tabLayout.alpha = 1f
     }
