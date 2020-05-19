@@ -38,6 +38,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation.findNavController
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
@@ -48,6 +49,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.home.view.CategoryMenuHelper
 import com.siju.acexplorer.main.helper.UpdateChecker
+import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isAppManager
@@ -194,10 +196,18 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     private fun getArgs() {
         val args = arguments
         args?.let {
-            val bundle = FileListFragmentArgs.fromBundle(args)
-            path = bundle.path
-            category =  bundle.category
-            showNavigation = bundle.showNavigation
+            if (this is FileListFragment) {
+                val bundle = FileListFragmentArgs.fromBundle(args)
+                path = bundle.path
+                category =  bundle.category
+                showNavigation = bundle.showNavigation
+            }
+            else {
+                val bundle = DualPaneFragmentArgs.fromBundle(args)
+                path = bundle.path
+                category =  bundle.category
+                showNavigation = bundle.showNavigation
+            }
         }
     }
 
@@ -1180,5 +1190,18 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
 
     fun onQueryTextChange(query: String?) {
         filesList.onQueryChanged(query)
+    }
+
+    fun createDualFragment() {
+        val activity = activity as AppCompatActivity?
+        activity?.let {
+            val action = FileListFragmentDirections.actionFileListFragmentDualToDualPaneFragment2(StorageUtils.internalStorage, Category.FILES, true)
+            val navController = findNavController(activity, R.id.nav_host_dual)
+            val currentDestination = navController.currentDestination
+            Log.d(TAG, "createDualFragment: navController:$navController, currentDest:$currentDestination")
+            if (currentDestination?.id == R.id.fileListFragmentDual) {
+                navController.navigate(action)
+            }
+        }
     }
 }

@@ -86,4 +86,21 @@
         android:id="@+id/aboutFragment"
         android:name="com.siju.acexplorer.settings.AboutFragment"
         android:label="AboutFragment" />
+
+    <fragment
+        android:id="@+id/dualPaneFragment"
+        android:name="com.siju.acexplorer.storage.view.DualPaneFragment"
+        android:label="DualPaneFragment">
+        <argument
+            android:name="path"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="category"
+            app:argType="com.siju.acexplorer.main.model.groups.Category" />
+        <argument
+            android:name="show_navigation"
+            app:argType="boolean" />
+
+    </fragment>
 </navigation>

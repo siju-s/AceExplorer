@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation_graph_dual"
+    app:startDestination="@id/fileListFragmentDual">
+
+    <fragment
+        android:id="@+id/dualPaneFragment2"
+        android:name="com.siju.acexplorer.storage.view.DualPaneFragment"
+        android:label="DualPaneFragment" >
+        <argument
+            android:name="path"
+            app:argType="string"
+            app:nullable="true" />
+        <argument
+            android:name="category"
+            app:argType="com.siju.acexplorer.main.model.groups.Category" />
+        <argument
+            android:name="show_navigation"
+            app:argType="boolean" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/fileListFragmentDual"
+        android:name="com.siju.acexplorer.storage.view.FileListFragment"
+        android:label="FileListFragment" >
+        <action
+            android:id="@+id/action_fileListFragmentDual_to_dualPaneFragment2"
+            app:destination="@id/dualPaneFragment2" />
+    </fragment>
+</navigation>

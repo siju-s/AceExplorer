@@ -30,6 +30,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -45,7 +46,6 @@ import com.siju.acexplorer.home.view.HomeScreenFragment
 import com.siju.acexplorer.home.view.HomeScreenFragmentDirections
 import com.siju.acexplorer.main.helper.REQUEST_CODE_UPDATE
 import com.siju.acexplorer.main.helper.UpdateChecker
-import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.main.viewmodel.Pane
@@ -217,7 +217,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     private fun enableDualPane() {
         Log.d(TAG, "enableDualPane")
-        frame_container_dual.visibility = View.VISIBLE
+        nav_host_dual.visibility = View.VISIBLE
         viewSeparator.visibility = View.VISIBLE
         createDualFragment()
     }
@@ -228,10 +228,10 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         Log.d(TAG, "disableDualPane")
         //TODO 29 Feb 2020 Find why dual mode preference firing even  though value unchanged
         // Happens when opening a file and returning back
-        if (frame_container_dual.visibility == View.GONE) {
+        if (nav_host_dual.visibility == View.GONE) {
             return
         }
-        frame_container_dual.visibility = View.GONE
+        nav_host_dual.visibility = View.GONE
         viewSeparator.visibility = View.GONE
         if (isCurrentScreenStorage()) {
             mainViewModel.refreshLayout(Pane.SINGLE)
@@ -271,10 +271,10 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     private fun createDualFragment() {
-        val fragment = DualPaneFragment.newInstance(StorageUtils.internalStorage, Category.FILES)
-        val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.frame_container_dual, fragment)
-        transaction.commit()
+        val fragment = getCurrentFragment()
+        if (fragment is FileListFragment) {
+            fragment.createDualFragment()
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -371,7 +371,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     private fun getCurrentFocusFragment(fragment: BaseFileListFragment): Fragment? {
         return if (mainViewModel.isDualPaneInFocus) {
-            supportFragmentManager.findFragmentById(R.id.frame_container_dual)
+            getDualFragment()
         } else {
             fragment
         }
@@ -440,6 +440,11 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     private fun getCurrentFragment(): Fragment? {
         val navHostFragment = supportFragmentManager.primaryNavigationFragment
+        return navHostFragment?.childFragmentManager?.fragments?.get(0)
+    }
+
+    private fun getDualFragment() : Fragment? {
+        val navHostFragment: NavHostFragment? = supportFragmentManager.findFragmentById(R.id.nav_host_dual) as NavHostFragment?
         return navHostFragment?.childFragmentManager?.fragments?.get(0)
     }
 
