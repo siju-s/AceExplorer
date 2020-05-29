@@ -62,11 +62,17 @@ class FloatingView(view: View,
     }
 
     private fun makeFabMenuTransparent() {
-        fabContainer.background.alpha = 0
+        val background = fabContainer.background
+        background?.let {
+            it.alpha = 0
+        }
     }
 
     private fun makeFabMenuOpaque() {
-        fabContainer.background.alpha = 240
+        val background = fabContainer.background
+        background?.let {
+            it.alpha = 240
+        }
     }
 
     fun setTheme(theme: Theme) {

@@ -38,7 +38,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
@@ -91,7 +91,7 @@ private const val EXTRACT_PATH_REQUEST = 5000
 private const val COPY_PATH_REQUEST = 6000
 private const val CUT_PATH_REQUEST = 7000
 
-open class BaseFileListFragment : Fragment(), FileListHelper {
+abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
     private var packageReceiverRegistered = false
     private lateinit var filesList: FilesList
@@ -117,7 +117,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         getArgs()
-        Log.d(TAG, "onActivityCreated:$this, category:$category")
+        Log.d(TAG, "onActivityCreated:$this, category:$category, path:$path, dest:${findNavController().currentDestination}")
         val view = view
         val container = view?.findViewById<CoordinatorLayout>(R.id.main_content)
         container?.let {
@@ -219,6 +219,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         fileListViewModel = ViewModelProvider(this, viewModelFactory)
                 .get(FileListViewModel::class.java)
         infoSharedViewModel = ViewModelProvider(activity).get(InfoSharedViewModel::class.java)
+        categoryMenuHelper = mainViewModel.getCategoryMenuHelper()
     }
 
     fun showUpdateSnackbar(updateChecker: UpdateChecker?) {
@@ -305,6 +306,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
         })
 
         fileListViewModel.showFab.observe(viewLifecycleOwner, Observer { showFab ->
+            Log.d(TAG, "Showfab:$showFab")
             if (showFab) {
                 floatingView.showFab()
             }
@@ -499,6 +501,23 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
                 if (it) {
                     fileListViewModel.refreshList()
                     fileListViewModel.setRefreshStateFalse()
+                }
+            }
+        })
+
+        mainViewModel.onMenuItemClicked.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                val item = it.getMenuItem()
+                item?.let {
+                    onMenuItemClick(item)
+                }
+            }
+        })
+
+        mainViewModel.refreshData.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                if (it) {
+                    refreshDataOnTabSelected()
                 }
             }
         })
@@ -1169,11 +1188,7 @@ open class BaseFileListFragment : Fragment(), FileListHelper {
             }
         }
 
-        fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper) {
-            this.categoryMenuHelper = categoryMenuHelper
-        }
-
-        fun refreshDataOnTabSelected() {
+        private fun refreshDataOnTabSelected() {
             if (::filesList.isInitialized) {
                 val viewMode = fileListViewModel.getViewMode(category)
                 filesList.onViewModeChanged(viewMode)

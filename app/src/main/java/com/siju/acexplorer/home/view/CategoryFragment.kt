@@ -11,15 +11,18 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.siju.acexplorer.R
 import com.siju.acexplorer.base.view.BaseActivity
+import com.siju.acexplorer.extensions.findCurrentFragment
 import com.siju.acexplorer.extensions.inflateLayout
 import com.siju.acexplorer.home.types.CategoryData
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
+import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.search.helper.SearchUtils
 import com.siju.acexplorer.storage.view.FileListFragment
 import com.siju.acexplorer.theme.Theme
@@ -33,6 +36,8 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
     private var category = Category.GENERIC_IMAGES
+    private lateinit var mainViewModel: MainViewModel
+    private val menuItemWrapper = MenuItemWrapper()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -43,7 +48,14 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     override fun getCategoryView() = view
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setupViewModel()
         setupUI(view)
+    }
+
+    private fun setupViewModel() {
+        val activity = requireNotNull(activity)
+        mainViewModel = ViewModelProvider(activity).get(MainViewModel::class.java)
+        mainViewModel.setCategoryMenuHelper(this)
     }
 
     private fun setupUI(view: View) {
@@ -105,11 +117,8 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
-        val fragment = pagerAdapter.getFragment(viewPager.currentItem)
-        if (fragment is FileListFragment) {
-            fragment.onMenuItemClick(item)
-            return true
-        }
+        menuItemWrapper.setMenuItem(item)
+        mainViewModel.onMenuItemClicked(menuItemWrapper)
         return false
     }
 
@@ -147,14 +156,10 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         }
 
         override fun onPageSelected(position: Int) {
-            Log.d("CategoryFragment", "onPageSelected:$position")
             if (position == -1) {
                 return
             }
-            val fragment = pagerAdapter.getFragment(position)
-            if (fragment is FileListFragment) {
-                fragment.refreshDataOnTabSelected()
-            }
+            mainViewModel.refreshData()
         }
     }
 
@@ -258,7 +263,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     fun onBackPressed(): Boolean {
-        val fragment = pagerAdapter.getFragment(viewPager.currentItem)
+        val fragment = viewPager.findCurrentFragment(childFragmentManager)
         if (fragment is FileListFragment) {
             return fragment.onBackPressed()
         }
@@ -270,6 +275,4 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         viewPager.unregisterOnPageChangeCallback(pageChangeListener)
         pagerAdapter.clear()
     }
-
-
 }

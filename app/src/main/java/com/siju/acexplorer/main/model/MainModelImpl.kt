@@ -19,7 +19,6 @@ package com.siju.acexplorer.main.model
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.AceApplication
@@ -48,7 +47,6 @@ class MainModelImpl : MainModel {
         setupFirstRunSettings(preferences)
         setupAnalytics(preferences)
         setupTheme()
-        Log.d("MainModel", "Dualmode:${dualMode.value}")
     }
 
     private fun setupFirstRunSettings(preferences: SharedPreferences) {

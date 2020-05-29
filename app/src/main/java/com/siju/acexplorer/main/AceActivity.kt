@@ -249,14 +249,15 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
         clearBackStack(menuItem.itemId)
         disableDualPane()
+        Log.d(TAG, "navItemSlected: $menuItem")
         navController.navigate(menuItem.itemId)
         true
     }
 
-    //
     private val navigationItemReselectedListener = BottomNavigationView.OnNavigationItemReselectedListener { menuItem ->
         clearBackStack(menuItem.itemId)
         disableDualPane()
+        Log.d(TAG, "navigationItemReselectedListener: $menuItem, category:$category")
         if (category != null) {
             val action = HomeScreenFragmentDirections.actionNavigationHomeToCategoryFragment(null, category!!)
             navController.navigate(action)
@@ -271,6 +272,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     private fun createDualFragment() {
+        Log.d(TAG, "createDualFragment: ")
         val fragment = getCurrentFragment()
         if (fragment is FileListFragment) {
             fragment.createDualFragment()

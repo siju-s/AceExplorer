@@ -15,10 +15,6 @@ class CategoryPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
         categoryDataList.add(categoryData)
     }
 
-    fun getFragment(position: Int) : Fragment? {
-        return fragmentMap[position]
-    }
-
     fun getTitle(position: Int): String {
         return categoryDataList[position].title
     }
@@ -30,8 +26,7 @@ class CategoryPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
     override fun createFragment(position: Int): Fragment {
         val  data = categoryDataList[position]
         val fragment = FileListFragment.newInstance(data.path, data.category, false)
-        Log.d("Adapter", "createFragment:pos:$position, category:${data.category}, frag:$fragment")
-        fragment.setCategoryMenuHelper(data.categoryMenuHelper)
+        Log.d("CategoryAdapter", "createFragment:pos:$position, category:${data.category}, frag:$fragment")
         fragmentMap[position] = fragment
         return fragment
     }

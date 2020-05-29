@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.billing.repository.BillingRepository
 import com.siju.acexplorer.billing.repository.localdb.Premium
+import com.siju.acexplorer.home.view.CategoryMenuHelper
+import com.siju.acexplorer.home.view.MenuItemWrapper
 import com.siju.acexplorer.main.model.MainModelImpl
 import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
@@ -21,6 +23,7 @@ enum class Pane {
 }
 class MainViewModel : ViewModel() {
 
+    private var categoryMenuHelper: CategoryMenuHelper? = null
     var navigateToSearch = MutableLiveData<Boolean>()
     var isDualPaneInFocus = false
     private set
@@ -52,6 +55,14 @@ class MainViewModel : ViewModel() {
 
     val reloadPane : LiveData<Pair<Pane, Boolean>>
     get() = _reloadPane
+
+    private val menuItemClicked = MutableLiveData<MenuItemWrapper>()
+
+    val onMenuItemClicked : LiveData<MenuItemWrapper>
+    get() = menuItemClicked
+
+    val refreshData = MutableLiveData<Boolean>()
+
 
     init {
         billingRepository.startDataSourceConnections()
@@ -165,5 +176,21 @@ class MainViewModel : ViewModel() {
     }
 
     fun hasUserCancelledUpdate() = mainModel.hasUserCancelledUpdate()
+
+    fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper) {
+        this.categoryMenuHelper = categoryMenuHelper
+    }
+
+    fun getCategoryMenuHelper(): CategoryMenuHelper? {
+        return categoryMenuHelper
+    }
+
+    fun onMenuItemClicked(wrapper: MenuItemWrapper) {
+        menuItemClicked.value = wrapper
+    }
+
+    fun refreshData() {
+        refreshData.value = true
+    }
 
 }

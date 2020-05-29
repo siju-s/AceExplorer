@@ -3,7 +3,7 @@ const val kotlinVersion = "1.3.60"
 object BuildPlugins {
 
     object Versions {
-        const val gradlePlugin = "4.0.0-rc01"
+        const val gradlePlugin = "4.0.0"
         const val fabric = "1.31.2"
         const val googleServices = "4.3.3"
         const val navigationPlugin = "2.2.2"
