@@ -38,7 +38,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
@@ -1199,13 +1199,16 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     fun createDualFragment() {
         val activity = activity as AppCompatActivity?
         activity?.let {
-            val action = FileListFragmentDirections.actionFileListFragmentDualToDualPaneFragment2(StorageUtils.internalStorage, Category.FILES, true)
-            val navController = activity.findNavController(R.id.nav_host_dual)
-            val currentDestination = navController.currentDestination
-            Log.d(TAG, "createDualFragment: navController:$navController, currentDest:$currentDestination")
-            if (currentDestination?.id == R.id.fileListFragmentDual) {
-                navController.navigate(action)
-            }
+            val navHost = activity.supportFragmentManager.findFragmentById(R.id.nav_host_dual) as NavHostFragment
+            val navController = navHost.navController
+            val graph = navController.navInflater.inflate(R.navigation.navigation_graph_dual)
+
+            graph.startDestination = R.id.dualPaneFragment2
+            val args = Bundle()
+            args.putString("path", StorageUtils.internalStorage)
+            args.putSerializable("category", Category.FILES)
+            args.putBoolean("show_navigation", true)
+            navController.setGraph(graph, args)
         }
     }
 }

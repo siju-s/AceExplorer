@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--Start destination will be set dynamically when dual fragment needs to be created -->
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/navigation_graph_dual"
-    app:startDestination="@id/fileListFragmentDual">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph_dual"
+    tools:ignore="InvalidNavigation">
 
     <fragment
         android:id="@+id/dualPaneFragment2"
@@ -17,15 +20,5 @@
         <argument
             android:name="show_navigation"
             app:argType="boolean" />
-    </fragment>
-
-
-    <fragment
-        android:id="@+id/fileListFragmentDual"
-        android:name="com.siju.acexplorer.storage.view.FileListFragment"
-        android:label="FileListFragment" >
-        <action
-            android:id="@+id/action_fileListFragmentDual_to_dualPaneFragment2"
-            app:destination="@id/dualPaneFragment2" />
     </fragment>
 </navigation>
