@@ -61,7 +61,6 @@ import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper.PermissionDialogListener
-import com.siju.acexplorer.main.viewmodel.InfoSharedViewModel
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
@@ -101,7 +100,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     private lateinit var mainViewModel: MainViewModel
     private lateinit var fileListViewModel: FileListViewModel
     private lateinit var menuControls: MenuControls
-    private lateinit var infoSharedViewModel: InfoSharedViewModel
 
     private var adView: AdsView? = null
     private var categoryMenuHelper: CategoryMenuHelper? = null
@@ -219,7 +217,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext, category))
         fileListViewModel = ViewModelProvider(this, viewModelFactory)
                 .get(FileListViewModel::class.java)
-        infoSharedViewModel = ViewModelProvider(activity).get(InfoSharedViewModel::class.java)
         categoryMenuHelper = mainViewModel.getCategoryMenuHelper()
     }
 
@@ -307,7 +304,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         })
 
         fileListViewModel.showFab.observe(viewLifecycleOwner, Observer { showFab ->
-            Log.d(TAG, "Showfab:$showFab")
+            Log.d(TAG, "fab:$showFab")
             if (showFab) {
                 floatingView.showFab()
             }
@@ -525,11 +522,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     override fun openPeekPopInfo(fileInfo: FileInfo, uri: Uri?) {
-        infoSharedViewModel.apply {
-            setFileInfo(fileInfo)
-            setUri(uri)
-        }
-        InfoFragment.newInstance(activity?.supportFragmentManager)
+        InfoFragment.newInstance(activity?.supportFragmentManager, uri, fileInfo)
     }
 
     private fun onActionModeStarted() {
@@ -704,9 +697,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             Operations.INFO -> {
                 context?.let { context ->
                     val fileInfo = operationData.second
-                    infoSharedViewModel.setFileInfo(fileInfo)
-                    infoSharedViewModel.setUri(UriHelper.createContentUri(context, fileInfo.filePath))
-                    InfoFragment.newInstance(activity?.supportFragmentManager)
+                    InfoFragment.newInstance(activity?.supportFragmentManager, UriHelper.createContentUri(context, fileInfo.filePath), fileInfo)
                 }
             }
 

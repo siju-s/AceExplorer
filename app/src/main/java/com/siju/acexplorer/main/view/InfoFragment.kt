@@ -28,30 +28,35 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
-import com.siju.acexplorer.main.viewmodel.InfoSharedViewModel
 import com.siju.acexplorer.utils.Clipboard
 import com.siju.acexplorer.utils.ThumbnailUtils
 import java.util.*
 
 private const val TAG_INFO = "Info"
 
+private const val KEY_URI = "uri"
+private const val KEY_FILEINFO = "fileinfo"
+
 class InfoFragment : BottomSheetDialogFragment() {
 
     companion object {
-        fun newInstance(fragmentManager: FragmentManager?): InfoFragment {
+
+        fun newInstance(fragmentManager: FragmentManager?, uri: Uri?, fileInfo: FileInfo): InfoFragment {
             val infoFragment = InfoFragment()
+            val args = Bundle()
+            args.putString(KEY_URI, uri?.toString())
+            args.putParcelable(KEY_FILEINFO, fileInfo)
+            infoFragment.arguments = args
             fragmentManager?.let { infoFragment.show(it, TAG_INFO) }
             return infoFragment
         }
     }
 
-    private lateinit var fileInfo: FileInfo
-    private var infoSharedViewModel: InfoSharedViewModel? = null
     private var category: Category? = null
-
+    private var fileInfo : FileInfo? = null
+    private var uri : Uri? = null
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var sheetView: View? = null
-    private var uri: Uri? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -61,30 +66,26 @@ class InfoFragment : BottomSheetDialogFragment() {
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         bottomSheetDialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
-        Log.d("Info", "onCreateDialog")
         sheetView = LayoutInflater.from(context).inflate(R.layout.media_info, null)
         sheetView?.let {
             bottomSheetDialog?.setContentView(it)
         }
-        infoSharedViewModel = activity?.let { ViewModelProvider(it).get(InfoSharedViewModel::class.java) }
         setHasOptionsMenu(true)
-        initObservers()
+        setup()
         return bottomSheetDialog as BottomSheetDialog
     }
 
-    private fun initObservers() {
-        infoSharedViewModel?.uri?.observe(this, androidx.lifecycle.Observer {
-            it?.apply {
-                this@InfoFragment.uri = it
+    private fun setup() {
+        arguments?.let { args ->
+            val uriString = args.getString(KEY_URI)
+            if (uriString != null) {
+                uri = Uri.parse(uriString)
             }
-        })
-        infoSharedViewModel?.fileInfo?.observe(this, androidx.lifecycle.Observer {
-            it?.apply {
-                this@InfoFragment.fileInfo = it
-                this@InfoFragment.category = it.category
-                showInfo(fileInfo, category)
+            fileInfo = args.getParcelable(KEY_FILEINFO)
+            fileInfo?.let { fileInfo ->
+                showInfo(fileInfo, fileInfo.category, uri)
             }
-        })
+        }
     }
 
     override fun onStart() {
@@ -103,19 +104,19 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun showInfo(fileInfo: FileInfo, category: Category?) {
-        setupUI(fileInfo, category)
+    private fun showInfo(fileInfo: FileInfo, category: Category?, uri: Uri?) {
+        setupUI(fileInfo, category, uri)
     }
 
-    private fun setupUI(fileInfo: FileInfo, category: Category?) {
+    private fun setupUI(fileInfo: FileInfo, category: Category?, uri: Uri?) {
         setupToolbar()
-        bindViews(fileInfo, category)
+        bindViews(fileInfo, category, uri)
     }
 
-    private fun bindViews(fileInfo: FileInfo, category: Category?) {
+    private fun bindViews(fileInfo: FileInfo, category: Category?, uri: Uri?) {
         val path = fileInfo.filePath
         val pathText = sheetView?.findViewById<TextView>(R.id.textPath)
-        val pathPlaceholder =  sheetView?.findViewById<TextView>(R.id.textPathPlaceholder)
+        val pathPlaceholder = sheetView?.findViewById<TextView>(R.id.textPathPlaceholder)
 
         if (CategoryHelper.isAppManager(category)) {
             pathPlaceholder?.text = getString(R.string.package_name)
@@ -139,7 +140,6 @@ class InfoFragment : BottomSheetDialogFragment() {
             setIconListener(icon, path, fileInfo)
         }
 
-
         val nameText = sheetView?.findViewById<TextView>(R.id.textName)
         nameText?.text = fileInfo.fileName
 
@@ -148,7 +148,7 @@ class InfoFragment : BottomSheetDialogFragment() {
 
         val sizeText = sheetView?.findViewById<TextView>(R.id.textFileSize)
         sizeText?.text = Formatter.formatFileSize(context, fileInfo.size)
-        bindSize(sizeText)
+        bindSize(sizeText, fileInfo)
 
         val context = context
         if (CategoryHelper.isAnyImagesCategory(category) && path != null && context != null && fileInfo.width != 0L) {
@@ -161,7 +161,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
     }
 
-    private fun bindSize(sizeText: TextView?) {
+    private fun bindSize(sizeText: TextView?, fileInfo: FileInfo) {
         if (sizeText == null) {
             return
         }
@@ -199,10 +199,9 @@ class InfoFragment : BottomSheetDialogFragment() {
     }
 
     private fun setIcon(context: Context?, icon: ImageView, category: Category?, uri: Uri?) {
-        if (context == null) {
-            return
+        if (context != null) {
+            fileInfo?.let { ThumbnailUtils.displayThumb(context, it, category, icon, null, uri) }
         }
-        ThumbnailUtils.displayThumb(context, fileInfo, category, icon, null, uri)
     }
 
     private fun setupToolbar() {
@@ -228,7 +227,7 @@ class InfoFragment : BottomSheetDialogFragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.media_info_menu, menu)
-        if (::fileInfo.isInitialized) {
+        fileInfo?.let {fileInfo ->
             if (fileInfo.isDirectory || category == Category.APP_MANAGER) {
                 menu.findItem(R.id.action_share).isVisible = false
             }
@@ -242,18 +241,24 @@ class InfoFragment : BottomSheetDialogFragment() {
         when (item.itemId) {
             android.R.id.home -> dismiss()
             R.id.action_share -> {
-                context?.let { ShareHelper.shareMedia(it, fileInfo.category, uri) }
+                context?.let { ShareHelper.shareMedia(it, fileInfo?.category, uri) }
             }
 
             R.id.action_copy_path -> {
-                Analytics.logger.pathCopied()
-                Clipboard.copyTextToClipBoard(context, fileInfo.filePath)
-                context?.let {
-                    Toast.makeText(it, it.getString(R.string.text_copied_clipboard), Toast.LENGTH_SHORT).show()
-                }
+                onCopyPathClicked()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun onCopyPathClicked() {
+        Analytics.logger.pathCopied()
+        fileInfo?.let {
+            Clipboard.copyTextToClipBoard(context, fileInfo?.filePath)
+            context?.let {
+                Toast.makeText(it, it.getString(R.string.text_copied_clipboard), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
 

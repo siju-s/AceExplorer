@@ -30,8 +30,6 @@ import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
-import com.siju.acexplorer.main.viewmodel.InfoSharedViewModel
-
 
 
 const val REQUEST_CODE_DELETE = 1000
@@ -44,7 +42,6 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
 
     private var noWriteAccess = false
     private lateinit var viewModel: ImageViewerViewModel
-    private lateinit var infoSharedViewModel: InfoSharedViewModel
     private lateinit var activity: AppCompatActivity
     private lateinit var pager: ViewPager
     private lateinit var pagerAdapter: ImageViewerPagerAdapter
@@ -82,7 +79,6 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
 
     override fun inflate() {
         LayoutInflater.from(context).inflate(R.layout.image_viewer, this, true)
-        infoSharedViewModel = ViewModelProvider(activity).get(InfoSharedViewModel::class.java)
         setupUI()
     }
 
@@ -114,11 +110,7 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
 
     override fun onFileInfoFetched(fileInfo: FileInfo?) {
         fileInfo?.let {
-            infoSharedViewModel.apply {
-                setFileInfo(it)
-                setUri(uriList[pager.currentItem])
-            }
-            InfoFragment.newInstance(activity.supportFragmentManager)
+            InfoFragment.newInstance(activity.supportFragmentManager, uriList[pager.currentItem], it)
         }
     }
 
