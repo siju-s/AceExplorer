@@ -29,8 +29,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -96,11 +96,15 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     private fun setupNavController() {
-        navController = findNavController(R.id.nav_host)
+        navController = getNavController()
         bottom_navigation.setupWithNavController(navController)
         navController.addOnDestinationChangedListener{ _, dest, _ ->
             Log.d(TAG, "setupNavController: destAdded:$dest")
         }
+    }
+
+    private fun getNavController() : NavController {
+        return supportFragmentManager.findFragmentById(R.id.nav_host)!!.findNavController()
     }
 
     override fun getUpdateChecker(): UpdateChecker? {
