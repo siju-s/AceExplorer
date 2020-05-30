@@ -6,7 +6,7 @@ object BuildPlugins {
         const val gradlePlugin = "4.0.0"
         const val fabric = "1.31.2"
         const val googleServices = "4.3.3"
-        const val navigationPlugin = "2.2.2"
+        const val navigationPlugin = "2.3.0-beta01"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradlePlugin}"
@@ -42,7 +42,7 @@ object Libraries {
        const val room         = "2.2.3"
        const val playCore     = "1.7.2"
        const val billing      = "2.1.0"
-       const val navigation   = "2.2.2"
+       const val navigation   = "2.3.0-beta01"
    }
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
     const val design    = "com.google.android.material:material:${Versions.design}"
