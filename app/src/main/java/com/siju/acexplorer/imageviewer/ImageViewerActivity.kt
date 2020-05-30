@@ -133,10 +133,4 @@ class ImageViewerActivity : AppCompatActivity() {
             }
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        ImageViewerDataHolder.getInstance()?.clearData()
-    }
-
 }
