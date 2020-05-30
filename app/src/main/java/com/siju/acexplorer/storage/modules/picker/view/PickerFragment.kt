@@ -22,6 +22,7 @@ import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -62,8 +63,7 @@ const val KEY_PICKER_TYPE = "picker_type"
 const val RINGTONE_TYPE = "ringtone_type"
 private const val DELAY_SCROLL_UPDATE_MS = 100L
 
-@Suppress("UNNECESSARY_SAFE_CALL")
-class PickerFragment private constructor(private val activity: AppCompatActivity) : DialogFragment() {
+class PickerFragment : DialogFragment() {
 
     private lateinit var fileList: FastScrollRecyclerView
     private lateinit var backButton: ImageButton
@@ -76,11 +76,9 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     private lateinit var viewModel: PickerViewModel
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return object : Dialog(activity, theme) {
-            override fun onBackPressed() {
-                viewModel.onBackPressed()
-            }
-        }
+        val dialog =  super.onCreateDialog(savedInstanceState)
+        initBackPressListener(dialog)
+        return dialog
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -100,12 +98,23 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
         loadData()
     }
 
+    private fun initBackPressListener(dialog: Dialog) {
+        dialog.setOnKeyListener { _, keyCode, event ->
+            return@setOnKeyListener if ((keyCode == KeyEvent.KEYCODE_BACK && event.action == KeyEvent.ACTION_UP)) {
+                viewModel.onBackPressed()
+                true
+            } else false
+        }
+    }
+
     private fun setupViewModels() {
         val viewModelFactory = PickerViewModelFactory(PickerModelImpl())
         viewModel = ViewModelProvider(this, viewModelFactory)
                 .get(PickerViewModel::class.java)
-        viewModel.setPermissionHelper(
-                PermissionHelper(activity, AceApplication.appContext))
+        activity?.let {
+            viewModel.setPermissionHelper(
+                    PermissionHelper(it as AppCompatActivity, AceApplication.appContext))
+        }
     }
 
     private fun setupUI(view: View) {
@@ -322,12 +331,12 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     private fun onRingtonePickerResult(pickerResultAction: PickerResultAction) {
         when (pickerResultAction.result) {
             true  -> {
-                activity.setResult(RESULT_OK, pickerResultAction.data)
-                activity.finish()
+                activity?.setResult(RESULT_OK, pickerResultAction.data)
+                activity?.finish()
             }
             false -> {
-                activity.setResult(RESULT_CANCELED, null)
-                activity.finish()
+                activity?.setResult(RESULT_CANCELED, null)
+                activity?.finish()
             }
         }
     }
@@ -335,8 +344,8 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     private fun onFilePickerResult(pickerResultAction: PickerResultAction) {
         when (pickerResultAction.result) {
             true -> {
-                activity.setResult(RESULT_OK, pickerResultAction.data)
-                activity.finish()
+                activity?.setResult(RESULT_OK, pickerResultAction.data)
+                activity?.finish()
             }
         }
     }
@@ -347,10 +356,10 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     }
 
     private fun onCancelButtonResult(pickerResultAction: PickerResultAction) {
-        activity.setResult(RESULT_CANCELED, null)
+        activity?.setResult(RESULT_CANCELED, null)
         when (pickerResultAction.data?.getSerializableExtra(KEY_PICKER_TYPE)) {
             PickerType.RINGTONE -> {
-                activity.finish()
+                activity?.finish()
             }
             else                -> {
                 dialog?.dismiss()
@@ -370,7 +379,7 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
     }
 
     private fun setTitle(title: String) {
-        val actionBar = activity.supportActionBar
+        val actionBar = activity?.actionBar
         actionBar?.title = title
     }
 
@@ -446,9 +455,8 @@ class PickerFragment private constructor(private val activity: AppCompatActivity
 
     companion object {
 
-        fun newInstance(activity: AppCompatActivity, theme: Int, pickerType: PickerType,
-                        ringtoneType: Int = -1): PickerFragment {
-            val dialogFragment = PickerFragment(activity)
+        fun newInstance(theme: Int, pickerType: PickerType, ringtoneType: Int = -1): PickerFragment {
+            val dialogFragment = PickerFragment()
             dialogFragment.setStyle(STYLE_NORMAL, theme)
             val args = Bundle()
             with(args) {

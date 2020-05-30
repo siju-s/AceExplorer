@@ -56,8 +56,7 @@ class TransparentActivity : AppCompatActivity() {
     }
 
     private fun showPickerDialog(intent: Intent, pickerType: PickerType) {
-        val dialogFragment = PickerFragment.newInstance(this, checkTheme(),
-                pickerType,
+        val dialogFragment = PickerFragment.newInstance(checkTheme(), pickerType,
                 intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, 0))
         dialogFragment.show(supportFragmentManager, FRAGMENT_TAG)
     }

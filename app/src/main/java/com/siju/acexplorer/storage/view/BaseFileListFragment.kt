@@ -892,8 +892,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                 return
             }
             activity?.let {
-                val dialogFragment = PickerFragment.newInstance(it as AppCompatActivity, getThemeStyle(theme),
-                        PickerType.FILE)
+                val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.FILE)
                 dialogFragment.setTargetFragment(this@BaseFileListFragment, EXTRACT_PATH_REQUEST)
                 this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                     dialogFragment.show(fragmentManager, "Browse Fragment")
@@ -905,8 +904,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     private fun showCopyToDialog() {
         val theme = mainViewModel.theme.value ?: return
         activity?.let {
-            val dialogFragment = PickerFragment.newInstance(it as AppCompatActivity, getThemeStyle(theme),
-                    PickerType.COPY)
+            val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.COPY)
             dialogFragment.setTargetFragment(this@BaseFileListFragment, COPY_PATH_REQUEST)
             this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                 dialogFragment.show(fragmentManager, "Browse Fragment")
@@ -917,8 +915,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     private fun showCutToDialog() {
         val theme = mainViewModel.theme.value ?: return
         activity?.let {
-            val dialogFragment = PickerFragment.newInstance(it as AppCompatActivity, getThemeStyle(theme),
-                    PickerType.CUT)
+            val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.CUT)
             dialogFragment.setTargetFragment(this@BaseFileListFragment, CUT_PATH_REQUEST)
             this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                 dialogFragment.show(fragmentManager, "Browse Fragment")
