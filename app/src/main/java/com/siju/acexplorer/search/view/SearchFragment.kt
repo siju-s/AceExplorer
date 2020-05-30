@@ -52,21 +52,17 @@ private const val TAG = "SearchFragment"
 
 class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelper {
 
-    companion object {
-        fun newInstance() = SearchFragment()
-    }
-
     private lateinit var searchViewModel: SearchViewModel
     private lateinit var fileListViewModel: FileListViewModel
-    private lateinit var searchView: SearchView
     private lateinit var filesList: RecyclerView
-    private var fileListAdapter: FileListAdapter? = null
     private lateinit var searchSuggestions: SearchSuggestions
-
     private lateinit var recentSearchContainer: LinearLayout
     private lateinit var recentSearchList: RecyclerView
     private lateinit var clearRecentButton: Button
     private lateinit var recentSearchAdapter: RecentSearchAdapter
+
+    private var fileListAdapter: FileListAdapter? = null
+    private var searchView: SearchView? = null
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -106,7 +102,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
         clearRecentButton = view.findViewById(R.id.buttonClear)
         recentSearchAdapter = RecentSearchAdapter {
             hideRecentSearch()
-            searchView.setQuery(it, false)
+            searchView?.setQuery(it, false)
         }
         recentSearchList.adapter = recentSearchAdapter
         clearRecentButton.setOnClickListener {
@@ -149,7 +145,8 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     private fun initObservers() {
         searchViewModel.searchResult.observe(viewLifecycleOwner, Observer {
             it?.apply {
-                if (::filesList.isInitialized) {
+                val searchView = this@SearchFragment.searchView
+                if (::filesList.isInitialized && searchView != null) {
                     Log.d("SearchFragment", " Search result:${it.size}")
                     if (searchView.query.isEmpty()) {
                         searchSuggestions.showChipGroup()
@@ -186,7 +183,9 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
         fileListViewModel.directoryClicked.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 hideRecentSearch()
-                saveQuery(searchView.query.toString())
+                searchView?.let {searchView ->
+                    saveQuery(searchView.query.toString())
+                }
                 filesList.adapter = fileListAdapter
                 fileListViewModel.saveScrollInfo(getScrollInfo())
             }
@@ -279,15 +278,16 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     }
 
     private fun setupSearchView() {
-        searchView.setIconifiedByDefault(false)
-        searchView.clearFocus()
-        searchView.maxWidth = Integer.MAX_VALUE
-        searchView.imeOptions = searchView.imeOptions or EditorInfo.IME_FLAG_NO_FULLSCREEN or EditorInfo.IME_ACTION_SEARCH
-        searchView.setOnQueryTextListener(this)
-        val searchManager = context?.getSystemService(
-                SEARCH_SERVICE) as SearchManager
-        searchView.setSearchableInfo(
-                searchManager.getSearchableInfo(activity?.componentName))
+        val searchManager = context?.getSystemService(SEARCH_SERVICE) as SearchManager
+        searchView?.apply {
+            setIconifiedByDefault(false)
+            clearFocus()
+            maxWidth = Integer.MAX_VALUE
+            imeOptions = imeOptions or EditorInfo.IME_FLAG_NO_FULLSCREEN or EditorInfo.IME_ACTION_SEARCH
+            setOnQueryTextListener(this@SearchFragment)
+            setSearchableInfo(
+                    searchManager.getSearchableInfo(activity?.componentName))
+        }
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -333,7 +333,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
 
     override fun handleItemClick(fileInfo: FileInfo, position: Int) {
         KeyboardHelper.hideKeyboard(searchView)
-        searchView.clearFocus()
+        searchView?.clearFocus()
         if (searchSuggestions.isNoneChecked()) {
             fileListViewModel.handleItemClick(fileInfo, position)
         }
@@ -408,12 +408,14 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
         val backPressNotHandled = fileListViewModel.onBackPress()
         if (!backPressNotHandled && fileListViewModel.hasNoBackStackEntry()) {
             searchSuggestions.clearAllCheckedItems()
-            searchViewModel.search(null, searchView.query.toString())
+            searchView?.let {
+                searchViewModel.search(null, it.query.toString())
+            }
             return false
-        } else if (backPressNotHandled && searchView.query.isNotBlank()) {
+        } else if (backPressNotHandled && searchView?.query?.isNotBlank() == true) {
             searchSuggestions.clearAllCheckedItems()
             searchSuggestions.showChipGroup()
-            searchView.setQuery("", false)
+            searchView?.setQuery("", false)
             return false
         }
         else {
@@ -440,7 +442,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     fun onSearchSuggestionClicked() {
         hideRecentSearch()
         KeyboardHelper.hideKeyboard(searchView)
-        searchView.clearFocus()
+        searchView?.clearFocus()
         filesList.adapter = fileListAdapter
     }
 
@@ -452,7 +454,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
 
     fun performVoiceSearch(query: String?) {
         query?.let {
-            searchView.setQuery(query, false)
+            searchView?.setQuery(query, false)
         }
     }
 
