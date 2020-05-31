@@ -34,7 +34,6 @@ android {
         applicationId = AndroidSdk.applicationId
         minSdkVersion(AndroidSdk.min)
         targetSdkVersion(AndroidSdk.target)
-        print("Apply root gradle:${rootProject.extra["versionCode"]}")
         versionCode = rootProject.extra["versionCode"] as Int
         versionName = rootProject.extra["versionName"] as String
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
@@ -44,23 +43,6 @@ android {
     }
 
 
-    dexOptions {
-        maxProcessCount = 2
-        javaMaxHeapSize = "8g"
-    }
-//    configurations {
-//        all*.exclude group: "commons-logging", module: "commons-logging"
-//    }
-    packagingOptions {
-        exclude ("proguard-project.txt")
-        exclude ("project.properties")
-        exclude ("META-INF/LICENSE.txt")
-        exclude ("META-INF/LICENSE")
-        exclude ("META-INF/NOTICE.txt")
-        exclude ("META-INF/NOTICE")
-        exclude ("META-INF/DEPENDENCIES.txt")
-        exclude ("META-INF/DEPENDENCIES")
-    }
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false

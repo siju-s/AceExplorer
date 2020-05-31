@@ -531,7 +531,9 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         floatingView.hideFab()
         hideAds()
         menuControls.onStartActionMode()
-        categoryMenuHelper?.disableTab()
+        if (!showNavigation) {
+            categoryMenuHelper?.disableTab()
+        }
     }
 
     private fun onActionModeEnded() {
@@ -543,7 +545,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         if (mainViewModel.isFreeVersion()) {
             showAds()
         }
-        if (categoryMenuHelper == null) {
+        if (showNavigation) {
             setToolbarTitle(toolbar)
         }
         else {

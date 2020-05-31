@@ -94,6 +94,12 @@
   *** rewind();
 }
 
+
+# Navigation component
+-keepnames class androidx.navigation.fragment.NavHostFragment
+-keep class androidx.fragment.app.FragmentContainerView
+-keep enum com.siju.acexplorer.main.model.groups.Category
+
 # This will strip `Log.v`, `Log.d`, and `Log.i` statements and will leave `Log.w` and `Log.e` statements intact.
 -assumenosideeffects class android.util.Log {
     public static boolean isLoggable(java.lang.String, int);
