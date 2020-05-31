@@ -139,8 +139,6 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Required -> mainViewModel.requestPermissions()
                 is PermissionHelper.PermissionState.Rationale -> mainViewModel.showPermissionRationale()
-                else -> {
-                }
             }
         })
 

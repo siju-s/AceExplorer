@@ -18,10 +18,7 @@ package com.siju.acexplorer
 
 import android.app.Application
 import android.os.StrictMode
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.core.CrashlyticsCore
 import com.kobakei.ratethisapp.RateThisApp
-import io.fabric.sdk.android.Fabric
 
 private const val RATE_APP_CRITERIA_INSTALL_DAYS = 7
 private const val RATE_APP_CRITERIA_LAUNCH_TIMES = 25
@@ -32,18 +29,8 @@ class AceApplication : Application() {
         super.onCreate()
 
         appContext = this
-        initCrashlytics()
         initRateApp()
         setupPerformanceCheckers()
-    }
-
-    private fun initCrashlytics() {
-        Crashlytics.Builder()
-                .core(CrashlyticsCore.Builder().disabled(BuildConfig.DEBUG).build())
-                .build()
-                .also { crashlyticsKit ->
-                    Fabric.with(this, crashlyticsKit)
-                }
     }
 
     private fun initRateApp() {

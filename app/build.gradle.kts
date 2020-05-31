@@ -9,7 +9,7 @@ plugins {
     kotlin(BuildPlugins.kotlinAndroidExtensions)
     kotlin(BuildPlugins.kotlinKapt)
     id(BuildPlugins.googleServicesPlugin)
-    id(BuildPlugins.fabricPlugin)
+    id(BuildPlugins.crashlyticsAppPlugin)
     id("androidx.navigation.safeargs")
     id("org.sonarqube")
 }
@@ -38,7 +38,6 @@ android {
         versionCode = rootProject.extra["versionCode"] as Int
         versionName = rootProject.extra["versionName"] as String
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
-        buildConfigField ("boolean", "ENABLE_CRASHLYTICS", "true")
         resConfigs("en", "af", "ar", "bg", "da", "de", "el", "es", "fa", "fr", "ga", "hi", "hr", "hu",
         "hy", "in", "is", "it", "iw", "ja", "ka", "ko", "mk", "nl", "no", "pl", "pt", "ro", "ru",
         "sl", "sq", "sr", "sv", "th", "tr", "uk", "vi", "zh", "zh-rCN", "zh-rTW")
@@ -65,8 +64,13 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            buildConfigField ("boolean", "ENABLE_CRASHLYTICS", "false")
+            firebaseCrashlytics {
+                // If you don't need crash reporting for your debug build,
+                // you can speed up your build by disabling mapping file uploading.
+                mappingFileUploadEnabled = false
+            }
         }
+
 
         getByName("release") {
             isMinifyEnabled = true

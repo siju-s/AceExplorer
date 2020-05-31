@@ -8,7 +8,6 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven { url = uri("https://maven.fabric.io/public") }
         maven { url = uri( "https://jitpack.io") }
         maven {
             url = uri("https://plugins.gradle.org/m2/")
@@ -19,7 +18,7 @@ buildscript {
         classpath (BuildPlugins.androidGradlePlugin)
         classpath (BuildPlugins.kotlinGradlePlugin)
         classpath (BuildPlugins.googleServices)
-        classpath (BuildPlugins.fabric)
+        classpath (BuildPlugins.crashlyticsPlugin)
         classpath (BuildPlugins.navigationPlugin)
         classpath (BuildPlugins.sonarqube)
 
@@ -32,7 +31,6 @@ allprojects {
     repositories {
         google()
         jcenter()
-        maven { url = uri("https://maven.fabric.io/public") }
         maven { url = uri( "https://jitpack.io") }
         maven {
             url = uri("https://plugins.gradle.org/m2/")

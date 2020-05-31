@@ -72,18 +72,6 @@
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
-
-            <!--            <intent-filter>
-                            <action android:name="android.intent.action.VIEW"/>
-                            <category android:name="android.intent.category.DEFAULT"/>
-
-                            <data android:mimeType="application/vnd.android.package-archive"/>
-                            <data android:mimeType="application/java-archive"/>
-                            <data android:mimeType="application/zip"/>
-                            <data android:mimeType="application/rar"/>
-                            <data android:mimeType="application/x-rar-compressed"/>
-                        </intent-filter>-->
-
         </activity>
 
         <activity
@@ -101,17 +89,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <!--        <activity-->
-        <!--            android:name="com.siju.acexplorer.settings.SettingsActivity"-->
-        <!--            android:configChanges="orientation|screenSize|keyboardHidden"-->
-        <!--            android:label="@string/action_settings"-->
-        <!--            android:permission="android.permission.WRITE_SECURE_SETTINGS">-->
-        <!--            <intent-filter>-->
-        <!--                <action android:name="android.intent.action.APPLICATION_PREFERENCES"/>-->
-        <!--                <category android:name="android.intent.category.DEFAULT"/>-->
-        <!--            </intent-filter>-->
-        <!--        </activity>-->
 
         <activity
             android:name=".appmanager.view.AppDetailActivity"
@@ -136,7 +113,6 @@
         <service android:name=".storage.model.task.CreateZipService" />
         <service android:name=".storage.model.task.CopyService" />
         <service android:name=".storage.model.task.ExtractService" />
-        <service android:name=".storage.model.task.MoveService" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -151,10 +127,6 @@
             android:name=".search.model.SearchSuggestionProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false" />
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="d34cf3ffdd00d6e0d7b3e85d558c4fa01210a6f1" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
