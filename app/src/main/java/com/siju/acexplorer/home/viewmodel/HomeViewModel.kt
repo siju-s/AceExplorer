@@ -113,7 +113,8 @@ class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
             Category.SCREENSHOT    -> path = SearchUtils.getScreenshotDirectory()
             Category.WHATSAPP    -> path = SearchUtils.getWhatsappDirectory()
             Category.TELEGRAM    -> path = SearchUtils.getTelegramDirectory()
-            else               -> {
+            else -> {
+                path = null
             }
         }
         _categoryClickEvent.postValue(Pair(path, category1))

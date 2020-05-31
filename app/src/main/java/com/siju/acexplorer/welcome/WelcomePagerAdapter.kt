@@ -37,8 +37,8 @@ internal class WelcomePagerAdapter(private val context: Context, private val res
         return resources.size
     }
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        return view === `object`
+    override fun isViewFromObject(view: View, any: Any): Boolean {
+        return view === any
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -57,8 +57,8 @@ internal class WelcomePagerAdapter(private val context: Context, private val res
         return itemView
     }
 
-    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        container.removeView(`object` as LinearLayout)
+    override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
+        container.removeView(any as LinearLayout)
     }
 
 }

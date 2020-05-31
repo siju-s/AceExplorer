@@ -550,12 +550,12 @@ class CopyService : Service() {
             e.printStackTrace()
         }
 
-        val `in` = BufferedInputStream(FileInputStream(sourcePath))
+        val inputStream = BufferedInputStream(FileInputStream(sourcePath))
         if (out == null) {
             failedFiles.add(sourceFile)
             return
         }
-        copy(`in`, out, size, sourceFile, sourcePath, targetPath)
+        copy(inputStream, out, size, sourceFile, sourcePath, targetPath)
     }
 
 

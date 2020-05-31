@@ -135,19 +135,16 @@ class OperationHelper(val context: Context) {
             parent + File.separator + newName
         }
         val newFile = File(newFilePath)
-        var result = FileOperations.renameFile(oldFile, newFile)
+        var renamed = FileOperations.renameFile(oldFile, newFile)
         val fileCreated = !oldFile.exists() && newFile.exists()
-        if (!result) {
-            if (!fileCreated && RootUtils.isRooted(context)) {
-                try {
-                    renameRoot(oldFile, newFile.name)
-                } catch (e: RootDeniedException) {
-                }
-
-                result = true
+        if (!renamed && !fileCreated && RootUtils.isRooted(context)) {
+            try {
+                 renameRoot(oldFile, newFile.name)
+            } catch (e: RootDeniedException) {
             }
+            renamed = true
         }
-        val resultCode = if (result) OperationResultCode.SUCCESS else OperationResultCode.FAIL
+        val resultCode = if (renamed) OperationResultCode.SUCCESS else OperationResultCode.FAIL
         fileOperationCallback.onOperationResult(operation, getOperationAction(
                 OperationResult(resultCode, 1)))
         removeOperation()

@@ -75,7 +75,7 @@ class AutoPlayView constructor(context: Context?, attrs: AttributeSet? = null, d
             setOnCompletionListener(completionListener)
             setOnPreparedListener(preparedListener)
             setOnErrorListener(errorListener)
-            isLooping = isLooping
+            this.isLooping = this@AutoPlayView.isLooping
             setDataSource(path)
         }
         mutePlayer()

@@ -92,12 +92,4 @@ class BackStackInfo {
     }
 
     fun getBackStack() = backStack
-
-//    fun getDirAtPosition(index: Int): String {
-//        return backStack[index].filePath
-//    }
-//
-//    fun getCategoryAtPosition(index: Int): Category {
-//        return backStack[index].category
-//    }
 }

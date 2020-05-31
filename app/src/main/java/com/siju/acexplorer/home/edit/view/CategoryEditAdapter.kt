@@ -186,9 +186,6 @@ class CategoryEditAdapter(private val selectedStateListener: (CategoryEditModelI
         private fun initListeners(categoryEdit: CategoryEditModelImpl.DataItem.Content,
                                   selectedStateListener: (CategoryEditModelImpl.DataItem.Content, Int) -> Unit) {
             selectedState.setOnClickListener {
-//                val isChecked = categoryEdit.checked
-//                categoryEdit.checked = !isChecked
-//                handleSelectedState(categoryEdit)
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     selectedStateListener(categoryEdit, position)

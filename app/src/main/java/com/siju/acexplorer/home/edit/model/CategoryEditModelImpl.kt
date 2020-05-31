@@ -61,29 +61,6 @@ class CategoryEditModelImpl(val context: Context) : CategoryEditModel {
                         categoryId.toString() + categoryEdit.headerType
                     }
                 }
-
-//            override fun equals(other: Any?): Boolean {
-//                if (this === other) return true
-//                if (other !is Content) return false
-//                if (!super.equals(other)) return false
-//
-//                if (this.categoryEdit.headerType == other.categoryEdit.headerType) {
-//                    return if (this.categoryEdit.categoryId == Category.FILES.value && other.categoryEdit.categoryId == Category.FILES.value) {
-//                        this.categoryEdit.path == other.categoryEdit.path
-//                    } else {
-//                        this.categoryEdit.categoryId == other.categoryEdit.categoryId
-//                    }
-//                }
-//                return false
-//            }
-//
-//            override fun hashCode(): Int {
-//                var result = super.hashCode()
-//                result = 31 * result + categoryEdit.hashCode()
-//                return result
-//            }
-
-
         }
 
         data class Header(val headerType: CategoryEditType) : DataItem() {
@@ -93,30 +70,6 @@ class CategoryEditModelImpl(val context: Context) : CategoryEditModel {
         }
 
         abstract val id: String
-
-//        override fun equals(other: Any?): Boolean {
-//            if (this === other) return true
-//            if (other !is DataItem) return false
-//
-//            if (this is Header && other is Header) {
-//                return this.id == other.id
-//            }
-//            else if (this is Content && other is Content) {
-//                return super.equals(this) == super.equals(other)
-//            }
-//            else if (this is Header && other is Content) {
-//                return false
-//            }
-//            else if (this is Content && other is Header) {
-//                return false
-//            }
-//            return false
-//        }
-//
-//        override fun hashCode(): Int {
-//            return id.hashCode()
-//        }
-
 
     }
 

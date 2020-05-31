@@ -90,6 +90,8 @@ private const val SAF_REQUEST = 2000
 private const val EXTRACT_PATH_REQUEST = 5000
 private const val COPY_PATH_REQUEST = 6000
 private const val CUT_PATH_REQUEST = 7000
+private const val TAG_DIALOG = "Browse Fragment"
+
 
 abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
@@ -886,7 +888,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                 val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.FILE)
                 dialogFragment.setTargetFragment(this@BaseFileListFragment, EXTRACT_PATH_REQUEST)
                 this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
-                    dialogFragment.show(fragmentManager, "Browse Fragment")
+                    dialogFragment.show(fragmentManager, TAG_DIALOG)
                 }
             }
         }
@@ -898,7 +900,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.COPY)
             dialogFragment.setTargetFragment(this@BaseFileListFragment, COPY_PATH_REQUEST)
             this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
-                dialogFragment.show(fragmentManager, "Browse Fragment")
+                dialogFragment.show(fragmentManager, TAG_DIALOG)
             }
         }
     }
@@ -909,7 +911,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.CUT)
             dialogFragment.setTargetFragment(this@BaseFileListFragment, CUT_PATH_REQUEST)
             this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
-                dialogFragment.show(fragmentManager, "Browse Fragment")
+                dialogFragment.show(fragmentManager, TAG_DIALOG)
             }
         }
     }

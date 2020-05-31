@@ -210,12 +210,7 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         setCurrentDir(path)
         if (RecentTimeHelper.isRecentTimeLineCategory(newCategory)) {
             uiScope.launch(Dispatchers.IO) {
-                val data = if (fromSearch) {
-                    storageModel.loadRecentData(path, newCategory)
-                }
-                else {
-                    storageModel.loadRecentData(path, newCategory)
-                }
+                val data = storageModel.loadRecentData(path, newCategory)
                 Log.d(this.javaClass.name,
                         "onDataloaded loadData: data ${data.size} , category $newCategory")
                 _recentFileData.postValue(Pair(newCategory, data))

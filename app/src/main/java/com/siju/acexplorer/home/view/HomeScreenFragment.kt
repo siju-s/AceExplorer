@@ -124,8 +124,6 @@ class HomeScreenFragment : Fragment() {
         mainViewModel.permissionStatus.observe(viewLifecycleOwner, Observer { permissionStatus ->
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> homeViewModel.loadData()
-                else -> {
-                }
             }
         })
 

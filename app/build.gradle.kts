@@ -11,7 +11,9 @@ plugins {
     id(BuildPlugins.googleServicesPlugin)
     id(BuildPlugins.fabricPlugin)
     id("androidx.navigation.safeargs")
+    id("org.sonarqube")
 }
+
 android {
     compileSdkVersion(AndroidSdk.compile)
 
@@ -101,6 +103,21 @@ android {
     }
     lintOptions {
         isAbortOnError = false
+    }
+
+    sonarqube {
+        properties {
+            property("sonar.projectName", "ace-explorer")
+            property ("sonar.projectKey", "ace-explorer")
+            property ("sonar.language", "kotlin")
+            property ("sonar.sources", "src/main/java/")
+            property ("sonar.tests", "src/test/java/")
+            property ("sonar.binaries", "build")
+            property ("sonar.sourceEncoding", "UTF-8")
+            property ("sonar.login", "admin")
+            property ("sonar.password", "admin")
+            property ("sonar.host.url", "http://localhost:9000")
+        }
     }
 }
 

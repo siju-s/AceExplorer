@@ -17,9 +17,11 @@ object CategorySaver {
         saveToPreference(preferences, CATEGORIES, categories)
     }
 
-    private fun saveToPreference(preferences: SharedPreferences, CATEGORIES: String, categories: String?) {
+    @Suppress("SameParameterValue")
+    //Suppressing to allow caller to provide name of the key
+    private fun saveToPreference(preferences: SharedPreferences, key: String, categories: String?) {
         with(preferences.edit()) {
-            putString(CATEGORIES, categories)
+            putString(key, categories)
             apply()
         }
     }

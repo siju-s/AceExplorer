@@ -127,9 +127,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
             when {
                 CategoryHelper.isGenericMusic(category) -> bindGenericMusic(context, fileInfo)
                 CategoryHelper.isMusicCategory(category) -> bindMusicCategory(context, fileInfo)
-                CategoryHelper.isGenericImagesCategory(category) -> bindGenericImagesVidsCategory(context,
-                        fileInfo)
-                CategoryHelper.isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
+                CategoryHelper.isGenericImagesCategory(category) || CategoryHelper.isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
                         fileInfo)
                 else -> {
                     bindFilesCategory(fileInfo, category, context, peekPopView, pos)

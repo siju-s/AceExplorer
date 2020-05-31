@@ -16,7 +16,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import com.siju.acexplorer.R
@@ -36,7 +35,6 @@ const val REQUEST_CODE_DELETE = 1000
 
 class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayout(context, attrs),
         ImageViewerView,
-        ViewPager.OnPageChangeListener,
         View.OnClickListener,
         PopupMenu.OnMenuItemClickListener {
 
@@ -91,7 +89,6 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
         setupTopContainer()
         pager = findViewById(R.id.pager)
         pagerAdapter = ImageViewerPagerAdapter(context, uriList)
-        pager.addOnPageChangeListener(this)
         pager.adapter = pagerAdapter
         pager.setCurrentItem(pos, true)
     }
@@ -124,7 +121,7 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
 
     private val deleteDialogListener = object : DialogHelper.DeleteDialogListener {
         override fun onPositiveButtonClick(view: View, isTrashEnabled: Boolean, filesToDelete: java.util.ArrayList<FileInfo>) {
-
+           //no-op
         }
 
         override fun onPositiveButtonClick(view: View?, isTrashEnabled: Boolean, filesToDelete: Uri) {
@@ -198,7 +195,7 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
         }
 
         override fun onNeutralButtonClick(view: View) {
-
+            //no-op
         }
     }
 
@@ -262,17 +259,4 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
         popupMenu.setOnMenuItemClickListener(this)
         popupMenu.show()
     }
-
-    override fun onPageScrollStateChanged(state: Int) {
-    }
-
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-    }
-
-    override fun onPageSelected(position: Int) {
-//        Log.d(this.javaClass.simpleName, "onPageSelected:${uriList[position].fileName}")
-//        setToolbarTitle(uriList[position].fileName)
-    }
-
-
 }

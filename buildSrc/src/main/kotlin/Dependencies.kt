@@ -7,6 +7,7 @@ object BuildPlugins {
         const val fabric = "1.31.2"
         const val googleServices = "4.3.3"
         const val navigationPlugin = "2.3.0-beta01"
+        const val sonarqube = "3.0"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradlePlugin}"
@@ -20,6 +21,7 @@ object BuildPlugins {
     const val googleServicesPlugin = "com.google.gms.google-services"
     const val fabricPlugin = "io.fabric"
     const val navigationPlugin = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navigationPlugin}"
+    const val sonarqube = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${Versions.sonarqube}"
 }
 
 object AndroidSdk {

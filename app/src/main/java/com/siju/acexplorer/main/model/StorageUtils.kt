@@ -122,6 +122,7 @@ object StorageUtils {
             isDigit = true
         }
         catch (ignored: NumberFormatException) {
+            //no-op
         }
 
         rawUserId = if (isDigit) lastFolder else ""
@@ -175,6 +176,7 @@ object StorageUtils {
                     path = File(path).canonicalPath
                 }
                 catch (e: IOException) {
+
                 }
 
                 if (!paths.contains(path)) {

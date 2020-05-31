@@ -15,8 +15,8 @@ import com.siju.acexplorer.R
 
 class ImageViewerPagerAdapter(private val context: Context, private val list: ArrayList<Uri?>) : PagerAdapter() {
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean {
-        return view == `object`
+    override fun isViewFromObject(view: View, any: Any): Boolean {
+        return view == any
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
@@ -30,8 +30,8 @@ class ImageViewerPagerAdapter(private val context: Context, private val list: Ar
         return itemView
     }
 
-    override fun destroyItem(container: ViewGroup, position: Int, `object`: Any) {
-        container.removeView(`object` as RelativeLayout)
+    override fun destroyItem(container: ViewGroup, position: Int, any: Any) {
+        container.removeView(any as RelativeLayout)
     }
 
     override fun getCount() = list.size
@@ -41,7 +41,7 @@ class ImageViewerPagerAdapter(private val context: Context, private val list: Ar
         notifyDataSetChanged()
     }
 
-    override fun getItemPosition(`object`: Any): Int {
+    override fun getItemPosition(any: Any): Int {
         return POSITION_NONE
     }
 }
