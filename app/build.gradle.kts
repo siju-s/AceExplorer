@@ -123,6 +123,7 @@ dependencies {
     implementation (Libraries.viewModelKtx)
     implementation (Libraries.lifecycleLiveData)
     implementation(Libraries.lifecycleRuntime)
+    implementation(Libraries.constraintLayout)
     kapt(Libraries.lifecycleCompiler)
 
     implementation (Libraries.roomRuntime)
@@ -158,7 +159,7 @@ dependencies {
     implementation (Libraries.ExternalLibs.photoView)
     implementation (Libraries.ExternalLibs.fastScrollRecyclerview)
 
-//    debugImplementation (Libraries.ExternalLibs.leakCanary)
+    debugImplementation (Libraries.ExternalLibs.leakCanary)
 
     implementation (Libraries.ExternalLibs.crashlytics)
 

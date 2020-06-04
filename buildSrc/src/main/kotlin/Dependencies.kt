@@ -45,6 +45,7 @@ object Libraries {
        const val playCore     = "1.7.2"
        const val billing      = "2.1.0"
        const val navigation   = "2.3.0-beta01"
+       const val constraintLayout = "1.1.3"
    }
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
     const val design    = "com.google.android.material:material:${Versions.design}"
@@ -54,7 +55,7 @@ object Libraries {
     const val preference   = "androidx.preference:preference:${Versions.preference}"
     const val cardView     = "androidx.cardview:cardview:${Versions.support}"
     const val palette      = "androidx.palette:palette:${Versions.support}"
-
+    const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
     const val lifecycleRuntime       = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
     const val lifecycleLiveData      = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
     const val viewModelKtx           = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
@@ -104,7 +105,7 @@ object Libraries {
             const val apacheCompress = "1.20"
             const val ratethisapp = "1.2.0"
             const val floatingButton     = "1.10.1"
-            const val leakCanary          = "2.2"
+            const val leakCanary          = "2.3"
             const val photoView           = "2.3.0"
             const val fastscrollRecycler = "2.0.1"
             const val rootTools          = "5.0"
