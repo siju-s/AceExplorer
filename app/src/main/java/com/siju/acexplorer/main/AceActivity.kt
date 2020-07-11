@@ -76,7 +76,6 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     private var premiumUtils: PremiumUtils? = null
     private var updateChecker: UpdateChecker? = null
-    private var category: Category? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,9 +89,9 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         setTabColor()
         initObservers()
         initListeners()
-        checkIfInAppShortcut(intent)
         updateChecker = UpdateChecker(applicationContext, this, updateCallback)
         setupPremiumUtils()
+        checkIfInAppShortcut(intent)
     }
 
     private fun setupNavController() {
@@ -185,24 +184,18 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     private fun checkIfInAppShortcut(intent: Intent?) {
         if (intent == null || intent.action == null) {
-            setCategory(null)
             return
         }
-        var category: Category? = null
-        when (intent.action) {
-            ACTION_IMAGES -> category = Category.GENERIC_IMAGES
-            ACTION_MUSIC -> category = Category.GENERIC_MUSIC
-            ACTION_VIDEOS -> category = Category.GENERIC_VIDEOS
+        val category = when (intent.action) {
+            ACTION_IMAGES -> Category.GENERIC_IMAGES
+            ACTION_MUSIC ->  Category.GENERIC_MUSIC
+            ACTION_VIDEOS -> Category.GENERIC_VIDEOS
+            else          -> Category.GENERIC_IMAGES
         }
         if (mainViewModel.permissionStatus.value is PermissionHelper.PermissionState.Granted) {
-            setCategory(category)
-        } else {
-            setCategory(null)
+            val action = HomeScreenFragmentDirections.actionNavigationHomeToCategoryFragment(null, category)
+            navController.navigate(action)
         }
-    }
-
-    private fun setCategory(value: Category?) {
-        this.category = value
     }
 
     private fun onDualModeEnabled(configuration: Configuration?) {
@@ -255,14 +248,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     private val navigationItemReselectedListener = BottomNavigationView.OnNavigationItemReselectedListener { menuItem ->
         clearBackStack(menuItem.itemId)
         disableDualPane()
-        Log.d(TAG, "navigationItemReselectedListener: $menuItem, category:$category")
-        if (category != null) {
-            val action = HomeScreenFragmentDirections.actionNavigationHomeToCategoryFragment(null, category!!)
-            navController.navigate(action)
-        } else {
-            navController.navigate(menuItem.itemId)
-        }
-        setCategory(null)
+        navController.navigate(menuItem.itemId)
     }
 
     private fun clearBackStack(id: Int, inclusive: Boolean = true) {
