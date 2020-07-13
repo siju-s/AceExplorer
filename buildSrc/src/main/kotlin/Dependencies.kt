@@ -3,7 +3,7 @@ const val kotlinVersion = "1.3.72"
 object BuildPlugins {
 
     object Versions {
-        const val gradlePlugin = "4.2.0-alpha04"
+        const val gradlePlugin = "4.0.0"
         const val crashlytics = "2.1.1"
         const val googleServices = "4.3.3"
         const val navigationPlugin = "2.3.0-beta01"
@@ -105,7 +105,7 @@ object Libraries {
             const val apacheCompress = "1.20"
             const val ratethisapp = "1.2.0"
             const val floatingButton     = "1.10.1"
-            const val leakCanary          = "2.3"
+            const val leakCanary          = "2.4"
             const val photoView           = "2.3.0"
             const val fastscrollRecycler = "2.0.1"
             const val rootTools          = "5.0"
