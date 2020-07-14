@@ -29,6 +29,8 @@
     <!-- For deleting packages in App manager in Android P and above -->
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
 
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove"/>
+
     <application
         android:name=".AceApplication"
         android:allowBackup="true"
