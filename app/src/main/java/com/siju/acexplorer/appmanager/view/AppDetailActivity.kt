@@ -17,10 +17,10 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -32,21 +32,23 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.appmanager.helper.AppHelper
-import com.siju.acexplorer.appmanager.model.AppDetailDetailModelImpl
 import com.siju.acexplorer.appmanager.model.AppInfo
 import com.siju.acexplorer.appmanager.model.AppVersionInfo
 import com.siju.acexplorer.appmanager.model.PermissionInfo
 import com.siju.acexplorer.appmanager.viewmodel.AppDetailViewModel
-import com.siju.acexplorer.appmanager.viewmodel.AppDetailViewModelFactory
 import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.helper.ToolbarHelper
 import com.siju.acexplorer.main.model.helper.SdkHelper
+import dagger.hilt.android.AndroidEntryPoint
 
 
 private const val URL_STORE = "https://play.google" + ".com/store/apps/details?id="
 private const val EXTRA_PACKAGE_NAME = "package"
 
+@AndroidEntryPoint
 class AppDetailActivity : BaseActivity(), View.OnClickListener {
+
+    private val viewModel: AppDetailViewModel by viewModels()
 
     private lateinit var toolbar: Toolbar
     private lateinit var settingsButton: Button
@@ -66,7 +68,6 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
     private lateinit var enabledText: TextView
     private lateinit var imageIcon: ImageView
     private lateinit var fabStore: FloatingActionButton
-    private lateinit var viewModel: AppDetailViewModel
 
     private var packageValue: String? = null
 
@@ -75,7 +76,6 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
         setContentView(R.layout.app_detail_ui)
 
         setupUI()
-        setupViewModels()
         initListeners()
         initObservers()
         setupData(getPackage())
@@ -99,13 +99,6 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
 
     private fun setupData(packageName: String?) {
         viewModel.fetchPackageInfo(packageName)
-    }
-
-    private fun setupViewModels() {
-        val viewModelFactory = AppDetailViewModelFactory(
-                AppDetailDetailModelImpl(AceApplication.appContext))
-        viewModel = ViewModelProvider(this, viewModelFactory)
-                .get(AppDetailViewModel::class.java)
     }
 
     private fun initObservers() {

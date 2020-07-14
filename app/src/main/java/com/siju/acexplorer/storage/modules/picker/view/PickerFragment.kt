@@ -34,8 +34,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
@@ -46,15 +46,14 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.modules.picker.model.PickerAction
-import com.siju.acexplorer.storage.modules.picker.model.PickerModelImpl
 import com.siju.acexplorer.storage.modules.picker.model.PickerResultAction
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.viewmodel.PickerViewModel
-import com.siju.acexplorer.storage.modules.picker.viewmodel.PickerViewModelFactory
 import com.siju.acexplorer.storage.view.FileListAdapter
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.ScrollInfo
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
 
 private const val TAG = "PickerFragment"
@@ -63,7 +62,10 @@ const val KEY_PICKER_TYPE = "picker_type"
 const val RINGTONE_TYPE = "ringtone_type"
 private const val DELAY_SCROLL_UPDATE_MS = 100L
 
+@AndroidEntryPoint
 class PickerFragment : DialogFragment() {
+
+    private val viewModel: PickerViewModel by viewModels()
 
     private lateinit var fileList: FastScrollRecyclerView
     private lateinit var backButton: ImageButton
@@ -73,7 +75,6 @@ class PickerFragment : DialogFragment() {
     private lateinit var toolbar: Toolbar
     private lateinit var emptyText: TextView
     private lateinit var adapter: FileListAdapter
-    private lateinit var viewModel: PickerViewModel
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val dialog =  super.onCreateDialog(savedInstanceState)
@@ -108,9 +109,6 @@ class PickerFragment : DialogFragment() {
     }
 
     private fun setupViewModels() {
-        val viewModelFactory = PickerViewModelFactory(PickerModelImpl())
-        viewModel = ViewModelProvider(this, viewModelFactory)
-                .get(PickerViewModel::class.java)
         activity?.let {
             viewModel.setPermissionHelper(
                     PermissionHelper(it as AppCompatActivity, AceApplication.appContext))

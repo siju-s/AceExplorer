@@ -9,11 +9,13 @@ import androidx.lifecycle.MutableLiveData
 import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.SdkHelper
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 private const val PACKAGE_NAME_PLAYSTORE = "com.android.vending"
 private const val PACKAGE_NAME_AMAZON_APPSTORE = "com.amazon.venezia"
 
-class AppDetailDetailModelImpl(val context: Context) : AppDetailModel {
+class AppDetailDetailModelImpl @Inject constructor(@ApplicationContext val context: Context) : AppDetailModel {
 
     private val _versionInfo = MutableLiveData<AppVersionInfo>()
 

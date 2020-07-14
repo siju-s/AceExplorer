@@ -23,27 +23,27 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.home.edit.model.CategoryEditModelImpl
 import com.siju.acexplorer.home.edit.viewmodel.CategoryEditViewModel
-import com.siju.acexplorer.home.edit.viewmodel.CategoryEditViewModelFactory
 import com.siju.acexplorer.storage.view.custom.helper.SimpleItemTouchHelperCallback
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.category_edit.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 private const val MIN_LIBRARY_ITEMS = 3
 private const val MAX_LIBRARY_ITEMS = 12
 
+@AndroidEntryPoint
 class CategoryEditFragment : Fragment(), OnStartDragListener {
-    private lateinit var categoryEditViewModel: CategoryEditViewModel
+    private val categoryEditViewModel: CategoryEditViewModel by viewModels()
     private lateinit var itemTouchHelper: ItemTouchHelper
     private lateinit var adapter: CategoryEditAdapter
 
@@ -60,7 +60,6 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
     }
 
     private fun setupUI() {
-        setupViewModels()
         setupToolbar()
         setupList()
         initObservers()
@@ -132,13 +131,6 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
         val imageSize = resources.getDimensionPixelSize(R.dimen.home_library_width) +
                 2 * resources.getDimensionPixelSize(R.dimen.margin_16)
         return Resources.getSystem().displayMetrics.widthPixels / imageSize
-    }
-
-    private fun setupViewModels() {
-        val viewModelFactory = CategoryEditViewModelFactory(
-                CategoryEditModelImpl(AceApplication.appContext))
-        categoryEditViewModel = ViewModelProvider(this, viewModelFactory)
-                .get(CategoryEditViewModel::class.java)
     }
 
     private fun initObservers() {

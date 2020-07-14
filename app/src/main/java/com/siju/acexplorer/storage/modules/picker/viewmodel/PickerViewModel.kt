@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.modules.picker.viewmodel
 
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -17,7 +18,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.File
 
-class PickerViewModel(val model: PickerModel) : ViewModel(), PickerModel.Listener {
+class PickerViewModel @ViewModelInject constructor(val model: PickerModel) : ViewModel(), PickerModel.Listener {
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)

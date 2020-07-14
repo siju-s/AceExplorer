@@ -6,8 +6,10 @@ import com.siju.acexplorer.home.model.CategoryListFetcher
 import com.siju.acexplorer.home.model.CategorySaver
 import com.siju.acexplorer.home.types.HomeLibraryInfo
 import com.siju.acexplorer.main.model.groups.Category
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class CategoryEditModelImpl(val context: Context) : CategoryEditModel {
+class CategoryEditModelImpl @Inject constructor(@ApplicationContext val context: Context) : CategoryEditModel {
 
     private fun getSavedCategories(): ArrayList<HomeLibraryInfo> {
         return CategoryListFetcher.getCategories(context)

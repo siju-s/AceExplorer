@@ -22,11 +22,12 @@ import com.siju.acexplorer.storage.modules.picker.view.KEY_PICKER_TYPE
 import com.siju.acexplorer.storage.modules.picker.view.RINGTONE_TYPE
 import com.siju.acexplorer.theme.Theme
 import java.io.File
+import javax.inject.Inject
 
 
 private const val RINGTONE_PICKER_PATH = "ringtone_picker_path"
 
-class PickerModelImpl : PickerModel {
+class PickerModelImpl @Inject constructor(): PickerModel {
     private var listener: PickerModel.Listener? = null
     private val preferences: SharedPreferences
     val theme = MutableLiveData<Theme>()
