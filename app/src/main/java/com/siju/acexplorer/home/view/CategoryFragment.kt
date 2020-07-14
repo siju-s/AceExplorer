@@ -49,12 +49,8 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     override fun getCategoryView() = view
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupViewModel()
-        setupUI(view)
-    }
-
-    private fun setupViewModel() {
         mainViewModel.setCategoryMenuHelper(this)
+        setupUI(view)
     }
 
     private fun setupUI(view: View) {
@@ -266,5 +262,6 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         super.onDestroy()
         viewPager.unregisterOnPageChangeCallback(pageChangeListener)
         pagerAdapter.clear()
+        mainViewModel.setCategoryMenuHelper(null)
     }
 }

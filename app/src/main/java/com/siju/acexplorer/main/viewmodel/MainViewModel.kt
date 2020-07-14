@@ -177,7 +177,7 @@ class MainViewModel @ViewModelInject constructor(private val permissionHelper: P
 
     fun hasUserCancelledUpdate() = mainModel.hasUserCancelledUpdate()
 
-    fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper) {
+    fun setCategoryMenuHelper(categoryMenuHelper: CategoryMenuHelper?) {
         this.categoryMenuHelper = categoryMenuHelper
     }
 
