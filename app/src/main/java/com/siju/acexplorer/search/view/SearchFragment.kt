@@ -15,11 +15,10 @@ import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.inflateLayout
@@ -29,20 +28,17 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
-import com.siju.acexplorer.search.model.SearchModelImpl
 import com.siju.acexplorer.search.model.SearchSuggestionProvider
 import com.siju.acexplorer.search.viewmodel.SearchViewModel
-import com.siju.acexplorer.search.viewmodel.SearchViewModelFactory
 import com.siju.acexplorer.storage.helper.RecentDataConverter
-import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
 import com.siju.acexplorer.storage.view.FileListAdapter
 import com.siju.acexplorer.storage.view.FileListHelper
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
-import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
 import com.siju.acexplorer.utils.InstallHelper
 import com.siju.acexplorer.utils.ScrollInfo
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -50,10 +46,12 @@ import kotlin.collections.ArrayList
 private const val DELAY_SCROLL_UPDATE_MS = 100L
 private const val TAG = "SearchFragment"
 
+@AndroidEntryPoint
 class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelper {
 
-    private lateinit var searchViewModel: SearchViewModel
-    private lateinit var fileListViewModel: FileListViewModel
+    private val searchViewModel: SearchViewModel by viewModels()
+    private val fileListViewModel: FileListViewModel by viewModels()
+
     private lateinit var filesList: RecyclerView
     private lateinit var searchSuggestions: SearchSuggestions
     private lateinit var recentSearchContainer: LinearLayout
@@ -134,12 +132,8 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     }
 
     private fun setupViewModel() {
-        val viewModelFactory = SearchViewModelFactory(SearchModelImpl(AceApplication.appContext))
-        searchViewModel = ViewModelProvider(this, viewModelFactory).get(SearchViewModel::class.java)
-        val fileListViewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext), true)
-        fileListViewModel = ViewModelProvider(this, fileListViewModelFactory)
-                .get(FileListViewModel::class.java)
         fileListViewModel.setCategory(Category.FILES)
+        fileListViewModel.setSearchScreen(true)
     }
 
     private fun initObservers() {

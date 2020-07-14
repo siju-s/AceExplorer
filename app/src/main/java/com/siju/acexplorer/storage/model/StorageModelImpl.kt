@@ -20,19 +20,22 @@ import com.siju.acexplorer.preferences.PreferenceConstants
 import com.siju.acexplorer.storage.model.operations.OperationAction
 import com.siju.acexplorer.storage.model.operations.OperationHelper
 import com.siju.acexplorer.storage.model.operations.Operations
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 private const val PREFS_NAME = "PREFS"
 private const val PREFS_VIEW_MODE = "view-mode"
 private const val PREFS_VIEW_MODE_IMAGE = "view-mode-image"
 private const val PREFS_VIEW_MODE_VIDEO = "view-mode-video"
 
-class StorageModelImpl(val context: Context, var category: Category = Category.FILES) : StorageModel {
+class StorageModelImpl @Inject constructor(@ApplicationContext val context: Context) : StorageModel {
 
     private val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val globalPreference = PreferenceManager.getDefaultSharedPreferences(context)
     private val operationHelper = OperationHelper(AceApplication.appContext)
     private val _operationData = MutableLiveData<Pair<Operations, OperationAction>>()
     private val mediaObserver = MediaObserver(Handler())
+    private var category: Category? = null
     val operationData: LiveData<Pair<Operations, OperationAction>>
         get() = _operationData
     @Suppress("PropertyName")
@@ -185,7 +188,7 @@ class StorageModelImpl(val context: Context, var category: Category = Category.F
     }
 
     private fun registerContentObserver() {
-        if (contentObserverRegistered) {
+        if (contentObserverRegistered || category == null) {
             return
         }
         val uri: Uri? = when (category) {

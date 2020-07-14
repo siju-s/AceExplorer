@@ -22,21 +22,20 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
-import com.siju.acexplorer.home.model.HomeModelImpl
 import com.siju.acexplorer.home.viewmodel.HomeViewModel
-import com.siju.acexplorer.home.viewmodel.HomeViewModelFactory
 import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.theme.Theme
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.home_categories.*
 import kotlinx.android.synthetic.main.home_storage.*
 import kotlinx.android.synthetic.main.homescreen.*
@@ -44,10 +43,11 @@ import kotlinx.android.synthetic.main.toolbar.*
 
 private const val TAG = "HomeScreenFragment"
 
+@AndroidEntryPoint
 class HomeScreenFragment : Fragment() {
 
     private lateinit var mainViewModel: MainViewModel
-    private lateinit var homeViewModel: HomeViewModel
+    private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var categoryAdapter: HomeLibAdapter
     private lateinit var storageAdapter: HomeStorageAdapter
     private lateinit var adView: AdsView
@@ -74,8 +74,6 @@ class HomeScreenFragment : Fragment() {
     private fun setupViewModels() {
         val activity = requireNotNull(activity)
         mainViewModel = ViewModelProvider(activity).get(MainViewModel::class.java)
-        val viewModelFactory = HomeViewModelFactory(HomeModelImpl(AceApplication.appContext))
-        homeViewModel = ViewModelProvider(this, viewModelFactory).get(HomeViewModel::class.java)
     }
 
     private fun setupToolbar() {

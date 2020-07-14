@@ -9,8 +9,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
-class SearchModelImpl(val context: Context) : SearchModel, SearchDataFetcher.SearchResultCallback {
+class SearchModelImpl @Inject constructor(@ApplicationContext val context: Context) : SearchModel, SearchDataFetcher.SearchResultCallback {
     private val _searchResult = MutableLiveData<ArrayList<FileInfo>>()
 
     val searchResult : LiveData<ArrayList<FileInfo>>

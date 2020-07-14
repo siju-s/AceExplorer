@@ -2,6 +2,7 @@ package com.siju.acexplorer.storage.viewmodel
 
 import android.net.Uri
 import android.util.Log
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -42,12 +43,13 @@ import kotlin.collections.ArrayList
 private const val TAG = "FileListViewModel"
 private const val ZIP_EXT = ".zip"
 
-class FileListViewModel(private val storageModel: StorageModel, private val searchScreen: Boolean = false) : ViewModel() {
+class FileListViewModel @ViewModelInject constructor(private val storageModel: StorageModel) : ViewModel() {
 
     private var zipViewer: ZipViewer? = null
     var apkPath: String? = null
 
     private var navigationView: NavigationView? = null
+    private var searchScreen = false
 
     lateinit var category: Category
         private set
@@ -194,6 +196,10 @@ class FileListViewModel(private val storageModel: StorageModel, private val sear
         showPasteDialog = operationPresenter.showPasteDialog()
         pasteConflictCheckData = operationPresenter.getPasteData()
         refreshData = model._refreshData
+    }
+
+    fun setSearchScreen(searchScreen : Boolean) {
+        this.searchScreen = searchScreen
     }
 
     fun loadData(path: String?, category: Category, fromSearch: Boolean = false) {

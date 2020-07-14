@@ -12,6 +12,7 @@ plugins {
     id(BuildPlugins.crashlyticsAppPlugin)
     id("androidx.navigation.safeargs")
     id("org.sonarqube")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -105,6 +106,10 @@ android {
             property ("sonar.host.url", "http://localhost:9000")
         }
     }
+
+    kotlinOptions.apply {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
 }
 
 dependencies {
@@ -125,6 +130,11 @@ dependencies {
     implementation(Libraries.lifecycleRuntime)
     implementation(Libraries.constraintLayout)
     kapt(Libraries.lifecycleCompiler)
+
+    implementation (Libraries.hilt)
+    kapt(Libraries.hiltCompiler)
+    implementation(Libraries.hiltViewModel)
+    kapt(Libraries.hiltViewModelCompiler)
 
     implementation (Libraries.roomRuntime)
     kapt  (Libraries.roomCompiler)

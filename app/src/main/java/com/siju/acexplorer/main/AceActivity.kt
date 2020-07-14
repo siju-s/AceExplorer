@@ -24,10 +24,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -58,6 +58,7 @@ import com.siju.acexplorer.storage.view.DualPaneFragment
 import com.siju.acexplorer.storage.view.FileListFragment
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.tools.ToolsFragment
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -69,12 +70,13 @@ private const val ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS"
 private const val CRITERIA_INSTALL_NUM_DAYS = 10
 private const val CRITERIA_LAUNCH_TIMES = 25
 
+@AndroidEntryPoint
 class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
-    private lateinit var mainViewModel: MainViewModel
-    private lateinit var navController: NavController
+    private val mainViewModel: MainViewModel by viewModels()
+    private val premiumUtils = PremiumUtils()
 
-    private var premiumUtils: PremiumUtils? = null
+    private lateinit var navController: NavController
     private var updateChecker: UpdateChecker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,8 +85,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
         setupNavController()
 
-        mainViewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        mainViewModel.setPermissionHelper(PermissionHelper(this, applicationContext))
+        mainViewModel.checkPermissions()
 
         setTabColor()
         initObservers()
@@ -107,10 +108,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     override fun isPremiumVersion(): Boolean {
-        if (::mainViewModel.isInitialized) {
-            return mainViewModel.isPremiumVersion()
-        }
-        return false
+        return mainViewModel.isPremiumVersion()
     }
 
     fun getViewModel() = mainViewModel
@@ -177,9 +175,8 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     private fun setupPremiumUtils() {
-        premiumUtils = PremiumUtils()
-        premiumUtils?.onStart(this)
-        premiumUtils?.showPremiumDialogIfNeeded(this, mainViewModel)
+        premiumUtils.onStart(this)
+        premiumUtils.showPremiumDialogIfNeeded(this, mainViewModel)
     }
 
     private fun checkIfInAppShortcut(intent: Intent?) {
@@ -240,7 +237,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
         clearBackStack(menuItem.itemId)
         disableDualPane()
-        Log.d(TAG, "navItemSlected: $menuItem")
+        Log.d(TAG, "navItemSelected: $menuItem")
         navController.navigate(menuItem.itemId)
         true
     }
@@ -299,7 +296,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     override fun onBackPressed() {
         val fragment = getCurrentFragment()
-        Log.d(TAG, "onBackPressed: getCUrrentFrag:$fragment")
+        Log.d(TAG, "onBackPressed: getCurrentFrag:$fragment")
         when (fragment) {
             is BaseFileListFragment -> when (val focusedFragment = getCurrentFocusFragment(fragment)) {
                 is DualPaneFragment -> {

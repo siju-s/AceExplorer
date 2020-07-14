@@ -10,9 +10,11 @@ import com.siju.acexplorer.main.model.data.DataLoader
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.StorageFetcher
 import com.siju.acexplorer.utils.ConfigurationHelper
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 private const val TAG = "HomeModelImpl"
-class HomeModelImpl(val context: Context) : HomeModel {
+class HomeModelImpl @Inject constructor(@ApplicationContext val context: Context) : HomeModel {
 
     override fun getCategories(): ArrayList<HomeLibraryInfo> {
         return CategoryListFetcher.getCategories(context)

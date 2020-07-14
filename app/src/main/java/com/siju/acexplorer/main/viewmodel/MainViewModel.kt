@@ -2,6 +2,7 @@ package com.siju.acexplorer.main.viewmodel
 
 import android.app.Activity
 import android.util.Log
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,7 +22,7 @@ enum class Pane {
     SINGLE,
     DUAL
 }
-class MainViewModel : ViewModel() {
+class MainViewModel @ViewModelInject constructor(private val permissionHelper: PermissionHelper) : ViewModel() {
 
     private var categoryMenuHelper: CategoryMenuHelper? = null
     var navigateToSearch = MutableLiveData<Boolean>()
@@ -31,7 +32,6 @@ class MainViewModel : ViewModel() {
     private val billingRepository = BillingRepository.getInstance(AceApplication.appContext)
     val premiumLiveData: LiveData<Premium>
     private val mainModel = MainModelImpl()
-    private lateinit var permissionHelper: PermissionHelper
     lateinit var permissionStatus: LiveData<PermissionHelper.PermissionState>
     val theme: LiveData<Theme>
     private var storageList: ArrayList<StorageItem>? = null
@@ -65,6 +65,7 @@ class MainViewModel : ViewModel() {
 
 
     init {
+        Log.d("MainViewModel", "init")
         billingRepository.startDataSourceConnections()
         premiumLiveData = billingRepository.premiumLiveData
         theme = mainModel.theme
@@ -81,8 +82,7 @@ class MainViewModel : ViewModel() {
         billingRepository.purchaseFullVersion(activity)
     }
 
-    fun setPermissionHelper(permissionHelper: PermissionHelper) {
-        this.permissionHelper = permissionHelper
+    fun checkPermissions() {
         permissionStatus = permissionHelper.permissionStatus
         permissionHelper.checkPermissions()
     }

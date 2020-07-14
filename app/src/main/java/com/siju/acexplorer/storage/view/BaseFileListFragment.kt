@@ -36,6 +36,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
@@ -66,7 +67,6 @@ import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.PasteOpData
 import com.siju.acexplorer.storage.model.SortMode
-import com.siju.acexplorer.storage.model.StorageModelImpl
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.model.operations.*
 import com.siju.acexplorer.storage.modules.picker.model.PickerModelImpl
@@ -74,10 +74,10 @@ import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.view.PickerFragment
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
-import com.siju.acexplorer.storage.viewmodel.FileListViewModelFactory
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.InstallHelper
 import com.siju.acexplorer.utils.InstallHelper.openInstallScreen
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.main_list.*
 import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
@@ -92,15 +92,14 @@ private const val COPY_PATH_REQUEST = 6000
 private const val CUT_PATH_REQUEST = 7000
 private const val TAG_DIALOG = "Browse Fragment"
 
-
+@AndroidEntryPoint
 abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
-    private var packageReceiverRegistered = false
+    private val fileListViewModel: FileListViewModel by viewModels()
+    private lateinit var mainViewModel: MainViewModel
     private lateinit var filesList: FilesList
     private lateinit var floatingView: FloatingView
     private lateinit var navigationView: NavigationView
-    private lateinit var mainViewModel: MainViewModel
-    private lateinit var fileListViewModel: FileListViewModel
     private lateinit var menuControls: MenuControls
 
     private var adView: AdsView? = null
@@ -108,6 +107,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     private var path: String? = null
     private var category = Category.FILES
     private var showNavigation = true
+    private var packageReceiverRegistered = false
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -216,9 +216,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         Log.d(TAG, "setupViewModels:$this")
         val activity = requireNotNull(activity)
         mainViewModel = ViewModelProvider(activity).get(MainViewModel::class.java)
-        val viewModelFactory = FileListViewModelFactory(StorageModelImpl(AceApplication.appContext, category))
-        fileListViewModel = ViewModelProvider(this, viewModelFactory)
-                .get(FileListViewModel::class.java)
         categoryMenuHelper = mainViewModel.getCategoryMenuHelper()
     }
 
@@ -1190,10 +1187,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         }
 
         fun shouldShowHiddenFiles(): Boolean {
-            if (::fileListViewModel.isInitialized) {
-                return fileListViewModel.shouldShowHiddenFiles()
-            }
-            return false
+            return fileListViewModel.shouldShowHiddenFiles()
         }
 
     fun onQueryTextChange(query: String?) {

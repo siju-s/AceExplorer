@@ -19,10 +19,12 @@ package com.siju.acexplorer
 import android.app.Application
 import android.os.StrictMode
 import com.kobakei.ratethisapp.RateThisApp
+import dagger.hilt.android.HiltAndroidApp
 
 private const val RATE_APP_CRITERIA_INSTALL_DAYS = 7
 private const val RATE_APP_CRITERIA_LAUNCH_TIMES = 25
 
+@HiltAndroidApp
 class AceApplication : Application() {
 
     override fun onCreate() {

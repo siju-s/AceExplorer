@@ -30,12 +30,14 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.siju.acexplorer.R
 import com.siju.acexplorer.logging.Logger
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 
 private const val TAG = "PermissionHelper"
@@ -44,7 +46,7 @@ private const val SCHEMA_PACKAGE = "package"
 private const val PERMISSIONS_REQUEST = 1000
 private const val storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
 
-class PermissionHelper(private val activity: AppCompatActivity, private val context: Context) {
+class PermissionHelper @Inject constructor(private val activity: FragmentActivity, @ApplicationContext val context: Context) {
     private var permissionRationaleDialog: Dialog? = null
 
     val permissionStatus: MutableLiveData<PermissionState> = MutableLiveData()

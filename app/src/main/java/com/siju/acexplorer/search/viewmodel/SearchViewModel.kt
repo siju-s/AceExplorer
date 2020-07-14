@@ -2,6 +2,7 @@ package com.siju.acexplorer.search.viewmodel
 
 import android.provider.SearchRecentSuggestions
 import android.util.Log
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.common.types.FileInfo
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 private const val TAG = "SearchViewModel"
 private const val MIN_CHAR_QUERY = 2
 
-class SearchViewModel(private val searchModel: SearchModel) : ViewModel() {
+class SearchViewModel @ViewModelInject constructor(private val searchModel: SearchModel) : ViewModel() {
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)

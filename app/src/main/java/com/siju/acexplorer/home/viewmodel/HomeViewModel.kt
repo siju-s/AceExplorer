@@ -1,6 +1,7 @@
 package com.siju.acexplorer.home.viewmodel
 
 import android.util.Log
+import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,7 +17,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 private const val TAG = "HomeViewModel"
-class HomeViewModel(private val homeModel: HomeModel) : ViewModel() {
+class HomeViewModel @ViewModelInject constructor(private val homeModel: HomeModel) : ViewModel() {
 
     private val _categories = MutableLiveData<ArrayList<HomeLibraryInfo>>()
     private val _storage = MutableLiveData<ArrayList<StorageItem>>()

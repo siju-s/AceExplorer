@@ -8,6 +8,7 @@ object BuildPlugins {
         const val googleServices = "4.3.3"
         const val navigationPlugin = "2.3.0-beta01"
         const val sonarqube = "3.0"
+        const val hilt = "2.28-alpha"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradlePlugin}"
@@ -22,6 +23,7 @@ object BuildPlugins {
     const val navigationPlugin = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navigationPlugin}"
     const val sonarqube = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${Versions.sonarqube}"
     const val crashlyticsAppPlugin = "com.google.firebase.crashlytics"
+    const val hiltPlugin = "com.google.dagger:hilt-android-gradle-plugin:${Versions.hilt}"
 }
 
 object AndroidSdk {
@@ -46,6 +48,8 @@ object Libraries {
        const val billing      = "2.1.0"
        const val navigation   = "2.3.0-beta01"
        const val constraintLayout = "1.1.3"
+       const val hilt = "2.28-alpha"
+       const val hiltViewModel = "1.0.0-alpha01"
    }
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
     const val design    = "com.google.android.material:material:${Versions.design}"
@@ -71,6 +75,10 @@ object Libraries {
 
     const val navigation     = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi   = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
+    const val hilt           = "com.google.dagger:hilt-android:${Versions.hilt}"
+    const val hiltCompiler   = "com.google.dagger:hilt-android-compiler:${Versions.hilt}"
+    const val hiltViewModel  = "androidx.hilt:hilt-lifecycle-viewmodel:${Versions.hiltViewModel}"
+    const val hiltViewModelCompiler  = "androidx.hilt:hilt-compiler:${Versions.hiltViewModel}"
 
 
    object Firebase {
