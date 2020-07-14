@@ -11,7 +11,7 @@ import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
@@ -32,12 +32,13 @@ import java.util.*
 
 class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClickListener {
 
+    private val mainViewModel: MainViewModel by activityViewModels()
+    private val menuItemWrapper = MenuItemWrapper()
+
     private lateinit var pagerAdapter: CategoryPagerAdapter
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
     private var category = Category.GENERIC_IMAGES
-    private lateinit var mainViewModel: MainViewModel
-    private val menuItemWrapper = MenuItemWrapper()
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
@@ -53,8 +54,6 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     private fun setupViewModel() {
-        val activity = requireNotNull(activity)
-        mainViewModel = ViewModelProvider(activity).get(MainViewModel::class.java)
         mainViewModel.setCategoryMenuHelper(this)
     }
 

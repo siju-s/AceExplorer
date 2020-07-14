@@ -30,8 +30,8 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -54,13 +54,15 @@ import com.siju.acexplorer.utils.NetworkHelper
 
 const val PREFS_UPDATE = "prefsUpdate"
 const val PREFS_LANGUAGE = "prefLanguage"
-private const val PREFS_ABOUT = "prefsAbout"
 private const val PREFS_FULL_VERSION = "prefsUnlockFull"
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
-    private lateinit var mainViewModel: MainViewModel
+    private val mainViewModel: MainViewModel by activityViewModels()
+    private val handler = Handler(Looper.getMainLooper())
+
     private lateinit var mainCommunicator: MainCommunicator
+
     private var preferences: SharedPreferences? = null
     private var updatePreference: Preference? = null
     private var currentLanguage: String? = null
@@ -68,7 +70,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     private var theme = 0
     private var connectivityManager : ConnectivityManager? = null
     private var networkHelper : NetworkHelper? = null
-    private val handler = Handler(Looper.getMainLooper())
     private var registeredNetworkCallback = false
 
     override fun onAttach(context: Context) {
@@ -111,8 +112,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupViewModels() {
-        val activity = requireNotNull(activity)
-        mainViewModel = ViewModelProvider(activity).get(MainViewModel::class.java)
         mainViewModel.premiumLiveData.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (it.entitled) {

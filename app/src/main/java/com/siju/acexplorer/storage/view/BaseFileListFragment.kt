@@ -36,9 +36,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.siju.acexplorer.AceApplication
@@ -96,7 +96,8 @@ private const val TAG_DIALOG = "Browse Fragment"
 abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
     private val fileListViewModel: FileListViewModel by viewModels()
-    private lateinit var mainViewModel: MainViewModel
+    private val mainViewModel: MainViewModel by activityViewModels()
+
     private lateinit var filesList: FilesList
     private lateinit var floatingView: FloatingView
     private lateinit var navigationView: NavigationView
@@ -214,8 +215,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
     private fun setupViewModels() {
         Log.d(TAG, "setupViewModels:$this")
-        val activity = requireNotNull(activity)
-        mainViewModel = ViewModelProvider(activity).get(MainViewModel::class.java)
         categoryMenuHelper = mainViewModel.getCategoryMenuHelper()
     }
 

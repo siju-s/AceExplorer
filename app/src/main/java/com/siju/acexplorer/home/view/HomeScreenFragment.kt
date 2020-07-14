@@ -22,9 +22,9 @@ import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.siju.acexplorer.R
@@ -46,7 +46,7 @@ private const val TAG = "HomeScreenFragment"
 @AndroidEntryPoint
 class HomeScreenFragment : Fragment() {
 
-    private lateinit var mainViewModel: MainViewModel
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var categoryAdapter: HomeLibAdapter
     private lateinit var storageAdapter: HomeStorageAdapter
@@ -62,18 +62,12 @@ class HomeScreenFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         setHasOptionsMenu(true)
-        setupViewModels()
         adView = AdsView(container)
         lifecycle.addObserver(adView)
 
         setupToolbar()
         initList()
         initObservers()
-    }
-
-    private fun setupViewModels() {
-        val activity = requireNotNull(activity)
-        mainViewModel = ViewModelProvider(activity).get(MainViewModel::class.java)
     }
 
     private fun setupToolbar() {
