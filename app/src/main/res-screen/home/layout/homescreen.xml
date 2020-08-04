@@ -23,7 +23,9 @@
     android:fitsSystemWindows="true"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <include layout="@layout/app_bar" />
+    <include
+        android:id="@+id/appBar"
+        layout="@layout/app_bar" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -35,15 +37,23 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <include layout="@layout/home_categories" />
+            <include
+                android:id="@+id/category"
+                layout="@layout/home_categories" />
 
-            <include layout="@layout/home_storage" />
+            <include
+                android:id="@+id/storage"
+                android:layout_below="@id/category"
+                layout="@layout/home_storage"
+                android:layout_margin="@dimen/margin_16"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <LinearLayout
                 android:id="@+id/adviewLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/cardViewStorages"
+                android:layout_below="@+id/storage"
                 android:layout_centerHorizontal="true"
                 android:orientation="vertical" />
 

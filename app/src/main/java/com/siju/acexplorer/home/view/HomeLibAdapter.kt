@@ -1,52 +1,36 @@
 package com.siju.acexplorer.home.view
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.siju.acexplorer.R
+import com.siju.acexplorer.databinding.LibraryItemBinding
 import com.siju.acexplorer.home.types.HomeLibraryInfo
 import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
 
-private const val TAG = "HomeLibAdapter"
 class HomeLibAdapter internal constructor(private val clickListener: (HomeLibraryInfo) -> Unit) :
         ListAdapter<HomeLibraryInfo, HomeLibAdapter.ViewHolder>(CategoryDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder.from(parent)
+        val binding = LibraryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
-//        Log.d(TAG, "onBindViewHolder $position")
         viewHolder.bind(item, clickListener)
     }
 
-    class ViewHolder private constructor(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-        private var imageLibrary: ImageView = itemView.findViewById(R.id.imageLibrary)
-        private var textLibraryName: TextView = itemView.findViewById(R.id.textLibrary)
-        private var textCount: TextView = itemView.findViewById(R.id.textCount)
+    class ViewHolder(private val binding: LibraryItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: HomeLibraryInfo, clickListener: (HomeLibraryInfo) -> Unit) {
-            imageLibrary.setImageResource(item.resourceId)
+            binding.imageLibrary.setImageResource(item.resourceId)
             val name = getCategoryName(itemView.context, item.category)
-            textLibraryName.text = name
-            textCount.text = item.count.toString()
+            binding.textLibrary.text = name
+            binding.textCount.text = item.count.toString()
             itemView.tag = item.category
             itemView.setOnClickListener { clickListener(item) }
-        }
-
-        companion object {
-            fun from(parent: ViewGroup): ViewHolder {
-                val view = LayoutInflater.from(parent.context).inflate(R.layout.library_item,
-                        parent, false)
-                return ViewHolder(view)
-            }
         }
     }
 

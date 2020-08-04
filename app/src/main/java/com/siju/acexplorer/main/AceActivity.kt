@@ -40,6 +40,7 @@ import com.google.android.play.core.install.model.ActivityResult
 import com.kobakei.ratethisapp.RateThisApp
 import com.siju.acexplorer.R
 import com.siju.acexplorer.base.view.BaseActivity
+import com.siju.acexplorer.databinding.ActivityMainBinding
 import com.siju.acexplorer.extensions.isLandscape
 import com.siju.acexplorer.home.view.CategoryFragment
 import com.siju.acexplorer.home.view.HomeScreenFragment
@@ -59,9 +60,6 @@ import com.siju.acexplorer.storage.view.FileListFragment
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.tools.ToolsFragment
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
-
 
 private const val TAG = "AceActivity"
 private const val ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES"
@@ -78,10 +76,12 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     private lateinit var navController: NavController
     private var updateChecker: UpdateChecker? = null
+    private lateinit var binding : ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setupNavController()
 
@@ -97,7 +97,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     private fun setupNavController() {
         navController = findNavController(R.id.nav_host)
-        bottom_navigation.setupWithNavController(navController)
+        binding.bottomNavigation.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, dest, _ ->
             Log.d(TAG, "setupNavController: destAdded:$dest")
         }
@@ -114,16 +114,16 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     fun getViewModel() = mainViewModel
 
     private fun initListeners() {
-        bottom_navigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
-        bottom_navigation.setOnNavigationItemReselectedListener(navigationItemReselectedListener)
+        binding.bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
+        binding.bottomNavigation.setOnNavigationItemReselectedListener(navigationItemReselectedListener)
     }
 
     private fun setTabColor() {
         val darkColoredTheme = Theme.isDarkColoredTheme(resources, currentTheme)
         if (darkColoredTheme) {
-            bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.tab_bg_color))
+            binding.bottomNavigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.tab_bg_color))
         } else {
-            bottom_navigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorPrimary))
+            binding.bottomNavigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorPrimary))
         }
     }
 
@@ -205,8 +205,8 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     private fun enableDualPane() {
         Log.d(TAG, "enableDualPane")
-        nav_host_dual.visibility = View.VISIBLE
-        viewSeparator.visibility = View.VISIBLE
+        binding.contentMain.navHostDual.visibility = View.VISIBLE
+        binding.contentMain.viewSeparator.visibility = View.VISIBLE
         createDualFragment()
     }
 
@@ -216,11 +216,11 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         Log.d(TAG, "disableDualPane")
         //TODO 29 Feb 2020 Find why dual mode preference firing even  though value unchanged
         // Happens when opening a file and returning back
-        if (nav_host_dual.visibility == View.GONE) {
+        if (binding.contentMain.navHostDual.visibility == View.GONE) {
             return
         }
-        nav_host_dual.visibility = View.GONE
-        viewSeparator.visibility = View.GONE
+        binding.contentMain.navHostDual.visibility = View.GONE
+        binding.contentMain.viewSeparator.visibility = View.GONE
         if (isCurrentScreenStorage()) {
             mainViewModel.refreshLayout(Pane.SINGLE)
         }
@@ -326,7 +326,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     private fun switchToHomeScreen() {
-        bottom_navigation.selectedItemId = R.id.navigation_home
+        binding.bottomNavigation.selectedItemId = R.id.navigation_home
     }
 
     private fun onDualPaneBackPress(focusedFragment: DualPaneFragment) {
@@ -414,11 +414,11 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     private fun showUpdateBadge() {
-        bottom_navigation.getOrCreateBadge(R.id.navigation_settings)
+        binding.bottomNavigation.getOrCreateBadge(R.id.navigation_settings)
     }
 
     private fun removeUpdateBadge() {
-        bottom_navigation.removeBadge(R.id.navigation_settings)
+        binding.bottomNavigation.removeBadge(R.id.navigation_settings)
     }
 
     private fun getCurrentFragment(): Fragment? {

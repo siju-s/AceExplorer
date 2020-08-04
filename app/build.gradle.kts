@@ -16,8 +16,6 @@ plugins {
 }
 
 android {
-    compileSdkVersion(AndroidSdk.compile)
-
     signingConfigs {
         if (rootProject.file("keystore.properties").exists()) {
             val signingRelease = Properties()
@@ -34,6 +32,7 @@ android {
     defaultConfig {
         applicationId = AndroidSdk.applicationId
         minSdkVersion(AndroidSdk.min)
+        compileSdkVersion(AndroidSdk.compile)
         targetSdkVersion(AndroidSdk.target)
         versionCode = rootProject.extra["versionCode"] as Int
         versionName = rootProject.extra["versionName"] as String
@@ -90,6 +89,10 @@ android {
     }
     lintOptions {
         isAbortOnError = false
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     sonarqube {

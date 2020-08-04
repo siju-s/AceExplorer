@@ -29,6 +29,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
+import com.siju.acexplorer.databinding.HomescreenBinding
 import com.siju.acexplorer.home.viewmodel.HomeViewModel
 import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.groups.Category
@@ -36,10 +37,6 @@ import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.theme.Theme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.home_categories.*
-import kotlinx.android.synthetic.main.home_storage.*
-import kotlinx.android.synthetic.main.homescreen.*
-import kotlinx.android.synthetic.main.toolbar.*
 
 private const val TAG = "HomeScreenFragment"
 
@@ -52,17 +49,21 @@ class HomeScreenFragment : Fragment() {
     private lateinit var storageAdapter: HomeStorageAdapter
     private lateinit var adView: AdsView
 
+    private var _binding: HomescreenBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.homescreen, container, false)
+        _binding = HomescreenBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         setHasOptionsMenu(true)
-        adView = AdsView(container)
+        adView = AdsView(binding.container)
         lifecycle.addObserver(adView)
 
         setupToolbar()
@@ -71,6 +72,7 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun setupToolbar() {
+        val toolbar = binding.appBar.toolbar.toolbar
         toolbar.title = resources.getString(R.string.app_name)
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
     }
@@ -78,7 +80,7 @@ class HomeScreenFragment : Fragment() {
     private fun initList() {
         setupCategoriesList()
         setupStorageList()
-        editButton.setOnClickListener {
+        binding.category.editButton.setOnClickListener {
             showCategoryEditScreen()
         }
     }
@@ -133,6 +135,7 @@ class HomeScreenFragment : Fragment() {
         })
         mainViewModel.theme.observe(viewLifecycleOwner, Observer {
             it?.apply {
+                val editButton = binding.category.editButton
                 if (Theme.isDarkColoredTheme(resources, this)) {
                     editButton.setImageResource(R.drawable.ic_rename_white)
                 }
@@ -153,7 +156,7 @@ class HomeScreenFragment : Fragment() {
 
     private fun setupCategoriesList() {
         Log.d(TAG, "setupCategoriesList")
-        categoryList.isNestedScrollingEnabled = true
+        binding.category.categoryList.isNestedScrollingEnabled = true
         categoryAdapter = HomeLibAdapter {
             homeViewModel.onCategoryClick(it.category)
         }
@@ -162,6 +165,7 @@ class HomeScreenFragment : Fragment() {
 
     private fun setupStorageList() {
         Log.d(TAG, "setupStorageList")
+        val storageList = binding.storage.storageList
         storageList.isNestedScrollingEnabled = true
         storageAdapter = HomeStorageAdapter { storageItem ->
             loadList(storageItem.path, storageItem.category)
@@ -173,8 +177,10 @@ class HomeScreenFragment : Fragment() {
         val gridColumns = homeViewModel.getCategoryGridColumns()
         Log.d(TAG, "gridColumns$gridColumns")
         val gridLayoutManager = GridLayoutManager(context, gridColumns)
-        categoryList.layoutManager = gridLayoutManager
-        categoryList.adapter = categoryAdapter
+        binding.category.categoryList.apply {
+            layoutManager = gridLayoutManager
+            adapter = categoryAdapter
+        }
     }
 
     private fun loadList(path: String?, category: Category) {
@@ -232,5 +238,6 @@ class HomeScreenFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         lifecycle.removeObserver(adView)
+        _binding = null
     }
 }
