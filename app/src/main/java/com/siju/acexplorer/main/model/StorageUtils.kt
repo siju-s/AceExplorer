@@ -222,7 +222,7 @@ object StorageUtils {
 
 
         companion object {
-
+            @JvmStatic
             fun getStorageText(context: Context, storageType: StorageType): String {
                 return when (storageType) {
                     ROOT     -> context.getString(R.string.nav_menu_root)

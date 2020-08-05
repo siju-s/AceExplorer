@@ -2,15 +2,11 @@ package com.siju.acexplorer.home.view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.siju.acexplorer.R
 import com.siju.acexplorer.databinding.StorageItemBinding
 import com.siju.acexplorer.main.model.StorageItem
-import com.siju.acexplorer.main.model.StorageUtils
-import java.util.*
 
 
 class HomeStorageAdapter(private val clickListener: (StorageItem) -> Unit) : ListAdapter<StorageItem,
@@ -29,23 +25,10 @@ class HomeStorageAdapter(private val clickListener: (StorageItem) -> Unit) : Lis
     class ViewHolder constructor(private val binding: StorageItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: StorageItem, clickListener: (StorageItem) -> Unit) {
-            setStorageNameText(binding.textStorageName, item)
-            binding.textStorageSpace.text = item.secondLine
-            val progress = item.progress
-            binding.progressBarSD.progress = progress
-            binding.textProgress.text = String.format(Locale.getDefault(), itemView.context.getString(R.string.storage_progress_percent), progress, progress)
+            binding.item = item
             itemView.tag = item.path
             itemView.setOnClickListener { clickListener(item) }
-        }
-
-        private fun setStorageNameText(storageNameText: TextView, storageItem: StorageItem) {
-            val storageType = storageItem.storageType
-
-            if (storageType == StorageUtils.StorageType.EXTERNAL) {
-                storageNameText.text = storageItem.name
-            } else {
-                storageNameText.text = StorageUtils.StorageType.getStorageText(itemView.context, storageType)
-            }
+            binding.executePendingBindings()
         }
     }
 

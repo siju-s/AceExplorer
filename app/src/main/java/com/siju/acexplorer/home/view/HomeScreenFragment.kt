@@ -156,17 +156,13 @@ class HomeScreenFragment : Fragment() {
 
     private fun setupCategoriesList() {
         Log.d(TAG, "setupCategoriesList")
-        binding.category.categoryList.isNestedScrollingEnabled = true
-        categoryAdapter = HomeLibAdapter {
-            homeViewModel.onCategoryClick(it.category)
-        }
+        categoryAdapter = HomeLibAdapter(homeViewModel)
         setupCategoryAdapter()
     }
 
     private fun setupStorageList() {
         Log.d(TAG, "setupStorageList")
         val storageList = binding.storage.storageList
-        storageList.isNestedScrollingEnabled = true
         storageAdapter = HomeStorageAdapter { storageItem ->
             loadList(storageItem.path, storageItem.category)
         }

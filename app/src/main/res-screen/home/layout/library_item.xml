@@ -14,60 +14,78 @@
   ~ limitations under the License.
   -->
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="@dimen/home_library_width"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="@dimen/storage_card_margin_start"
-    android:layout_marginTop="@dimen/storage_card_margin_top"
-    android:layout_marginEnd="@dimen/storage_card_margin_start"
-    android:layout_marginBottom="@dimen/storage_card_margin_top"
-    card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="8dp">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <data>
+        <variable
+            name="item"
+            type="com.siju.acexplorer.home.types.HomeLibraryInfo" />
+        <import
+            type="com.siju.acexplorer.main.model.groups.CategoryHelper" />
+        <import type="androidx.core.content.ContextCompat"/>
+        <variable
+            name="viewModel"
+            type="com.siju.acexplorer.home.viewmodel.HomeViewModel" />
+    </data>
 
-        <ImageView
-            android:id="@+id/imageLibrary"
-            android:layout_width="@dimen/home_library_width"
-            android:layout_height="@dimen/home_library_height"
-            android:background="@drawable/ic_shape_rectangle"
-            android:contentDescription="@string/img_accessibility_icon_lib"
-            android:scaleType="center"
-            app:srcCompat="@drawable/ic_library_images" />
+    <androidx.cardview.widget.CardView
+        android:layout_width="@dimen/home_library_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/storage_card_margin_start"
+        android:layout_marginTop="@dimen/storage_card_margin_top"
+        android:layout_marginEnd="@dimen/storage_card_margin_start"
+        android:layout_marginBottom="@dimen/storage_card_margin_top"
+        card_view:cardCornerRadius="8dp"
+        android:onClick="@{() -> viewModel.onCategoryClick(item.category)}"
+        card_view:cardElevation="8dp">
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@id/imageLibrary"
-            android:layout_marginStart="@dimen/padding_5"
-            android:background="@null"
-            android:contentDescription="@string/msg_ok"
-            android:scaleType="center"
-            android:visibility="gone"
-            app:srcCompat="@drawable/ic_done_white" />
+        <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/textLibrary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageLibrary"
-            android:layout_centerHorizontal="true"
-            android:maxLines="1"
-            tools:text="@string/nav_menu_image" />
+            <ImageView
+                android:id="@+id/imageLibrary"
+                android:layout_width="@dimen/home_library_width"
+                android:layout_height="@dimen/home_library_height"
+                android:background="@drawable/ic_shape_rectangle"
+                android:contentDescription="@string/img_accessibility_icon_lib"
+                android:src="@{ContextCompat.getDrawable(context, item.resourceId)}"
+                android:scaleType="center" />
 
-        <TextView
-            android:id="@+id/textCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textLibrary"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/home_library_count_margin_bottom"
-            android:textSize="@dimen/library_count_font_size"
-            tools:text="5" />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/imageLibrary"
+                android:layout_marginStart="@dimen/padding_5"
+                android:background="@null"
+                android:contentDescription="@string/msg_ok"
+                android:scaleType="center"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_done_white" />
 
-    </RelativeLayout>
-</androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/textLibrary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageLibrary"
+                android:layout_centerHorizontal="true"
+                android:maxLines="1"
+                android:text="@{CategoryHelper.INSTANCE.getCategoryName(context, item.category)}"
+                tools:text="@string/nav_menu_image" />
+
+            <TextView
+                android:id="@+id/textCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textLibrary"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="@dimen/home_library_count_margin_bottom"
+                android:textSize="@dimen/library_count_font_size"
+                android:text="@{String.valueOf(item.count)}"
+                tools:text="5" />
+
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+</layout>
