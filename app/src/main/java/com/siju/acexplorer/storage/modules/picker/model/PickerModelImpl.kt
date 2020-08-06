@@ -57,6 +57,9 @@ class PickerModelImpl @Inject constructor(): PickerModel {
             PickerType.FILE -> {
                 listener?.onFilePicker(StorageUtils.internalStorage)
             }
+            PickerType.GET_CONTENT -> {
+                listener?.onContentIntentPicker(StorageUtils.internalStorage)
+            }
             PickerType.COPY -> {
                 listener?.onCopyPicker()
             }
@@ -119,6 +122,7 @@ class PickerModelImpl @Inject constructor(): PickerModel {
                 putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, ringtoneType)
                 putExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI, uri)
                 data = uri
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
             saveLastRingtoneDir(File(path).parent)
             listener?.onPickerResultAction(PickerResultAction(PickerAction.RINGTONE_PICK, true, intent))
@@ -127,7 +131,9 @@ class PickerModelImpl @Inject constructor(): PickerModel {
 
     override fun onFileSelected(filePath: String?) {
         val intent = Intent()
-        intent.data = UriHelper.createContentUri(context, filePath)
+        val uri = UriHelper.createContentUri(context, filePath)
+        intent.data = uri
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         listener?.onPickerResultAction(PickerResultAction(PickerAction.FILE_PICK, true, intent))
     }
 

@@ -26,9 +26,11 @@ import com.siju.acexplorer.settings.SettingsPreferenceFragment
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.view.PickerFragment
 import com.siju.acexplorer.theme.Theme
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val FRAGMENT_TAG = "Browse_Frag"
 
+@AndroidEntryPoint
 class TransparentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,17 +49,23 @@ class TransparentActivity : AppCompatActivity() {
     }
 
     private fun handleIntent(intent: Intent?) {
-        if (intent?.action != null) {
-            when (intent.action) {
-                RingtoneManager.ACTION_RINGTONE_PICKER -> showPickerDialog(intent, PickerType.RINGTONE)
-                Intent.ACTION_GET_CONTENT -> showPickerDialog(intent, PickerType.FILE)
-            }
+        if (intent == null || intent.action == null) {
+            return
+        }
+        when (intent.action) {
+            RingtoneManager.ACTION_RINGTONE_PICKER -> showRingtonePickerDialog(intent)
+            Intent.ACTION_GET_CONTENT -> showFilePickerDialog()
         }
     }
 
-    private fun showPickerDialog(intent: Intent, pickerType: PickerType) {
-        val dialogFragment = PickerFragment.newInstance(checkTheme(), pickerType,
+    private fun showRingtonePickerDialog(intent: Intent) {
+        val dialogFragment = PickerFragment.newInstance(checkTheme(), PickerType.RINGTONE,
                 intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, 0))
+        dialogFragment.show(supportFragmentManager, FRAGMENT_TAG)
+    }
+
+    private fun showFilePickerDialog() {
+        val dialogFragment = PickerFragment.newInstance(checkTheme(), PickerType.GET_CONTENT)
         dialogFragment.show(supportFragmentManager, FRAGMENT_TAG)
     }
 

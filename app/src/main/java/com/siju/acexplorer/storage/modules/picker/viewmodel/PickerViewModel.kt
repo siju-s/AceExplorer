@@ -116,6 +116,11 @@ class PickerViewModel @ViewModelInject constructor(val model: PickerModel) : Vie
         _currentPath.value = path
     }
 
+    override fun onContentIntentPicker(path: String) {
+        _pickerInfo.value  = Triple(PickerType.GET_CONTENT, path, 0)
+        _currentPath.value = path
+    }
+
     override fun onCopyPicker() {
         _pickerInfo.value = Triple(PickerType.COPY, null, 0)
     }
@@ -140,7 +145,7 @@ class PickerViewModel @ViewModelInject constructor(val model: PickerModel) : Vie
                 PickerType.RINGTONE -> {
                     model.onRingtoneSelected(filePath, pickerInfo.value?.third)
                 }
-                PickerType.FILE     -> {
+                PickerType.FILE, PickerType.GET_CONTENT     -> {
                     model.onFileSelected(filePath)
                 }
                 else -> {}

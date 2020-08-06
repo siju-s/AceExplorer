@@ -30,5 +30,6 @@ interface PickerModel {
         fun onFilePicker(path: String)
         fun onCopyPicker()
         fun onCutPicker()
+        fun onContentIntentPicker(path: String)
     }
 }

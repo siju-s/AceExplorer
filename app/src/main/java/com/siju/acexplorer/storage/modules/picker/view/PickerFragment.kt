@@ -212,6 +212,9 @@ class PickerFragment : DialogFragment() {
                     PickerType.FILE -> {
                         setupFilePicker()
                     }
+                    PickerType.GET_CONTENT -> {
+                        setupContentPicker()
+                    }
                     PickerType.NONE -> {
                         setTitle(getString(R.string.dialog_title_browse))
                     }
@@ -374,6 +377,13 @@ class PickerFragment : DialogFragment() {
     private fun setupFilePicker() {
         Analytics.logger.pickerShown(false)
         setTitle(getString(R.string.dialog_title_browse))
+    }
+
+    private fun setupContentPicker() {
+        Analytics.logger.pickerShown(false)
+        setTitle(getString(R.string.dialog_title_browse))
+        okButton.visibility = View.GONE
+        cancelButton.visibility = View.GONE
     }
 
     private fun setTitle(title: String) {
