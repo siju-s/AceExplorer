@@ -70,7 +70,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         when (holder) {
             is HeaderViewHolder -> {
                 val item = getItem(position) as RecentTimeData.RecentDataItem.Header
-                holder.bind(item.headerType, item.count, multiSelectionHelper?.hasSelectedItems(),
+                holder.bind(item.headerType, item.firstItemDate, item.count, multiSelectionHelper?.hasSelectedItems(),
                         multiSelectionHelper?.isCompleteRecentHeaderSelected(item.headerType, item.count),
                         position,
                         imageClickListener)
@@ -272,10 +272,10 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         private var countText: TextView = itemView.findViewById(R.id.countText)
         private var imageSelection : ImageView = itemView.findViewById(R.id.imageSelection)
 
-        fun bind(headerType: RecentTimeData.HeaderType, count: Int, hasSelectedItems: Boolean?,
+        fun bind(headerType: RecentTimeData.HeaderType, firstItemDate : Long, count: Int, hasSelectedItems: Boolean?,
                  headerItemsChecked: Boolean?, position: Int, imageClickListener: (Int, Boolean) -> Unit) {
             Log.d("RecentAdapter", "bindHeader:type:$headerType, itemChecked:$headerItemsChecked, count:$count")
-            dateText.text = RecentTimeData.getHeaderName(itemView.context, headerType)
+            dateText.text = RecentTimeData.getHeaderName(itemView.context, headerType, firstItemDate)
             countText.text = itemView.context.resources.getQuantityString(R.plurals.number_of_files, count, count)
 
             if (hasSelectedItems == true) {

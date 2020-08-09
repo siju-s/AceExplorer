@@ -1,7 +1,6 @@
 package com.siju.acexplorer.storage.model
 
 import android.content.Context
-import android.util.Log
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.helper.DateUtils
@@ -12,7 +11,8 @@ object RecentTimeData {
         TODAY,
         YESTERDAY,
         THIS_WEEK,
-        THIS_MONTH;
+        THIS_MONTH,
+        REMAINING;
     }
 
     fun getRecentTimeData(fileList: ArrayList<FileInfo>): ArrayList<RecentDataItem> {
@@ -24,12 +24,12 @@ object RecentTimeData {
                 DateUtils.isYesterday(date) -> mapRecentData(dataMap, file, HeaderType.YESTERDAY)
                 DateUtils.isThisWeek(date) -> mapRecentData(dataMap, file, HeaderType.THIS_WEEK)
                 DateUtils.isThisMonth(date) -> mapRecentData(dataMap, file, HeaderType.THIS_MONTH)
+                else                        -> mapRecentData(dataMap, file, HeaderType.REMAINING)
             }
         }
         val recentData = ArrayList<RecentDataItem>()
         for ((headerType, itemList) in dataMap) {
-            Log.d("RecentTimeData", "map: $headerType = ${itemList.size}")
-            recentData.add(RecentDataItem.Header(headerType, itemList.size))
+            recentData.add(RecentDataItem.Header(headerType, itemList.size, itemList[0].date * 1000))
             for (item in itemList) {
                 recentData.add(RecentDataItem.Item(headerType, item))
             }
@@ -48,12 +48,15 @@ object RecentTimeData {
         }
     }
 
-    fun getHeaderName(context: Context, headerType: HeaderType): String {
+    fun getHeaderName(context: Context, headerType: HeaderType, dateMs : Long): String {
         return when (headerType) {
             HeaderType.TODAY -> context.getString(R.string.recent_today)
             HeaderType.YESTERDAY -> context.getString(R.string.recent_yesterday)
             HeaderType.THIS_WEEK -> context.getString(R.string.recent_this_week)
             HeaderType.THIS_MONTH -> context.getString(R.string.recent_this_month)
+            HeaderType.REMAINING -> {
+                DateUtils.getMonthYear(dateMs)
+            }
         }
     }
 
@@ -65,7 +68,7 @@ object RecentTimeData {
                 get() = fileInfo.filePath
         }
 
-        data class Header(val headerType: HeaderType, val count: Int) : RecentDataItem() {
+        data class Header(val headerType: HeaderType, val count: Int, val firstItemDate : Long) : RecentDataItem() {
             override val id: String
                 get() = headerType.name
         }

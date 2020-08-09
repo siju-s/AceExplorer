@@ -8,7 +8,7 @@ import com.siju.acexplorer.main.model.helper.FileUtils.isApk
 import com.siju.acexplorer.main.model.helper.SortHelper
 import java.util.*
 
-private const val MAX_RECENT_DAYS_IN_SECONDS = (7 * 24 * 3600).toLong() // 7 days
+private const val MAX_RECENT_DAYS_IN_SECONDS = (14 * 24 * 3600).toLong() // 14 days
 
 object RecentUtils {
 
