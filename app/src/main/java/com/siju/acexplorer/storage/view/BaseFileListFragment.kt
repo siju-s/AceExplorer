@@ -18,10 +18,7 @@ package com.siju.acexplorer.storage.view
 
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -134,7 +131,8 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             floatingView = FloatingView(view, this)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
             val appbarView = getAppBarView(it) ?: return
-            menuControls = MenuControls(this, view, appbarView, category, viewMode)
+            menuControls = MenuControls(this, view, appbarView, category, viewMode, mainViewModel)
+            fileListViewModel.setFilePickerArgs(mainViewModel.isFilePicker(), mainViewModel.isPickerMultiSelection())
             setupMultiSelection()
             setupNavigationView()
             initObservers()
@@ -203,6 +201,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                 path = bundle.path
                 category =  bundle.category
                 showNavigation = bundle.showNavigation
+                Log.d(TAG, "getArgs: category:$category")
             }
             else {
                 val bundle = DualPaneFragmentArgs.fromBundle(args)
@@ -303,7 +302,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
         fileListViewModel.showFab.observe(viewLifecycleOwner, Observer { showFab ->
             Log.d(TAG, "fab:$showFab")
-            if (showFab) {
+            if (showFab && !mainViewModel.isFilePicker()) {
                 floatingView.showFab()
             }
             else {
@@ -313,12 +312,12 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
         fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, Observer {
             it?.apply {
-                viewFile(it.first, it.second)
+                onViewFileEvent(it)
             }
         })
 
         fileListViewModel.viewImageFileEvent.observe(viewLifecycleOwner, Observer {
-            ViewHelper.openImage(context, it.first, it.second)
+            onViewImageEvent(it.first, it.second)
         })
 
         fileListViewModel.viewMode.observe(viewLifecycleOwner, Observer {
@@ -519,8 +518,53 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         })
     }
 
+    private fun onViewFileEvent(it: Pair<String, String?>) {
+        if (mainViewModel.isFilePicker()) {
+            onPickerItemsSelected(arrayListOf(it.first))
+        } else {
+            viewFile(it.first, it.second)
+        }
+    }
+
+    private fun onViewImageEvent(data : ArrayList<FileInfo>, pos : Int) {
+        if (mainViewModel.isFilePicker()) {
+            onPickerItemsSelected(arrayListOf(data[pos].filePath))
+        }
+        else {
+            ViewHelper.openImage(context, data, pos)
+        }
+    }
+
+    private fun onPickerItemsSelected(paths : List<String?>) {
+        val context = context
+        context ?: return
+        val intent = Intent()
+        val uriList = arrayListOf<Uri>()
+        for (item in paths) {
+            val uri = UriHelper.createContentUri(context, item)
+            uri?.let { uriList.add(uri) }
+        }
+        val clipData = ClipData.newUri(context.contentResolver, "Ace", uriList[0])
+        if (uriList.size > 1) {
+            for (i in 1 until uriList.size) {
+                clipData.addItem(ClipData.Item(uriList[i]))
+            }
+        }
+        else {
+            intent.data = uriList[0]
+        }
+        intent.clipData = clipData
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        activity?.setResult(RESULT_OK, intent)
+        activity?.finish()
+    }
+
     override fun openPeekPopInfo(fileInfo: FileInfo, uri: Uri?) {
         InfoFragment.newInstance(activity?.supportFragmentManager, uri, fileInfo)
+    }
+
+    override fun isFilePickerMode(): Boolean {
+        return mainViewModel.isFilePicker()
     }
 
     private fun onActionModeStarted() {
@@ -734,6 +778,12 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                         showDeleteDialog(context, operationData.second)
                     }
                 }
+            }
+            Operations.PICKER -> {
+                val paths = operationData.second.map {
+                    it.filePath
+                }
+                onPickerItemsSelected(paths)
             }
             Operations.SHARE -> {
                 context?.let { ShareHelper.shareFiles(it, operationData.second, category) }

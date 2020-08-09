@@ -11,6 +11,7 @@ import com.siju.acexplorer.billing.repository.BillingRepository
 import com.siju.acexplorer.billing.repository.localdb.Premium
 import com.siju.acexplorer.home.view.CategoryMenuHelper
 import com.siju.acexplorer.home.view.MenuItemWrapper
+import com.siju.acexplorer.main.helper.SingleLiveEvent
 import com.siju.acexplorer.main.model.MainModelImpl
 import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
@@ -62,6 +63,14 @@ class MainViewModel @ViewModelInject constructor(private val permissionHelper: P
     get() = menuItemClicked
 
     val refreshData = MutableLiveData<Boolean>()
+
+    private var filePicker = false
+    private var pickerMultipleSelection = false
+
+    private val _navigateToRecent = SingleLiveEvent<Boolean>()
+
+    val navigateToRecent : SingleLiveEvent<Boolean>
+    get() = _navigateToRecent
 
 
     init {
@@ -192,5 +201,15 @@ class MainViewModel @ViewModelInject constructor(private val permissionHelper: P
     fun refreshData() {
         refreshData.value = true
     }
+
+    fun onFilePicker(multiSelection : Boolean) {
+       filePicker = true
+        pickerMultipleSelection = multiSelection
+        _navigateToRecent.value = true
+    }
+
+    fun isFilePicker() = filePicker
+
+    fun isPickerMultiSelection() = pickerMultipleSelection
 
 }

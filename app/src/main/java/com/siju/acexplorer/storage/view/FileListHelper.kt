@@ -21,4 +21,5 @@ interface FileListHelper {
     fun isActionModeActive() : Boolean
     fun refreshList()
     fun openPeekPopInfo(fileInfo: FileInfo, uri: Uri?)
+    fun isFilePickerMode(): Boolean
 }

@@ -182,6 +182,9 @@ class FileListViewModel @ViewModelInject constructor(private val storageModel: S
         get() = _navigationClicked
 
     val refreshData : LiveData<Boolean>
+    private var filePicker = false
+    private var multiSelectionPicker = false
+
 
     init {
         val model = storageModel as StorageModelImpl
@@ -473,7 +476,7 @@ class FileListViewModel @ViewModelInject constructor(private val storageModel: S
         val path = fileInfo.filePath
         Log.d(TAG, "onFileClicked:category:${fileInfo.category}, rootCategory:$category, path:$path")
         when {
-            isZipFile(path) -> openZipViewer(path)
+            isZipFile(path) -> onZipClicked(path, fileInfo.extension)
             zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
             CategoryHelper.isAnyImagesCategory(fileInfo.category) -> {
                 fileData.value?.let {
@@ -495,7 +498,7 @@ class FileListViewModel @ViewModelInject constructor(private val storageModel: S
             onDirectoryClicked(fileInfo, position)
         } else {
             when {
-                isZipFile(path) -> openZipViewer(path)
+                isZipFile(path) -> onZipClicked(path, fileInfo.extension)
                 zipPresenter.isZipMode -> zipViewer?.onFileClicked(position)
                 CategoryHelper.isAnyImagesCategory(fileInfo.category) -> {
                     recentFileData.value?.let {
@@ -522,10 +525,15 @@ class FileListViewModel @ViewModelInject constructor(private val storageModel: S
         return !zipPresenter.isZipMode && path.toLowerCase(Locale.ROOT).endsWith(ZIP_EXT)
     }
 
-    private fun openZipViewer(path: String?) {
+    private fun onZipClicked(path: String?, extension: String? = null) {
         path?.let {
-            zipPresenter.isZipMode = true
-            _openZipViewerEvent.value = Pair(it, zipPresenter.zipCallback)
+            if (filePicker) {
+                _viewFileEvent.postValue(Pair(path, extension))
+            }
+            else {
+                zipPresenter.isZipMode = true
+                _openZipViewerEvent.value = Pair(it, zipPresenter.zipCallback)
+            }
         }
     }
 
@@ -586,7 +594,7 @@ class FileListViewModel @ViewModelInject constructor(private val storageModel: S
         return null
     }
 
-    private fun canLongPress() = !zipPresenter.isZipMode
+    private fun canLongPress() = !zipPresenter.isZipMode || multiSelectionPicker
 
     private fun addNavigation(path: String?, category: Category) {
         setupNavigation(path, category)
@@ -891,6 +899,11 @@ class FileListViewModel @ViewModelInject constructor(private val storageModel: S
         }
     }
 
+    fun setFilePickerArgs(value: Boolean, multiSelection: Boolean) {
+        filePicker = value
+        multiSelectionPicker = multiSelection
+    }
+
     val apkDialogListener = object : DialogHelper.ApkDialogListener {
 
         override fun onInstallClicked(path: String?) {
@@ -903,7 +916,7 @@ class FileListViewModel @ViewModelInject constructor(private val storageModel: S
         }
 
         override fun onOpenApkClicked(path: String?) {
-            openZipViewer(path)
+            onZipClicked(path)
         }
     }
 

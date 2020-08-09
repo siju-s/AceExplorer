@@ -364,6 +364,10 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
 
     }
 
+    override fun isFilePickerMode(): Boolean {
+        return false
+    }
+
     private fun getScrollInfo(): ScrollInfo {
         val view = filesList.getChildAt(0)
         val offset = view?.top ?: 0

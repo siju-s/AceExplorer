@@ -39,6 +39,7 @@ import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.install.model.ActivityResult
 import com.kobakei.ratethisapp.RateThisApp
 import com.siju.acexplorer.R
+import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.databinding.ActivityMainBinding
 import com.siju.acexplorer.extensions.isLandscape
@@ -86,13 +87,26 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         setupNavController()
 
         mainViewModel.checkPermissions()
-
+        handleIntent(intent)
         setTabColor()
         initObservers()
         initListeners()
         updateChecker = UpdateChecker(applicationContext, this, updateCallback)
         setupPremiumUtils()
         checkIfInAppShortcut(intent)
+    }
+
+    private fun handleIntent(intent: Intent?) {
+        intent ?: return
+        if (intent.action == Intent.ACTION_GET_CONTENT) {
+            hideTabs()
+            Analytics.logger.filePickerShown()
+            mainViewModel.onFilePicker(intent.getBooleanExtra(Intent.EXTRA_ALLOW_MULTIPLE, false))
+        }
+    }
+
+    private fun hideTabs() {
+        binding.bottomNavigation.visibility = View.GONE
     }
 
     private fun setupNavController() {
@@ -180,7 +194,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     private fun checkIfInAppShortcut(intent: Intent?) {
-        if (intent == null || intent.action == null) {
+        if (intent == null || intent.action == null || intent.action == Intent.ACTION_GET_CONTENT) {
             return
         }
         val category = when (intent.action) {

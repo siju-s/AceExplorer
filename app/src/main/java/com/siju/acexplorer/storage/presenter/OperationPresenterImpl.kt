@@ -127,6 +127,9 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             R.id.action_select_all -> {
                 onSelectAllClicked()
             }
+            R.id.action_done -> {
+                onDoneClicked()
+            }
 
             R.id.action_cancel -> {
                 onCancelClicked()
@@ -136,6 +139,24 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
                 onCreateFolderForPasteClicked()
             }
         }
+    }
+
+    private fun onDoneClicked() {
+        Analytics.logger.operationClicked(Analytics.Logger.EV_FILE_PICKER)
+        val files = arrayListOf<FileInfo>()
+        val selectedItems = multiSelectionHelper.selectedItems
+        for (i in 0 until selectedItems.size()) {
+            val index = selectedItems.keyAt(i)
+            val fileInfo =  if (RecentTimeHelper.isRecentTimeLineCategory(category)) {
+                RecentDataConverter.getRecentItemList(viewModel.recentFileData.value?.second)[index]
+            }
+            else {
+                viewModel.fileData.value?.get(index)
+            }
+            fileInfo?.let { files.add(it) }
+        }
+        viewModel.endActionMode()
+        _multiSelectionOperationData.value = Pair(Operations.PICKER, files)
     }
 
     private fun onCancelClicked() {

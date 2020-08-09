@@ -65,6 +65,13 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         pagerAdapter = CategoryPagerAdapter(this)
         setupAdapter()
         setupTabWithPager()
+        checkIfFilePicker()
+    }
+
+    private fun checkIfFilePicker() {
+        if (mainViewModel.isFilePicker()) {
+            toolbar.menu.findItem(R.id.action_search).isVisible = false
+        }
     }
 
     private fun setupToolbar() {

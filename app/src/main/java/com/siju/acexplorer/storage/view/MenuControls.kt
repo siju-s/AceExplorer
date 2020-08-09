@@ -17,6 +17,7 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfAnyMusicCateg
 import com.siju.acexplorer.main.model.groups.CategoryHelper.shouldShowSort
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.root.RootUtils
+import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.theme.Theme
 
@@ -24,7 +25,7 @@ import com.siju.acexplorer.theme.Theme
 private const val TAG = "MenuControls"
 
 class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryFragmentView: View,
-                   val category: Category, var viewMode: ViewMode) :
+                   val category: Category, var viewMode: ViewMode, val mainViewModel: MainViewModel) :
         Toolbar.OnMenuItemClickListener, SearchView.OnQueryTextListener {
 
     private val bottomToolbar: Toolbar = view.findViewById(R.id.toolbar_bottom)
@@ -66,7 +67,9 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         Log.d(TAG, "onStartActionMode")
         setupActionModeToolbar()
         setupActionModeMenu()
-        showBottomToolbar()
+        if (!mainViewModel.isFilePicker()) {
+            showBottomToolbar()
+        }
     }
 
     private fun setupActionModeMenu() {
@@ -117,6 +120,9 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         toolbar.setNavigationIcon(R.drawable.ic_back_white)
         toolbar.inflateMenu(R.menu.action_mode)
         toolbar.setOnMenuItemClickListener(this)
+        if (mainViewModel.isPickerMultiSelection()) {
+            toolbar.menu.findItem(R.id.action_done).isVisible = true
+        }
         toolbar.setNavigationOnClickListener {
             fragment.onBackPressed()
         }
@@ -178,7 +184,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     private fun setupMenuItemVisibility() {
         Log.d(TAG, "setupMenuItemVisibility:$category")
-        searchItem.isVisible = true
+        searchItem.isVisible = !mainViewModel.isFilePicker()
         sortItem.isVisible = shouldShowSort(category)
         if (Category.APP_MANAGER == category || CategoryHelper.checkIfLibraryCategory(category)) {
             hiddenMenuItem?.isVisible = false
@@ -345,12 +351,6 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     fun setToolbarTitle(title: String) {
         toolbar.title = title
-    }
-
-    fun onPasteEnabled() {
-        bottomToolbar.visibility = View.VISIBLE
-        bottomToolbar.menu.clear()
-        bottomToolbar.inflateMenu(R.menu.action_mode_paste)
     }
 
     fun onViewModeChanged(viewMode: ViewMode) {

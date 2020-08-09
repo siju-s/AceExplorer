@@ -196,6 +196,10 @@ class GoogleAnalytics : Analytics.Logger {
         logEvent(Analytics.Logger.EV_PICKER, params)
     }
 
+    override fun filePickerShown() {
+        logEvent(Analytics.Logger.EV_FILE_PICKER)
+    }
+
     override fun enterPeekMode() {
         logEvent(Analytics.Logger.EV_PEEK)
     }

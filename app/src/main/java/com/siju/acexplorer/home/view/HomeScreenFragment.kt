@@ -49,6 +49,7 @@ class HomeScreenFragment : Fragment() {
     private lateinit var storageAdapter: HomeStorageAdapter
     private lateinit var adView: AdsView
 
+    private var searchItem: MenuItem? = null
     private var _binding: HomescreenBinding? = null
     private val binding get() = _binding!!
 
@@ -68,6 +69,7 @@ class HomeScreenFragment : Fragment() {
 
         setupToolbar()
         initList()
+        checkIfFilePicker()
         initObservers()
     }
 
@@ -102,6 +104,12 @@ class HomeScreenFragment : Fragment() {
             }
         })
 
+        mainViewModel.navigateToRecent.observe(viewLifecycleOwner, Observer {navigateToRecent ->
+            if (navigateToRecent == true) {
+                navigateToRecent()
+            }
+        })
+
         homeViewModel.categories.observe(viewLifecycleOwner, Observer { categoryList ->
             Log.d(TAG, "categories: ${categoryList.size}")
             categoryAdapter.submitList(categoryList)
@@ -122,7 +130,6 @@ class HomeScreenFragment : Fragment() {
         })
 
         homeViewModel.categoryData.observe(viewLifecycleOwner, Observer {
-            Log.d(TAG, "categorydata: ${it.first}, ${it.second}")
             categoryAdapter.notifyItemChanged(it.first, it.second)
             categoryAdapter.notifyDataSetChanged()
         })
@@ -146,6 +153,25 @@ class HomeScreenFragment : Fragment() {
         })
     }
 
+    private fun checkIfFilePicker() {
+        if (mainViewModel.isFilePicker()) {
+            onFilePicker()
+        }
+    }
+
+    private fun onFilePicker() {
+        hideSearch()
+        hideAds()
+    }
+
+    private fun navigateToRecent() {
+        loadCategory(null, Category.RECENT)
+    }
+
+    private fun hideSearch() {
+        searchItem?.isVisible = false
+    }
+
     private fun showAds() {
         adView.showAds()
     }
@@ -155,13 +181,11 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun setupCategoriesList() {
-        Log.d(TAG, "setupCategoriesList")
         categoryAdapter = HomeLibAdapter(homeViewModel)
         setupCategoryAdapter()
     }
 
     private fun setupStorageList() {
-        Log.d(TAG, "setupStorageList")
         val storageList = binding.storage.storageList
         storageAdapter = HomeStorageAdapter { storageItem ->
             loadList(storageItem.path, storageItem.category)
@@ -186,6 +210,7 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun loadCategory(path: String?, category: Category) {
+        Log.d(TAG, "loadCategory() called with: path = $path, category = $category")
         val action = if (isCategorySplitRequired(category)) {
             HomeScreenFragmentDirections.actionNavigationHomeToCategoryFragment(path, category)
         } else {
@@ -205,6 +230,10 @@ class HomeScreenFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.home, menu)
+        searchItem = menu.findItem(R.id.action_search)
+        if (mainViewModel.isFilePicker()) {
+            hideSearch()
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

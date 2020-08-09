@@ -38,6 +38,7 @@ object Analytics {
         fun openFile()
         fun openAsDialogShown()
         fun pickerShown(isRingtonePicker: Boolean)
+        fun filePickerShown()
         fun sendAnalytics(isSent: Boolean)
         fun logEvent(event: String, params: Bundle?)
         fun logEvent(event: String)
@@ -88,6 +89,7 @@ object Analytics {
             const val EV_PERMISSIONS = "Permissions_clicked"
             const val EV_PICKER = "Picker"
             const val EV_PEEK = "Peek"
+            const val EV_FILE_PICKER = "FilePicker"
         }
     }
 }

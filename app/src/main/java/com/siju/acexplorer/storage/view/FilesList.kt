@@ -176,7 +176,7 @@ class FilesList(private val fileListHelper: FileListHelper,
             }
 
             override fun canShowPeek(): Boolean {
-                return !fileListHelper.isActionModeActive() && viewMode != ViewMode.GALLERY
+                return !fileListHelper.isActionModeActive() && viewMode != ViewMode.GALLERY && !fileListHelper.isFilePickerMode()
             }
         })
     }
