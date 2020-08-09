@@ -8,14 +8,16 @@ import com.siju.acexplorer.main.model.helper.FileUtils.isApk
 import com.siju.acexplorer.main.model.helper.SortHelper
 import java.util.*
 
-private const val MAX_RECENT_DAYS_IN_SECONDS = (14 * 24 * 3600).toLong() // 14 days
+private const val MAX_RECENT_DAYS = 15 // 15 days
 
 object RecentUtils {
 
     fun getRecentTimeSelectionArgument(): String {
-        val currentTimeMs = System.currentTimeMillis() / 1000
-        val pastTime = currentTimeMs - MAX_RECENT_DAYS_IN_SECONDS
-        return MediaStore.Files.FileColumns.DATE_MODIFIED + " BETWEEN " + pastTime + " AND " + currentTimeMs
+        val currentTimeMs = Calendar.getInstance()
+        val pastDateCalendar = Calendar.getInstance()
+        pastDateCalendar.add(Calendar.DATE, -MAX_RECENT_DAYS)
+        pastDateCalendar.set(Calendar.HOUR_OF_DAY, 0)
+        return MediaStore.Files.FileColumns.DATE_MODIFIED + " BETWEEN " + pastDateCalendar.timeInMillis/1000 + " AND " + currentTimeMs.timeInMillis/1000
     }
 
     fun getImagesMediaType(): String {
