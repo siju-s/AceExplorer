@@ -66,6 +66,7 @@ private const val TAG = "AceActivity"
 private const val ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES"
 private const val ACTION_MUSIC = "android.intent.action.SHORTCUT_MUSIC"
 private const val ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS"
+private const val ACTION_RECENT = "android.intent.action.SHORTCUT_RECENT"
 private const val CRITERIA_INSTALL_NUM_DAYS = 10
 private const val CRITERIA_LAUNCH_TIMES = 25
 
@@ -194,6 +195,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     private fun checkIfInAppShortcut(intent: Intent?) {
+        Log.d(TAG, "checkIfInAppShortcut() called with: intent = ${intent?.action}")
         if (intent == null || intent.action == null || intent.action == Intent.ACTION_GET_CONTENT) {
             return
         }
@@ -201,6 +203,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
             ACTION_IMAGES -> Category.GENERIC_IMAGES
             ACTION_MUSIC ->  Category.GENERIC_MUSIC
             ACTION_VIDEOS -> Category.GENERIC_VIDEOS
+            ACTION_RECENT -> Category.RECENT
             else          -> Category.GENERIC_IMAGES
         }
         if (mainViewModel.permissionStatus.value is PermissionHelper.PermissionState.Granted) {
