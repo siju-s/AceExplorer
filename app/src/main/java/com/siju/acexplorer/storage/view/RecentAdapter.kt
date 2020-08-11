@@ -208,6 +208,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
                     imageIcon.visibility = View.GONE
                     imageGalleryThumb.visibility = View.VISIBLE
                     textFileName.visibility = View.VISIBLE
+                    textFileName.setBackgroundResource(R.color.gallery_item_text_background)
                 } else {
                     imageIcon.visibility = View.GONE
                     textFileName.visibility = View.GONE

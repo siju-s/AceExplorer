@@ -15,77 +15,86 @@
   ~ limitations under the License.
   -->
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="5dp">
+    android:layout_height="wrap_content"
+    android:padding="5dp">
 
     <ImageView
         android:id="@+id/imageIcon"
         android:layout_width="@dimen/folder_icon_grid"
         android:layout_height="@dimen/folder_icon_grid"
-        android:layout_centerHorizontal="true"
         android:scaleType="centerCrop"
-        tools:ignore="ContentDescription"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        tools:src="@drawable/ic_folder" />
 
     <ImageView
         android:id="@+id/imageVideoThumb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_video_thumb"
-        android:layout_alignStart="@id/imageIcon"
-        android:layout_alignEnd="@id/imageIcon"
-        android:layout_marginTop="@dimen/margin_20"
         android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_20"
+        android:src="@drawable/ic_video_thumb"
         android:visibility="gone"
-        tools:visibility="visible"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintEnd_toEndOf="@id/imageIcon"
+        app:layout_constraintStart_toStartOf="@id/imageIcon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/imageSelection"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@id/imageIcon"
-        android:src="@drawable/ic_select_checked_state"
         android:layout_marginStart="@dimen/selection_margin_start"
         android:layout_marginTop="@dimen/selection_margin_start"
+        android:src="@drawable/ic_select_checked_state"
         android:visibility="gone"
-        tools:visibility="visible"
-        tools:ignore="ContentDescription" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ContentDescription"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/textFolderName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageIcon"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="2dp"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="4"
-        android:textSize="14sp"/>
+        android:textSize="14sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageIcon"
+        tools:text="First line" />
 
     <!-- This will be no of files for directory & size for file respectively-->
     <TextView
         android:id="@+id/textSecondLine"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textFolderName"
-        android:layout_centerHorizontal="true"
         android:layout_marginTop="3dp"
         android:gravity="center"
         android:textAppearance="?attr/textAppearanceListItemSmall"
-        android:textSize="12sp"/>
-
+        android:textSize="12sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textFolderName"
+        tools:text="Second line" />
 
     <ImageView
         android:id="@+id/imageThumbIcon"
         android:layout_width="@dimen/folder_thumb_icon_grid"
         android:layout_height="@dimen/folder_thumb_icon_grid"
-        android:layout_alignBottom="@id/imageIcon"
-        android:layout_alignEnd="@+id/imageIcon"
         android:scaleType="centerCrop"
-        tools:ignore="ContentDescription"/>
+        app:layout_constraintBottom_toBottomOf="@id/imageIcon"
+        app:layout_constraintEnd_toEndOf="@+id/imageIcon"
+        tools:ignore="ContentDescription" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
