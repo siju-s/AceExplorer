@@ -76,7 +76,14 @@
         android:layout_marginEnd="@dimen/margin_16"
         app:singleSelection="true" />
 
-    <include layout="@layout/recent_search_container" />
+    <include
+        android:id="@+id/recentSearchContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_below="@id/commonSearchChipGroup"
+        layout="@layout/recent_search_container" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/filesList"

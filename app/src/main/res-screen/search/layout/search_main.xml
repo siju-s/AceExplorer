@@ -29,6 +29,8 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <include layout="@layout/search_content" />
+    <include
+        android:id="@+id/searchContainer"
+        layout="@layout/search_content" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

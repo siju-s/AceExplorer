@@ -10,8 +10,6 @@ import android.provider.SearchRecentSuggestions
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
-import android.widget.Button
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -21,7 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
-import com.siju.acexplorer.extensions.inflateLayout
+import com.siju.acexplorer.databinding.SearchMainBinding
 import com.siju.acexplorer.helper.KeyboardHelper
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
@@ -53,64 +51,59 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     private val fileListViewModel: FileListViewModel by viewModels()
 
     private lateinit var filesList: RecyclerView
-    private lateinit var searchSuggestions: SearchSuggestions
-    private lateinit var recentSearchContainer: LinearLayout
-    private lateinit var recentSearchList: RecyclerView
-    private lateinit var clearRecentButton: Button
     private lateinit var recentSearchAdapter: RecentSearchAdapter
+    private lateinit var searchSuggestions: SearchSuggestions
 
     private var fileListAdapter: FileListAdapter? = null
     private var searchView: SearchView? = null
-
+    private var binding : SearchMainBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflateLayout(R.layout.search_main, container)
+        binding = SearchMainBinding.inflate(inflater, container, false)
+        return binding!!.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setHasOptionsMenu(true)
 
-        view?.let {
+        binding?.let {
             setupUI(it)
             setupViewModel()
-            searchSuggestions = SearchSuggestions(it, this, fileListViewModel)
+            searchSuggestions = SearchSuggestions(binding!!, this, fileListViewModel)
             initObservers()
             loadData()
         }
     }
 
-    private fun setupUI(view: View) {
+    private fun setupUI(binding: SearchMainBinding) {
         setupToolbar()
-        initializeViews(view)
+        initializeViews(binding)
     }
 
     private fun setupToolbar() {
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
     }
 
-    private fun initializeViews(view: View) {
-        setupRecentSearch(view)
-        setupList(view)
+    private fun initializeViews(binding: SearchMainBinding) {
+        setupRecentSearch(binding)
+        setupList(binding)
     }
 
-    private fun setupRecentSearch(view: View) {
-        recentSearchContainer = view.findViewById(R.id.recentSearchContainer)
-        recentSearchList = view.findViewById(R.id.listRecentSearch)
-        clearRecentButton = view.findViewById(R.id.buttonClear)
+    private fun setupRecentSearch(binding: SearchMainBinding) {
         recentSearchAdapter = RecentSearchAdapter {
             hideRecentSearch()
             searchView?.setQuery(it, false)
         }
-        recentSearchList.adapter = recentSearchAdapter
-        clearRecentButton.setOnClickListener {
+        binding.searchContainer.recentSearchContainer.listRecentSearch.adapter = recentSearchAdapter
+        binding.searchContainer.recentSearchContainer.buttonClear.setOnClickListener {
             searchViewModel.clearRecentSearch()
             recentSearchAdapter.submitList(emptyList())
         }
     }
 
-    private fun setupList(view: View) {
-        filesList = view.findViewById(R.id.filesList)
+    private fun setupList(binding: SearchMainBinding) {
+        filesList = binding.searchContainer.filesList
         filesList.layoutManager = LinearLayoutManager(context)
         fileListAdapter = FileListAdapter(ViewMode.LIST, {
             handleItemClick(it.first, it.second)
@@ -235,15 +228,12 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     }
 
     private fun hideRecentSearch() {
-        if (recentSearchContainer.visibility != View.GONE) {
-            Log.d(TAG, "hideRecentSearch")
-            recentSearchContainer.visibility = View.GONE
-        }
+        binding!!.searchContainer.recentSearchContainer.root.visibility = View.GONE
     }
 
     private fun showRecentSearch() {
         Log.d(TAG, "showRecentSearch")
-        recentSearchContainer.visibility = View.VISIBLE
+        binding!!.searchContainer.recentSearchContainer.root.visibility = View.VISIBLE
     }
 
     private fun viewFile(path: String, extension: String?) {

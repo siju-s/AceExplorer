@@ -3,8 +3,7 @@ package com.siju.acexplorer.search.view
 import android.util.Log
 import android.view.View
 import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
-import com.siju.acexplorer.R
+import com.siju.acexplorer.databinding.SearchMainBinding
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.search.helper.SearchUtils
 import com.siju.acexplorer.search.types.ChipInfo
@@ -18,15 +17,15 @@ private const val DIRECTORY_TELEGRAM = "Telegram"
 
 private const val TAG = "SearchSuggestions"
 
-class SearchSuggestions(val view: View, private val fragment: SearchFragment, private val fileListViewModel: FileListViewModel) {
+class SearchSuggestions(val binding: SearchMainBinding, private val fragment: SearchFragment, private val fileListViewModel: FileListViewModel) {
 
-    private lateinit var chipRecent: Chip
-    private lateinit var chipAudio: Chip
-    private lateinit var chipVideos: Chip
-    private lateinit var chipImages: Chip
-    private lateinit var chipDocuments: Chip
-    private lateinit var folderChipGroup: ChipGroup
-    private lateinit var categoryChipGroup: ChipGroup
+    private val chipRecent = binding.searchContainer.chipRecent
+    private val chipAudio = binding.searchContainer.chipAudio
+    private val chipVideos = binding.searchContainer.chipVideos
+    private val chipImages = binding.searchContainer.chipImages
+    private val chipDocuments = binding.searchContainer.chipDocuments
+    private val folderChipGroup = binding.searchContainer.commonSearchChipGroup
+    private val categoryChipGroup = binding.searchContainer.categoriesChipGroup
 
     private var chipCamera: Chip? = null
     private var chipScreenshot: Chip? = null
@@ -37,21 +36,9 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
     private val checkedChipList = arrayListOf<Chip?>()
 
     init {
-        initializeViews()
         initCategoryChip()
         addCommonSearchItems()
         initChipListener()
-    }
-
-    private fun initializeViews() {
-        chipRecent = view.findViewById(R.id.chipRecent)
-        chipAudio = view.findViewById(R.id.chipAudio)
-        chipVideos = view.findViewById(R.id.chipVideos)
-        chipImages = view.findViewById(R.id.chipImages)
-        chipDocuments = view.findViewById(R.id.chipDocuments)
-
-        categoryChipGroup = view.findViewById(R.id.categoriesChipGroup)
-        folderChipGroup = view.findViewById(R.id.commonSearchChipGroup)
     }
 
     private fun initCategoryChip() {
@@ -93,7 +80,7 @@ class SearchSuggestions(val view: View, private val fragment: SearchFragment, pr
     }
 
     private fun createChip(name: String, path: String?): Chip {
-        val chip = Chip(view.context)
+        val chip = Chip(binding.root.context)
         chip.text = name
         chip.isClickable = true
         chip.isCheckable = true
