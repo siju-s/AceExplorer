@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,24 +7,22 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/search_main">
 
-
     <com.google.android.material.chip.Chip
         android:id="@+id/chipRecent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_16"
-        android:layout_marginTop="@dimen/margin_16"
         android:checkable="true"
-        android:text="@string/library_recent" />
+        android:text="@string/library_recent"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/categoriesChipGroup"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/chipRecent"
-        android:layout_marginStart="@dimen/margin_16"
-        android:layout_marginTop="@dimen/padding_10"
-        android:layout_marginEnd="@dimen/margin_16"
+        app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@id/chipRecent"
         app:singleLine="true"
         app:singleSelection="true">
 
@@ -68,29 +66,43 @@
 
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/commonSearchChipGroup"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/categoriesChipGroup"
-        android:layout_marginStart="@dimen/margin_16"
-        android:layout_marginTop="@dimen/padding_10"
-        android:layout_marginEnd="@dimen/margin_16"
+        app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/categoriesChipGroup"
         app:singleSelection="true" />
 
     <include
         android:id="@+id/recentSearchContainer"
-        android:layout_width="match_parent"
+        layout="@layout/recent_search_container"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_16"
-        android:layout_marginStart="@dimen/margin_16"
-        android:layout_below="@id/commonSearchChipGroup"
-        layout="@layout/recent_search_container" />
+        app:layout_constraintEnd_toEndOf="@id/guidelineRight"
+        app:layout_constraintStart_toStartOf="@id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/commonSearchChipGroup" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/filesList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/recentSearchContainer"
-        android:layout_marginTop="@dimen/margin_16"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/recentSearchContainer"
         tools:listitem="@layout/file_list_item" />
 
-</RelativeLayout>
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/margin_16" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/margin_16" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
