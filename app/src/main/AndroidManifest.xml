@@ -127,7 +127,7 @@
         </provider>
         <provider
             android:name=".search.model.SearchSuggestionProvider"
-            android:authorities="${applicationId}.fileprovider"
+            android:authorities="${applicationId}.SearchSuggestionProvider"
             android:exported="false" />
 
         <meta-data
