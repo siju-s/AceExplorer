@@ -69,133 +69,146 @@
         android:layout_height="wrap_content"
         android:fillViewport="true">
 
-        <TableLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
             android:layout_marginStart="@dimen/margin_16"
             android:layout_marginTop="@dimen/margin_16"
             android:layout_marginEnd="@dimen/margin_16">
 
-            <TableRow android:layout_weight="1">
+            <TextView
+                android:id="@+id/textFileNamePlaceholder"
+                style="@style/InfoItem"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:textStyle="bold"
+                android:text="@string/info_name"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textName"
+                app:layout_constraintEnd_toStartOf="@+id/textName"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_chainStyle="spread"
+                app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    android:id="@+id/textFileNamePlaceholder"
-                    style="@style/InfoItem"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
-                    android:gravity="end"
-                    android:text="@string/info_name"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textName"
+                style="@style/InfoItemDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="11dp"
+                android:textIsSelectable="true"
+                app:layout_constraintBottom_toTopOf="@+id/textPath"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/textFileNamePlaceholder"
+                tools:text="Name" />
 
-                <TextView
-                    android:id="@+id/textName"
-                    style="@style/InfoItemDetail"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_10"
-                    android:layout_weight="0.7"
-                    android:textIsSelectable="true"
-                    tools:text="/storage/0" />
-            </TableRow>
 
-            <TableRow
-                android:layout_marginTop="@dimen/info_item_margin_top"
-                android:layout_weight="1">
+            <TextView
+                android:id="@+id/textPathPlaceholder"
+                style="@style/InfoItem"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/path"
+                android:textStyle="bold"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textPath"
+                app:layout_constraintEnd_toStartOf="@+id/textPath"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    android:id="@+id/textPathPlaceholder"
-                    style="@style/InfoItem"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
-                    android:gravity="end"
-                    android:text="@string/path"
-                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/textPath"
-                    style="@style/InfoItemDetail"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_10"
-                    android:layout_weight="0.7"
-                    android:textIsSelectable="true"
-                    tools:text="/storage/0" />
-            </TableRow>
+            <TextView
+                android:id="@+id/textPath"
+                style="@style/InfoItemDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:textIsSelectable="true"
+                app:layout_constraintBottom_toTopOf="@+id/textFileSize"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/textPathPlaceholder"
+                tools:text="/storage/0" />
 
-            <TableRow
-                android:layout_marginTop="@dimen/info_item_margin_top"
-                android:layout_weight="1">
 
-                <TextView
-                    style="@style/InfoItem"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
-                    android:gravity="end"
-                    android:text="@string/size"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textSizeLabel"
+                style="@style/InfoItem"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/size"
+                android:textStyle="bold"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textFileSize"
+                app:layout_constraintEnd_toStartOf="@+id/textFileSize"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    android:id="@+id/textFileSize"
-                    style="@style/InfoItemDetail"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_10"
-                    android:layout_weight="0.7" />
+            <TextView
+                android:id="@+id/textFileSize"
+                style="@style/InfoItemDetail"
+                android:layout_width="0dp"
+                tools:text="100 kb"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                app:layout_constraintBottom_toTopOf="@+id/textDateModified"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/textSizeLabel" />
 
-            </TableRow>
 
-            <TableRow
-                android:layout_marginTop="@dimen/info_item_margin_top"
-                android:layout_weight="1">
+            <TextView
+                android:id="@+id/textDateLabel"
+                style="@style/InfoItem"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/date_modified"
+                android:textStyle="bold"
+                app:layout_constraintBaseline_toBaselineOf="@+id/textDateModified"
+                app:layout_constraintEnd_toStartOf="@+id/textDateModified"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent" />
 
-                <TextView
-                    style="@style/InfoItem"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
-                    android:gravity="end"
-                    android:text="@string/date_modified"
-                    android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textDateModified"
+                style="@style/InfoItemDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="11dp"
+                tools:text="1 Aug, 1970"
+                app:layout_constraintBottom_toTopOf="@+id/textResolution"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/textDateLabel" />
 
-                <TextView
-                    android:id="@+id/textDateModified"
-                    style="@style/InfoItemDetail"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_10"
-                    android:layout_weight="0.7" />
 
-            </TableRow>
+            <TextView
+                android:id="@+id/textResolutionPlaceholder"
+                style="@style/InfoItem"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/info_resolution"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/textResolution"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textDateLabel" />
 
-            <TableRow
-                android:layout_marginTop="@dimen/info_item_margin_top"
-                android:layout_weight="1">
+            <TextView
+                android:id="@+id/textResolution"
+                style="@style/InfoItemDetail"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                tools:text="1000 X 1000"
+                app:layout_constraintStart_toEndOf="@+id/textResolutionPlaceholder" />
 
-                <TextView
-                    android:id="@+id/textResolutionPlaceholder"
-                    style="@style/InfoItem"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.3"
-                    android:gravity="end"
-                    android:text="@string/info_resolution"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/textResolution"
-                    style="@style/InfoItemDetail"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/padding_10"
-                    android:layout_weight="0.7" />
-
-            </TableRow>
-
-        </TableLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 

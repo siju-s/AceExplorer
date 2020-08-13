@@ -3,6 +3,7 @@
     <style name="InfoItem">
         <item name="android:textSize">@dimen/text_12</item>
         <item name="fontFamily">sans-serif-medium</item>
+        <item name="android:maxLines">1</item>
     </style>
 
     <style name="InfoItemDetail">
