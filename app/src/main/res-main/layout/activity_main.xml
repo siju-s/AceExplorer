@@ -36,6 +36,7 @@
         app:itemTextColor="@drawable/selector_tab_tint"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/tab_background_color"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/content_main"
         app:menu="@menu/bottom_navigation_view" />

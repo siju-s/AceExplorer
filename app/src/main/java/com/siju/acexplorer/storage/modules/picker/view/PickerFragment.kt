@@ -19,7 +19,6 @@ package com.siju.acexplorer.storage.modules.picker.view
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
@@ -28,11 +27,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -50,7 +47,6 @@ import com.siju.acexplorer.storage.modules.picker.model.PickerResultAction
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.viewmodel.PickerViewModel
 import com.siju.acexplorer.storage.view.FileListAdapter
-import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.ScrollInfo
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import dagger.hilt.android.AndroidEntryPoint
@@ -124,11 +120,6 @@ class PickerFragment : DialogFragment() {
 
     private fun setupToolbar(view: View) {
         toolbar = view.findViewById(R.id.toolbar)
-        val pathContainer = view.findViewById<LinearLayout>(R.id.layoutFileNavigate)
-        context?.let {
-            val theme = Theme.getTheme(it)
-            setTheme(it, theme, pathContainer)
-        }
         (activity as AppCompatActivity?)?.setSupportActionBar(toolbar)
     }
 
@@ -391,17 +382,6 @@ class PickerFragment : DialogFragment() {
         actionBar?.title = title
     }
 
-    private fun setTheme(context: Context, theme: Theme, pathContainer: LinearLayout) {
-        val darkColoredTheme = Theme.isDarkColoredTheme(resources, theme)
-        if (darkColoredTheme) {
-            toolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
-            pathContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
-        } else {
-            toolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-            pathContainer.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-        }
-    }
-
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
         when (requestCode) {
@@ -465,6 +445,7 @@ class PickerFragment : DialogFragment() {
 
         fun newInstance(pickerType: PickerType, ringtoneType: Int = -1): PickerFragment {
             val dialogFragment = PickerFragment()
+            dialogFragment.setStyle(STYLE_NORMAL, R.style.BaseDeviceTheme)
             val args = Bundle()
             with(args) {
                 putSerializable(KEY_PICKER_TYPE, pickerType)

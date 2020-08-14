@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:visibility="gone"
+    android:background="@color/fab_bg"
     tools:showIn="@layout/main_list"
     tools:ignore="MergeRootFrame">
 

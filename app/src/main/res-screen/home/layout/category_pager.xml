@@ -33,6 +33,10 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/categoryTabs"
+        android:background="@color/tab_background_color"
+        app:tabIndicatorColor="@color/colorAccent"
+        app:tabTextColor="@color/tab_text_color"
+        app:tabSelectedTextColor="@color/tab_selected_text_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

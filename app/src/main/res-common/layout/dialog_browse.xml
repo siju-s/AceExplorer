@@ -39,6 +39,7 @@
         android:paddingStart="@dimen/padding_10"
         android:paddingEnd="@dimen/padding_10"
         android:minHeight="?attr/actionBarSize"
+        android:background="@color/tab_background_color"
         android:orientation="horizontal">
 
         <ImageButton

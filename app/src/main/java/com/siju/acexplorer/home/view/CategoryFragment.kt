@@ -61,7 +61,6 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         // on tab click only. Works fine on swipe. Verify with new versions of viewpager > 1.0
         viewPager.offscreenPageLimit = 2
         tabLayout = view.findViewById(R.id.categoryTabs)
-        setTabColor(tabLayout)
         pagerAdapter = CategoryPagerAdapter(this)
         setupAdapter()
         setupTabWithPager()
@@ -77,24 +76,6 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     private fun setupToolbar() {
         toolbar.inflateMenu(R.menu.filelist_base)
         toolbar.setOnMenuItemClickListener(this)
-    }
-
-    private fun setTabColor(tabLayout: TabLayout) {
-        val activity = activity
-        val context = context
-        context?.let {
-            if (activity is BaseActivity) {
-                val darkColoredTheme = Theme.isDarkColoredTheme(resources, activity.currentTheme)
-                if (darkColoredTheme) {
-                    tabLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
-                } else {
-                    tabLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-                    tabLayout.setTabTextColors(ContextCompat.getColor(context, R.color.tab_text_color),
-                            ContextCompat.getColor(context, R.color.tab_selected_text_color))
-                    tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(context, R.color.colorAccent))
-                }
-            }
-        }
     }
 
     override fun setToolbarTitle() {

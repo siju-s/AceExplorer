@@ -19,7 +19,6 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
 import com.siju.acexplorer.storage.model.RecentTimeData
 import com.siju.acexplorer.storage.model.ViewMode
-import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils
 
@@ -172,15 +171,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         }
 
         private fun onSelection(selected: Boolean?, position: Int, draggedPos: Int) {
-            val context = itemView.context
-            val color = if (Theme.isDarkColoredTheme(context.resources, Theme.getTheme(context))) {
-                ContextCompat.getColor(itemView.context,
-                        R.color.dark_actionModeItemSelected)
-            }
-            else   {
-                ContextCompat.getColor(itemView.context,
-                        R.color.actionModeItemSelected)
-            }
+            val color =  ContextCompat.getColor(itemView.context, R.color.actionModeItemSelected)
             when {
                 selected == true       -> {
                     itemView.setBackgroundColor(color)

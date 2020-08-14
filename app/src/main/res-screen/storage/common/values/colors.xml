@@ -2,4 +2,5 @@
 <resources>
     <color name="gallery_item_text_background">#30000000</color>
     <color name="bottom_toolbar_bg">@color/colorPrimary</color>
+    <color name="fab_bg">@color/whiteOverlay</color>
 </resources>

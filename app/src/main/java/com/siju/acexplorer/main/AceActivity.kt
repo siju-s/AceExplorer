@@ -89,7 +89,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
         mainViewModel.checkPermissions()
         handleIntent(intent)
-        setTabColor()
+//        setTabColor()
         initObservers()
         initListeners()
         updateChecker = UpdateChecker(applicationContext, this, updateCallback)
@@ -133,14 +133,14 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         binding.bottomNavigation.setOnNavigationItemReselectedListener(navigationItemReselectedListener)
     }
 
-    private fun setTabColor() {
-        val darkColoredTheme = Theme.isDarkColoredTheme(resources, currentTheme)
-        if (darkColoredTheme) {
-            binding.bottomNavigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.tab_bg_color))
-        } else {
-            binding.bottomNavigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorPrimary))
-        }
-    }
+//    private fun setTabColor() {
+//        val darkColoredTheme = Theme.isDarkColoredTheme(resources, currentTheme)
+//        if (darkColoredTheme) {
+//            binding.bottomNavigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.tab_bg_color))
+//        } else {
+//            binding.bottomNavigation.setBackgroundColor(ContextCompat.getColor(baseContext, R.color.colorPrimary))
+//        }
+//    }
 
     private fun initObservers() {
         mainViewModel.permissionStatus.observe(this, Observer { permissionStatus ->

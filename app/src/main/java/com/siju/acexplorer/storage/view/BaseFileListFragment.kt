@@ -247,12 +247,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        mainViewModel.theme.observe(viewLifecycleOwner, Observer {
-            if (::menuControls.isInitialized) {
-                floatingView.setTheme(it)
-            }
-        })
-
         fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {
             it?.apply {
                 if (::filesList.isInitialized) {

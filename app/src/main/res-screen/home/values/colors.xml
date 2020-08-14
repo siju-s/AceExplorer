@@ -3,4 +3,5 @@
     <!-- Colors for library items in Homescreen -->
     <color name="home_storage_card_bg_color">#80262626</color>
     <color name="home_card_image_bg">#595959</color>
+    <color name="home_edit_button_color">#77000000</color>
 </resources>

@@ -35,7 +35,6 @@ import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
-import com.siju.acexplorer.theme.Theme
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "HomeScreenFragment"
@@ -138,17 +137,6 @@ class HomeScreenFragment : Fragment() {
             it?.apply {
                 loadCategory(first, second)
                 homeViewModel.setCategoryClickEvent(null)
-            }
-        })
-        mainViewModel.theme.observe(viewLifecycleOwner, Observer {
-            it?.apply {
-                val editButton = binding.category.editButton
-                if (Theme.isDarkColoredTheme(resources, this)) {
-                    editButton.setImageResource(R.drawable.ic_rename_white)
-                }
-                else {
-                    editButton.setImageResource(R.drawable.ic_edit)
-                }
             }
         })
     }

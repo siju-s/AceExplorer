@@ -1,21 +1,17 @@
 package com.siju.acexplorer.storage.view
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.view.View
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import com.getbase.floatingactionbutton.FloatingActionButton
 import com.getbase.floatingactionbutton.FloatingActionsMenu
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
-import com.siju.acexplorer.theme.Theme
 
 @SuppressLint("ClickableViewAccessibility")
 class FloatingView(view: View,
                    private val baseFileListFragment: BaseFileListFragment) : View.OnClickListener {
 
-    private val context: Context = view.context
     private lateinit var fabContainer: FrameLayout
     private lateinit var fabCreateMenu: FloatingActionsMenu
     private lateinit var fabCreateFolder: FloatingActionButton
@@ -28,6 +24,7 @@ class FloatingView(view: View,
     init {
         initializeViews(view)
         setListeners()
+        makeFabMenuTransparent()
     }
 
     private fun initializeViews(view: View) {
@@ -73,17 +70,6 @@ class FloatingView(view: View,
         background?.let {
             it.alpha = 240
         }
-    }
-
-    fun setTheme(theme: Theme) {
-        val backgroundColor = if (Theme.isDarkColoredTheme(context.resources, theme)) {
-            R.color.dark_overlay
-        }
-            else {
-            R.color.whiteOverlay
-        }
-        fabContainer.setBackgroundColor(ContextCompat.getColor(context, backgroundColor))
-        makeFabMenuTransparent()
     }
 
     fun showFab() {

@@ -17,8 +17,6 @@
 package com.siju.acexplorer.theme
 
 import android.content.Context
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
@@ -53,23 +51,6 @@ enum class Theme constructor(val value: Int) {
             context ?: DARK.value
             return PreferenceManager.getDefaultSharedPreferences(context)
                     .getInt(CURRENT_THEME, DARK.value)
-        }
-
-        fun isDarkColoredTheme(resources: Resources?, currentTheme: Theme?): Boolean {
-            if (resources == null) {
-                return true
-            }
-            val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-            val isNightMode = currentNightMode == Configuration.UI_MODE_NIGHT_YES
-            return when {
-                currentTheme == DARK || (currentTheme == DEVICE && isNightMode) -> {
-                    true
-                }
-                currentTheme == LIGHT || (currentTheme == DEVICE && currentNightMode == Configuration.UI_MODE_NIGHT_NO) -> {
-                    false
-                }
-                else -> true
-            }
         }
 
         fun setTheme(theme: Theme?) {

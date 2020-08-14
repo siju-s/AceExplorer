@@ -178,15 +178,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun onSelection(selected: Boolean?, position: Int, draggedPos: Int) {
-            val context = itemView.context
-            val color = if (Theme.isDarkColoredTheme(context.resources, getTheme(context))) {
-                ContextCompat.getColor(itemView.context,
-                        R.color.dark_actionModeItemSelected)
-            }
-                else   {
-                ContextCompat.getColor(itemView.context,
-                        R.color.actionModeItemSelected)
-            }
+            val color = ContextCompat.getColor(itemView.context, R.color.actionModeItemSelected)
 
             when {
                 selected == true       -> {
