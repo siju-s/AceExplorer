@@ -19,6 +19,8 @@ package com.siju.acexplorer.theme
 import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.util.Log
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.PreferenceManager
 
 
@@ -34,7 +36,7 @@ enum class Theme constructor(val value: Int) {
 
     companion object {
 
-        private fun getThemeValue(position: Int): Theme {
+        fun getThemeValue(position: Int): Theme {
             when (position) {
                 0 -> return LIGHT
                 1 -> return DARK
@@ -47,7 +49,7 @@ enum class Theme constructor(val value: Int) {
             return getThemeValue(getUserThemeValue(context))
         }
 
-        fun getUserThemeValue(context: Context?) : Int {
+        fun getUserThemeValue(context: Context?): Int {
             context ?: DARK.value
             return PreferenceManager.getDefaultSharedPreferences(context)
                     .getInt(CURRENT_THEME, DARK.value)
@@ -67,6 +69,17 @@ enum class Theme constructor(val value: Int) {
                     false
                 }
                 else -> true
+            }
+        }
+
+        fun setTheme(theme: Theme?) {
+            Log.d("Theme", "setTheme() called with: theme = $theme")
+            when (theme) {
+                DARK -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                LIGHT -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                DEVICE -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                else -> {
+                }
             }
         }
     }

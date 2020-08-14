@@ -19,6 +19,7 @@ package com.siju.acexplorer
 import android.app.Application
 import android.os.StrictMode
 import com.kobakei.ratethisapp.RateThisApp
+import com.siju.acexplorer.theme.Theme
 import dagger.hilt.android.HiltAndroidApp
 
 private const val RATE_APP_CRITERIA_INSTALL_DAYS = 7
@@ -29,7 +30,7 @@ class AceApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
+        Theme.setTheme(Theme.getTheme(applicationContext))
         appContext = this
         initRateApp()
         setupPerformanceCheckers()

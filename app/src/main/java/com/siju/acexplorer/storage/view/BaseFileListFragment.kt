@@ -71,7 +71,6 @@ import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.view.PickerFragment
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
-import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.InstallHelper
 import com.siju.acexplorer.utils.InstallHelper.openInstallScreen
 import dagger.hilt.android.AndroidEntryPoint
@@ -251,7 +250,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         mainViewModel.theme.observe(viewLifecycleOwner, Observer {
             if (::menuControls.isInitialized) {
                 floatingView.setTheme(it)
-                menuControls.setTheme(it)
             }
         })
 
@@ -933,7 +931,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                 return
             }
             activity?.let {
-                val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.FILE)
+                val dialogFragment = PickerFragment.newInstance(PickerType.FILE)
                 dialogFragment.setTargetFragment(this@BaseFileListFragment, EXTRACT_PATH_REQUEST)
                 this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                     dialogFragment.show(fragmentManager, TAG_DIALOG)
@@ -943,9 +941,8 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun showCopyToDialog() {
-        val theme = mainViewModel.theme.value ?: return
         activity?.let {
-            val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.COPY)
+            val dialogFragment = PickerFragment.newInstance(PickerType.COPY)
             dialogFragment.setTargetFragment(this@BaseFileListFragment, COPY_PATH_REQUEST)
             this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                 dialogFragment.show(fragmentManager, TAG_DIALOG)
@@ -954,9 +951,8 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     }
 
     private fun showCutToDialog() {
-        val theme = mainViewModel.theme.value ?: return
         activity?.let {
-            val dialogFragment = PickerFragment.newInstance(getThemeStyle(theme), PickerType.CUT)
+            val dialogFragment = PickerFragment.newInstance(PickerType.CUT)
             dialogFragment.setTargetFragment(this@BaseFileListFragment, CUT_PATH_REQUEST)
             this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                 dialogFragment.show(fragmentManager, TAG_DIALOG)
@@ -973,13 +969,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         }
 
         override fun onNegativeButtonClick(operation: Operations?) {
-        }
-    }
-
-    private fun getThemeStyle(theme: Theme): Int {
-        return when (theme) {
-            Theme.DARK -> R.style.BaseDarkTheme
-            Theme.LIGHT, Theme.DEVICE -> R.style.BaseLightTheme
         }
     }
 

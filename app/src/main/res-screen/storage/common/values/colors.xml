@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="gallery_item_text_background">#30000000</color>
+    <color name="bottom_toolbar_bg">@color/colorPrimary</color>
 </resources>

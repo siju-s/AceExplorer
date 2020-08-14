@@ -463,9 +463,8 @@ class PickerFragment : DialogFragment() {
 
     companion object {
 
-        fun newInstance(theme: Int, pickerType: PickerType, ringtoneType: Int = -1): PickerFragment {
+        fun newInstance(pickerType: PickerType, ringtoneType: Int = -1): PickerFragment {
             val dialogFragment = PickerFragment()
-            dialogFragment.setStyle(STYLE_NORMAL, theme)
             val args = Bundle()
             with(args) {
                 putSerializable(KEY_PICKER_TYPE, pickerType)

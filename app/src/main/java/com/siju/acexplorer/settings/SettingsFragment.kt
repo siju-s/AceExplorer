@@ -29,6 +29,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -350,13 +351,13 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         true
     }
 
-    private fun onThemeChanged(stringValue: String) {
-        val theme = Integer.parseInt(stringValue)
+    private fun onThemeChanged(themeValue: String) {
+        val theme = Integer.parseInt(themeValue)
         preferences?.edit()?.putInt(CURRENT_THEME, theme)?.apply()
         Logger.log("TAG", "Current theme=" + this@SettingsPreferenceFragment
                 .theme + " new theme=" + theme)
         if (this@SettingsPreferenceFragment.theme != theme) {
-            restartApp()
+           Theme.setTheme(Theme.getThemeValue(theme))
         }
     }
 

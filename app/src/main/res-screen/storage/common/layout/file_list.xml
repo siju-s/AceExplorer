@@ -70,10 +70,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/actionbar_height"
             android:layout_gravity="bottom"
-            android:background="@color/colorPrimary"
             android:visibility="gone"
             tools:visibility="visible"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            android:background="@color/bottom_toolbar_bg" />
 
         <LinearLayout
             android:id="@+id/adviewLayout"

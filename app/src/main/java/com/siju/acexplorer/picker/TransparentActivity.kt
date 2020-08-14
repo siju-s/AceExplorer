@@ -20,12 +20,10 @@ import android.media.RingtoneManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceManager
-import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.settings.SettingsPreferenceFragment
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.view.PickerFragment
-import com.siju.acexplorer.theme.Theme
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val FRAGMENT_TAG = "Browse_Frag"
@@ -59,22 +57,13 @@ class TransparentActivity : AppCompatActivity() {
     }
 
     private fun showRingtonePickerDialog(intent: Intent) {
-        val dialogFragment = PickerFragment.newInstance(checkTheme(), PickerType.RINGTONE,
-                intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, 0))
+        val dialogFragment = PickerFragment.newInstance(PickerType.RINGTONE, intent.getIntExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, 0))
         dialogFragment.show(supportFragmentManager, FRAGMENT_TAG)
     }
 
     private fun showFilePickerDialog() {
-        val dialogFragment = PickerFragment.newInstance(checkTheme(), PickerType.GET_CONTENT)
+        val dialogFragment = PickerFragment.newInstance(PickerType.GET_CONTENT)
         dialogFragment.show(supportFragmentManager, FRAGMENT_TAG)
-    }
-
-    private fun checkTheme(): Int {
-        return if (Theme.isDarkColoredTheme(baseContext.resources, Theme.getTheme(baseContext))) {
-            R.style.TransparentTheme_DarkAppTheme_NoActionBar
-        } else {
-            R.style.TransparentTheme_AppTheme_NoActionBar
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

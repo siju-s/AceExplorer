@@ -7,7 +7,6 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
@@ -19,18 +18,16 @@ import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.storage.model.ViewMode
-import com.siju.acexplorer.theme.Theme
 
 
 private const val TAG = "MenuControls"
 
 class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryFragmentView: View,
-                   val category: Category, var viewMode: ViewMode, val mainViewModel: MainViewModel) :
+                   val category: Category, var viewMode: ViewMode, private val mainViewModel: MainViewModel) :
         Toolbar.OnMenuItemClickListener, SearchView.OnQueryTextListener {
 
     private val bottomToolbar: Toolbar = view.findViewById(R.id.toolbar_bottom)
     private val toolbar: Toolbar = categoryFragmentView.findViewById(R.id.toolbar)
-    private val context = view.context
     private lateinit var searchItem: MenuItem
     private lateinit var sortItem: MenuItem
     private lateinit var renameItem: MenuItem
@@ -47,7 +44,6 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private var searchView: SearchView? = null
     private var hiddenMenuItem: MenuItem? = null
     private var isSearchActive = false
-    private var theme: Theme? = null
 
     init {
         // When Categoryfragment with viewpager is not shown, the BaseFileListFragment toolbar inflates the menu
@@ -349,7 +345,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         toggleActionModeMenuVisibility(count, fileInfo, externalSdList)
     }
 
-    fun setToolbarTitle(title: String) {
+    private fun setToolbarTitle(title: String) {
         toolbar.title = title
     }
 
@@ -370,19 +366,4 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         fragment.onQueryTextChange(query)
         return true
     }
-
-    fun setTheme(theme: Theme) {
-        this.theme = theme
-        val darkColoredTheme = Theme.isDarkColoredTheme(fragment.resources, theme)
-        if (darkColoredTheme) {
-            toolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
-            bottomToolbar.popupTheme = R.style.Dark_AppTheme_PopupOverlay
-            bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.tab_bg_color))
-        } else {
-            toolbar.popupTheme = R.style.AppTheme_PopupOverlay
-            bottomToolbar.popupTheme = R.style.AppTheme_PopupOverlay
-            bottomToolbar.setBackgroundColor(ContextCompat.getColor(context, R.color.colorPrimary))
-        }
-    }
-
 }

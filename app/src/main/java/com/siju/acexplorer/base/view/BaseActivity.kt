@@ -19,7 +19,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.siju.acexplorer.R
 import com.siju.acexplorer.base.model.BaseModel
 import com.siju.acexplorer.base.model.BaseModelImpl
 import com.siju.acexplorer.base.presenter.BasePresenter
@@ -41,16 +40,6 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme()
         super.onCreate(savedInstanceState)
     }
-
-    private fun setTheme() {
-        when (currentTheme) {
-            Theme.DARK -> setTheme(R.style.BaseDarkTheme)
-            Theme.LIGHT -> setTheme(R.style.BaseLightTheme)
-            Theme.DEVICE -> setTheme(R.style.BaseDeviceTheme)
-        }
-    }
-
 }
