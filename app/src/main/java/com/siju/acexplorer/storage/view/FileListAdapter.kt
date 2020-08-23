@@ -29,8 +29,6 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.shouldHideGalleryThumb
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.storage.model.ViewMode
-import com.siju.acexplorer.theme.Theme
-import com.siju.acexplorer.theme.Theme.Companion.getTheme
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
 import java.util.*
@@ -276,7 +274,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun getThumbIcon(category: Category?) : ImageView {
-            return if (viewMode == ViewMode.GALLERY && (category != Category.FILES)) {
+            return if (viewMode == ViewMode.GALLERY && (category != Category.FILES && category != Category.APPS)) {
                 itemView.findViewById(R.id.imageThumb) as ImageView
             } else {
                 imageIcon
@@ -375,6 +373,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                         CategoryHelper.isGalleryMusicCategory(category) || category == Category.DOCS) {
                     imageIcon.visibility = View.GONE
                     imageGalleryThumb.visibility = View.VISIBLE
+                    textFileName.setBackgroundColor(ContextCompat.getColor(textFileName.context, R.color.gallery_item_text_background))
                     textFileName.visibility = View.VISIBLE
                 }
                 else {
