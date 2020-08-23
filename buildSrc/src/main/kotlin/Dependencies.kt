@@ -145,13 +145,13 @@ object Libraries {
     }
 
     object ResDirs {
-        val directories = arrayOf("src/main/res-appmanager",
+        val directories = arrayOf(
+                "src/main/res-appmanager",
                 "src/main/res-common",
                 "src/main/res-main",
                 "src/main/res-permission",
                 "src/main/res-screen",
                 "src/main/res-screen/common",
-                "src/main/res-screen/drawer",
                 "src/main/res-screen/home",
                 "src/main/res-screen/imageviewer",
                 "src/main/res-screen/tools",
