@@ -75,7 +75,6 @@
     <string name="action_cut">Կտրել</string>
     <string name="action_copy">Պատճենել</string>
     <string name="action_paste">Կպցնել</string>
-    <string name="msg_cut_copy">ֆայլ (ներ) ը պատճենված է clipboard- ում</string>
     <string name="dialog_skip">Բաց թողնել</string>
     <string name="dialog_replace">Փոխարինեք</string>
     <string name="dialog_keep_both">Պահպանեք երկուսն էլ</string>
@@ -83,7 +82,6 @@
     <string name="move">Տեղափոխել</string>
     <string name="copying">Պատճենել ֆայլերը</string>
     <string name="moving">Տեղափոխվող ֆայլեր</string>
-    <string name="clipboard">%d- ը հենակետում</string>
     <string name="text_copied_clipboard">Պատճենահանվել է clipboard- ում:</string>
     <string name="dialog_cancel">Չեղարկել</string>
     <string name="msg_ok">լավ</string>

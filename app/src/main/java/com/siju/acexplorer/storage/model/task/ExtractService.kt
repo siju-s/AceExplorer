@@ -173,7 +173,7 @@ class ExtractService : Service() {
         stopSelf()
     }
 
-    private inner class ServiceHandler internal constructor(looper: Looper) : Handler(looper) {
+    private inner class ServiceHandler(looper: Looper) : Handler(looper) {
 
         override fun handleMessage(msg: Message) {
             Logger.log(TAG, "handleMessage: " + msg.arg1)

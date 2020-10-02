@@ -75,7 +75,6 @@
     <string name="action_cut">Tagliare</string>
     <string name="action_copy">copia</string>
     <string name="action_paste">Incolla</string>
-    <string name="msg_cut_copy">file copiati negli appunti</string>
     <string name="dialog_skip">Salta</string>
     <string name="dialog_replace">Sostituire</string>
     <string name="dialog_keep_both">Tieni entrambi</string>
@@ -83,7 +82,6 @@
     <string name="move">Mossa</string>
     <string name="copying">Copia dei file</string>
     <string name="moving">Spostamento di file</string>
-    <string name="clipboard">%d negli appunti</string>
     <string name="text_copied_clipboard">Copiato negli appunti.</string>
     <string name="dialog_cancel">Annulla</string>
     <string name="msg_ok">OK</string>

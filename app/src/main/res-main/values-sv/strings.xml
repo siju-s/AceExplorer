@@ -75,7 +75,6 @@
     <string name="action_cut">Skära</string>
     <string name="action_copy">Kopia</string>
     <string name="action_paste">Klistra</string>
-    <string name="msg_cut_copy">fil (er) kopierade till urklipp</string>
     <string name="dialog_skip">Hoppa</string>
     <string name="dialog_replace">Byta ut</string>
     <string name="dialog_keep_both">Behåll båda</string>
@@ -83,7 +82,6 @@
     <string name="move">Flytta</string>
     <string name="copying">Kopierar filer</string>
     <string name="moving">Flytta filer</string>
-    <string name="clipboard">%d i urklipp</string>
     <string name="text_copied_clipboard">Kopierade till urklipp.</string>
     <string name="dialog_cancel">Annullera</string>
     <string name="msg_ok">OK</string>

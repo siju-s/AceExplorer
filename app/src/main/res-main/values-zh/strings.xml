@@ -75,7 +75,6 @@
     <string name="action_cut">切</string>
     <string name="action_copy">复制</string>
     <string name="action_paste">糊</string>
-    <string name="msg_cut_copy">文件复制到剪贴板</string>
     <string name="dialog_skip">跳跃</string>
     <string name="dialog_replace">更换</string>
     <string name="dialog_keep_both">保留两个</string>
@@ -83,7 +82,6 @@
     <string name="move">移动</string>
     <string name="copying">复制文件</string>
     <string name="moving">移动文件</string>
-    <string name="clipboard">在剪贴板中%d</string>
     <string name="text_copied_clipboard">复制到剪贴板。</string>
     <string name="dialog_cancel">取消</string>
     <string name="msg_ok">好</string>

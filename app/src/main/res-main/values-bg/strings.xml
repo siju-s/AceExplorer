@@ -75,7 +75,6 @@
     <string name="action_cut">Разрез</string>
     <string name="action_copy">копие</string>
     <string name="action_paste">Поставяне</string>
-    <string name="msg_cut_copy">файл (и) копиран в клипборда</string>
     <string name="dialog_skip">Skip</string>
     <string name="dialog_replace">Заменете</string>
     <string name="dialog_keep_both">Запази и двете</string>
@@ -83,7 +82,6 @@
     <string name="move">Ход</string>
     <string name="copying">Копиране на файлове</string>
     <string name="moving">Преместване на файлове</string>
-    <string name="clipboard">%d в клипборда</string>
     <string name="text_copied_clipboard">Копирано е в клипборда.</string>
     <string name="dialog_cancel">Отказ</string>
     <string name="msg_ok">Добре</string>

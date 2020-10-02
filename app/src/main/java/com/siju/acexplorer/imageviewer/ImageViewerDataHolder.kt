@@ -29,11 +29,6 @@ class ImageViewerDataHolder private constructor() {
         return arrayListOf()
     }
 
-    fun clearData() {
-        uriList = arrayListOf()
-        pathList = arrayListOf()
-    }
-
     companion object {
         private var instance: ImageViewerDataHolder? = null
 
@@ -43,10 +38,5 @@ class ImageViewerDataHolder private constructor() {
             }
             return instance
         }
-
-
-
     }
-
-
 }

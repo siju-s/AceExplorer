@@ -75,7 +75,6 @@
     <string name="action_cut">גזירה</string>
     <string name="action_copy">עותק</string>
     <string name="action_paste">הדבק</string>
-    <string name="msg_cut_copy">קבצים שהועתקו ללוח</string>
     <string name="dialog_skip">לדלג</string>
     <string name="dialog_replace">החלף</string>
     <string name="dialog_keep_both">שמור את שניהם</string>
@@ -83,7 +82,6 @@
     <string name="move">מהלך \ לזוז \ לעבור</string>
     <string name="copying">העתקת קבצים</string>
     <string name="moving">העברת קבצים</string>
-    <string name="clipboard">%d בלוח</string>
     <string name="text_copied_clipboard">הועתק ללוח.</string>
     <string name="dialog_cancel">בטל</string>
     <string name="msg_ok">בסדר</string>

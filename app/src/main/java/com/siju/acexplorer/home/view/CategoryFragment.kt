@@ -9,14 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.siju.acexplorer.R
-import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.extensions.findCurrentFragment
 import com.siju.acexplorer.extensions.inflateLayout
 import com.siju.acexplorer.home.types.CategoryData
@@ -25,7 +23,6 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.search.helper.SearchUtils
 import com.siju.acexplorer.storage.view.FileListFragment
-import com.siju.acexplorer.theme.Theme
 import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
 

@@ -25,7 +25,6 @@
     <string name="action_paste">แปะ</string>
     <string name="action_delete">ลบ</string>
     <string name="action_share">หุ้น</string>
-    <string name="msg_cut_copy">file (s) คัดลอกไปที่คลิปบอร์ด</string>
     <string name="msg_delete_success">ลบเรียบร้อยแล้ว</string>
     <string name="msg_delete_failure">ลบดำเนินการล้มเหลว</string>
     <string name="dialog_skip">กระโดด</string>
@@ -136,7 +135,6 @@
     <string name="action_more">มากกว่า</string>
     <string name="directory">ไดเรกทอรี</string>
     <string name="operation">การทำงาน</string>
-    <string name="clipboard">%d ในคลิปบอร์ด</string>
     <string name="fav_exists">รายการโปรดมีอยู่แล้ว</string>
     <string name="header_source">แหล่ง</string>
     <string name="header_destination">ปลายทาง</string>

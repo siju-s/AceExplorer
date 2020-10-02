@@ -75,7 +75,6 @@
     <string name="action_cut">sny</string>
     <string name="action_copy">kopie</string>
     <string name="action_paste">Plak</string>
-    <string name="msg_cut_copy">lêer (s) na klembord gekopieër</string>
     <string name="dialog_skip">Huppel</string>
     <string name="dialog_replace">vervang</string>
     <string name="dialog_keep_both">Behou albei</string>
@@ -83,7 +82,6 @@
     <string name="move">skuif</string>
     <string name="copying">Kopieer lêers</string>
     <string name="moving">Skuif lêers</string>
-    <string name="clipboard">%d in knipbord</string>
     <string name="text_copied_clipboard">Gekopieër na knipbord.</string>
     <string name="dialog_cancel">kanselleer</string>
     <string name="msg_ok">OK</string>

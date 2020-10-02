@@ -75,7 +75,6 @@
     <string name="action_cut">Исечете</string>
     <string name="action_copy">Копирај</string>
     <string name="action_paste">Залепи</string>
-    <string name="msg_cut_copy">датотека (и) копирани во клипборд</string>
     <string name="dialog_skip">Прескокни</string>
     <string name="dialog_replace">Заменете</string>
     <string name="dialog_keep_both">Чувајте ги и двете</string>
@@ -83,7 +82,6 @@
     <string name="move">Премести</string>
     <string name="copying">Копирање на датотеки</string>
     <string name="moving">Премести датотеки</string>
-    <string name="clipboard">%d во клипборд</string>
     <string name="text_copied_clipboard">Копирано во таблата со исечоци.</string>
     <string name="dialog_cancel">Откажи</string>
     <string name="msg_ok">добро</string>

@@ -75,7 +75,6 @@
     <string name="action_cut">절단</string>
     <string name="action_copy">부</string>
     <string name="action_paste">풀</string>
-    <string name="msg_cut_copy">클립 보드에 복사 된 파일</string>
     <string name="dialog_skip">건너 뛰기</string>
     <string name="dialog_replace">바꾸다</string>
     <string name="dialog_keep_both">둘 다 유지</string>
@@ -83,7 +82,6 @@
     <string name="move">움직임</string>
     <string name="copying">파일 복사</string>
     <string name="moving">파일 이동</string>
-    <string name="clipboard">클립 보드의  %d</string>
     <string name="text_copied_clipboard">클립 보드에 복사했습니다.</string>
     <string name="dialog_cancel">취소</string>
     <string name="msg_ok">확인</string>

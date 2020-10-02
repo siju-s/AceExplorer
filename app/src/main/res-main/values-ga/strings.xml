@@ -75,7 +75,6 @@
     <string name="action_cut">Gearr</string>
     <string name="action_copy">Cóip</string>
     <string name="action_paste">Greamaigh</string>
-    <string name="msg_cut_copy">cóip (í) a chóipeáil chuig an ghearrthaisce</string>
     <string name="dialog_skip">Scipeáil</string>
     <string name="dialog_replace">In ionad</string>
     <string name="dialog_keep_both">Coinnigh an dá rud</string>
@@ -83,7 +82,6 @@
     <string name="move">Bog</string>
     <string name="copying">Comhaid a chóipeáil</string>
     <string name="moving">Comhaid a bhogadh</string>
-    <string name="clipboard">%d sa ghearrthaisce</string>
     <string name="text_copied_clipboard">Cóipeáilte chuig an ghearrthaisce.</string>
     <string name="dialog_cancel">Cealaigh</string>
     <string name="msg_ok">OK</string>

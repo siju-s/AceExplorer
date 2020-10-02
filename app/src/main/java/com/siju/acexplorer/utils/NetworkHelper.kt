@@ -25,7 +25,7 @@ class NetworkHelper(val networkChangeCallback: NetworkChangeCallback) {
     }
 
     private var networkCallback = object : ConnectivityManager.NetworkCallback() {
-        override fun onLost(network: Network?) {
+        override fun onLost(network: Network) {
             networkChangeCallback.onNetworkUnavailable()
         }
 
@@ -33,10 +33,10 @@ class NetworkHelper(val networkChangeCallback: NetworkChangeCallback) {
             networkChangeCallback.onNetworkUnavailable()
         }
 
-        override fun onLosing(network: Network?, maxMsToLive: Int) {
+        override fun onLosing(network: Network, maxMsToLive: Int) {
         }
 
-        override fun onAvailable(network: Network?) {
+        override fun onAvailable(network: Network) {
             networkChangeCallback.onNetworkAvailable()
         }
     }

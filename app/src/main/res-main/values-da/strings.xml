@@ -75,7 +75,6 @@
     <string name="action_cut">Skære</string>
     <string name="action_copy">Kopi</string>
     <string name="action_paste">sæt ind</string>
-    <string name="msg_cut_copy">fil (er) kopieret til udklipsholder</string>
     <string name="dialog_skip">Springe</string>
     <string name="dialog_replace">Erstatte</string>
     <string name="dialog_keep_both">Behold begge</string>
@@ -83,7 +82,6 @@
     <string name="move">Bevæge sig</string>
     <string name="copying">Kopiering af filer</string>
     <string name="moving">Flytning af filer</string>
-    <string name="clipboard">%d i udklipsholder</string>
     <string name="text_copied_clipboard">Kopieret til udklipsholder.</string>
     <string name="dialog_cancel">Afbestille</string>
     <string name="msg_ok">Okay</string>

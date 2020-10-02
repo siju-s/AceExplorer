@@ -18,7 +18,6 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.main.AceActivity
 
 const val REQUEST_CODE_UPDATE = 300
-private const val TAG = "UpdateChecker"
 
 class UpdateChecker(val context: Context, val activity: AceActivity, private var updateCallback: UpdateCallback) {
     private val appUpdateManager = AppUpdateManagerFactory.create(context)

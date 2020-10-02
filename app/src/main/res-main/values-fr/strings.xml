@@ -75,7 +75,6 @@
     <string name="action_cut">Couper</string>
     <string name="action_copy">Copie</string>
     <string name="action_paste">Pâte</string>
-    <string name="msg_cut_copy">fichier (s) copié (s) dans le presse-papiers</string>
     <string name="dialog_skip">Sauter</string>
     <string name="dialog_replace">Remplacer</string>
     <string name="dialog_keep_both">Garde les deux</string>
@@ -83,7 +82,6 @@
     <string name="move">Bouge toi</string>
     <string name="copying">Copie de fichiers</string>
     <string name="moving">Déplacer des fichiers</string>
-    <string name="clipboard">%d dans le presse-papiers</string>
     <string name="text_copied_clipboard">Copié dans le presse-papier.</string>
     <string name="dialog_cancel">Annuler</string>
     <string name="msg_ok">D\'accord</string>

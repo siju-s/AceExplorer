@@ -28,7 +28,6 @@ class PremiumUtils {
     private var optOut = false
     private var installDate = Date()
     private var askLaterDate = Date()
-    private val premium: Premium? = null
     private var launchTimes = 0
 
     fun onStart(context: Context) {

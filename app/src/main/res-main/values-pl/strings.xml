@@ -75,7 +75,6 @@
     <string name="action_cut">Skaleczenie</string>
     <string name="action_copy">Kopiuj</string>
     <string name="action_paste">Pasta</string>
-    <string name="msg_cut_copy">pliki skopiowane do schowka</string>
     <string name="dialog_skip">Pominąć</string>
     <string name="dialog_replace">Zastąpić</string>
     <string name="dialog_keep_both">Zatrzymaj oba</string>
@@ -83,7 +82,6 @@
     <string name="move">Ruszaj się</string>
     <string name="copying">Kopiowanie plików</string>
     <string name="moving">Przenoszenie plików</string>
-    <string name="clipboard">%d w schowku</string>
     <string name="text_copied_clipboard">Skopiowane do schowka.</string>
     <string name="dialog_cancel">Anuluj</string>
     <string name="msg_ok">OK</string>

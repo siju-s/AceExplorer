@@ -17,29 +17,14 @@ package com.siju.acexplorer.base.view
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.siju.acexplorer.base.model.BaseModel
-import com.siju.acexplorer.base.model.BaseModelImpl
-import com.siju.acexplorer.base.presenter.BasePresenter
-import com.siju.acexplorer.base.presenter.BasePresenterImpl
-import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.LocaleHelper
 
 @SuppressLint("Registered")
 open class BaseActivity : AppCompatActivity() {
-    var currentTheme: Theme? = null
-        private set
 
     override fun attachBaseContext(newBase: Context) {
-        val baseModel: BaseModel = BaseModelImpl()
-        val basePresenter: BasePresenter = BasePresenterImpl(baseModel)
-        currentTheme = basePresenter.theme
         val context = LocaleHelper.setLanguage(newBase)
         super.attachBaseContext(context)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 }

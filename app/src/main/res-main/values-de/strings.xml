@@ -75,7 +75,6 @@
     <string name="action_cut">Schnitt</string>
     <string name="action_copy">Kopieren</string>
     <string name="action_paste">Einfügen</string>
-    <string name="msg_cut_copy">Datei (en) in die Zwischenablage kopiert</string>
     <string name="dialog_skip">Überspringen</string>
     <string name="dialog_replace">Ersetzen</string>
     <string name="dialog_keep_both">Behalte beides</string>
@@ -83,7 +82,6 @@
     <string name="move">Bewegung</string>
     <string name="copying">Dateien kopieren</string>
     <string name="moving">Dateien verschieben</string>
-    <string name="clipboard">%d in der Zwischenablage</string>
     <string name="text_copied_clipboard">In die Zwischenablage kopiert.</string>
     <string name="dialog_cancel">Stornieren</string>
     <string name="msg_ok">in Ordnung</string>

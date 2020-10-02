@@ -75,7 +75,6 @@
     <string name="action_cut">A tăia</string>
     <string name="action_copy">Copie</string>
     <string name="action_paste">Paste</string>
-    <string name="msg_cut_copy">fișiere (e) copiate în clipboard</string>
     <string name="dialog_skip">Ocolire</string>
     <string name="dialog_replace">A inlocui</string>
     <string name="dialog_keep_both">Păstrați ambele</string>
@@ -83,7 +82,6 @@
     <string name="move">Mișcare</string>
     <string name="copying">Copiere fișiere</string>
     <string name="moving">Mutarea fișierelor</string>
-    <string name="clipboard">%d în clipboard</string>
     <string name="text_copied_clipboard">Copiat în clipboard.</string>
     <string name="dialog_cancel">Anulare</string>
     <string name="msg_ok">O.K</string>

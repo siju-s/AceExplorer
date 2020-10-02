@@ -75,7 +75,6 @@
     <string name="action_cut">Memotong</string>
     <string name="action_copy">Salinan</string>
     <string name="action_paste">Tempel</string>
-    <string name="msg_cut_copy">file disalin ke clipboard</string>
     <string name="dialog_skip">Melewatkan</string>
     <string name="dialog_replace">Menggantikan</string>
     <string name="dialog_keep_both">Simpan keduanya</string>
@@ -83,7 +82,6 @@
     <string name="move">Pindah</string>
     <string name="copying">Menyalin file</string>
     <string name="moving">Memindahkan file</string>
-    <string name="clipboard">%d di clipboard</string>
     <string name="text_copied_clipboard">Disalin ke papan klip.</string>
     <string name="dialog_cancel">Membatalkan</string>
     <string name="msg_ok">baik</string>

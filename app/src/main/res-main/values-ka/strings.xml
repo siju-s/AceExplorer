@@ -75,7 +75,6 @@
     <string name="action_cut">გაჭრა</string>
     <string name="action_copy">დააკოპირეთ</string>
     <string name="action_paste">ჩასვით</string>
-    <string name="msg_cut_copy">ფაილი (ებ) ის კოპირებულია ბუფერში</string>
     <string name="dialog_skip">გამოტოვეთ</string>
     <string name="dialog_replace">შეცვალეთ</string>
     <string name="dialog_keep_both">Ორივე დაიტოვე</string>
@@ -83,7 +82,6 @@
     <string name="move">გადაადგილება</string>
     <string name="copying">ფაილების კოპირება</string>
     <string name="moving">ფაილების გადაადგილება</string>
-    <string name="clipboard">%d ბუფერში</string>
     <string name="text_copied_clipboard">გადაწერა ბუფერში.</string>
     <string name="dialog_cancel">გაუქმება</string>
     <string name="msg_ok">კარგი</string>

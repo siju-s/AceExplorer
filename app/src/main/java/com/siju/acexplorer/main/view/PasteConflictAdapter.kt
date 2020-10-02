@@ -68,7 +68,7 @@ class PasteConflictAdapter(private val context: Context, private val conflictFil
         }
     }
 
-    private class FileInfoHolder internal constructor(view: View) {
+    private class FileInfoHolder (view: View) {
         var imageIcon: ImageView = view.findViewById(R.id.imageFileIcon)
         var headerText: TextView = view.findViewById(R.id.header)
         var titleText: TextView = view.findViewById(R.id.textFileName)

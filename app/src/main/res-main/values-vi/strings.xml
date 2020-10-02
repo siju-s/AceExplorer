@@ -75,7 +75,6 @@
     <string name="action_cut">Cắt</string>
     <string name="action_copy">Sao chép</string>
     <string name="action_paste">Dán</string>
-    <string name="msg_cut_copy">tập tin được sao chép vào clipboard</string>
     <string name="dialog_skip">Nhảy</string>
     <string name="dialog_replace">Thay thế</string>
     <string name="dialog_keep_both">Giữ cả hai</string>
@@ -83,7 +82,6 @@
     <string name="move">Di chuyển</string>
     <string name="copying">Sao chép các tập tin</string>
     <string name="moving">Di chuyển tập tin</string>
-    <string name="clipboard">%d trong clipboard</string>
     <string name="text_copied_clipboard">Sao chép vào clipboard.</string>
     <string name="dialog_cancel">Hủy bỏ</string>
     <string name="msg_ok">đồng ý</string>

@@ -75,7 +75,6 @@
     <string name="action_cut">Kesmek</string>
     <string name="action_copy">kopya</string>
     <string name="action_paste">Yapıştırmak</string>
-    <string name="msg_cut_copy">dosya panoya kopyalandı</string>
     <string name="dialog_skip">Atla</string>
     <string name="dialog_replace">değiştirmek</string>
     <string name="dialog_keep_both">Her ikisini de sakla</string>
@@ -83,7 +82,6 @@
     <string name="move">Hareket</string>
     <string name="copying">Dosyalar kopyalanıyor</string>
     <string name="moving">Dosyaları taşıma</string>
-    <string name="clipboard">Panodaki %d</string>
     <string name="text_copied_clipboard">Panoya kopyalandı.</string>
     <string name="dialog_cancel">İptal etmek</string>
     <string name="msg_ok">tamam</string>

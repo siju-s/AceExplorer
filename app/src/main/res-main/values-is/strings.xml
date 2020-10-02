@@ -75,7 +75,6 @@
     <string name="action_cut">Skera</string>
     <string name="action_copy">Afrita</string>
     <string name="action_paste">Límdu</string>
-    <string name="msg_cut_copy">skrá (ir) afrituð á klemmuspjald</string>
     <string name="dialog_skip">Sleppa</string>
     <string name="dialog_replace">Skiptu um</string>
     <string name="dialog_keep_both">Haltu báðum</string>
@@ -83,7 +82,6 @@
     <string name="move">Færðu þig</string>
     <string name="copying">Afritun skráa</string>
     <string name="moving">Að flytja skrár</string>
-    <string name="clipboard">%d í klemmuspjaldi</string>
     <string name="text_copied_clipboard">Afritað á klemmuspjald.</string>
     <string name="dialog_cancel">Hætta við</string>
     <string name="msg_ok">OK</string>

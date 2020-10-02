@@ -75,7 +75,6 @@
     <string name="action_cut">قطع كردن</string>
     <string name="action_copy">کپی 🀄</string>
     <string name="action_paste">چسباندن</string>
-    <string name="msg_cut_copy">پرونده (های) کپی شده در کلیپ بورد</string>
     <string name="dialog_skip">پرش</string>
     <string name="dialog_replace">جایگزین کردن</string>
     <string name="dialog_keep_both">هر دو را نگه دار</string>
@@ -83,7 +82,6 @@
     <string name="move">حرکت</string>
     <string name="copying">کپی کردن پرونده ها</string>
     <string name="moving">انتقال پرونده ها</string>
-    <string name="clipboard">%d در کلیپ بورد</string>
     <string name="text_copied_clipboard">در کلیپ بورد کپی شد.</string>
     <string name="dialog_cancel">لغو</string>
     <string name="msg_ok">خوب</string>

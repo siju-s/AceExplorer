@@ -75,7 +75,6 @@
     <string name="action_cut">Cortar</string>
     <string name="action_copy">cópia de</string>
     <string name="action_paste">Colar</string>
-    <string name="msg_cut_copy">arquivos copiados para a área de transferência</string>
     <string name="dialog_skip">Pular</string>
     <string name="dialog_replace">Substituir</string>
     <string name="dialog_keep_both">Manter os dois</string>
@@ -83,7 +82,6 @@
     <string name="move">Mover</string>
     <string name="copying">Copiando arquivos</string>
     <string name="moving">Movendo arquivos</string>
-    <string name="clipboard">%d na área de transferência</string>
     <string name="text_copied_clipboard">Copiado para a área de transferência.</string>
     <string name="dialog_cancel">Cancelar</string>
     <string name="msg_ok">Está bem</string>

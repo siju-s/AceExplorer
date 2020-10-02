@@ -35,7 +35,7 @@ internal class PassAppModelLoader : ModelLoader<String, ApplicationInfo> {
     /**
      * Extremely unsafe, use with care.
      */
-    private class CastingDataFetcher internal constructor(private val path: String) : DataFetcher<ApplicationInfo?> {
+    private class CastingDataFetcher(private val path: String) : DataFetcher<ApplicationInfo?> {
         override fun loadData(priority: Priority, callback: DataFetcher.DataCallback<in ApplicationInfo?>) {
             var applicationInfo: ApplicationInfo? = null
             if (path.contains("/")) {

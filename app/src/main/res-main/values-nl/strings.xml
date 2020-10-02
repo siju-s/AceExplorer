@@ -75,7 +75,6 @@
     <string name="action_cut">Besnoeiing</string>
     <string name="action_copy">Kopiëren</string>
     <string name="action_paste">Plakken</string>
-    <string name="msg_cut_copy">bestand (en) gekopieerd naar klembord</string>
     <string name="dialog_skip">Overspringen</string>
     <string name="dialog_replace">Vervangen</string>
     <string name="dialog_keep_both">Hou beide</string>
@@ -83,7 +82,6 @@
     <string name="move">Actie</string>
     <string name="copying">Bestanden kopiëren</string>
     <string name="moving">Bestanden verplaatsen</string>
-    <string name="clipboard">%d in klembord</string>
     <string name="text_copied_clipboard">Gekopieerd naar het klembord.</string>
     <string name="dialog_cancel">annuleren</string>
     <string name="msg_ok">OK</string>

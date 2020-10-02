@@ -75,7 +75,6 @@
     <string name="action_cut">Cortar</string>
     <string name="action_copy">Copiar</string>
     <string name="action_paste">Pegar</string>
-    <string name="msg_cut_copy">archivo (s) copiado al portapapeles</string>
     <string name="dialog_skip">Omitir</string>
     <string name="dialog_replace">Reemplazar</string>
     <string name="dialog_keep_both">Mantén ambos</string>
@@ -83,7 +82,6 @@
     <string name="move">Moverse</string>
     <string name="copying">Copiando documentos</string>
     <string name="moving">Mover archivos</string>
-    <string name="clipboard">%d en el portapapeles</string>
     <string name="text_copied_clipboard">Copiado al portapapeles.</string>
     <string name="dialog_cancel">Cancelar</string>
     <string name="msg_ok">Okay</string>

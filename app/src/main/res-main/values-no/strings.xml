@@ -75,7 +75,6 @@
     <string name="action_cut">Kutte opp</string>
     <string name="action_copy">Kopiere</string>
     <string name="action_paste">Lim inn</string>
-    <string name="msg_cut_copy">fil (er) kopiert til utklippstavlen</string>
     <string name="dialog_skip">Skip</string>
     <string name="dialog_replace">Erstatte</string>
     <string name="dialog_keep_both">Behold begge</string>
@@ -83,7 +82,6 @@
     <string name="move">Bevege seg</string>
     <string name="copying">Kopiering av filer</string>
     <string name="moving">Flytte filer</string>
-    <string name="clipboard">%d i utklippstavlen</string>
     <string name="text_copied_clipboard">Kopiert til utklippstavlen.</string>
     <string name="dialog_cancel">Avbryt</string>
     <string name="msg_ok">OK</string>

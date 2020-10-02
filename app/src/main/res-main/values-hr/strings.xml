@@ -75,7 +75,6 @@
     <string name="action_cut">Izrezati</string>
     <string name="action_copy">Kopirati</string>
     <string name="action_paste">Zalijepiti</string>
-    <string name="msg_cut_copy">datoteka preslikana u međuspremnik</string>
     <string name="dialog_skip">Preskočiti</string>
     <string name="dialog_replace">Zamijeniti</string>
     <string name="dialog_keep_both">Zadrzi oboje</string>
@@ -83,7 +82,6 @@
     <string name="move">Pomicati</string>
     <string name="copying">Kopiranje datoteka</string>
     <string name="moving">Premještanje datoteka</string>
-    <string name="clipboard">%d u međuspremniku</string>
     <string name="text_copied_clipboard">Kopirano u međuspremnik.</string>
     <string name="dialog_cancel">Otkazati</string>
     <string name="msg_ok">u redu</string>

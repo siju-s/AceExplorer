@@ -75,7 +75,6 @@
     <string name="action_cut">कट गया</string>
     <string name="action_copy">प्रतिलिपि</string>
     <string name="action_paste">पेस्ट करें</string>
-    <string name="msg_cut_copy">फ़ाइल (ओं) को क्लिपबोर्ड पर कॉपी किया गया</string>
     <string name="dialog_skip">छोड़ें</string>
     <string name="dialog_replace">बदलने के</string>
     <string name="dialog_keep_both">दोनों रखो</string>
@@ -83,7 +82,6 @@
     <string name="move">चाल</string>
     <string name="copying">फ़ाइलों की प्रतिलिपि बनाना</string>
     <string name="moving">चल रही फाइलें</string>
-    <string name="clipboard">क्लिपबोर्ड में %d</string>
     <string name="text_copied_clipboard">क्लिपबोर्ड पर नकल।</string>
     <string name="dialog_cancel">रद्द करना</string>
     <string name="msg_ok">ठीक</string>

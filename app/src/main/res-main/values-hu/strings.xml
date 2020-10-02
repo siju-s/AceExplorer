@@ -75,7 +75,6 @@
     <string name="action_cut">Vágott</string>
     <string name="action_copy">Másolat</string>
     <string name="action_paste">Paszta</string>
-    <string name="msg_cut_copy">a vágólapra másolt fájlokat</string>
     <string name="dialog_skip">Skip</string>
     <string name="dialog_replace">Cserélje</string>
     <string name="dialog_keep_both">Megtartani mindkettőt</string>
@@ -83,7 +82,6 @@
     <string name="move">Mozog</string>
     <string name="copying">Fájlok másolása</string>
     <string name="moving">Fájlok mozgatása</string>
-    <string name="clipboard">%d a vágólapra</string>
     <string name="text_copied_clipboard">Másolja a vágólapra.</string>
     <string name="dialog_cancel">Megszünteti</string>
     <string name="msg_ok">OK</string>

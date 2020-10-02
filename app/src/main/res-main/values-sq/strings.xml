@@ -75,7 +75,6 @@
     <string name="action_cut">Prerje</string>
     <string name="action_copy">kopje</string>
     <string name="action_paste">Ngjit</string>
-    <string name="msg_cut_copy">skedar (et) e kopjuar në klipboard</string>
     <string name="dialog_skip">Skip</string>
     <string name="dialog_replace">zëvendësoj</string>
     <string name="dialog_keep_both">Mbajini të dy</string>
@@ -83,7 +82,6 @@
     <string name="move">veprim</string>
     <string name="copying">Kopjimi i skedarëve</string>
     <string name="moving">Skedarët lëvizës</string>
-    <string name="clipboard">%d në prapavijë</string>
     <string name="text_copied_clipboard">Kopjuar në clipboard.</string>
     <string name="dialog_cancel">anuloj</string>
     <string name="msg_ok">Ne rregull</string>
