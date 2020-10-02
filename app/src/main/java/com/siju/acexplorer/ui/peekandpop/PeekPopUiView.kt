@@ -242,8 +242,6 @@ class PeekPopUiView(val activity: AppCompatActivity, fileListView: RecyclerView)
 
     override fun endPeekMode() {
         stopAutoPlayVid()
-        peekAndPop.setOnClickListener(null)
-        peekAndPop.setOnGeneralActionListener(null)
     }
 
     override fun pausePeekMode() {

@@ -177,6 +177,7 @@ open class PeekAndPop(var builder: Builder) {
      */
     fun resetViews() {
         Log.d("Peek", "resetViews: ")
+        peekLayout.background.alpha = 0
         peekLayout.visibility = View.GONE
         peekViewOriginalPosition?.let {
             peekView.x = it[0]
