@@ -14,4 +14,4 @@ pipelines:
           # You must commit the Gradle wrapper to your repository
           # https://docs.gradle.org/current/userguide/gradle_wrapper.html
            - chmod +x gradlew
-           - bash ./gradlew clean assembleDebug
+           - bash ./gradlew assembleDebug
