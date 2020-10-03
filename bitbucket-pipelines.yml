@@ -1,4 +1,4 @@
-image: mingc/android-build-box:latest
+image: bitbucketpipelines/android-ci-image
 pipelines:
   default:
     - step:
