@@ -5,7 +5,7 @@ object BuildPlugins {
     object Versions {
         const val gradlePlugin = "4.0.1"
         const val crashlytics = "2.1.1"
-        const val googleServices = "4.3.3"
+        const val googleServices = "4.3.4"
         const val navigationPlugin = "2.3.0-beta01"
         const val sonarqube = "3.0"
         const val hilt = "2.28-alpha"
@@ -35,15 +35,15 @@ object AndroidSdk {
 
 object Libraries {
    private object Versions {
-       const val appCompat    = "1.1.0"
-       const val design       = "1.1.0"
+       const val appCompat    = "1.2.0"
+       const val design       = "1.2.1"
        const val support      = "1.0.0"
        const val annotation   = "1.1.0"
        const val recyclerview = "1.1.0"
        const val preference   = "1.1.0"
        const val viewpager    = "1.0.0"
        const val lifecycle    = "2.2.0"
-       const val room         = "2.2.3"
+       const val room         = "2.2.5"
        const val playCore     = "1.7.2"
        const val billing      = "2.1.0"
        const val navigation   = "2.3.0-beta01"
