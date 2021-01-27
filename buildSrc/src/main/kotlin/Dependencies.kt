@@ -4,9 +4,9 @@ object BuildPlugins {
 
     object Versions {
         const val gradlePlugin = "4.1.2"
-        const val crashlytics = "2.1.1"
+        const val crashlytics = "2.4.1"
         const val googleServices = "4.3.4"
-        const val navigationPlugin = "2.3.0-beta01"
+        const val navigationPlugin = "2.3.2"
         const val sonarqube = "3.0"
         const val hilt = "2.28-alpha"
     }
@@ -43,11 +43,11 @@ object Libraries {
        const val preference   = "1.1.0"
        const val viewpager    = "1.0.0"
        const val lifecycle    = "2.2.0"
-       const val room         = "2.2.5"
+       const val room         = "2.2.6"
        const val playCore     = "1.7.2"
        const val billing      = "2.1.0"
-       const val navigation   = "2.3.0-beta01"
-       const val constraintLayout = "1.1.3"
+       const val navigation   = "2.3.2"
+       const val constraintLayout = "2.0.4"
        const val hilt = "2.28-alpha"
        const val hiltViewModel = "1.0.0-alpha01"
    }
@@ -84,9 +84,9 @@ object Libraries {
    object Firebase {
 
        private object Versions {
-           const val ads          = "18.3.0"
+           const val ads          = "19.7.0"
            const val invites      = "16.1.0"
-           const val analytics    = "17.2.2"
+           const val analytics    = "18.0.1"
        }
 
        const val ads     = "com.google.firebase:firebase-ads:${Versions.ads}"
@@ -107,13 +107,13 @@ object Libraries {
 
     object ExternalLibs {
         private object Versions {
-            const val crashlytics = "17.0.0"
+            const val crashlytics = "17.3.0"
             const val gson = "2.8.6"
             const val glide = "4.11.0"
             const val apacheCompress = "1.20"
             const val ratethisapp = "1.2.0"
             const val floatingButton     = "1.10.1"
-            const val leakCanary          = "2.4"
+            const val leakCanary          = "2.6"
             const val photoView           = "2.3.0"
             const val fastscrollRecycler = "2.0.1"
             const val rootTools          = "5.0"
