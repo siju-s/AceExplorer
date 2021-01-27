@@ -1,4 +1,4 @@
-const val kotlinVersion = "1.3.72"
+const val kotlinVersion = "1.4.21"
 
 object BuildPlugins {
 
@@ -96,8 +96,8 @@ object Libraries {
 
     object Kotlin {
         private object Versions {
-            const val stdlib          = "1.3.60"
-            const val coroutineCore      = "1.3.3"
+            const val stdlib          = "1.4.21"
+            const val coroutineCore      = "1.4.1"
         }
 
         const val stdlib            = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.stdlib}"
