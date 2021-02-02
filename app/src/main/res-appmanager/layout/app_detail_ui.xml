@@ -31,6 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/padding_10"
+        android:contentDescription="@string/play_store"
         android:src="@drawable/ic_store" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

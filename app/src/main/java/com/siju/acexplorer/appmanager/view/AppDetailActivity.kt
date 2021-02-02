@@ -20,7 +20,6 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Observer
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -81,7 +80,6 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
         setupData(getPackage())
     }
 
-
     private fun getPackage(): String? {
         if (intent == null || intent.getStringExtra(
                         EXTRA_PACKAGE_NAME) == null) {
@@ -102,19 +100,19 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun initObservers() {
-        viewModel.versionInfo.observe(this, Observer {
+        viewModel.versionInfo.observe(this, {
             it?.apply {
                 setupVersionInfo(it)
             }
         })
 
-        viewModel.permissionInfo.observe(this, Observer {
+        viewModel.permissionInfo.observe(this, {
             it?.apply {
                 setupPermissionData(it)
             }
         })
 
-        viewModel.appInfo.observe(this, Observer {
+        viewModel.appInfo.observe(this, {
             it?.apply {
                 setupAppProperties(it)
             }
@@ -255,8 +253,6 @@ class AppDetailActivity : BaseActivity(), View.OnClickListener {
 
         fab.rippleColor = lightVibrantColor
         fab.backgroundTintList = ColorStateList.valueOf(vibrantColor)
-        settingsButton.setBackgroundColor(vibrantColor)
-        uninstallButton.setBackgroundColor(vibrantColor)
     }
 
     public override fun onResume() {

@@ -44,24 +44,24 @@
         android:layout_marginTop="@dimen/padding_10"
         android:layout_below="@+id/imageAppIcon">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/uninstallButton"
-            style="?android:attr/buttonBarButtonStyle"
+            style="?android:attr/buttonBarStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorAccent"
             android:text="@string/uninstall"
             android:textColor="@color/white" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/settingsButton"
-            style="?android:attr/buttonBarButtonStyle"
+            style="?android:attr/buttonBarStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_16"
             android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorAccent"
             android:text="@string/action_settings"
             android:textColor="@color/white" />
     </LinearLayout>
