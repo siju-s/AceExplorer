@@ -13,6 +13,7 @@ val devReleaseTask = "assembledevRelease"
 val prodReleaseTask = "assembleprodRelease"
 val prodReleaseTaskStudio = "assembleProdRelease"
 val prodReleaseTaskBundle = "bundleProdRelease"
+val prodReleaseTaskBundle2 = "bundleprodRelease"
 val devReleaseTaskStudio = "assembleDevRelease"
 val genericRelease = "assembleRelease"
 
@@ -24,7 +25,7 @@ if (versionPropsFile.canRead()) {
     for (item in runTasks) {
         if (item.contains(devReleaseTask) || item.contains(prodReleaseTask) || item.contains(genericRelease) ||
                 item.contains(devReleaseTaskStudio) || item.contains(prodReleaseTaskStudio) ||
-                item.contains(prodReleaseTaskBundle)) {
+                item.contains(prodReleaseTaskBundle) || item.contains(prodReleaseTaskBundle2)) {
             isRelease = true
             break
         }
