@@ -149,6 +149,7 @@ object DialogHelper {
         builder.setView(dialogView)
         builder.setCancelable(true)
         val alertDialog = builder.create()
+
         val textTitle = dialogView.findViewById<TextView>(R.id.textTitle)
         val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radioGroupSort)
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
@@ -169,7 +170,9 @@ object DialogHelper {
             sortDialogListener.onPositiveButtonClick(sortModeNew)
             alertDialog.dismiss()
         }
-        negativeButton.setOnClickListener { alertDialog.dismiss() }
+        negativeButton.setOnClickListener {
+            alertDialog.dismiss()
+        }
         alertDialog.show()
     }
 
@@ -194,11 +197,13 @@ object DialogHelper {
         builder.setView(dialogView)
         builder.setCancelable(false)
         val alertDialog = builder.create()
+
         val title = dialogView.findViewById<TextView>(R.id.textTitle)
         val msg = dialogView.findViewById<TextView>(R.id.textMessage)
         val inputText = dialogView.findViewById<EditText>(R.id.editFileName)
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
+
         title.text = text[0]
         msg.text = text[1]
         positiveButton.text = text[2]

@@ -39,7 +39,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         return inflater.inflateLayout(R.layout.category_pager, container)
     }
 
@@ -98,7 +98,17 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         menuItemWrapper.setMenuItem(item)
-        mainViewModel.onMenuItemClicked(menuItemWrapper)
+        when (item.itemId) {
+            R.id.action_sort -> {
+                mainViewModel.onSortClicked()
+            }
+            R.id.action_search -> {
+                mainViewModel.navigateToSearch()
+            }
+            else -> {
+                mainViewModel.onMenuItemClicked(menuItemWrapper)
+            }
+        }
         return false
     }
 

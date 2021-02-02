@@ -25,9 +25,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -58,7 +56,6 @@ import com.siju.acexplorer.settings.SettingsPreferenceFragment
 import com.siju.acexplorer.storage.view.BaseFileListFragment
 import com.siju.acexplorer.storage.view.DualPaneFragment
 import com.siju.acexplorer.storage.view.FileListFragment
-import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.tools.ToolsFragment
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -143,14 +140,15 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 //    }
 
     private fun initObservers() {
-        mainViewModel.permissionStatus.observe(this, Observer { permissionStatus ->
+        mainViewModel.permissionStatus.observe(this, { permissionStatus ->
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Required -> mainViewModel.requestPermissions()
                 is PermissionHelper.PermissionState.Rationale -> mainViewModel.showPermissionRationale()
+                else -> {}
             }
         })
 
-        mainViewModel.dualMode.observe(this, Observer {
+        mainViewModel.dualMode.observe(this, {
             Log.d(TAG, "Dual mode value:$it")
             it?.apply {
                 if (it) {
@@ -161,7 +159,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
             }
         })
 
-        mainViewModel.storageScreenReady.observe(this, Observer {
+        mainViewModel.storageScreenReady.observe(this, {
             it?.apply {
                 if (it) {
                     onDualModeEnabled(resources.configuration)
@@ -169,7 +167,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
             }
         })
 
-        mainViewModel.homeClicked.observe(this, Observer {
+        mainViewModel.homeClicked.observe(this, {
             it?.apply {
                 if (it) {
                     disableDualPane()
@@ -178,11 +176,10 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
             }
         })
 
-        mainViewModel.navigateToSearch.observe(this, Observer {
-            it?.apply {
-                if (it) {
+        mainViewModel.navigateToSearch.observe(this, {
+            it?.getContentIfNotHandled()?.apply {
+                if (this) {
                     disableDualPane()
-                    mainViewModel.setNavigatedToSearch()
                     navController.navigate(R.id.searchFragment)
                 }
             }

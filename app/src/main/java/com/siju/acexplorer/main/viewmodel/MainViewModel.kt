@@ -17,6 +17,8 @@ import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.preferences.PreferenceConstants
+import com.siju.acexplorer.storage.helper.Event
+import com.siju.acexplorer.storage.model.SortMode
 import com.siju.acexplorer.theme.Theme
 
 enum class Pane {
@@ -26,7 +28,7 @@ enum class Pane {
 class MainViewModel @ViewModelInject constructor(private val permissionHelper: PermissionHelper) : ViewModel() {
 
     private var categoryMenuHelper: CategoryMenuHelper? = null
-    var navigateToSearch = MutableLiveData<Boolean>()
+    val navigateToSearch = MutableLiveData<Event<Boolean>>()
     var isDualPaneInFocus = false
     private set
 
@@ -72,6 +74,9 @@ class MainViewModel @ViewModelInject constructor(private val permissionHelper: P
     val navigateToRecent : SingleLiveEvent<Boolean>
     get() = _navigateToRecent
 
+    private val _sortEvent = MutableLiveData<Event<SortMode>>()
+    val sortEvent: LiveData<Event<SortMode>>
+        get() = _sortEvent
 
     init {
         Log.d("MainViewModel", "init")
@@ -146,10 +151,6 @@ class MainViewModel @ViewModelInject constructor(private val permissionHelper: P
         _homeClicked.value = false
     }
 
-    fun setNavigatedToSearch() {
-        navigateToSearch.value = false
-    }
-
     fun setStorageReady() {
        _storageScreenReady.value = true
     }
@@ -211,5 +212,16 @@ class MainViewModel @ViewModelInject constructor(private val permissionHelper: P
     fun isFilePicker() = filePicker
 
     fun isPickerMultiSelection() = pickerMultipleSelection
+
+    fun onSortClicked() {
+        val value = sortMode.value
+        value?.let {
+            _sortEvent.value = Event(SortMode.getSortModeFromValue(value))
+        }
+    }
+
+    fun navigateToSearch() {
+        navigateToSearch.value = Event(true)
+    }
 
 }

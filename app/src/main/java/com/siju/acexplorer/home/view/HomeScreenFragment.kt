@@ -24,7 +24,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.siju.acexplorer.R
@@ -54,7 +53,7 @@ class HomeScreenFragment : Fragment() {
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?): View? {
+            savedInstanceState: Bundle?): View {
         _binding = HomescreenBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -92,7 +91,7 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun initObservers() {
-        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, Observer {
+        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, {
             Log.d(TAG, "Premium state:$it")
             it?.apply {
                 if (it.entitled) {
@@ -103,37 +102,37 @@ class HomeScreenFragment : Fragment() {
             }
         })
 
-        mainViewModel.navigateToRecent.observe(viewLifecycleOwner, Observer {navigateToRecent ->
+        mainViewModel.navigateToRecent.observe(viewLifecycleOwner, { navigateToRecent ->
             if (navigateToRecent == true) {
                 navigateToRecent()
             }
         })
 
-        homeViewModel.categories.observe(viewLifecycleOwner, Observer { categoryList ->
+        homeViewModel.categories.observe(viewLifecycleOwner, { categoryList ->
             Log.d(TAG, "categories: ${categoryList.size}")
             categoryAdapter.submitList(categoryList)
             homeViewModel.fetchCount(categoryList)
         })
 
-        homeViewModel.storage.observe(viewLifecycleOwner, Observer {
+        homeViewModel.storage.observe(viewLifecycleOwner, {
             it?.apply {
                 mainViewModel.setStorageList(it)
                 storageAdapter.submitList(it)
             }
         })
 
-        mainViewModel.permissionStatus.observe(viewLifecycleOwner, Observer { permissionStatus ->
+        mainViewModel.permissionStatus.observe(viewLifecycleOwner, { permissionStatus ->
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> homeViewModel.loadData()
             }
         })
 
-        homeViewModel.categoryData.observe(viewLifecycleOwner, Observer {
+        homeViewModel.categoryData.observe(viewLifecycleOwner, {
             categoryAdapter.notifyItemChanged(it.first, it.second)
             categoryAdapter.notifyDataSetChanged()
         })
 
-        homeViewModel.categoryClickEvent.observe(viewLifecycleOwner, Observer {
+        homeViewModel.categoryClickEvent.observe(viewLifecycleOwner, {
             it?.apply {
                 loadCategory(first, second)
                 homeViewModel.setCategoryClickEvent(null)
@@ -235,7 +234,7 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun navigateToSearchScreen() {
-        mainViewModel.navigateToSearch.value = true
+        mainViewModel.navigateToSearch()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {

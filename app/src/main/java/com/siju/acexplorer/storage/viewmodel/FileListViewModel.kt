@@ -66,10 +66,6 @@ class FileListViewModel @ViewModelInject constructor(private val storageModel: S
     val viewImageFileEvent : LiveData<Pair<ArrayList<FileInfo>, Int>>
     get() = _viewImageFileEvent
 
-    private val _sortEvent = MutableLiveData<SortMode>()
-    val sortEvent: LiveData<SortMode>
-        get() = _sortEvent
-
     val viewFileEvent: LiveData<Pair<String, String?>>
         get() = _viewFileEvent
 
@@ -665,10 +661,6 @@ class FileListViewModel @ViewModelInject constructor(private val storageModel: S
             else -> storageModel.saveViewMode(viewMode)
         }
         _viewMode.value = viewMode
-    }
-
-    fun onSortClicked() {
-        _sortEvent.value = storageModel.getSortMode()
     }
 
     fun onSort(sortMode: SortMode) {

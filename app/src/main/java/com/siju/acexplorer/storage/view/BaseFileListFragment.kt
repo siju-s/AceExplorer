@@ -222,7 +222,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
     @Suppress("ObjectLiteralToLambda")
     private fun initObservers() {
-        mainViewModel.permissionStatus.observe(viewLifecycleOwner, Observer { permissionStatus ->
+        mainViewModel.permissionStatus.observe(viewLifecycleOwner, { permissionStatus ->
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> {
                     if (isAppManager(category)) {
@@ -236,7 +236,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, Observer {
+        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, {
             it?.apply {
                 if (it.entitled) {
                     hideAds()
@@ -247,7 +247,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.fileData.observe(viewLifecycleOwner, {
             it?.apply {
                 if (::filesList.isInitialized) {
                     filesList.onDataLoaded(it, fileListViewModel.category, fileListViewModel.isZipMode())
@@ -255,7 +255,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.recentFileData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.recentFileData.observe(viewLifecycleOwner, {
             it?.apply {
                 if (::filesList.isInitialized) {
                     filesList.onRecentDataLoaded(it.first, it.second)
@@ -270,7 +270,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        mainViewModel.refreshGridCols.observe(viewLifecycleOwner, Observer {
+        mainViewModel.refreshGridCols.observe(viewLifecycleOwner, {
             it?.apply {
                 Log.d(TAG, "refreshGridCols pane:${it.first}, reload:${it.second}, this:${this@BaseFileListFragment is FileListFragment}")
                 if (::filesList.isInitialized && shouldRefreshPane(it.first, it.second)) {
@@ -280,7 +280,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        mainViewModel.reloadPane.observe(viewLifecycleOwner, Observer {
+        mainViewModel.reloadPane.observe(viewLifecycleOwner, {
             it?.apply {
                 val pane = it.first
                 val reload = it.second
@@ -292,7 +292,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.showFab.observe(viewLifecycleOwner, Observer { showFab ->
+        fileListViewModel.showFab.observe(viewLifecycleOwner, { showFab ->
             Log.d(TAG, "fab:$showFab")
             if (showFab && !mainViewModel.isFilePicker()) {
                 floatingView.showFab()
@@ -302,17 +302,17 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, {
             it?.apply {
                 onViewFileEvent(it)
             }
         })
 
-        fileListViewModel.viewImageFileEvent.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.viewImageFileEvent.observe(viewLifecycleOwner, {
             onViewImageEvent(it.first, it.second)
         })
 
-        fileListViewModel.viewMode.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.viewMode.observe(viewLifecycleOwner, {
             if (::filesList.isInitialized) {
                 filesList.onViewModeChanged(it)
                 refreshGridCols()
@@ -322,11 +322,15 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.sortEvent.observe(viewLifecycleOwner, Observer { sortMode ->
-            context?.let { DialogHelper.showSortDialog(it, sortMode, sortDialogListener) }
+        mainViewModel.sortEvent.observe(viewLifecycleOwner, {
+            it.getContentIfNotHandled()?.let { sortMode ->
+                context?.let {
+                    DialogHelper.showSortDialog(it, sortMode, sortDialogListener)
+                }
+            }
         })
 
-        fileListViewModel.installAppEvent.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.installAppEvent.observe(viewLifecycleOwner, {
             val canInstall = it.first
             if (canInstall) {
                 openInstallScreen(context, it.second)
@@ -336,7 +340,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.actionModeState.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.actionModeState.observe(viewLifecycleOwner, {
             Log.d(TAG, "actionModeState:$it")
             it?.apply {
                 when (it) {
@@ -350,7 +354,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.selectedFileInfo.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.selectedFileInfo.observe(viewLifecycleOwner, {
             it?.apply {
                 if (fileListViewModel.actionModeState.value != ActionModeState.ENDED) {
                     menuControls.onSelectedCountChanged(it.first, it.second,
@@ -359,7 +363,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.refreshEvent.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.refreshEvent.observe(viewLifecycleOwner, {
             it?.apply {
                 if (it) {
                     filesList.refresh()
@@ -367,26 +371,26 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.singleOpData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.singleOpData.observe(viewLifecycleOwner, {
             it?.apply {
                 handleSingleItemOperation(it)
             }
         })
 
-        fileListViewModel.homeClicked.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.homeClicked.observe(viewLifecycleOwner, {
             it?.apply {
                 mainViewModel.onHomeClicked()
                 activity?.onBackPressed()
             }
         })
 
-        fileListViewModel.operationResult.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.operationResult.observe(viewLifecycleOwner, {
             it?.apply {
                 handleOperationResult(it)
             }
         })
 
-        fileListViewModel.noOpData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.noOpData.observe(viewLifecycleOwner, {
             it?.apply {
                 when (it.first) {
                     Operations.FOLDER_CREATION -> showCreateFolderDialog(context)
@@ -396,25 +400,25 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.multiSelectionOpData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.multiSelectionOpData.observe(viewLifecycleOwner, {
             it?.apply {
                 handleMultiItemOperation(it)
             }
         })
 
-        fileListViewModel.pasteOpData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.pasteOpData.observe(viewLifecycleOwner, {
             it?.apply {
                 handlePasteOperation(it)
             }
         })
 
-        fileListViewModel.pasteConflictCheckData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.pasteConflictCheckData.observe(viewLifecycleOwner, {
             it?.apply {
                 handlePasteOperation(it)
             }
         })
 
-        fileListViewModel.showPasteDialog.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.showPasteDialog.observe(viewLifecycleOwner, {
             it?.apply {
                 context?.let { context ->
                     OperationProgress().showPasteDialog(context, it.second, it.third, it.first)
@@ -422,7 +426,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.showZipDialog.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.showZipDialog.observe(viewLifecycleOwner, {
             it?.apply {
                 context?.let { context ->
                     dismissDialog()
@@ -431,7 +435,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.showCompressDialog.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.showCompressDialog.observe(viewLifecycleOwner, {
             it?.apply {
                 context?.let { context ->
                     dismissDialog()
@@ -440,20 +444,20 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.directoryClicked.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.directoryClicked.observe(viewLifecycleOwner, {
             it?.apply {
                 fileListViewModel.saveScrollInfo(filesList.getScrollInfo())
                 mainViewModel.setPaneFocus(this@BaseFileListFragment is DualPaneFragment)
             }
         })
 
-        fileListViewModel.scrollInfo.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.scrollInfo.observe(viewLifecycleOwner, {
             it?.apply {
                 filesList.scrollToPosition(it)
             }
         })
 
-        fileListViewModel.openZipViewerEvent.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.openZipViewerEvent.observe(viewLifecycleOwner, {
             it?.apply {
                 fileListViewModel.saveScrollInfo(filesList.getScrollInfo())
                 val zipViewer = ZipViewerFragment(this@BaseFileListFragment, it.first,
@@ -463,19 +467,19 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.dragEvent.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.dragEvent.observe(viewLifecycleOwner, {
             it?.apply {
                 filesList.startDrag(it.first, it.second, it.third)
             }
         })
 
-        fileListViewModel.showDragDialog.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.showDragDialog.observe(viewLifecycleOwner, {
             it?.apply {
                 filesList.showDragDialog(it.first, it.second, it.third)
             }
         })
 
-        fileListViewModel.navigationClicked.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.navigationClicked.observe(viewLifecycleOwner, {
             it?.apply {
                 if (it) {
                     mainViewModel.setPaneFocus(this@BaseFileListFragment is DualPaneFragment)
@@ -483,7 +487,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        fileListViewModel.refreshData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.refreshData.observe(viewLifecycleOwner, {
             it?.apply {
                 if (it) {
                     fileListViewModel.refreshList()
@@ -492,7 +496,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        mainViewModel.onMenuItemClicked.observe(viewLifecycleOwner, Observer {
+        mainViewModel.onMenuItemClicked.observe(viewLifecycleOwner, {
             it?.let {
                 val item = it.getMenuItem()
                 item?.let {
@@ -501,7 +505,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         })
 
-        mainViewModel.refreshData.observe(viewLifecycleOwner, Observer {
+        mainViewModel.refreshData.observe(viewLifecycleOwner, {
             it?.let {
                 if (it) {
                     refreshDataOnTabSelected()
@@ -1140,7 +1144,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
         private fun navigateToSearchScreen() {
             Log.d(TAG, "navigateToSearchScreen:$this")
-            mainViewModel.navigateToSearch.value = true
+            mainViewModel.navigateToSearch()
         }
 
         fun onMenuItemClick(item: MenuItem) {
@@ -1162,7 +1166,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                     fileListViewModel.onHiddenFileSettingChanged(item.isChecked)
                 }
                 R.id.action_sort -> {
-                    fileListViewModel.onSortClicked()
+                    mainViewModel.onSortClicked()
                 }
                 R.id.action_search -> {
                     if (category != Category.APP_MANAGER) {
