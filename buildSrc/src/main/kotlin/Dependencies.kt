@@ -45,7 +45,7 @@ object Libraries {
        const val lifecycle    = "2.2.0"
        const val room         = "2.2.6"
        const val playCore     = "1.7.2"
-       const val billing      = "2.1.0"
+       const val billing      = "3.0.0"
        const val navigation   = "2.3.2"
        const val constraintLayout = "2.0.4"
        const val hilt = "2.28-alpha"
@@ -70,7 +70,6 @@ object Libraries {
 
     const val playCore       = "com.google.android.play:core:${Versions.playCore}"
 
-    const val billing        = "com.android.billingclient:billing:${Versions.billing}"
     const val billingKtx     = "com.android.billingclient:billing-ktx:${Versions.billing}"
 
     const val navigation     = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"

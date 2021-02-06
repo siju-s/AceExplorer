@@ -172,7 +172,6 @@ dependencies {
     implementation(Libraries.Firebase.invites)
     implementation(Libraries.Firebase.analytics)
 
-    implementation(Libraries.billing)
     implementation(Libraries.billingKtx)
     implementation(Libraries.ExternalLibs.gson)
     implementation(Libraries.playCore)
@@ -186,7 +185,7 @@ dependencies {
     implementation(Libraries.ExternalLibs.photoView)
     implementation(Libraries.ExternalLibs.fastScrollRecyclerview)
 
-    debugImplementation(Libraries.ExternalLibs.leakCanary)
+//    debugImplementation(Libraries.ExternalLibs.leakCanary)
 
     implementation(Libraries.ExternalLibs.crashlytics)
 

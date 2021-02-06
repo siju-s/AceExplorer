@@ -635,7 +635,7 @@ class BillingRepository private constructor(private val application: Application
             when (billingResult.responseCode) {
                 BillingClient.BillingResponseCode.OK -> {
                     if (skuDetailsList.orEmpty().isNotEmpty()) {
-                        skuDetailsList.forEach {
+                        skuDetailsList?.forEach {
                             CoroutineScope(Job() + Dispatchers.IO).launch {
                                 localCacheBillingClient.skuDetailsDao().insertOrUpdate(it)
                             }
@@ -654,8 +654,12 @@ class BillingRepository private constructor(private val application: Application
      * launch the Google Play Billing flow. The response to this call is returned in
      * [onPurchasesUpdated]
      */
-    private fun launchBillingFlow(activity: Activity, augmentedSkuDetails: AugmentedSkuDetails) =
-            launchBillingFlow(activity, SkuDetails(augmentedSkuDetails.originalJson))
+    private fun launchBillingFlow(activity: Activity, augmentedSkuDetails: AugmentedSkuDetails) {
+        val originalJson = augmentedSkuDetails.originalJson
+        originalJson?.let {
+            launchBillingFlow(activity, SkuDetails(originalJson))
+        }
+    }
 
     private fun launchBillingFlow(activity: Activity, skuDetails: SkuDetails) {
         val purchaseParams = BillingFlowParams.newBuilder().setSkuDetails(skuDetails)
@@ -670,7 +674,6 @@ class BillingRepository private constructor(private val application: Application
             skuDetails?.let { launchBillingFlow(activity, it) }
         }
     }
-
 
     private fun consumePurchase(purchasesResult: HashSet<Purchase>) {
         if (purchasesResult.isNotEmpty()) {
