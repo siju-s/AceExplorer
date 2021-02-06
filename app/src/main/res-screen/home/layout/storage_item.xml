@@ -44,7 +44,7 @@
                 android:id="@+id/containerProgress"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/home_card_image_bg">
+                android:background="@drawable/ic_shape_rectangle">
 
                 <ProgressBar
                     android:id="@+id/progressBarSD"
