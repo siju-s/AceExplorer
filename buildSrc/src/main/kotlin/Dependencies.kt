@@ -105,7 +105,7 @@ object Libraries {
     object ExternalLibs {
         private object Versions {
             const val gson = "2.8.6"
-            const val glide = "4.11.0"
+            const val glide = "4.12.0"
             const val apacheCompress = "1.20"
             const val ratethisapp = "1.2.0"
             const val floatingButton     = "1.10.1"
