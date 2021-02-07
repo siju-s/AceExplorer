@@ -48,7 +48,7 @@ object Libraries {
        const val billing      = "3.0.0"
        const val navigation   = "2.3.2"
        const val constraintLayout = "2.0.4"
-       const val hilt = "2.28-alpha"
+       const val hilt = "2.28.1-alpha"
        const val hiltViewModel = "1.0.0-alpha01"
    }
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"

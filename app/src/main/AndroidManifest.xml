@@ -22,14 +22,12 @@
     <!-- Normal permission(auto granted) -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- For starting foreground service in Android P and above -->
+    <!-- For starting foreground service on Android 9 and above -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- To install apps -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <!-- For deleting packages in App manager in Android P and above -->
+    <!-- For deleting packages in App manager on Android P and above -->
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
-
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" tools:node="remove"/>
 
     <application
         android:name=".AceApplication"
