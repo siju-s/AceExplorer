@@ -27,7 +27,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <include layout="@layout/toolbar" />
+        <include
+            android:id="@+id/toolbarContainer"
+            layout="@layout/toolbar" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -4,8 +4,8 @@ import java.util.*
 plugins {
     id(BuildPlugins.androidApp)
     kotlin(BuildPlugins.kotlinAndroid)
-    kotlin(BuildPlugins.kotlinAndroidExtensions)
     kotlin(BuildPlugins.kotlinKapt)
+    id(BuildPlugins.kotlinParcelize)
     id(BuildPlugins.googleServicesPlugin)
     id(BuildPlugins.crashlyticsAppPlugin)
     id("androidx.navigation.safeargs")
@@ -169,8 +169,9 @@ dependencies {
     kapt(Libraries.annotation)
 
     implementation(Libraries.Firebase.ads)
-    implementation(Libraries.Firebase.invites)
+//    implementation(Libraries.Firebase.invites)
     implementation(Libraries.Firebase.analytics)
+    implementation(Libraries.Firebase.crashlytics)
 
     implementation(Libraries.billingKtx)
     implementation(Libraries.ExternalLibs.gson)
@@ -187,7 +188,6 @@ dependencies {
 
 //    debugImplementation(Libraries.ExternalLibs.leakCanary)
 
-    implementation(Libraries.ExternalLibs.crashlytics)
 
     testImplementation(Libraries.TestLibs.junit)
     testImplementation(Libraries.TestLibs.mockito)

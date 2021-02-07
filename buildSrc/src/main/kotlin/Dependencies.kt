@@ -5,10 +5,10 @@ object BuildPlugins {
     object Versions {
         const val gradlePlugin = "4.1.2"
         const val crashlytics = "2.4.1"
-        const val googleServices = "4.3.4"
-        const val navigationPlugin = "2.3.2"
+        const val googleServices = "4.3.5"
+        const val safeArgsPlugin = "2.3.3"
         const val sonarqube = "3.0"
-        const val hilt = "2.28-alpha"
+        const val hilt = "2.31.2-alpha"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradlePlugin}"
@@ -16,11 +16,11 @@ object BuildPlugins {
     const val googleServices = "com.google.gms:google-services:${Versions.googleServices}"
     const val androidApp     = "com.android.application"
     const val kotlinAndroid = "android"
-    const val kotlinAndroidExtensions = "android.extensions"
+    const val kotlinParcelize = "kotlin-parcelize"
     const val kotlinKapt = "kapt"
     const val googleServicesPlugin = "com.google.gms.google-services"
     const val crashlyticsPlugin = "com.google.firebase:firebase-crashlytics-gradle:${Versions.crashlytics}"
-    const val navigationPlugin = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.navigationPlugin}"
+    const val safeArgsPlugin = "androidx.navigation:navigation-safe-args-gradle-plugin:${Versions.safeArgsPlugin}"
     const val sonarqube = "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:${Versions.sonarqube}"
     const val crashlyticsAppPlugin = "com.google.firebase.crashlytics"
     const val hiltPlugin = "com.google.dagger:hilt-android-gradle-plugin:${Versions.hilt}"
@@ -85,12 +85,14 @@ object Libraries {
        private object Versions {
            const val ads          = "19.7.0"
            const val invites      = "16.1.0"
-           const val analytics    = "18.0.1"
+           const val analytics    = "18.0.2"
+           const val crashlytics  = "17.3.1"
        }
 
-       const val ads     = "com.google.firebase:firebase-ads:${Versions.ads}"
+       const val ads     = "com.google.android.gms:play-services-ads:${Versions.ads}"
        const val invites = "com.google.firebase:firebase-invites:${Versions.invites}"
-       const val analytics = "com.google.firebase:firebase-analytics:${Versions.analytics}"
+       const val analytics = "com.google.firebase:firebase-analytics-ktx:${Versions.analytics}"
+       const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx:${Versions.crashlytics}"
    }
 
     object Kotlin {
@@ -106,7 +108,6 @@ object Libraries {
 
     object ExternalLibs {
         private object Versions {
-            const val crashlytics = "17.3.0"
             const val gson = "2.8.6"
             const val glide = "4.11.0"
             const val apacheCompress = "1.20"
@@ -119,7 +120,6 @@ object Libraries {
             const val rootShell          = "1.6"
         }
 
-        const val crashlytics = "com.google.firebase:firebase-crashlytics:${Versions.crashlytics}"
         const val gson        = "com.google.code.gson:gson:${Versions.gson}"
         const val glideRuntime  = "com.github.bumptech.glide:glide:${Versions.glide}"
         const val glideCompiler = "com.github.bumptech.glide:compiler:${Versions.glide}"

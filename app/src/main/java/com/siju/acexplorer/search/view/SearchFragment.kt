@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
@@ -37,7 +36,6 @@ import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.utils.InstallHelper
 import com.siju.acexplorer.utils.ScrollInfo
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -58,7 +56,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     private var searchView: SearchView? = null
     private var binding : SearchMainBinding? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = SearchMainBinding.inflate(inflater, container, false)
         return binding!!.root
     }
@@ -82,7 +80,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     }
 
     private fun setupToolbar() {
-        (activity as AppCompatActivity).setSupportActionBar(toolbar)
+        (activity as AppCompatActivity).setSupportActionBar(binding?.toolbarContainer?.toolbar)
     }
 
     private fun initializeViews(binding: SearchMainBinding) {
@@ -130,7 +128,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     }
 
     private fun initObservers() {
-        searchViewModel.searchResult.observe(viewLifecycleOwner, Observer {
+        searchViewModel.searchResult.observe(viewLifecycleOwner, {
             it?.apply {
                 val searchView = this@SearchFragment.searchView
                 if (::filesList.isInitialized && searchView != null) {
@@ -148,7 +146,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
             }
         })
 
-        fileListViewModel.fileData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.fileData.observe(viewLifecycleOwner, {
             it?.apply {
                 showSearchList()
                 if (::filesList.isInitialized) {
@@ -158,7 +156,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
             }
         })
 
-        fileListViewModel.recentFileData.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.recentFileData.observe(viewLifecycleOwner, {
             it?.apply {
                 showSearchList()
                 if (::filesList.isInitialized) {
@@ -167,7 +165,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
             }
         })
 
-        fileListViewModel.directoryClicked.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.directoryClicked.observe(viewLifecycleOwner, {
             it?.apply {
                 hideRecentSearch()
                 searchView?.let {searchView ->
@@ -178,13 +176,13 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
             }
         })
 
-        fileListViewModel.scrollInfo.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.scrollInfo.observe(viewLifecycleOwner, {
             it?.apply {
                 scrollToPosition(it)
             }
         })
 
-        fileListViewModel.openZipViewerEvent.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.openZipViewerEvent.observe(viewLifecycleOwner, {
             it?.apply {
                 val zipViewer = ZipViewerFragment(this@SearchFragment, it.first,
                         it.second)
@@ -192,15 +190,15 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
             }
         })
 
-        fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.viewFileEvent.observe(viewLifecycleOwner, {
             viewFile(it.first, it.second)
         })
 
-        fileListViewModel.viewImageFileEvent.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.viewImageFileEvent.observe(viewLifecycleOwner, {
             ViewHelper.openImage(context, it.first, it.second)
         })
 
-        fileListViewModel.installAppEvent.observe(viewLifecycleOwner, Observer {
+        fileListViewModel.installAppEvent.observe(viewLifecycleOwner, {
             val canInstall = it.first
             if (canInstall) {
                 InstallHelper.openInstallScreen(context, it.second)
@@ -209,7 +207,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
             }
         })
 
-        searchViewModel.recentSearchList.observe(viewLifecycleOwner, Observer {
+        searchViewModel.recentSearchList.observe(viewLifecycleOwner, {
             it?.apply {
                 searchSuggestions.showChipGroup()
                 showRecentSearch()

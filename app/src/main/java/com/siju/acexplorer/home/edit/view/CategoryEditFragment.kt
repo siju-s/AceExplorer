@@ -24,19 +24,17 @@ import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
+import com.siju.acexplorer.databinding.CategoryEditBinding
 import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.home.edit.model.CategoryEditModelImpl
 import com.siju.acexplorer.home.edit.viewmodel.CategoryEditViewModel
 import com.siju.acexplorer.storage.view.custom.helper.SimpleItemTouchHelperCallback
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.category_edit.*
-import kotlinx.android.synthetic.main.toolbar.*
 
 private const val MIN_LIBRARY_ITEMS = 3
 private const val MAX_LIBRARY_ITEMS = 12
@@ -46,10 +44,12 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
     private val categoryEditViewModel: CategoryEditViewModel by viewModels()
     private lateinit var itemTouchHelper: ItemTouchHelper
     private lateinit var adapter: CategoryEditAdapter
+    private var binding : CategoryEditBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.category_edit, container, false)
+        binding =  CategoryEditBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,7 +67,8 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
     }
 
     private fun setupToolbar() {
-        toolbar.title = resources.getString(R.string.app_name)
+        val toolbar = binding?.toolbarContainer?.toolbar
+        toolbar?.title = resources.getString(R.string.app_name)
         val activity = activity as AppCompatActivity?
         activity?.setSupportActionBar(toolbar)
         activity?.supportActionBar?.setHomeButtonEnabled(true)
@@ -79,11 +80,11 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
         adapter = CategoryEditAdapter { item, _ ->
             onCategoryEdit(item)
         }
-        categoryList.adapter = adapter
+        binding?.categoryList?.adapter = adapter
 
         val callback = SimpleItemTouchHelperCallback(adapter)
         itemTouchHelper = ItemTouchHelper(callback)
-        itemTouchHelper.attachToRecyclerView(categoryList)
+        itemTouchHelper.attachToRecyclerView(binding?.categoryList)
     }
 
     private fun onCategoryEdit(item: CategoryEditModelImpl.DataItem.Content) {
@@ -124,7 +125,7 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
                 }
             }
         }
-        categoryList.layoutManager = gridLayoutManager
+        binding?.categoryList?.layoutManager = gridLayoutManager
     }
 
     private fun getGridColumns(): Int {
@@ -134,7 +135,7 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
     }
 
     private fun initObservers() {
-        categoryEditViewModel.categories.observe(viewLifecycleOwner, Observer {
+        categoryEditViewModel.categories.observe(viewLifecycleOwner, {
             it?.apply {
                 Log.d("CategoryEditFragment", "count:${it.size}, itemsEdited:${categoryEditViewModel.itemsEdited.value}")
                 if (categoryEditViewModel.itemsEdited.value == true) {

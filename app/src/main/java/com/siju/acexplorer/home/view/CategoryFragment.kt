@@ -15,15 +15,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.siju.acexplorer.R
+import com.siju.acexplorer.databinding.CategoryPagerBinding
 import com.siju.acexplorer.extensions.findCurrentFragment
-import com.siju.acexplorer.extensions.inflateLayout
 import com.siju.acexplorer.home.types.CategoryData
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.search.helper.SearchUtils
 import com.siju.acexplorer.storage.view.FileListFragment
-import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
 
 
@@ -36,11 +35,13 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
     private var category = Category.GENERIC_IMAGES
+    private var binding : CategoryPagerBinding? = null
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
-        return inflater.inflateLayout(R.layout.category_pager, container)
+                              savedInstanceState: Bundle?): View? {
+        binding =  CategoryPagerBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun getCategoryView() = view
@@ -66,17 +67,17 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
 
     private fun checkIfFilePicker() {
         if (mainViewModel.isFilePicker()) {
-            toolbar.menu.findItem(R.id.action_search).isVisible = false
+            binding?.toolbarContainer?.toolbar?.menu?.findItem(R.id.action_search)?.isVisible = false
         }
     }
 
     private fun setupToolbar() {
-        toolbar.inflateMenu(R.menu.filelist_base)
-        toolbar.setOnMenuItemClickListener(this)
+        binding?.toolbarContainer?.toolbar?.inflateMenu(R.menu.filelist_base)
+        binding?.toolbarContainer?.toolbar?.setOnMenuItemClickListener(this)
     }
 
     override fun setToolbarTitle() {
-        toolbar.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
+        binding?.toolbarContainer?.toolbar?.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
     }
 
     private fun setupAdapter() {

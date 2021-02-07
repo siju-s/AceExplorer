@@ -19,7 +19,7 @@ buildscript {
         classpath (BuildPlugins.kotlinGradlePlugin)
         classpath (BuildPlugins.googleServices)
         classpath (BuildPlugins.crashlyticsPlugin)
-        classpath (BuildPlugins.navigationPlugin)
+        classpath (BuildPlugins.safeArgsPlugin)
         classpath (BuildPlugins.sonarqube)
         classpath (BuildPlugins.hiltPlugin)
 

@@ -17,7 +17,7 @@ package com.siju.acexplorer.common.types
 
 import android.os.Parcelable
 import com.siju.acexplorer.main.model.groups.Category
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class FileInfo(var category: Category? = null,

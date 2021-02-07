@@ -45,6 +45,7 @@ import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.appmanager.view.AppDetailActivity
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.databinding.MainListBinding
 import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.home.view.CategoryMenuHelper
 import com.siju.acexplorer.main.helper.UpdateChecker
@@ -74,8 +75,6 @@ import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.utils.InstallHelper
 import com.siju.acexplorer.utils.InstallHelper.openInstallScreen
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.main_list.*
-import kotlinx.android.synthetic.main.toolbar.*
 import java.util.*
 
 const val KEY_PATH = "path"
@@ -105,11 +104,13 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     private var category = Category.FILES
     private var showNavigation = true
     private var packageReceiverRegistered = false
+    private var binding : MainListBinding? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.main_list, container, false)
+        binding = MainListBinding.inflate(inflater, container, false)
+        return binding?.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -161,23 +162,23 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
     private fun setupToolbar() {
         if (!showNavigation) {
-            appbar.visibility = View.GONE
+            binding?.appbar?.visibility = View.GONE
         }
         else {
-            setToolbarTitle(toolbar)
+            setToolbarTitle(binding?.toolbarContainer?.toolbar)
         }
     }
 
-    private fun setToolbarTitle(toolbar: Toolbar) {
+    private fun setToolbarTitle(toolbar: Toolbar?) {
         when {
             isAppManager(category) -> {
-                toolbar.title = resources.getString(R.string.app_manager)
+                toolbar?.title = resources.getString(R.string.app_manager)
             }
             category == Category.FILES -> {
-                toolbar.title = resources.getString(R.string.app_name)
+                toolbar?.title = resources.getString(R.string.app_name)
             }
             else -> {
-                toolbar.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
+                toolbar?.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
             }
         }
     }
@@ -582,7 +583,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             showAds()
         }
         if (showNavigation) {
-            setToolbarTitle(toolbar)
+            setToolbarTitle(binding?.toolbarContainer?.toolbar)
         }
         else {
             categoryMenuHelper?.enableTab()
