@@ -27,7 +27,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         Toolbar.OnMenuItemClickListener, SearchView.OnQueryTextListener {
 
     private val bottomToolbar: Toolbar = view.findViewById(R.id.toolbar_bottom)
-    private val toolbar: Toolbar = categoryFragmentView.findViewById(R.id.toolbar)
+    private val toolbar: Toolbar = categoryFragmentView as Toolbar
     private lateinit var searchItem: MenuItem
     private lateinit var sortItem: MenuItem
     private lateinit var renameItem: MenuItem

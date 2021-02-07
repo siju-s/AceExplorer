@@ -131,7 +131,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             floatingView = FloatingView(view, this)
             navigationView = NavigationView(view, fileListViewModel.navigationCallback)
             val appbarView = getAppBarView(it) ?: return
-            menuControls = MenuControls(this, view, appbarView, category, viewMode, mainViewModel)
+            menuControls = MenuControls(this, view, appbarView.findViewById(R.id.toolbarContainer), category, viewMode, mainViewModel)
             fileListViewModel.setFilePickerArgs(mainViewModel.isFilePicker(), mainViewModel.isPickerMultiSelection())
             setupMultiSelection()
             setupNavigationView()
