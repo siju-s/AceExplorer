@@ -1,7 +1,6 @@
 package com.siju.acexplorer.home.viewmodel
 
 import android.util.Log
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,13 +10,16 @@ import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.search.helper.SearchUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 private const val TAG = "HomeViewModel"
-class HomeViewModel @ViewModelInject constructor(private val homeModel: HomeModel) : ViewModel() {
+@HiltViewModel
+class HomeViewModel @Inject constructor(private val homeModel: HomeModel) : ViewModel() {
 
     private val _categories = MutableLiveData<ArrayList<HomeLibraryInfo>>()
     private val _storage = MutableLiveData<ArrayList<StorageItem>>()

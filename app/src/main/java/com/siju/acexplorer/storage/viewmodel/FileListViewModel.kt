@@ -2,7 +2,6 @@ package com.siju.acexplorer.storage.viewmodel
 
 import android.net.Uri
 import android.util.Log
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -33,17 +32,20 @@ import com.siju.acexplorer.storage.presenter.ZipPresenterImpl
 import com.siju.acexplorer.storage.view.*
 import com.siju.acexplorer.utils.InstallHelper
 import com.siju.acexplorer.utils.ScrollInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 private const val TAG = "FileListViewModel"
 private const val ZIP_EXT = ".zip"
 
-class FileListViewModel @ViewModelInject constructor(private val storageModel: StorageModel) : ViewModel() {
+@HiltViewModel
+class FileListViewModel @Inject constructor(private val storageModel: StorageModel) : ViewModel() {
 
     private var zipViewer: ZipViewer? = null
     var apkPath: String? = null

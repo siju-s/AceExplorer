@@ -84,7 +84,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
         setupNavController()
 
-        mainViewModel.checkPermissions()
+        mainViewModel.setupPermission(PermissionHelper(this, applicationContext))
         handleIntent(intent)
 //        setTabColor()
         initObservers()

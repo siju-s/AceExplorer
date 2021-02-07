@@ -1,11 +1,13 @@
 package com.siju.acexplorer.appmanager.viewmodel
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.appmanager.model.*
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class AppDetailViewModel @ViewModelInject constructor(private val appDetailModel: AppDetailModel) : ViewModel() {
+@HiltViewModel
+class AppDetailViewModel @Inject constructor(private val appDetailModel: AppDetailModel) : ViewModel() {
 
     val versionInfo: LiveData<AppVersionInfo>
 

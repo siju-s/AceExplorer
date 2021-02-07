@@ -2,7 +2,6 @@ package com.siju.acexplorer.main.viewmodel
 
 import android.app.Activity
 import android.util.Log
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,8 +24,8 @@ enum class Pane {
     SINGLE,
     DUAL
 }
-class MainViewModel @ViewModelInject constructor(private val permissionHelper: PermissionHelper) : ViewModel() {
-
+class MainViewModel : ViewModel() {
+    private lateinit var permissionHelper: PermissionHelper
     private var categoryMenuHelper: CategoryMenuHelper? = null
     val navigateToSearch = MutableLiveData<Event<Boolean>>()
     var isDualPaneInFocus = false
@@ -96,7 +95,8 @@ class MainViewModel @ViewModelInject constructor(private val permissionHelper: P
         billingRepository.purchaseFullVersion(activity)
     }
 
-    fun checkPermissions() {
+    fun setupPermission(permissionHelper: PermissionHelper) {
+        this.permissionHelper = permissionHelper
         permissionStatus = permissionHelper.permissionStatus
         permissionHelper.checkPermissions()
     }

@@ -1,6 +1,5 @@
 package com.siju.acexplorer.storage.modules.picker.viewmodel
 
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,13 +11,16 @@ import com.siju.acexplorer.storage.modules.picker.model.PickerModel
 import com.siju.acexplorer.storage.modules.picker.model.PickerResultAction
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.utils.ScrollInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.File
+import javax.inject.Inject
 
-class PickerViewModel @ViewModelInject constructor(val model: PickerModel) : ViewModel(), PickerModel.Listener {
+@HiltViewModel
+class PickerViewModel @Inject constructor(val model: PickerModel) : ViewModel(), PickerModel.Listener {
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)

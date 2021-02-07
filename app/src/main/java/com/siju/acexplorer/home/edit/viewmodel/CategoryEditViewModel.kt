@@ -1,7 +1,6 @@
 package com.siju.acexplorer.home.edit.viewmodel
 
 import android.util.Log
-import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,8 +11,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class CategoryEditViewModel @ViewModelInject constructor(private val categoryEditModel: CategoryEditModel) : ViewModel() {
+class CategoryEditViewModel @Inject constructor(private val categoryEditModel: CategoryEditModel) : ViewModel() {
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)

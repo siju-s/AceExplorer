@@ -48,8 +48,6 @@ object Libraries {
        const val billing      = "3.0.0"
        const val navigation   = "2.3.2"
        const val constraintLayout = "2.0.4"
-       const val hilt = "2.28.1-alpha"
-       const val hiltViewModel = "1.0.0-alpha01"
    }
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
     const val design    = "com.google.android.material:material:${Versions.design}"
@@ -74,10 +72,8 @@ object Libraries {
 
     const val navigation     = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi   = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
-    const val hilt           = "com.google.dagger:hilt-android:${Versions.hilt}"
-    const val hiltCompiler   = "com.google.dagger:hilt-android-compiler:${Versions.hilt}"
-    const val hiltViewModel  = "androidx.hilt:hilt-lifecycle-viewmodel:${Versions.hiltViewModel}"
-    const val hiltViewModelCompiler  = "androidx.hilt:hilt-compiler:${Versions.hiltViewModel}"
+    const val hilt           = "com.google.dagger:hilt-android:${BuildPlugins.Versions.hilt}"
+    const val hiltCompiler   = "com.google.dagger:hilt-android-compiler:${BuildPlugins.Versions.hilt}"
 
 
    object Firebase {

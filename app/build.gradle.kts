@@ -150,8 +150,6 @@ dependencies {
 
     implementation(Libraries.hilt)
     kapt(Libraries.hiltCompiler)
-    implementation(Libraries.hiltViewModel)
-    kapt(Libraries.hiltViewModelCompiler)
 
     implementation(Libraries.roomRuntime)
     kapt(Libraries.roomCompiler)
