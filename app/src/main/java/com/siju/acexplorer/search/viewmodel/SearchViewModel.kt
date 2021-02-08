@@ -10,15 +10,18 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.search.model.SearchModel
 import com.siju.acexplorer.search.model.SearchModelImpl
 import com.siju.acexplorer.search.model.SearchSuggestionProvider
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 private const val TAG = "SearchViewModel"
 private const val MIN_CHAR_QUERY = 2
 
-class SearchViewModel  constructor(private val searchModel: SearchModel) : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(private val searchModel: SearchModel) : ViewModel() {
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)

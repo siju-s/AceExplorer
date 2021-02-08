@@ -7,12 +7,14 @@ import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.home.edit.model.CategoryEditModel
 import com.siju.acexplorer.home.edit.model.CategoryEditModelImpl
 import com.siju.acexplorer.home.edit.model.CategoryEditType
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class CategoryEditViewModel @Inject constructor(private val categoryEditModel: CategoryEditModel) : ViewModel() {
 
     private val viewModelJob = Job()
