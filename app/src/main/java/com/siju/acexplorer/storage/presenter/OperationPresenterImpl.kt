@@ -134,10 +134,6 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             R.id.action_cancel -> {
                 onCancelClicked()
             }
-
-            R.id.action_create_folder -> {
-                onCreateFolderForPasteClicked()
-            }
         }
     }
 
@@ -162,10 +158,6 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
     private fun onCancelClicked() {
         viewModel.endActionMode()
         viewModel.showFab()
-    }
-
-    private fun onCreateFolderForPasteClicked() {
-         viewModel.onFABClicked(Operations.FOLDER_CREATION, viewModel.currentDir)
     }
 
     private fun onSelectAllClicked() {

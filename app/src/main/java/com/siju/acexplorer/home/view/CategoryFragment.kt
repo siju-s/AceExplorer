@@ -256,8 +256,12 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
 
     override fun onDestroy() {
         super.onDestroy()
-        viewPager.unregisterOnPageChangeCallback(pageChangeListener)
-        pagerAdapter.clear()
+        if (::viewPager.isInitialized) {
+            viewPager.unregisterOnPageChangeCallback(pageChangeListener)
+        }
+        if (::pagerAdapter.isInitialized) {
+            pagerAdapter.clear()
+        }
         mainViewModel.setCategoryMenuHelper(null)
     }
 }

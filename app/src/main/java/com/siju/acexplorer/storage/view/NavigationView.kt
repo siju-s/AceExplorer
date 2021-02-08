@@ -39,18 +39,8 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
     private val navDirectory: LinearLayout = view.findViewById(R.id.navButtonsContainer)
     private val scrollNavigation: HorizontalScrollView = view.findViewById(R.id.scrollNavigation)
 
-    private val storageInternal: String
-    private val storageRoot: String
-    private val storageExternal: String
-
     private val homeButton = LayoutInflater.from(context).inflate(R.layout.navigation_button,
                                                                   null) as ImageButton
-
-    init {
-        storageRoot = context.resources.getString(R.string.nav_menu_root)
-        storageInternal = context.resources.getString(R.string.nav_menu_internal_storage)
-        storageExternal = context.resources.getString(R.string.nav_menu_ext_storage)
-    }
 
 
     //    private void checkIfFavIsRootDir() {

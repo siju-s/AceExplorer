@@ -133,8 +133,7 @@ object ConfigurationHelper {
 
     fun getStorageDualGridCols(configuration: Configuration, viewMode: ViewMode): Int {
         val sw = configuration.smallestScreenWidthDp
-        val columns: Int
-        columns = if (sw >= 720) {
+        val columns: Int = if (sw >= 720) {
             if (viewMode === ViewMode.GALLERY) StorageGridColumns.GALLERY_720DP_DUAL.value else StorageGridColumns.COL_720DP_DUAL.value
         } else if (sw >= 600) {
             if (viewMode === ViewMode.GALLERY) StorageGridColumns.GALLERY_COL_600DP_DUAL.value else StorageGridColumns.COL_600DP_DUAL.value

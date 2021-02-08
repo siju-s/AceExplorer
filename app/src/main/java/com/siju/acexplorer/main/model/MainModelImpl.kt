@@ -92,8 +92,7 @@ class MainModelImpl : MainModel {
 
     @Suppress("DEPRECATION")
     private fun getVersionCode(): Int {
-        val versionCode: Int
-        versionCode = try {
+        return try {
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             if (SdkHelper.isAtleastPie) {
                 packageInfo.longVersionCode.toInt()
@@ -103,7 +102,6 @@ class MainModelImpl : MainModel {
         } catch (e: PackageManager.NameNotFoundException) {
             0
         }
-        return versionCode
     }
 
 

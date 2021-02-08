@@ -118,8 +118,7 @@ class FileDataFetcher : DataFetcher {
 
         fun getDirectorySize(file: File, showHidden: Boolean = false): Long {
             var childFileListSize = 0
-            val listFiles: Array<String?>?
-            listFiles = if (!showHidden) {
+            val listFiles: Array<String?>? = if (!showHidden) {
                 file.list { _, name ->
                     name != ".nomedia"
                 }

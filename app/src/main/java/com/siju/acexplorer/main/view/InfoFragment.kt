@@ -166,8 +166,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         }
         val context = sizeText.context
         val isDirectory = fileInfo.isDirectory
-        val fileNoOrSize: String
-        fileNoOrSize = if (isDirectory) {
+        val fileNoOrSize: String = if (isDirectory) {
             when (val childFileListSize = fileInfo.size.toInt()) {
                 0 -> {
                     context.getString(R.string.empty)

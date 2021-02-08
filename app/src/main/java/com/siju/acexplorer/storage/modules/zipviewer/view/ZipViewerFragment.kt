@@ -20,7 +20,6 @@ package com.siju.acexplorer.storage.modules.zipviewer.view
 import android.util.Log
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
@@ -62,14 +61,14 @@ class ZipViewerFragment(
     }
 
     private fun initObservers() {
-        viewModel.viewFileEvent.observe(fragment.viewLifecycleOwner, Observer {
+        viewModel.viewFileEvent.observe(fragment.viewLifecycleOwner, {
             it?.apply {
                 viewFile(it.first, it.second)
                 viewModel.endViewFileEvent()
             }
         })
 
-        viewModel.installAppEvent.observe(fragment.viewLifecycleOwner, Observer {
+        viewModel.installAppEvent.observe(fragment.viewLifecycleOwner, {
             val canInstall = it.first
             if (canInstall) {
                 openInstallScreen(it.second)
@@ -78,7 +77,7 @@ class ZipViewerFragment(
                 InstallHelper.requestUnknownAppsInstallPermission(fragment)
             }
         })
-        viewModel.zipFailEvent.observe(fragment.viewLifecycleOwner, Observer {
+        viewModel.zipFailEvent.observe(fragment.viewLifecycleOwner, {
             if (it) {
                 val context = fragment.context
                 context?.let {

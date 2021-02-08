@@ -556,8 +556,7 @@ object DialogHelper {
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
         positiveButton.text = context.getString(R.string.msg_ok)
         negativeButton.text = context.getString(R.string.dialog_cancel)
-        val operation: Operations
-        operation = if (radioButtonCopy.isChecked) {
+        val operation: Operations = if (radioButtonCopy.isChecked) {
             Operations.COPY
         } else {
             Operations.CUT

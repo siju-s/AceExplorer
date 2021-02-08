@@ -127,8 +127,7 @@ class OperationHelper(val context: Context) {
             removeOperation()
             return
         }
-        val newFilePath: String
-        newFilePath = if (isFile) {
+        val newFilePath: String = if (isFile) {
             parent + File.separator + newName + extension
         }
         else {
@@ -160,8 +159,7 @@ class OperationHelper(val context: Context) {
             extension = FileUtils.getExtensionWithDot(filePath)
             isFile = true
         }
-        val newFilePath: String
-        newFilePath = if (isFile) {
+        val newFilePath: String = if (isFile) {
             parent + File.separator + newName + extension
         }
         else {

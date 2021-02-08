@@ -2,8 +2,8 @@ package com.siju.acexplorer.main.model.data.image
 
 import android.database.Cursor
 import android.provider.MediaStore
-import android.util.Log
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.helper.MediaStoreColumnHelper
 import com.siju.acexplorer.main.model.groups.Category
 import java.io.File
 import java.util.*
@@ -16,7 +16,7 @@ object ImageCursorData {
             return fileInfoList
         }
         if (cursor.moveToFirst()) {
-            val bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
+            val bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStoreColumnHelper.getBucketIdColumn())
             val bucketNameIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_DISPLAY_NAME)
             val pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
 

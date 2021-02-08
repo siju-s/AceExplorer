@@ -15,7 +15,7 @@ import com.siju.acexplorer.main.model.helper.AppUtils.getAppInfo
 
 internal class PassAppModelLoader : ModelLoader<String, ApplicationInfo> {
     override fun buildLoadData(path: String, width: Int,
-                               height: Int, options: Options): LoadData<ApplicationInfo>? {
+                               height: Int, options: Options): LoadData<ApplicationInfo> {
         return LoadData<ApplicationInfo>(CustomKey(path), CastingDataFetcher(path))
     }
 

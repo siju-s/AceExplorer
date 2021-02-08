@@ -191,8 +191,7 @@ class ZipLoader(val context: Context) {
                 name = name.substring(1)
             }
             val isDirectory = model.isDirectory
-            val size: Long
-            size = if (isDirectory) {
+            val size: Long = if (isDirectory) {
                 getDirectoryCount(name)
             }
             else {

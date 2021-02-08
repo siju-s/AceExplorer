@@ -5,11 +5,11 @@ import java.io.File
 
 object SearchUtils {
 
-    fun getCameraDirectory(): String? {
+    fun getCameraDirectory(): String {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + "/Camera"
     }
 
-    fun getScreenshotDirectory() : String ? {
+    fun getScreenshotDirectory() : String {
         val screenShotPath1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + "/Screenshots"
         val screenShotPath2 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).absolutePath + "/Screenshots"
 
@@ -24,43 +24,43 @@ object SearchUtils {
         }
     }
 
-    fun getWhatsappDirectory() : String? {
+    fun getWhatsappDirectory() : String {
         return Environment.getExternalStorageDirectory().absolutePath + "/WhatsApp/Media"
     }
 
-    fun getWhatsappImagesDirectory() : String? {
+    fun getWhatsappImagesDirectory() : String {
         return getWhatsappDirectory() + "/WhatsApp Images"
     }
 
-    fun getWhatsappVideosDirectory() : String? {
+    fun getWhatsappVideosDirectory() : String {
         return getWhatsappDirectory() + "/WhatsApp Video"
     }
 
-    fun getWhatsappAudioDirectory() : String? {
+    fun getWhatsappAudioDirectory() : String {
         return getWhatsappDirectory() + "/WhatsApp Audio"
     }
 
-    fun getWhatsappDocDirectory() : String? {
+    fun getWhatsappDocDirectory() : String {
         return getWhatsappDirectory() + "/WhatsApp Documents"
     }
 
-    fun getTelegramDirectory() : String? {
+    fun getTelegramDirectory() : String {
         return Environment.getExternalStorageDirectory().absolutePath + "/Telegram"
     }
 
-    fun getTelegramImagesDirectory() : String? {
+    fun getTelegramImagesDirectory() : String {
         return getTelegramDirectory() + "/Telegram Images"
     }
 
-    fun getTelegramVideosDirectory() : String? {
+    fun getTelegramVideosDirectory() : String {
         return getTelegramDirectory() + "/Telegram Video"
     }
 
-    fun getTelegramAudioDirectory() : String? {
+    fun getTelegramAudioDirectory() : String {
         return getTelegramDirectory() + "/Telegram Audio"
     }
 
-    fun getTelegramDocsDirectory() : String? {
+    fun getTelegramDocsDirectory() : String {
         return getTelegramDirectory() + "/Telegram Documents"
     }
 

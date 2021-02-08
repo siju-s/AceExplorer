@@ -325,8 +325,8 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
         mainViewModel.sortEvent.observe(viewLifecycleOwner, {
             it.getContentIfNotHandled()?.let { sortMode ->
-                context?.let {
-                    DialogHelper.showSortDialog(it, sortMode, sortDialogListener)
+                context?.let { context ->
+                    DialogHelper.showSortDialog(context, sortMode, sortDialogListener)
                 }
             }
         })

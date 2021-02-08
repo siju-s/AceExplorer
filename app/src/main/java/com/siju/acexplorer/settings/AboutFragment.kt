@@ -21,9 +21,9 @@ private const val PREFS_VERSION = "prefsVersion"
 class AboutFragment : PreferenceFragmentCompat() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root: View = super.onCreateView(inflater, container, savedInstanceState)!!
+        val root: View? = super.onCreateView(inflater, container, savedInstanceState)
         val activity = activity as AppCompatActivity?
-        activity?.setSupportActionBar(root.findViewById(R.id.toolbar) as Toolbar)
+        activity?.setSupportActionBar(root?.findViewById(R.id.toolbar) as Toolbar)
         val actionBar: ActionBar? = activity?.supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
         actionBar?.setTitle(R.string.pref_title_about)

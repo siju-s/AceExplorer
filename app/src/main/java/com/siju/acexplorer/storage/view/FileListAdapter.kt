@@ -237,8 +237,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 bindDate(mainCategory, fileInfo)
             }
             val isDirectory = fileInfo.isDirectory
-            val fileNumOrSize: String
-            fileNumOrSize = if (isDirectory) {
+            val fileNumOrSize: String = if (isDirectory) {
                 getDirectoryFileCount(context, fileInfo)
             }
             else {

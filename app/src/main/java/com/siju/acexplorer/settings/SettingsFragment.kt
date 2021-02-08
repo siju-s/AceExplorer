@@ -29,10 +29,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.preference.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -81,10 +79,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val root: View = super.onCreateView(inflater, container, savedInstanceState)!!
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val root: View? = super.onCreateView(inflater, container, savedInstanceState)
         val activity = activity as AppCompatActivity?
-        val toolbar = root.findViewById(R.id.toolbar) as Toolbar
+        val toolbar = root?.findViewById(R.id.toolbar) as Toolbar
         activity?.setSupportActionBar(toolbar)
         val actionBar: ActionBar? = activity?.supportActionBar
         actionBar?.setTitle(R.string.action_settings)
@@ -113,7 +111,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     private fun setupViewModels() {
-        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, Observer {
+        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, {
             it?.apply {
                 if (it.entitled) {
                     findPreference<Preference>(PREFS_FULL_VERSION)?.isVisible = false

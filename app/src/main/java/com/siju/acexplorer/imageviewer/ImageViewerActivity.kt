@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Process
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
@@ -102,7 +101,7 @@ class ImageViewerActivity : AppCompatActivity() {
     }
 
     private fun setupListener() {
-        viewModel.fileData.observe(this, Observer{
+        viewModel.fileData.observe(this, {
             view.onFileInfoFetched(it)
         })
     }

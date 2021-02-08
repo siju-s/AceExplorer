@@ -10,17 +10,27 @@ import com.siju.acexplorer.main.model.helper.SdkHelper
 class NetworkHelper(val networkChangeCallback: NetworkChangeCallback) {
 
     companion object {
+        @Suppress("DEPRECATION")
         fun isConnectedToInternet(context: Context?): Boolean {
             if (context == null) {
                 return false
             }
             val connectivityManager = context.getSystemService(
                     Context.CONNECTIVITY_SERVICE) as ConnectivityManager? ?: return false
-            val activeNetwork = connectivityManager.activeNetwork ?: return false
-            val networkCapabilities: NetworkCapabilities? = connectivityManager.getNetworkCapabilities(
-                    activeNetwork)
-            return networkCapabilities != null && networkCapabilities.hasCapability(
-                    NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+            if (SdkHelper.isAtleastMarsh) {
+                val activeNetwork = connectivityManager.activeNetwork ?: return false
+                val networkCapabilities: NetworkCapabilities? =
+                    connectivityManager.getNetworkCapabilities(
+                        activeNetwork
+                    )
+                return networkCapabilities != null && networkCapabilities.hasCapability(
+                    NetworkCapabilities.NET_CAPABILITY_VALIDATED
+                )
+            }
+            else {
+                val networkInfo = connectivityManager.activeNetworkInfo
+                return networkInfo?.isConnected == true
+            }
         }
     }
 

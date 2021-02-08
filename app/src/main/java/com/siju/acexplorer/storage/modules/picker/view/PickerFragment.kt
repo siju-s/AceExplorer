@@ -32,7 +32,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
@@ -79,7 +78,7 @@ class PickerFragment : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         return inflater.inflateLayout(R.layout.dialog_browse, container)
     }
 
@@ -169,7 +168,7 @@ class PickerFragment : DialogFragment() {
     }
 
     private fun initObservers() {
-        viewModel.permissionStatus.observe(this, Observer { permissionStatus ->
+        viewModel.permissionStatus.observe(this, { permissionStatus ->
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Required  -> viewModel.requestPermissions()
                 is PermissionHelper.PermissionState.Rationale -> viewModel.showPermissionRationale()
@@ -181,11 +180,11 @@ class PickerFragment : DialogFragment() {
             }
         })
 
-        viewModel.fileData.observe(viewLifecycleOwner, Observer {
+        viewModel.fileData.observe(viewLifecycleOwner, {
             onDataLoaded(it)
         })
 
-        viewModel.storage.observe(viewLifecycleOwner, Observer {
+        viewModel.storage.observe(viewLifecycleOwner, {
             it?.apply {
                 val pickerType = viewModel.pickerInfo.value?.first
                 if (pickerType == PickerType.COPY || pickerType == PickerType.CUT) {
@@ -194,7 +193,7 @@ class PickerFragment : DialogFragment() {
             }
         })
 
-        viewModel.pickerInfo.observe(viewLifecycleOwner, Observer {
+        viewModel.pickerInfo.observe(viewLifecycleOwner, {
             it?.apply {
                 when (it.first) {
                     PickerType.RINGTONE -> {
@@ -223,13 +222,13 @@ class PickerFragment : DialogFragment() {
             }
         })
 
-        viewModel.currentPath.observe(viewLifecycleOwner, Observer {
+        viewModel.currentPath.observe(viewLifecycleOwner, {
             it?.apply {
                 onCurrentPathChanged(it)
             }
         })
 
-        viewModel.result.observe(viewLifecycleOwner, Observer {
+        viewModel.result.observe(viewLifecycleOwner, {
             it?.apply {
                 when (it.pickerAction) {
                     PickerAction.RINGTONE_PICK -> {
@@ -250,7 +249,7 @@ class PickerFragment : DialogFragment() {
             }
         })
 
-        viewModel.showEmptyText.observe(viewLifecycleOwner, Observer {
+        viewModel.showEmptyText.observe(viewLifecycleOwner, {
             if (it.second) {
                 showEmptyText(it.first)
             } else {
@@ -258,19 +257,19 @@ class PickerFragment : DialogFragment() {
             }
         })
 
-        viewModel.directoryClicked.observe(viewLifecycleOwner, Observer {
+        viewModel.directoryClicked.observe(viewLifecycleOwner, {
             it?.apply {
                 viewModel.saveScrollInfo(getScrollInfo())
             }
         })
 
-        viewModel.scrollInfo.observe(viewLifecycleOwner, Observer {
+        viewModel.scrollInfo.observe(viewLifecycleOwner, {
             it?.apply {
                 scrollToPosition(it)
             }
         })
 
-        viewModel.isRootStorageList.observe(viewLifecycleOwner, Observer {
+        viewModel.isRootStorageList.observe(viewLifecycleOwner, {
             it?.apply {
                 if (it) {
                     onStorageListScreen()

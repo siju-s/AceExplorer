@@ -4,6 +4,7 @@ import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.helper.MediaStoreColumnHelper
 import com.siju.acexplorer.main.model.HiddenFileHelper
 import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
@@ -42,7 +43,7 @@ class ImageAllFetcher : DataFetcher {
         val sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
         val dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
         val imageIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-        val bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.BUCKET_ID)
+        val bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStoreColumnHelper.getBucketIdColumn())
         val pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media .DATA)
         val widthIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)
         val heightIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)

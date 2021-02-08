@@ -259,8 +259,7 @@ object FileUtils {
             return null
         }
         val file = File(filePath)
-        val fileName: String
-        fileName = if (file.isFile) {
+        return if (file.isFile) {
             val dotIndex = getLastDotIndex(filePath)
             val fileNameIdx = filePath.lastIndexOf("/") + 1
             if (dotIndex <= fileNameIdx) {
@@ -270,7 +269,6 @@ object FileUtils {
         } else {
             file.name
         }
-        return fileName
     }
 
     fun formatSize(context: Context?, sizeInBytes: Long): String {

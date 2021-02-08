@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.helper.MediaStoreColumnHelper
 import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SortHelper
@@ -25,8 +26,8 @@ class ImageDataFetcher : DataFetcher {
 
     private fun fetchImages(context: Context): Cursor? {
         val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-        val projection = arrayOf(MediaStore.Images.Media.BUCKET_ID, MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.DATA)
-        val sortOrder = MediaStore.Images.Media.BUCKET_ID
+        val projection = arrayOf(MediaStoreColumnHelper.getBucketIdColumn(), MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.DATA)
+        val sortOrder = MediaStoreColumnHelper.getBucketIdColumn()
         return context.contentResolver.query(uri, projection, null, null, sortOrder)
     }
 }
