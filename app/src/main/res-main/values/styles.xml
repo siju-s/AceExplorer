@@ -45,6 +45,11 @@
         <item name="android:textColorHint">@color/white</item>
     </style>
 
+    <!--TODO 08-Feb-21 Note adding this fixes overflow and back button color in Light theme but the View menu option -> also becomes white in Light theme-->
+    <style name="ToolbarTheme">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
     <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
         <item name="android:textSize">18sp</item>
     </style>
