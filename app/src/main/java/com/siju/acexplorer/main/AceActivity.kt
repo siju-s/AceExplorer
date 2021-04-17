@@ -35,7 +35,6 @@ import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.install.model.ActivityResult
-import com.kobakei.ratethisapp.RateThisApp
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.base.view.BaseActivity
@@ -64,8 +63,7 @@ private const val ACTION_IMAGES = "android.intent.action.SHORTCUT_IMAGES"
 private const val ACTION_MUSIC = "android.intent.action.SHORTCUT_MUSIC"
 private const val ACTION_VIDEOS = "android.intent.action.SHORTCUT_VIDEOS"
 private const val ACTION_RECENT = "android.intent.action.SHORTCUT_RECENT"
-private const val CRITERIA_INSTALL_NUM_DAYS = 10
-private const val CRITERIA_LAUNCH_TIMES = 25
+
 
 @AndroidEntryPoint
 class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
@@ -76,10 +74,12 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     private lateinit var navController: NavController
     private var updateChecker: UpdateChecker? = null
     private lateinit var binding : ActivityMainBinding
+    private lateinit var reviewManager : ReviewManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
+        reviewManager = ReviewManager(this)
         setContentView(binding.root)
 
         setupNavController()
@@ -292,14 +292,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     override fun onStart() {
         super.onStart()
-        setupRateDialog()
-    }
-
-    private fun setupRateDialog() {
-        val config = RateThisApp.Config(CRITERIA_INSTALL_NUM_DAYS, CRITERIA_LAUNCH_TIMES)
-        RateThisApp.init(config)
-        RateThisApp.onCreate(this)
-        RateThisApp.showRateDialogIfNeeded(this)
+        reviewManager.checkCanShowReviewDialog()
     }
 
     override fun onResume() {

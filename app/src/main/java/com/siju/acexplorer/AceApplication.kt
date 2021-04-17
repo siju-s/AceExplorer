@@ -43,11 +43,11 @@ class AceApplication : Application() {
 
     private fun setupPerformanceCheckers() {
         if (BuildConfig.DEBUG) {
-            setStrictMode()
+//            setupStrictMode()
         }
     }
 
-    private fun setStrictMode() {
+    private fun setupStrictMode() {
         StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().detectAll()
                 .penaltyLog().build())
         StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
