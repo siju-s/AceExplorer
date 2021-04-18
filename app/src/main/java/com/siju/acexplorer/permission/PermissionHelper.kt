@@ -25,6 +25,7 @@ import android.content.pm.PackageManager
 import android.content.pm.PermissionInfo
 import android.net.Uri
 import android.os.Build
+import android.os.Environment
 import android.provider.Settings
 import android.util.Log
 import android.view.View
@@ -36,6 +37,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import com.siju.acexplorer.R
 import com.siju.acexplorer.logging.Logger
+import com.siju.acexplorer.main.model.helper.SdkHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
@@ -51,9 +53,10 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
 
     val permissionStatus: MutableLiveData<PermissionState> = MutableLiveData()
     private val permissionsNeeded = ArrayList<String>()
+    private var allFilesAccessNeeded = false
 
     fun checkPermissions() {
-        if (hasPermissions(context)) {
+        if (hasPermissions(context) && !allFilesAccessNeeded) {
             permissionStatus.value = PermissionState.Granted
         }
         else {
@@ -62,8 +65,12 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
     }
 
     fun onForeground() {
-        if (permissionRationaleDialog?.isShowing == true) {
-            Log.d(TAG, "onForeground")
+        if (allFilesAccessNeeded && Environment.isExternalStorageManager()) {
+            allFilesAccessNeeded = false
+            dismissRationaleDialog()
+            permissionStatus.value = PermissionState.Granted
+        }
+        else if (permissionRationaleDialog?.isShowing == true && !allFilesAccessNeeded) {
             if (hasPermissions(context)) {
                 dismissRationaleDialog()
                 permissionStatus.value = PermissionState.Granted
@@ -74,8 +81,10 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
     private fun hasPermissions(context: Context): Boolean {
         val packageInfo: PackageInfo
         try {
-            packageInfo = context.packageManager.getPackageInfo(context.packageName,
-                                                                PackageManager.GET_PERMISSIONS)
+            packageInfo = context.packageManager.getPackageInfo(
+                context.packageName,
+                PackageManager.GET_PERMISSIONS
+            )
         }
         catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
@@ -88,6 +97,9 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
             if (isPermissionDenied(context, permission)) {
                 permissionsNeeded.add(permission)
             }
+        }
+        if (SdkHelper.isAtleastAndroid11) {
+            allFilesAccessNeeded = !Environment.isExternalStorageManager()
         }
         return permissionsNeeded.isEmpty()
     }
@@ -128,11 +140,16 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
         }
     }
 
-
     fun requestPermission() {
         Logger.log(TAG, "requestPermission")
-        ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(),
-                                          PERMISSIONS_REQUEST)
+        if (permissionsNeeded.isNotEmpty()) {
+            ActivityCompat.requestPermissions(activity, permissionsNeeded.toTypedArray(),
+                PERMISSIONS_REQUEST
+            )
+        }
+        else if (allFilesAccessNeeded) {
+            showRationale()
+        }
     }
 
     fun onPermissionResult() {
@@ -151,11 +168,19 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
         if (permissionRationaleDialog == null) {
             createRationaleDialog()
         }
-        val showSettings = !ActivityCompat.shouldShowRequestPermissionRationale(activity,
-                                                                                storagePermission)
+        val showSettings = if (allFilesAccessNeeded) {
+           false
+        }
+        else {
+            !ActivityCompat.shouldShowRequestPermissionRationale(
+                activity,
+                storagePermission
+            )
+        }
         val buttonGrant: Button? = permissionRationaleDialog?.findViewById(R.id.buttonGrant)
         val textViewPermissionHint: TextView? = permissionRationaleDialog?.findViewById(
-                R.id.textPermissionHint)
+            R.id.textPermissionHint
+        )
 
         permissionRationaleDialog?.setOnDismissListener {
             onRationaleDialogDismissed()
@@ -166,19 +191,31 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
             textViewPermissionHint?.visibility = View.VISIBLE
         }
         buttonGrant?.setOnClickListener {
-            if (showSettings) {
-                openSettings()
-            }
-            else {
-                requestPermission()
+            when {
+                showSettings -> {
+                    openSettings()
+                }
+                allFilesAccessNeeded -> {
+                    requestAllFilesPermission()
+                }
+                else -> {
+                    requestPermission()
+                }
             }
         }
 
         permissionRationaleDialog?.show()
     }
 
+    private fun requestAllFilesPermission() {
+        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+        val uri = Uri.fromParts(SCHEMA_PACKAGE, context.packageName, null)
+        intent.data = uri
+        activity.startActivity(intent)
+    }
+
     private fun onRationaleDialogDismissed() {
-        if (!hasPermissions(context)) {
+        if (!hasPermissions(context) || allFilesAccessNeeded) {
             activity.finish()
         }
     }
@@ -197,7 +234,6 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
     }
 
     private fun dismissRationaleDialog() {
-        Log.d(TAG, "dismissRationaleDialog")
         permissionRationaleDialog?.dismiss()
     }
 
