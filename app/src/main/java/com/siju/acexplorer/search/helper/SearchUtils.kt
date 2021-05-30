@@ -43,7 +43,7 @@ object SearchUtils {
         else {
             return whatsappLegacyPath
         }
-        return Environment.getStorageDirectory().absolutePath
+        return Environment.getExternalStorageDirectory().absolutePath
     }
 
     fun getWhatsappImagesDirectory() : String {
