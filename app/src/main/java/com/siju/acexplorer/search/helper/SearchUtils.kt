@@ -1,8 +1,11 @@
 package com.siju.acexplorer.search.helper
 
 import android.os.Environment
+import com.siju.acexplorer.AceApplication
+import com.siju.acexplorer.main.model.helper.SdkHelper
 import java.io.File
 
+private const val WHATSAPP_PACKAGE_NAME = "com.whatsapp"
 object SearchUtils {
 
     fun getCameraDirectory(): String {
@@ -25,7 +28,22 @@ object SearchUtils {
     }
 
     fun getWhatsappDirectory() : String {
-        return Environment.getExternalStorageDirectory().absolutePath + "/WhatsApp/Media"
+        val whatsappLegacyPath = Environment.getExternalStorageDirectory().absolutePath + "/WhatsApp/Media"
+        if (SdkHelper.isAtleastAndroid11 || !File(whatsappLegacyPath).exists()) {
+            val mediaDirs = AceApplication.appContext.externalMediaDirs
+            if (mediaDirs != null) {
+                val path = mediaDirs[0].absolutePath
+                val genericMediaDir = path.substring(0, path.lastIndexOf("/"))
+                val whatsappPath = File(genericMediaDir, WHATSAPP_PACKAGE_NAME)
+                if (whatsappPath.exists()) {
+                    return whatsappPath.absolutePath + "/WhatsApp/Media"
+                }
+            }
+        }
+        else {
+            return whatsappLegacyPath
+        }
+        return Environment.getStorageDirectory().absolutePath
     }
 
     fun getWhatsappImagesDirectory() : String {
