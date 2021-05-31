@@ -154,6 +154,8 @@ dependencies {
     implementation(Libraries.roomRuntime)
     kapt(Libraries.roomCompiler)
 
+    implementation(Libraries.exif)
+
 // Support libraries
     implementation(Libraries.appCompat)
     implementation(Libraries.recyclerView)

@@ -65,8 +65,7 @@
     <ScrollView
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fillViewport="true">
+        android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -94,7 +93,7 @@
                 style="@style/InfoItemDetail"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="11dp"
+                android:layout_marginBottom="10dp"
                 android:textIsSelectable="true"
                 app:layout_constraintBottom_toTopOf="@+id/textPath"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -175,37 +174,38 @@
                 style="@style/InfoItemDetail"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="11dp"
-                tools:text="1 Aug, 1970"
-                app:layout_constraintBottom_toTopOf="@+id/textResolution"
+                tools:text="1 Aug"
+                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textFileSize"
                 app:layout_constraintStart_toEndOf="@+id/textDateLabel" />
 
 
             <TextView
-                android:id="@+id/textResolutionPlaceholder"
-                style="@style/InfoItem"
+                android:id="@+id/textMore"
+                android:text="@string/more_info"
                 android:layout_width="0dp"
+                android:textSize="@dimen/text_16"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:text="@string/info_resolution"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/textResolution"
-                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textDateLabel" />
+                app:layout_constraintTop_toBottomOf="@id/textDateLabel"
+                android:layout_marginStart="@dimen/margin_16"
+                android:layout_marginTop="@dimen/margin_20"
+                android:visibility="gone"
+                android:fontFamily="sans-serif-medium"
+                tools:visibility="visible"
+                android:textStyle="bold"/>
 
-            <TextView
-                android:id="@+id/textResolution"
-                style="@style/InfoItemDetail"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toBottomOf="parent"
+
+            <androidx.recyclerview.widget.RecyclerView
+                app:layout_constraintTop_toBottomOf="@id/textMore"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                tools:text="1000 X 1000"
-                app:layout_constraintStart_toEndOf="@+id/textResolutionPlaceholder" />
+                android:id="@+id/exifList"
+                tools:listitem="@layout/info_exif_item"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

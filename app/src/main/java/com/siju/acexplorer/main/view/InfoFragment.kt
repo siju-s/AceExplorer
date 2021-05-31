@@ -15,13 +15,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.exifinterface.media.ExifInterface
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.main.model.ExifData
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.helper.FileUtils
@@ -29,7 +32,6 @@ import com.siju.acexplorer.main.model.helper.ShareHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.utils.Clipboard
 import com.siju.acexplorer.utils.ThumbnailUtils
-import java.util.*
 
 private const val TAG_INFO = "Info"
 
@@ -150,13 +152,8 @@ class InfoFragment : BottomSheetDialogFragment() {
         bindSize(sizeText, fileInfo)
 
         val context = context
-        if (CategoryHelper.isAnyImagesCategory(category) && path != null && context != null && fileInfo.width != 0L) {
-            val resolutionText = sheetView?.findViewById<TextView>(R.id.textResolution)
-            resolutionText?.text = String.format(Locale.getDefault(), context.getString(R.string.resolution_format),
-                    fileInfo.width, fileInfo.height)
-        } else {
-            sheetView?.findViewById<TextView>(R.id.textResolution)?.visibility = View.GONE
-            sheetView?.findViewById<TextView>(R.id.textResolutionPlaceholder)?.visibility = View.GONE
+        if (CategoryHelper.isAnyImagesCategory(category) && context != null) {
+            bindExifInfo(context, uri)
         }
     }
 
@@ -185,6 +182,46 @@ class InfoFragment : BottomSheetDialogFragment() {
             Formatter.formatFileSize(context, size)
         }
         sizeText.text = fileNoOrSize
+    }
+
+    private fun bindExifInfo(context: Context?, uri: Uri?) {
+        if (uri == null || context == null) {
+            return
+        }
+        val inputStream = context.contentResolver.openInputStream(uri)
+        inputStream ?: return
+
+        inputStream.use { stream ->
+            val exif = ExifInterface(stream)
+            sheetView?.findViewById<TextView>(R.id.textMore)?.visibility = View.VISIBLE
+            val exifList = sheetView?.findViewById<RecyclerView>(R.id.exifList)
+            val exifAdapter =  ExifAdapter(buildExifValues(context, exif), exif.latLong)
+            exifList?.adapter = exifAdapter
+        }
+    }
+
+    private fun buildExifValues(context: Context, exif: ExifInterface) : ArrayList<ExifData> {
+        val tagsToCheck = arrayOf(
+            ExifInterface.TAG_MAKE,
+            ExifInterface.TAG_MODEL,
+            ExifInterface.TAG_DATETIME,
+            ExifInterface.TAG_FLASH,
+            ExifInterface.TAG_FOCAL_LENGTH,
+            ExifInterface.TAG_MAX_APERTURE_VALUE,
+            ExifInterface.TAG_EXPOSURE_TIME,
+            ExifInterface.TAG_ORIENTATION,
+            ExifInterface.TAG_IMAGE_WIDTH,
+            ExifInterface.TAG_IMAGE_LENGTH
+        )
+        val list = arrayListOf<ExifData>()
+
+        for (tag in tagsToCheck) {
+            val data = exif.getAttribute(tag)
+            if (data != null) {
+                list.add(ExifData(context, tag, data))
+            }
+        }
+        return list
     }
 
     private fun setIconListener(icon: ImageView, path: String?, fileInfo: FileInfo) {

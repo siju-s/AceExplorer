@@ -206,14 +206,12 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
     override fun infoClicked() {
         val uri = uriList[pager.currentItem]
         Log.d("View", "info:$uri")
-        if (pathList.isNotEmpty()) {
+        if (uri != null) {
+            viewModel.infoClicked(uri)
+        } else if (pathList.isNotEmpty()){
             val path = pathList[pager.currentItem]
             path?.let {
                 viewModel.infoClicked(path)
-            }
-        } else {
-            uri?.let {
-                viewModel.infoClicked(uri)
             }
         }
     }
