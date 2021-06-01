@@ -4,9 +4,9 @@ object BuildPlugins {
 
     object Versions {
         const val gradlePlugin = "4.1.3"
-        const val crashlytics = "2.4.1"
-        const val googleServices = "4.3.5"
-        const val safeArgsPlugin = "2.3.3"
+        const val crashlytics = "2.6.1"
+        const val googleServices = "4.3.8"
+        const val safeArgsPlugin = "2.3.5"
         const val sonarqube = "3.0"
         const val hilt = "2.31.2-alpha"
     }
@@ -46,7 +46,7 @@ object Libraries {
        const val room         = "2.2.6"
        const val playCore     = "1.10.0"
        const val billing      = "3.0.0"
-       const val navigation   = "2.3.2"
+       const val navigation   = "2.3.5"
        const val constraintLayout = "2.0.4"
        const val exif             = "1.3.2"
    }
@@ -82,14 +82,12 @@ object Libraries {
    object Firebase {
 
        private object Versions {
-           const val ads          = "19.7.0"
-           const val invites      = "16.1.0"
-           const val analytics    = "18.0.2"
-           const val crashlytics  = "17.3.1"
+           const val ads          = "20.1.0"
+           const val analytics    = "19.0.0"
+           const val crashlytics  = "18.0.0"
        }
 
        const val ads     = "com.google.android.gms:play-services-ads:${Versions.ads}"
-       const val invites = "com.google.firebase:firebase-invites:${Versions.invites}"
        const val analytics = "com.google.firebase:firebase-analytics-ktx:${Versions.analytics}"
        const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx:${Versions.crashlytics}"
    }

@@ -58,11 +58,6 @@ android {
     buildTypes {
         getByName("debug") {
             isMinifyEnabled = false
-            firebaseCrashlytics {
-                // If you don't need crash reporting for your debug build,
-                // you can speed up your build by disabling mapping file uploading.
-                mappingFileUploadEnabled = false
-            }
             signingConfig = signingConfigs.getByName("debug")
         }
 
@@ -127,6 +122,10 @@ android {
     kotlinOptions.apply {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
+    compileOptions.apply {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -169,7 +168,6 @@ dependencies {
     kapt(Libraries.annotation)
 
     implementation(Libraries.Firebase.ads)
-//    implementation(Libraries.Firebase.invites)
     implementation(Libraries.Firebase.analytics)
     implementation(Libraries.Firebase.crashlytics)
 
