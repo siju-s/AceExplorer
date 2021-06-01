@@ -7,7 +7,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.text.format.Formatter
-import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -58,11 +57,6 @@ class InfoFragment : BottomSheetDialogFragment() {
     private var uri : Uri? = null
     private var bottomSheetDialog: BottomSheetDialog? = null
     private var sheetView: View? = null
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        Log.d("Info", "attach")
-    }
 
     @SuppressLint("InflateParams")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

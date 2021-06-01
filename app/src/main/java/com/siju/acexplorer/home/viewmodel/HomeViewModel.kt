@@ -13,7 +13,7 @@ import com.siju.acexplorer.search.helper.SearchUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,7 +38,7 @@ class HomeViewModel @Inject constructor(private val homeModel: HomeModel) : View
     val categoryClickEvent: LiveData<Pair<String?, Category>>
         get() = _categoryClickEvent
 
-    private val viewModelJob = Job()
+    private val viewModelJob = SupervisorJob()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
 
@@ -65,7 +65,6 @@ class HomeViewModel @Inject constructor(private val homeModel: HomeModel) : View
             categoryInfoList.forEachIndexed { index, homeLibraryInfo ->
                 val fileInfo = homeModel.loadCountForCategory(homeLibraryInfo.category, getPath(homeLibraryInfo.category) )
                 homeLibraryInfo.count = fileInfo.count
-//                Log.d(TAG, "fetchCount : index:$index, category:${homeLibraryInfo.category}, count:${homeLibraryInfo.count}")
                 _categoryData.postValue(Pair(index, homeLibraryInfo))
             }
         }
