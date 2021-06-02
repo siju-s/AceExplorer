@@ -8,4 +8,5 @@ interface CategoryMenuHelper {
     fun disableTab()
     fun enableTab()
     fun setToolbarTitle()
+    fun setTabSubtitle(subtitle : String, position : Int)
 }

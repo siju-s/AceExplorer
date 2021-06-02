@@ -67,6 +67,10 @@
         <argument
             android:name="show_navigation"
             app:argType="boolean" />
+        <argument
+            android:name="tab_pos"
+            android:defaultValue="-1"
+            app:argType="integer" />
 
     </fragment>
 

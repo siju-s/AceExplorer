@@ -22,4 +22,5 @@
     android:layout_height="@dimen/actionbar_height"
     android:theme="@style/ToolbarTheme"
     app:titleTextAppearance="@style/ToolbarTitle"
+    app:subtitleTextAppearance="@style/ToolbarSubtitle"
     app:titleTextColor="@color/white"/>

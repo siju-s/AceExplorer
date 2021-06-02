@@ -54,6 +54,10 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="ToolbarSubtitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textSize">@dimen/text_14</item>
+    </style>
+
     <style name="TransparentTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
         <item name="windowNoTitle">true</item>
     </style>

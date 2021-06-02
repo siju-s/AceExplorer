@@ -25,7 +25,7 @@ class CategoryPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) 
 
     override fun createFragment(position: Int): Fragment {
         val  data = categoryDataList[position]
-        val fragment = FileListFragment.newInstance(data.path, data.category, false)
+        val fragment = FileListFragment.newInstance(data.path, data.category, false, position)
         Log.d("CategoryAdapter", "createFragment:pos:$position, category:${data.category}, frag:$fragment")
         fragmentMap[position] = fragment
         return fragment

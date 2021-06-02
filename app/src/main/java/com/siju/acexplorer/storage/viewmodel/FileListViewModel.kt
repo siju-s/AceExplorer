@@ -183,6 +183,11 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
     private var filePicker = false
     private var multiSelectionPicker = false
 
+    private val _fileCount = MutableLiveData<Pair<Int, Int>>()
+
+    val fileCount : LiveData<Pair<Int, Int>>
+    get() = _fileCount
+
 
     init {
         val model = storageModel as StorageModelImpl
@@ -203,7 +208,7 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
         this.searchScreen = searchScreen
     }
 
-    fun loadData(path: String?, category: Category, fromSearch: Boolean = false) {
+    fun  loadData(path: String?, category: Category, fromSearch: Boolean = false) {
         Log.d(this.javaClass.name, "loadData: path $path , category $category")
         val newCategory = if (fromSearch) {
            getNewSearchCategory(category)
@@ -221,6 +226,7 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
                 Log.d(this.javaClass.name,
                         "onDataloaded loadData: data ${data.size} , category $newCategory")
                 _recentFileData.postValue(Pair(newCategory, data))
+                filterRecentFileCount(newCategory, data)
                 handleScrollPosition()
             }
         }
@@ -230,9 +236,31 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
                 Log.d(this.javaClass.name,
                         "onDataloaded loadData: data ${data.size} , category $newCategory")
                 _fileData.postValue(data)
+                filterFileCount(data)
                 handleScrollPosition()
             }
         }
+    }
+
+    private fun filterFileCount(fileList : ArrayList<FileInfo>) {
+        val total = fileList.size
+        val folderCount = fileList.filter {
+            it.isDirectory
+        }.size
+        val fileCount = total - folderCount
+        _fileCount.postValue(Pair(folderCount, fileCount))
+    }
+
+    private fun filterRecentFileCount(category: Category, fileList : ArrayList<RecentTimeData.RecentDataItem>) {
+        var fileCount = 0
+        var folderCount = 0
+        if (category == RECENT) {
+            folderCount = fileList.size
+        }
+        else {
+            fileCount = fileList.filterIsInstance<RecentTimeData.RecentDataItem.Item>().size
+        }
+        _fileCount.postValue(Pair(folderCount, fileCount))
     }
 
     private fun getNewSearchCategory(category: Category) : Category {
@@ -260,7 +288,9 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
         }
         else {
             uiScope.launch(Dispatchers.IO) {
-                _fileData.postValue(storageModel.loadData(path, category))
+                val data = storageModel.loadData(path, category)
+                _fileData.postValue(data)
+                filterFileCount(data)
                 handleScrollPosition()
             }
         }
@@ -832,6 +862,7 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
 
     fun onZipContentsLoaded(data: ArrayList<FileInfo>) {
         _fileData.postValue(data)
+        filterFileCount(data)
     }
 
     fun isZipMode() = zipPresenter.isZipMode

@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -80,6 +81,13 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         binding?.toolbarContainer?.toolbar?.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
     }
 
+    override fun setTabSubtitle(subtitle: String, position : Int) {
+        Log.d(this.javaClass.simpleName, "setToolbarSubtitle() called with: subtitle = $subtitle, category:$category, current item:${tabLayout.selectedTabPosition}")
+        if (position >= 0 && category != Category.WHATSAPP && category != Category.TELEGRAM) {
+            tabLayout.getTabAt(position)?.customView?.findViewById<TextView>(R.id.subtitle)?.text = subtitle
+        }
+    }
+
     private fun setupAdapter() {
         val args = arguments
         args?.let {
@@ -93,7 +101,14 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
 
     private fun setupTabWithPager() {
         TabLayoutMediator(tabLayout, viewPager) { tab, pos ->
-            tab.text = pagerAdapter.getTitle(pos)
+            if (category == Category.WHATSAPP || category == Category.TELEGRAM) {
+                tab.text = pagerAdapter.getTitle(pos)
+            }
+            else {
+                tab.setCustomView(R.layout.category_tab_custom)
+                tab.customView?.tag = pos
+                tab.customView?.findViewById<TextView>(R.id.title)?.text = pagerAdapter.getTitle(pos)
+            }
         }.attach()
     }
 

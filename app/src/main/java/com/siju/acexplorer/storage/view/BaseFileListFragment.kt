@@ -80,7 +80,9 @@ import java.util.*
 const val KEY_PATH = "path"
 const val KEY_CATEGORY = "category"
 const val KEY_SHOW_NAVIGATION = "show_navigation"
-private const val TAG = "BaseFileListFragment"
+ const val KEY_TAB_POS = "tab_pos"
+
+ private const val TAG = "BaseFileListFragment"
 private const val SAF_REQUEST = 2000
 private const val EXTRACT_PATH_REQUEST = 5000
 private const val COPY_PATH_REQUEST = 6000
@@ -103,6 +105,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     private var path: String? = null
     private var category = Category.FILES
     private var showNavigation = true
+    private var tabPos = -1
     private var packageReceiverRegistered = false
     private var binding : MainListBinding? = null
 
@@ -183,6 +186,24 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         }
     }
 
+    private fun setToolbarSubtitle(folderCount : Int, fileCount : Int) {
+        val context = context
+        context ?: return
+        val subtitle  = StringBuilder()
+        Log.d(TAG, "setToolbarSubtitle() called with: folderCount = $folderCount, fileCount = $fileCount")
+        if (folderCount != 0) {
+            subtitle.append(context.resources.getQuantityString(R.plurals.number_of_folders, folderCount, folderCount))
+        }
+        if (folderCount != 0 && fileCount != 0) {
+            subtitle.append(", ")
+        }
+        if (fileCount != 0) {
+            subtitle.append(context.resources.getQuantityString(R.plurals.number_of_files, fileCount, fileCount))
+        }
+        binding?.toolbarContainer?.toolbar?.subtitle = subtitle.toString()
+        categoryMenuHelper?.setTabSubtitle(subtitle.toString(), tabPos)
+    }
+
     private fun setupNavigationView() {
         fileListViewModel.setNavigationView(navigationView)
         if (isAppManager(category) || !showNavigation) {
@@ -201,6 +222,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                 path = bundle.path
                 category =  bundle.category
                 showNavigation = bundle.showNavigation
+                tabPos = bundle.tabPos
                 Log.d(TAG, "getArgs: category:$category")
             }
             else {
@@ -253,6 +275,12 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                 if (::filesList.isInitialized) {
                     filesList.onDataLoaded(it, fileListViewModel.category, fileListViewModel.isZipMode())
                 }
+            }
+        })
+
+        fileListViewModel.fileCount.observe(viewLifecycleOwner, {
+            it?.apply {
+                setToolbarSubtitle(it.first, it.second)
             }
         })
 
