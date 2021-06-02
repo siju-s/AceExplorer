@@ -1,5 +1,10 @@
 package com.siju.acexplorer.storage.model
 
+import android.content.SharedPreferences
+import android.util.Log
+import com.siju.acexplorer.main.model.groups.Category
+import com.siju.acexplorer.main.model.groups.CategoryHelper
+import com.siju.acexplorer.preferences.PreferenceConstants
 import java.security.InvalidParameterException
 
 enum class SortMode(val value: Int) {
@@ -31,6 +36,27 @@ enum class SortMode(val value: Int) {
         }
 
         fun isAscending(sortMode: SortMode) = sortMode.value % 2 == 0
+
+        fun getSortMode(preferences : SharedPreferences, category: Category?) : SortMode {
+            Log.d(SortMode::class.java.simpleName, "getSortMode() called with: category = $category")
+            val sortMode : Int = if (CategoryHelper.isCategorySortDifferent(category)) {
+                PreferenceConstants.SORT_MODE_DATE_DESC
+            }
+            else {
+                preferences.getInt(
+                    PreferenceConstants.KEY_SORT_MODE,
+                    PreferenceConstants.DEFAULT_VALUE_SORT_MODE)
+            }
+            return getSortModeFromValue(sortMode)
+        }
+
+        fun saveSortMode(preferences: SharedPreferences, sortMode: SortMode) {
+            Log.d(SortMode::class.java.simpleName, "saveSortMode: value:$sortMode")
+            preferences.edit().apply {
+                putInt(PreferenceConstants.KEY_SORT_MODE, sortMode.value)
+                apply()
+            }
+        }
 
     }
 

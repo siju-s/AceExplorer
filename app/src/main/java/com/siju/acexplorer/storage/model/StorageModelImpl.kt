@@ -127,18 +127,12 @@ class StorageModelImpl @Inject constructor(@ApplicationContext val context: Cont
     }
 
     override fun getSortMode(): SortMode {
-        return SortMode.getSortModeFromValue(
-                globalPreference.getInt(
-                        PreferenceConstants.KEY_SORT_MODE,
-                        PreferenceConstants.DEFAULT_VALUE_SORT_MODE))
+        return SortMode.getSortMode(globalPreference, category)
     }
 
     override fun saveSortMode(sortMode: SortMode) {
         Log.d(this.javaClass.name, "saveSortMode: value:$sortMode")
-        globalPreference.edit().apply {
-            putInt(PreferenceConstants.KEY_SORT_MODE, sortMode.value)
-            apply()
-        }
+        SortMode.saveSortMode(globalPreference, sortMode)
     }
 
     override fun renameFile(operation: Operations, filePath: String, newName: String) {

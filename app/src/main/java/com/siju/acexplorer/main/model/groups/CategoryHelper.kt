@@ -154,7 +154,16 @@ object CategoryHelper {
 
     fun shouldShowSort(category: Category?) : Boolean {
         return category != RECENT && category != LARGE_FILES && category != LARGE_FILES_ALL
+                && !isCategorySortDifferent(category)
     }
+
+    fun isCategorySortDifferent(category: Category?) =
+        category == IMAGES_ALL ||
+                category == CAMERA ||
+                category == GENERIC_IMAGES ||
+                category == VIDEO_ALL ||
+                category == GENERIC_VIDEOS ||
+                category == CAMERA_GENERIC
 
     fun getCategoryForRecentFromExtension(extension: String?): Category {
         var ext = extension

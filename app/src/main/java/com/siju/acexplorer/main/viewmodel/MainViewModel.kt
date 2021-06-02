@@ -14,6 +14,7 @@ import com.siju.acexplorer.main.helper.SingleLiveEvent
 import com.siju.acexplorer.main.model.MainModelImpl
 import com.siju.acexplorer.main.model.StorageItem
 import com.siju.acexplorer.main.model.StorageUtils
+import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.preferences.PreferenceConstants
 import com.siju.acexplorer.storage.helper.Event
@@ -213,7 +214,11 @@ class MainViewModel : ViewModel() {
 
     fun isPickerMultiSelection() = pickerMultipleSelection
 
-    fun onSortClicked() {
+    fun onSortClicked(category : Category? = Category.FILES) {
+        if (category != Category.FILES) {
+            _sortEvent.value = Event(mainModel.getSortMode(category))
+            return
+        }
         val value = sortMode.value
         value?.let {
             _sortEvent.value = Event(SortMode.getSortModeFromValue(value))

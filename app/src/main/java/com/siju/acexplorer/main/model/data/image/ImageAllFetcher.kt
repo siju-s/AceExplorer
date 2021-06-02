@@ -19,7 +19,8 @@ class ImageAllFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
         val cursor = fetchImages(context)
         val data = getImageAllDataFromCursor(cursor, category, canShowHiddenFiles(context))
-        return SortHelper.sortFiles(data, getSortMode(context))
+        val sortMode = getSortMode(context, category)
+        return SortHelper.sortFiles(data, sortMode)
     }
 
     override fun fetchCount(context: Context, path: String?): Int {

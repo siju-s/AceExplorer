@@ -2,10 +2,12 @@ package com.siju.acexplorer.main.model.data
 
 import android.content.Context
 import android.database.Cursor
+import android.util.Log
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.preferences.PreferenceConstants
+import com.siju.acexplorer.storage.model.SortMode
 import java.util.*
 
 interface DataFetcher {
@@ -17,9 +19,9 @@ interface DataFetcher {
         return arrayListOf()
     }
 
-    fun getSortMode(context: Context): Int {
-        return PreferenceManager.getDefaultSharedPreferences(context).getInt(
-                PreferenceConstants.KEY_SORT_MODE, PreferenceConstants.DEFAULT_VALUE_SORT_MODE)
+    fun getSortMode(context: Context, category: Category = Category.FILES): Int {
+        Log.d(this.javaClass.simpleName, "getSortMode() called with: category = $category")
+        return SortMode.getSortMode(PreferenceManager.getDefaultSharedPreferences(context), category).value
     }
 
     companion object {

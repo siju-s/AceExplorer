@@ -116,7 +116,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
         menuItemWrapper.setMenuItem(item)
         when (item.itemId) {
             R.id.action_sort -> {
-                mainViewModel.onSortClicked()
+                mainViewModel.onSortClicked(category)
             }
             R.id.action_search -> {
                 mainViewModel.navigateToSearch()
