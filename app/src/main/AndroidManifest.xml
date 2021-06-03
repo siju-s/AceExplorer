@@ -31,6 +31,10 @@
     <!-- For deleting packages in App manager on Android P and above -->
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
 
+    <!-- Required from Android 11 to list all apps -->
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
+
     <application
         android:name=".AceApplication"
         android:allowBackup="true"
