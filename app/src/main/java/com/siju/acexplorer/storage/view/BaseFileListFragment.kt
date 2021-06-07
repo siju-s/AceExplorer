@@ -190,7 +190,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         val context = context
         context ?: return
         val subtitle  = StringBuilder()
-        Log.d(TAG, "setToolbarSubtitle() called with: folderCount = $folderCount, fileCount = $fileCount")
+        Log.d(TAG, "setToolbarSubtitle() called with: folderCount = $folderCount, fileCount = $fileCount, category:$category")
         if (folderCount != 0) {
             subtitle.append(context.resources.getQuantityString(R.plurals.number_of_folders, folderCount, folderCount))
         }
@@ -198,10 +198,20 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             subtitle.append(", ")
         }
         if (fileCount != 0) {
-            subtitle.append(context.resources.getQuantityString(R.plurals.number_of_files, fileCount, fileCount))
+            subtitle.append(getFileCountText(context, fileCount, category))
         }
         binding?.toolbarContainer?.toolbar?.subtitle = subtitle.toString()
         categoryMenuHelper?.setTabSubtitle(subtitle.toString(), tabPos)
+    }
+
+    private fun getFileCountText(context: Context, fileCount: Int, category: Category) : String {
+        val resourceId = if (category == Category.APP_MANAGER) {
+            R.plurals.number_of_apps
+        }
+        else {
+            R.plurals.number_of_files
+        }
+        return context.resources.getQuantityString(resourceId, fileCount, fileCount)
     }
 
     private fun setupNavigationView() {

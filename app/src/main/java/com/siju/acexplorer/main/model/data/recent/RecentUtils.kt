@@ -49,6 +49,7 @@ object RecentUtils {
                         CategoryHelper.getSubCategoryForRecentFromExtension(
                                 fileInfo.extension),
                         count)
+                itemFileInfo.isDirectory = true
                 fileInfoList.add(itemFileInfo)
                 categories.add(newCategory)
             } else {

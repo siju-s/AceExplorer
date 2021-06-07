@@ -21,7 +21,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/activity_main">
+    >
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -40,7 +40,7 @@
         app:tabTextColor="@color/tab_text_color"
         app:tabSelectedTextColor="@color/tab_selected_text_color"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="@dimen/tab_height" />
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/categoryPager"

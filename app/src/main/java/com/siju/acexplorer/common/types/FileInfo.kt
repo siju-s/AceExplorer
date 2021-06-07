@@ -93,6 +93,7 @@ class FileInfo(var category: Category? = null,
         this.subcategory = subcategory
         this.filePath = filePath
         this.count = count
+        this.isDirectory = true
     }
 
     constructor(category: Category?, albumId: Long, title: String?, numTracks: Long) : this() {
@@ -109,6 +110,7 @@ class FileInfo(var category: Category? = null,
         fileName = bucketName
         filePath = path
         numTracks = count.toLong()
+        this.isDirectory = true
     }
 
     // App manager
