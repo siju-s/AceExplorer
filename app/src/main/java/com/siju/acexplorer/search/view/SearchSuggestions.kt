@@ -100,19 +100,33 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
         }
 
         categoryChipGroup.setOnCheckedChangeListener { _, checkedChipId ->
-            Log.d(TAG, "categoryChipGroup, pos:$checkedChipId, count :${categoryChipGroup.childCount}, ${categoryChipGroup.checkedChipId}")
+            Log.d(TAG, "categoryChipGroup, pos:$checkedChipId, count :${categoryChipGroup.childCount}, ${checkedChipId}")
             if (!clearAll) {
+                if (isDocAndCamOrScreenChecked()) {
+                    folderChipGroup.clearCheck()
+                    checkedChipList.remove(chipCamera)
+                    checkedChipList.remove(chipScreenshot)
+                }
                 onChipGroupCheckedListener(checkedChipId)
             }
         }
 
         folderChipGroup.setOnCheckedChangeListener { _, checkedChipId ->
-            Log.d(TAG, "Folder chip group, pos:$checkedChipId, count :${folderChipGroup.childCount}")
+            Log.d(TAG, "Folder chip group, pos:$checkedChipId, count :${folderChipGroup.childCount}, chipCamera:${chipCamera?.id}")
             if (!clearAll) {
+                if (isDocAndCamOrScreenChecked()) {
+                    chipDocuments.isChecked = false
+                    checkedChipList.remove(chipDocuments)
+                }
                 onChipGroupCheckedListener(checkedChipId)
             }
         }
     }
+
+    private fun isDocAndCamOrScreenChecked() = chipDocuments.isChecked && isCameraOrScreenshotSelected()
+
+    private fun isCameraOrScreenshotSelected() : Boolean =
+       chipCamera?.isChecked == true || chipScreenshot?.isChecked == true
 
     private fun onChipGroupCheckedListener(checkedChipId: Int) {
         if (checkedChipId == -1) {
@@ -282,7 +296,7 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
                 }
             }
             else -> {
-                chipWhatsapp?.tag as String
+                chipWhatsapp?.tag as String?
             }
         }
     }
@@ -306,7 +320,7 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
                 }
             }
             else -> {
-                chipTelegram?.tag as String
+                chipTelegram?.tag as String?
             }
         }
     }
