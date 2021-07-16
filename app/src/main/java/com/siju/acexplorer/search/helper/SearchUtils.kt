@@ -31,9 +31,6 @@ object SearchUtils {
 
     fun getWhatsappDirectory(): String {
         val whatsappLegacyPath = Environment.getExternalStorageDirectory().absolutePath + "/WhatsApp/Media"
-        if (File(whatsappLegacyPath).exists()) {
-            return whatsappLegacyPath
-        }
         val mediaDirs = AceApplication.appContext.externalMediaDirs
         if (mediaDirs != null) {
             val path = mediaDirs[0].absolutePath
@@ -43,7 +40,10 @@ object SearchUtils {
                 return whatsappPath.absolutePath + "/WhatsApp/Media"
             }
         }
-        return Environment.getExternalStorageDirectory().absolutePath
+        if (File(whatsappLegacyPath).exists()) {
+            return whatsappLegacyPath
+        }
+        return ""
     }
 
     fun getWhatsappImagesDirectory(): String {

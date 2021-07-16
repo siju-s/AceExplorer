@@ -32,7 +32,7 @@ class ReviewManager(val activity: AppCompatActivity) {
 
     private fun showPlayStoreReviewDialog(activity : AppCompatActivity, reviewInfo: ReviewInfo) {
         val flow = manager.launchReviewFlow(activity, reviewInfo)
-        flow.addOnCompleteListener { _ ->
+        flow.addOnCompleteListener {
             Log.d(TAG, "showPlayStoreReviewDialog: ")
             // The flow has finished. The API does not indicate whether the user
             // reviewed or not, or even whether the review dialog was shown. Thus, no

@@ -34,10 +34,9 @@ class PremiumUtils {
         val pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         val editor = pref.edit()
         // If it is the first launch, save the date in shared preference.
-        if (pref.getLong(KEY_INSTALL_DATE, 0) == 0L) {
+        if (isFirstLaunch(pref)) {
             storeInstallDate(context, editor)
         }
-        // Increment launch times
         launchTimes = pref.getInt(KEY_LAUNCH_TIMES, 0)
         launchTimes++
         storeLaunchTime(editor, launchTimes)
@@ -46,6 +45,8 @@ class PremiumUtils {
         optOut = pref.getBoolean(KEY_OPT_OUT, false)
         printStatus(context)
     }
+
+    private fun isFirstLaunch(pref: SharedPreferences) = pref.getLong(KEY_INSTALL_DATE, 0) == 0L
 
     private fun storeLaunchTime(editor: SharedPreferences.Editor, launchTimes: Int) {
         editor.putInt(KEY_LAUNCH_TIMES, launchTimes)
@@ -71,8 +72,7 @@ class PremiumUtils {
             false
         } else {
             val time = Date().time
-            time - installDate.time >= MAX_DAYS_MILLIS &&
-                    time - askLaterDate.time >= MAX_DAYS_MILLIS && launchTimes >= MAX_LAUNCH_TIMES
+            time - installDate.time >= MAX_DAYS_MILLIS && launchTimes >= MAX_LAUNCH_TIMES
         }
     }
 
