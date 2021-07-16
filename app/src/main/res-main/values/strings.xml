@@ -31,7 +31,7 @@
     <string name="nav_header_collections">Library</string>
     <string name="app_manager">App manager</string>
     <string name="unlock_full_version">Unlock full version</string>
-    <string name="full_version_buy_ask">Full version removes annoying ads. Do you want to buy it?</string>
+    <string name="full_version_buy_ask">Full version removes annoying ads. Do you want to support us by buying it?</string>
     <string name="img_accessibility_icon_lib">Library icon</string>
     <string name="empty">Empty</string>
     <string name="action_rename">Rename</string>
@@ -138,7 +138,7 @@
     <string name="copy_path">Copy path</string>
     <string name="permission_setting_hint">Tap Settings -> Permissions and then turn Storage on.</string>
     <string name="access_denied_external">Write access to External SD not granted</string>
-    <string name="permission_request">Need storage permission to show all the files</string>
+    <string name="permission_request">Please grant permission to show all the files</string>
     <string name="action_grant">GRANT</string>
     <string name="img_accessibility_permission">Grant permission</string>
     <string name="next">NEXT</string>

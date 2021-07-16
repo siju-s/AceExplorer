@@ -65,7 +65,7 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
     }
 
     fun onForeground() {
-        if (allFilesAccessNeeded && Environment.isExternalStorageManager()) {
+        if (allFilesAccessNeeded && SdkHelper.isAtleastAndroid11 && Environment.isExternalStorageManager()) {
             allFilesAccessNeeded = false
             dismissRationaleDialog()
             permissionStatus.value = PermissionState.Granted
@@ -100,6 +100,8 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
         }
         if (SdkHelper.isAtleastAndroid11) {
             allFilesAccessNeeded = !Environment.isExternalStorageManager()
+            permissionsNeeded.remove(storagePermission)
+            permissionsNeeded.remove(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
         return permissionsNeeded.isEmpty()
     }
@@ -208,10 +210,12 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
     }
 
     private fun requestAllFilesPermission() {
-        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-        val uri = Uri.fromParts(SCHEMA_PACKAGE, context.packageName, null)
-        intent.data = uri
-        activity.startActivity(intent)
+        if (SdkHelper.isAtleastAndroid11) {
+            val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+            val uri = Uri.fromParts(SCHEMA_PACKAGE, context.packageName, null)
+            intent.data = uri
+            activity.startActivity(intent)
+        }
     }
 
     private fun onRationaleDialogDismissed() {
