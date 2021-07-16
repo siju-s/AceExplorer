@@ -24,7 +24,7 @@ data class ExifData(val context : Context, val tag : String, var value : String)
             }
         }
         else if (tag == ExifInterface.TAG_EXPOSURE_TIME) {
-            value = String.format(Locale.ENGLISH, context.getString(R.string.exposure_sec), value)
+            value = String.format(Locale.ENGLISH, context.getString(R.string.exposure_sec), value.toFloat())
         }
     }
 }
