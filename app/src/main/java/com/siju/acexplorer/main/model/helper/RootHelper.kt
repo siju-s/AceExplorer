@@ -25,26 +25,26 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.stericson.RootShell.exceptions.RootDeniedException
 import com.stericson.RootShell.execution.Command
 import com.stericson.RootTools.RootTools
-import java.io.File
-import java.io.IOException
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicReference
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+import kotlin.collections.ArrayList
 
 private const val TAG = "RootHelper"
-private const val COMMAND_WAIT_MS = 2000
+private const val COMMAND_WAIT_MS = 1000
 private const val UNIX_ESCAPE_EXPRESSION = "(\\(|\\)|\\[|\\]|\\s|\'|\"|`|\\{|\\}|&|\\\\|\\?)"
 
 @SuppressLint("StaticFieldLeak")
 object RootHelper {
     private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH)
 
-    @Synchronized
-    fun executeCommand(cmd: String): ArrayList<String> {
+    fun executeCommand(cmd: String, path : String = ""): ArrayList<String> {
         Log.d(TAG, "executeCommand: $cmd")
         val list = ArrayList<String>()
-        //        final CountDownLatch countDownLatch = new CountDownLatch(1);
         val resultRef = AtomicReference<ArrayList<String>>()
         val command: Command = object : Command(0, cmd) {
             override fun commandOutput(id: Int, line: String) {
@@ -62,12 +62,18 @@ object RootHelper {
                 super.commandCompleted(id, exitcode)
                 Log.d(TAG, "command commandCompleted:" + list.size)
                 resultRef.set(list)
-                //                countDownLatch.countDown();
             }
         }
         try {
             RootTools.getShell(true).add(command)
-            waitForCommand(command,1)
+            while (!command.isFinished) {
+                try {
+                    Thread.sleep(50)
+                }
+                catch (e: InterruptedException) {
+                    e.printStackTrace()
+                }
+            }
         } catch (e: IOException) {
             e.printStackTrace()
         } catch (e: RootDeniedException) {
@@ -102,25 +108,58 @@ object RootHelper {
 
     private fun waitForCommand(command: Command, time: Long = -1L): Boolean {
         var t: Long = 0
-        while (!command.isFinished) {
-            synchronized(command) {
-                try {
-                    if (!command.isFinished) {
-                        t += COMMAND_WAIT_MS
-                        if (t != -1L && t >= time) {
-                            return true
-                        }
+        while (true) {
+            try {
+                if (!command.isFinished) {
+                    t += COMMAND_WAIT_MS
+                    if (t != -1L && t >= time) {
+                        return true
                     }
-                } catch (e: InterruptedException) {
-                    e.printStackTrace()
                 }
-            }
-            if (!command.isExecuting && !command.isFinished) {
-                return false
+                else {
+                    return true
+                }
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
             }
         }
-        log(TAG, "Command Finished!$command")
-        return true
+    }
+
+    private fun execute(cmd: String): BufferedReader? {
+        val reader: BufferedReader
+        try {
+            val process = Runtime.getRuntime().exec("su")
+            val os = DataOutputStream(
+                process.outputStream
+            )
+            os.writeBytes(
+                """
+                $cmd
+                
+                """.trimIndent()
+            )
+            os.writeBytes("exit\n")
+            reader = BufferedReader(InputStreamReader(process.inputStream))
+            val err: String = BufferedReader(InputStreamReader(process.errorStream)).readLine()
+            os.flush()
+            if (process.waitFor() != 0 || "" != err && !containsIllegals(err)) {
+                Log.e("Root Error, cmd: $cmd", err)
+                return null
+            }
+            return reader
+        }
+        catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    private fun containsIllegals(toExamine: String): Boolean {
+        // checks for "+" sign so the program doesn't throw an error when its
+        // not erroring.
+        val pattern: Pattern = Pattern.compile("[+]")
+        val matcher: Matcher = pattern.matcher(toExamine)
+        return matcher.find()
     }
 
     fun getCommandLineString(input: String): String {
@@ -154,7 +193,7 @@ object RootHelper {
         val rootAccessGiven = RootTools.isAccessGiven()
         val rooted = root || rootAccessGiven
         if (rooted) {
-            list = executeCommand("ls -l" + hidden + getCommandLineString(path))
+            list = executeCommand("ls -l" + hidden + getCommandLineString(path), path)
             val newTime = System.currentTimeMillis()
             Log.d(TAG, "getRootedList: time taken for ls:" + (newTime - time) + " list:" + list)
             for (i in list.indices) {
@@ -181,9 +220,8 @@ object RootHelper {
     }
 
     private fun parseFileNew(path: String, result: String, fileInfoArrayList: ArrayList<FileInfo>) {
-        val array = result.trim { it <= ' ' }.split("\\s+").toTypedArray()
+        val array = result.trim { it <= ' ' }.split("\\s+".toRegex()).toTypedArray()
         val arrayLength = array.size
-        Log.d(TAG, "parseFileNew: arrayLength:$arrayLength")
         if (array.size > 3) {
             val trimName: String
             val date: String
