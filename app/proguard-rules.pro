@@ -37,8 +37,6 @@
   *** rewind();
 }
 -keep class android.support.v7.widget.SearchView { *; }
-#-dontnote android.net.http.*
-#-dontnote org.apache.**
 
 -keep class org.apache.** { *; }
 -dontwarn org.apache.**
