@@ -42,6 +42,8 @@ import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.analytics.Analytics
+import com.siju.acexplorer.appmanager.filter.AppSource
+import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.appmanager.view.AppDetailActivity
 import com.siju.acexplorer.common.types.FileInfo
@@ -1211,6 +1213,30 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                     if (category != Category.APP_MANAGER) {
                         navigateToSearchScreen()
                     }
+                }
+                R.id.action_apps_all -> {
+                    item.isChecked = true
+                    fileListViewModel.filterAppByType(AppType.ALL_APPS)
+                }
+                R.id.action_apps_user -> {
+                    item.isChecked = true
+                    fileListViewModel.filterAppByType(AppType.USER_APP)
+                }
+                R.id.action_apps_system -> {
+                    item.isChecked = true
+                    fileListViewModel.filterAppByType(AppType.SYSTEM_APP)
+                }
+                R.id.action_playstore -> {
+                    item.isChecked = true
+                    fileListViewModel.filterAppBySource(AppSource.PLAYSTORE)
+                }
+                R.id.action_amazon_store -> {
+                    item.isChecked = true
+                    fileListViewModel.filterAppBySource(AppSource.AMAZON_APPSTORE)
+                }
+                R.id.action_unknown -> {
+                    item.isChecked = true
+                    fileListViewModel.filterAppBySource(AppSource.UNKNOWN)
                 }
                 else -> {
                     if (item.itemId != R.id.action_view) {

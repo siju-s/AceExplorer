@@ -16,6 +16,7 @@
 package com.siju.acexplorer.common.types
 
 import android.os.Parcelable
+import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.main.model.groups.Category
 import kotlinx.parcelize.Parcelize
 
@@ -37,7 +38,9 @@ class FileInfo(var category: Category? = null,
                var width : Long = 0L,
                var height: Long = 0L,
                var isDirectory: Boolean = false,
-               var isRootMode : Boolean = false)  : Parcelable {
+               var isRootMode : Boolean = false,
+               var source: AppSource = AppSource.PLAYSTORE,
+               var systemApp : Boolean = false)  : Parcelable {
 
     // For Images, Audio, Video
     constructor(category: Category?, id: Long, bucketId: Long, fileName: String?, filePath: String?,
@@ -114,10 +117,12 @@ class FileInfo(var category: Category? = null,
     }
 
     // App manager
-    private constructor(category: Category, name: String, packageName: String, date: Long, size: Long) : this() {
+    private constructor(category: Category, name: String, packageName: String, source: AppSource, isSystemApp: Boolean, date: Long, size: Long) : this() {
         this.category = category
         fileName = name
         filePath = packageName
+        this.source = source
+        this.systemApp = isSystemApp
         this.date = date
         this.size = size
     }
@@ -184,8 +189,8 @@ class FileInfo(var category: Category? = null,
             return FileInfo(category, subcategory, filePath, count)
         }
 
-        fun createAppInfo(category: Category, name: String, packageName: String, date: Long, size: Long): FileInfo {
-            return FileInfo(category, name, packageName, date, size)
+        fun createAppInfo(category: Category, name: String, packageName: String, isSystemApp : Boolean, source: AppSource, date: Long, size: Long): FileInfo {
+            return FileInfo(category, name, packageName, source, isSystemApp, date, size)
         }
     }
 }

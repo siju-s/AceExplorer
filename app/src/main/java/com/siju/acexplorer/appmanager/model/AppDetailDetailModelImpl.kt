@@ -6,14 +6,12 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.siju.acexplorer.R
+import com.siju.acexplorer.appmanager.helper.AppHelper
+import com.siju.acexplorer.extensions.getInstallerPackage
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.SdkHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
-
-private const val PACKAGE_NAME_PLAYSTORE = "com.android.vending"
-private const val PACKAGE_NAME_AMAZON_APPSTORE = "com.amazon.venezia"
 
 class AppDetailDetailModelImpl @Inject constructor(@ApplicationContext val context: Context) : AppDetailModel {
 
@@ -85,16 +83,8 @@ class AppDetailDetailModelImpl @Inject constructor(@ApplicationContext val conte
     }
 
     private fun getInstallerSource(packageName: String): String {
-        return getInstallerSourceName(context.packageManager.getInstallerPackageName(packageName))
+        return AppHelper.getInstallerSourceName(context, context.packageManager.getInstallerPackage(packageName))
     }
 
-    private fun getInstallerSourceName(packageName: String?): String {
-        return when (packageName) {
-            null -> context.getString(R.string.unknown)
-            PACKAGE_NAME_PLAYSTORE -> context.getString(R.string.play_store)
-            PACKAGE_NAME_AMAZON_APPSTORE -> context.getString(
-                    R.string.amazon_play_store)
-            else -> context.getString(R.string.unknown)
-        }
-    }
+
 }

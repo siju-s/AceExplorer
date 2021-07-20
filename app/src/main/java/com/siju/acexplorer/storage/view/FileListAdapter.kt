@@ -115,9 +115,17 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         text = text.toLowerCase(Locale.getDefault())
         for (item in filteredList) {
             val fileName = item.fileName
+            val packageName = item.filePath
             fileName?.let {
                 if (fileName.toLowerCase(Locale.getDefault()).contains(text)) {
                     result.add(item)
+                }
+            }
+            if (!result.contains(item)) {
+                packageName?.let {
+                    if (packageName.toLowerCase(Locale.getDefault()).contains(text)) {
+                        result.add(item)
+                    }
                 }
             }
         }

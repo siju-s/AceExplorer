@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.view
 
+import android.annotation.SuppressLint
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -7,6 +8,8 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.badge.BadgeUtils
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.common.types.FileInfo
@@ -40,7 +43,11 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private lateinit var permissionItem: MenuItem
     private lateinit var deleteFavItem: MenuItem
     private lateinit var deleteItem: MenuItem
+    private lateinit var installSourceItem : MenuItem
+    private lateinit var allSourceItem: MenuItem
+    private lateinit var userSourceItem: MenuItem
 
+    private var menuItemBadge : BadgeDrawable?= null
     private var searchView: SearchView? = null
     private var hiddenMenuItem: MenuItem? = null
     private var isSearchActive = false
@@ -132,7 +139,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private fun setupBaseMenu() {
         toolbar.menu.clear()
         if (CategoryHelper.isAppManager(category)) {
-            toolbar.inflateMenu(R.menu.search)
+            toolbar.inflateMenu(R.menu.app_manager)
         } else {
             toolbar.inflateMenu(R.menu.filelist_base)
         }
@@ -154,7 +161,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         menu?.let {
             searchItem = menu.findItem(R.id.action_search)
             if (CategoryHelper.isAppManager(category)) {
-                searchView = searchItem.actionView as SearchView
+                setupAppManagerMenuItems(menu)
             }
             sortItem = menu.findItem(R.id.action_sort)
             hiddenMenuItem = menu.findItem(R.id.action_hidden)
@@ -163,6 +170,15 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
             setHiddenCheckedState(fragment.shouldShowHiddenFiles())
             toggleViewModeMenuItemState(viewMode, menu)
         }
+    }
+
+    private fun setupAppManagerMenuItems(menu: Menu) {
+        searchView = searchItem.actionView as SearchView
+        menu.findItem(R.id.action_apps_user).isChecked = true
+        menu.findItem(R.id.action_source_all).isChecked = true
+        installSourceItem = menu.findItem(R.id.action_installed_source)
+        allSourceItem = menu.findItem(R.id.action_source_all)
+        userSourceItem = menu.findItem(R.id.action_apps_user)
     }
 
     private fun toggleViewModeMenuItemState(viewMode: ViewMode, menu: Menu) {
@@ -187,7 +203,6 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         }
     }
 
-
     private fun setupSearchView() {
         if (!CategoryHelper.isAppManager(category)) {
             return
@@ -195,6 +210,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         searchView?.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
         searchView?.imeOptions = EditorInfo.IME_ACTION_SEARCH
         searchView?.setOnQueryTextListener(this)
+        searchView?.queryHint = searchView?.context?.getString(R.string.search_name_or_package)
         searchView?.maxWidth = Int.MAX_VALUE
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
@@ -333,8 +349,54 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_apps_system -> {
+                installSourceItem.isEnabled = false
+                allSourceItem.isChecked = true
+                applyBadgeToMenuItem(R.id.action_filter)
+            }
+            R.id.action_apps_user -> {
+                allSourceItem.isChecked = true
+                installSourceItem.isEnabled = true
+                clearBadgeMenuItem(R.id.action_filter)
+            }
+            R.id.action_apps_all -> {
+                allSourceItem.isChecked = true
+                installSourceItem.isEnabled = true
+                applyBadgeToMenuItem(R.id.action_filter)
+            }
+            R.id.action_playstore, R.id.action_amazon_store, R.id.action_unknown -> {
+                applyBadgeToMenuItem(R.id.action_filter)
+            }
+            R.id.action_source_all -> {
+                if (userSourceItem.isChecked) {
+                    clearBadgeMenuItem(R.id.action_installed_source)
+                }
+            }
+        }
         fragment.onMenuItemClick(item)
         return false
+    }
+
+    @SuppressLint("UnsafeExperimentalUsageError")
+    private fun applyBadgeToMenuItem(itemId : Int) {
+        val context = fragment.context
+        if (menuItemBadge == null) {
+            context?.let {
+                menuItemBadge = BadgeDrawable.create(it)
+                BadgeUtils.attachBadgeDrawable(menuItemBadge!!, toolbar, itemId)
+            }
+        }
+    }
+
+    @SuppressLint("UnsafeExperimentalUsageError")
+    private fun clearBadgeMenuItem(itemId : Int) {
+        val context = fragment.context
+        context ?: return
+        menuItemBadge?.let {
+            BadgeUtils.detachBadgeDrawable(it, toolbar, itemId)
+        }
+        menuItemBadge = null
     }
 
     fun onSelectedCountChanged(count: Int,

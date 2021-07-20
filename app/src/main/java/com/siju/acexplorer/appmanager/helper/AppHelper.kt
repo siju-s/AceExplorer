@@ -9,10 +9,14 @@ import android.net.Uri
 import android.provider.Settings
 
 import androidx.appcompat.app.AppCompatActivity
+import com.siju.acexplorer.R
+import com.siju.acexplorer.appmanager.filter.AppSource
 
 import com.siju.acexplorer.appmanager.view.AppDetailActivity.Companion.REQUEST_CODE_UNINSTALL
 
 
+private const val PACKAGE_NAME_PLAYSTORE = "com.android.vending"
+private const val PACKAGE_NAME_AMAZON_APPSTORE = "com.amazon.venezia"
 object AppHelper {
 
     const val SCHEME_PACKAGE = "package"
@@ -50,6 +54,25 @@ object AppHelper {
 
     fun isSystemPackage(applicationInfo: ApplicationInfo): Boolean {
         return applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM != 0
+    }
+
+    fun getInstallerSourceName(context: Context, packageName: String?): String {
+        return when (packageName) {
+            null -> context.getString(R.string.unknown)
+            PACKAGE_NAME_PLAYSTORE -> context.getString(R.string.play_store)
+            PACKAGE_NAME_AMAZON_APPSTORE -> context.getString(
+                R.string.amazon_play_store)
+            else -> context.getString(R.string.unknown)
+        }
+    }
+
+    fun getInstallerSourceName(packageName: String?): AppSource {
+        return when (packageName) {
+            null -> AppSource.UNKNOWN
+            PACKAGE_NAME_PLAYSTORE -> AppSource.PLAYSTORE
+            PACKAGE_NAME_AMAZON_APPSTORE -> AppSource.AMAZON_APPSTORE
+            else -> AppSource.UNKNOWN
+        }
     }
 
 }

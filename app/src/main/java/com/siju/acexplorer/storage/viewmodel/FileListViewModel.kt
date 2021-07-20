@@ -7,6 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.analytics.Analytics
+import com.siju.acexplorer.appmanager.filter.AppSource
+import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
@@ -188,6 +190,8 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
     val fileCount : LiveData<Pair<Int, Int>>
     get() = _fileCount
 
+    private var appManagerData = ArrayList<FileInfo> ()
+
 
     init {
         val model = storageModel as StorageModelImpl
@@ -232,14 +236,25 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
         }
         else {
             uiScope.launch(Dispatchers.IO) {
-                val data = storageModel.loadData(path, newCategory)
+                var data = storageModel.loadData(path, newCategory)
                 Log.d(this.javaClass.name,
                         "onDataloaded loadData: data ${data.size} , category $newCategory")
+                if (isAppManager(newCategory)) {
+                    handleAppManagerData(data)
+                    data = filterAppDataDefault(data)
+                }
                 _fileData.postValue(data)
                 filterFileCount(data)
                 handleScrollPosition()
             }
         }
+    }
+
+    private fun isAppManager(category: Category?) = category == APP_MANAGER
+
+    private fun handleAppManagerData(data: ArrayList<FileInfo>) {
+        appManagerData = ArrayList()
+        appManagerData.addAll(data)
     }
 
     private fun filterFileCount(fileList : ArrayList<FileInfo>) {
@@ -927,6 +942,47 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
     fun setFilePickerArgs(value: Boolean, multiSelection: Boolean) {
         filePicker = value
         multiSelectionPicker = multiSelection
+    }
+
+    fun filterAppByType(appType: AppType) {
+        println("filterAppByType $appType")
+        val list = appManagerData.filter {
+            when (appType) {
+                AppType.ALL_APPS   -> it.systemApp || !it.systemApp
+                AppType.USER_APP   -> !it.systemApp
+                AppType.SYSTEM_APP -> it.systemApp
+            }
+        }
+        _fileData.postValue(list as ArrayList<FileInfo>)
+        filterFileCount(list)
+    }
+
+    fun filterAppBySource(appSource: AppSource) {
+        println("filterAppBySource $appSource")
+        val list = fileData.value?.filter {
+            when (appSource) {
+                AppSource.ALL             -> it.source == AppSource.PLAYSTORE ||
+                                                           it.source == AppSource.AMAZON_APPSTORE ||
+                                                           it.source == AppSource.UNKNOWN
+
+                AppSource.PLAYSTORE       -> it.source == AppSource.PLAYSTORE
+                AppSource.AMAZON_APPSTORE -> it.source == AppSource.AMAZON_APPSTORE
+                AppSource.UNKNOWN         -> it.source == AppSource.UNKNOWN
+                AppSource.SYSTEM           -> it.source == AppSource.SYSTEM
+            }
+        }
+        list ?: return
+        _fileData.postValue(list as ArrayList<FileInfo>)
+        filterFileCount(list)
+    }
+
+    fun filterAppDataDefault(data: ArrayList<FileInfo>): ArrayList<FileInfo> {
+        val list = data.filter {
+            !it.systemApp && (it.source == AppSource.PLAYSTORE ||
+                    it.source == AppSource.AMAZON_APPSTORE ||
+                    it.source == AppSource.UNKNOWN)
+        }
+        return list as ArrayList<FileInfo>
     }
 
     val apkDialogListener = object : DialogHelper.ApkDialogListener {

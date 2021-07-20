@@ -11,4 +11,13 @@
     <string name="play_store" translatable="false">Play store</string>
     <string name="amazon_play_store" translatable="false">Amazon app store</string>
     <string name="zip_open_error">Cannot open this zip file</string>
+    <string name="filter">Filter</string>
+    <string name="all_apps">All apps</string>
+    <string name="user_apps">Installed apps</string>
+    <string name="preinstalled_apps">Preinstalled apps</string>
+    <string name="source_from">Installed from</string>
+    <string name="unknown_source">Unknown source</string>
+    <string name="source_all">All</string>
+    <string name="search_name_or_package">App or package name</string>
+
 </resources>
