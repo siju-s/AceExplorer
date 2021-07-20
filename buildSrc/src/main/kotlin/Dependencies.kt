@@ -3,12 +3,12 @@ const val kotlinVersion = "1.4.21"
 object BuildPlugins {
 
     object Versions {
-        const val gradlePlugin = "4.1.3"
+        const val gradlePlugin = "4.2.2"
         const val crashlytics = "2.6.1"
         const val googleServices = "4.3.8"
         const val safeArgsPlugin = "2.3.5"
         const val sonarqube = "3.0"
-        const val hilt = "2.31.2-alpha"
+        const val hilt = "2.37"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradlePlugin}"
@@ -36,7 +36,7 @@ object AndroidSdk {
 object Libraries {
    private object Versions {
        const val appCompat    = "1.2.0"
-       const val design       = "1.2.1"
+       const val design       = "1.4.0"
        const val support      = "1.0.0"
        const val annotation   = "1.1.0"
        const val recyclerview = "1.1.0"
