@@ -84,8 +84,8 @@ object DataFetcherFactory {
             Category.ZIP_VIEWER -> TODO()
             Category.GENERIC_LIST -> TODO()
             Category.PICKER -> TODO()
-            Category.APP_MANAGER -> return AppManagerDataFetcher()
-            Category.TOOLS -> return AppManagerDataFetcher()
+            Category.APP_MANAGER -> TODO()
+            Category.TOOLS -> TODO()
 //            Category.TRASH -> TODO()
         }
     }

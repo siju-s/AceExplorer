@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
@@ -28,7 +29,6 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.isMusicCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.shouldHideGalleryThumb
 import com.siju.acexplorer.main.model.helper.FileUtils
-import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
 import java.util.*
@@ -136,7 +136,8 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     }
 
     class ViewHolder private constructor(itemView: View,
-                                         private val viewMode: ViewMode) : RecyclerView.ViewHolder(itemView) {
+                                         private val viewMode: ViewMode
+    ) : RecyclerView.ViewHolder(itemView) {
 
         private val textFileName: TextView = itemView.findViewById(R.id.textFolderName)
         private val textNoOfFileOrSize: TextView = itemView.findViewById(R.id.textSecondLine)
@@ -218,7 +219,6 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 isMusicCategory(category)         -> bindMusicCategory(context, fileInfo, pos, peekPopView)
                 isGenericImagesCategory(category) || isGenericVideosCategory(category) -> bindGenericImagesVidsCategory(context,
                                                                                    fileInfo, pos, peekPopView)
-                isAppManager(category)            -> bindAppManagerCategory(context, fileInfo, viewMode, pos, peekPopView)
                 isRecentCategory(category)        -> bindGenericRecent(context, fileInfo, category, pos, peekPopView)
                 isAnyLargeFilesCategory(category) -> bindLargeFilesGeneric(context, fileInfo, category, pos, peekPopView)
                 isAnyCameraCategory(category)     -> bindCameraGeneric(context, fileInfo, category, pos, peekPopView)
@@ -227,8 +227,6 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                 }
             }
         }
-
-        private fun isAppManager(category: Category?) = category == Category.APP_MANAGER
 
         private fun bindFilesCategory(fileInfo: FileInfo,
                                       category: Category?,
@@ -426,28 +424,14 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             addPeekPop(peekPopView, imageIcon, pos, category)
         }
 
-        private fun bindAppManagerCategory(context: Context, fileInfo: FileInfo, viewMode: ViewMode, pos: Int, peekPopView: PeekPopView?) {
-
-            textFileName.text = fileInfo.fileName
-            val size = fileInfo.size
-            val fileSize = Formatter.formatFileSize(context, size)
-            textNoOfFileOrSize.text = fileSize
-            val fileDate = FileUtils.convertDate(fileInfo.date)
-            if (viewMode == ViewMode.LIST) {
-                dateText?.text = fileDate
-                showDateView()
-            }
-            displayThumb(context, fileInfo, fileInfo.category, imageIcon,
-                    imageThumbIcon)
-            addPeekPop(peekPopView, imageIcon, pos, fileInfo.category)
-        }
         companion object {
             fun from(parent: ViewGroup,
-                     viewMode: ViewMode): ViewHolder {
+                     viewMode: ViewMode
+            ): ViewHolder {
 
                 val layoutId = when (viewMode) {
-                    ViewMode.LIST -> R.layout.file_list_item
-                    ViewMode.GRID -> R.layout.file_grid_item
+                    ViewMode.LIST    -> R.layout.file_list_item
+                    ViewMode.GRID    -> R.layout.file_grid_item
                     ViewMode.GALLERY -> R.layout.file_gallery_item
                 }
                 val view = LayoutInflater.from(parent.context).inflate(layoutId, parent, false)

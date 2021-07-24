@@ -9,6 +9,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.AceApplication
+import com.siju.acexplorer.common.PreferenceConstants.PREFS_NAME
+import com.siju.acexplorer.common.SortMode
+import com.siju.acexplorer.common.SortModeData
+import com.siju.acexplorer.common.ViewMode
+import com.siju.acexplorer.common.ViewModeData
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.helper.SafHelper.persistUriPermission
 import com.siju.acexplorer.helper.SafHelper.saveSafUri
@@ -17,18 +22,20 @@ import com.siju.acexplorer.main.model.data.DataFetcherFactory
 import com.siju.acexplorer.main.model.data.DataLoader
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.preferences.PreferenceConstants
+import com.siju.acexplorer.storage.helper.SortModeHelper
 import com.siju.acexplorer.storage.model.operations.OperationAction
 import com.siju.acexplorer.storage.model.operations.OperationHelper
 import com.siju.acexplorer.storage.model.operations.Operations
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-private const val PREFS_NAME = "PREFS"
-private const val PREFS_VIEW_MODE = "view-mode"
 private const val PREFS_VIEW_MODE_IMAGE = "view-mode-image"
 private const val PREFS_VIEW_MODE_VIDEO = "view-mode-video"
 
-class StorageModelImpl @Inject constructor(@ApplicationContext val context: Context) : StorageModel {
+class StorageModelImpl @Inject constructor(@ApplicationContext val context: Context,
+                                           val viewModeInfo: ViewModeData,
+                                           val sortModeData: SortModeData
+) : StorageModel {
 
     private val sharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     private val globalPreference = PreferenceManager.getDefaultSharedPreferences(context)
@@ -59,14 +66,7 @@ class StorageModelImpl @Inject constructor(@ApplicationContext val context: Cont
         return RecentTimeData.getRecentTimeData(data)
     }
 
-    override fun getViewMode(): ViewMode {
-        return if (sharedPreferences.contains(PREFS_VIEW_MODE)) {
-            ViewMode.getViewModeFromValue(
-                    sharedPreferences.getInt(PREFS_VIEW_MODE, ViewMode.LIST.value))
-        } else {
-            ViewMode.LIST
-        }
-    }
+    override fun getViewMode(): ViewMode = viewModeInfo.getViewMode()
 
     override fun getImageViewMode(): ViewMode {
         return if (sharedPreferences.contains(PREFS_VIEW_MODE_IMAGE)) {
@@ -86,14 +86,7 @@ class StorageModelImpl @Inject constructor(@ApplicationContext val context: Cont
         }
     }
 
-    override fun saveViewMode(viewMode: ViewMode?) {
-        viewMode?.let {
-            sharedPreferences.edit().apply {
-                putInt(PREFS_VIEW_MODE, viewMode.value)
-                apply()
-            }
-        }
-    }
+    override fun saveViewMode(viewMode: ViewMode?) = viewModeInfo.saveViewMode(viewMode)
 
     override fun saveImageViewMode(viewMode: ViewMode?) {
         viewMode?.let {
@@ -127,12 +120,12 @@ class StorageModelImpl @Inject constructor(@ApplicationContext val context: Cont
     }
 
     override fun getSortMode(): SortMode {
-        return SortMode.getSortMode(globalPreference, category)
+        return SortModeHelper.getSortMode(globalPreference, category)
     }
 
     override fun saveSortMode(sortMode: SortMode) {
         Log.d(this.javaClass.name, "saveSortMode: value:$sortMode")
-        SortMode.saveSortMode(globalPreference, sortMode)
+        sortModeData.saveSortMode(sortMode)
     }
 
     override fun renameFile(operation: Operations, filePath: String, newName: String) {

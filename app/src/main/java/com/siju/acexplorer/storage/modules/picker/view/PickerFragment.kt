@@ -40,7 +40,7 @@ import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.inflateLayout
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.permission.PermissionHelper
-import com.siju.acexplorer.storage.model.ViewMode
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.storage.modules.picker.model.PickerAction
 import com.siju.acexplorer.storage.modules.picker.model.PickerResultAction
 import com.siju.acexplorer.storage.modules.picker.types.PickerType

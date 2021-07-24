@@ -13,6 +13,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import com.google.android.material.appbar.AppBarLayout
 import com.siju.acexplorer.R
 
 
@@ -23,7 +24,9 @@ class AboutFragment : PreferenceFragmentCompat() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root: View? = super.onCreateView(inflater, container, savedInstanceState)
         val activity = activity as AppCompatActivity?
-        activity?.setSupportActionBar(root?.findViewById(R.id.toolbar) as Toolbar)
+        val appbar = root?.findViewById(R.id.appbar) as AppBarLayout
+        val toolbar = appbar.findViewById<Toolbar>(R.id.toolbarContainer)
+        activity?.setSupportActionBar(toolbar)
         val actionBar: ActionBar? = activity?.supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
         actionBar?.setTitle(R.string.pref_title_about)

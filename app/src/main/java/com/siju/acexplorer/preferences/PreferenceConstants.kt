@@ -1,6 +1,6 @@
 package com.siju.acexplorer.preferences
 
-import com.siju.acexplorer.storage.model.SortMode
+import com.siju.acexplorer.common.SortMode
 
 object PreferenceConstants {
     const val PREFS_HIDDEN = "prefHidden"

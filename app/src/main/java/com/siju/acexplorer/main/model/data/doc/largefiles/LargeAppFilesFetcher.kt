@@ -3,6 +3,7 @@ package com.siju.acexplorer.main.model.data.doc.largefiles
 import android.content.Context
 import android.database.Cursor
 import android.provider.MediaStore
+import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.HiddenFileHelper.constructionNoHiddenFilesArgs
 import com.siju.acexplorer.main.model.data.AppDataFetcher
@@ -12,7 +13,6 @@ import com.siju.acexplorer.main.model.data.doc.DocumentCursorData
 import com.siju.acexplorer.main.model.data.doc.DocumentUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SortHelper
-import com.siju.acexplorer.storage.model.SortMode
 import java.util.*
 
 private const val LARGE_FILES_MIN_SIZE_MB = 104857600 //100 MB

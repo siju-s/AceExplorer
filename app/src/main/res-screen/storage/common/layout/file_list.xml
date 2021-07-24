@@ -21,7 +21,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:showIn="@layout/main_list"
+    tools:showIn="@layout/apps_list_container"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <TextView
@@ -52,7 +52,7 @@
             app:fastScrollEnableThumbInactiveColor="true"
             app:fastScrollThumbInactiveColor="@color/colorPrimary"
             tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            tools:listitem="@layout/file_gallery_item" />
+            tools:listitem="@layout/apps_gallery_item" />
 
     <!--</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 
@@ -65,7 +65,7 @@
         android:layout_gravity="bottom"
         android:orientation="vertical">
 
-        <com.siju.acexplorer.storage.view.custom.SplitToolbar
+        <com.siju.acexplorer.common.view.custom.SplitToolbar
             android:id="@+id/toolbar_bottom"
             android:layout_width="match_parent"
             android:layout_height="@dimen/actionbar_height"

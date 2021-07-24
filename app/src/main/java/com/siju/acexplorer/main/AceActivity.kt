@@ -19,6 +19,7 @@ package com.siju.acexplorer.main
 import android.app.Activity
 import android.app.SearchManager
 import android.content.Intent
+import android.content.pm.PackageInstaller
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
@@ -37,6 +38,7 @@ import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.install.model.ActivityResult
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
+import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.base.view.BaseActivity
 import com.siju.acexplorer.databinding.ActivityMainBinding
 import com.siju.acexplorer.extensions.isLandscape
@@ -81,7 +83,6 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         binding = ActivityMainBinding.inflate(layoutInflater)
         reviewManager = ReviewManager(this)
         setContentView(binding.root)
-
         setupNavController()
 
         mainViewModel.setupPermission(PermissionHelper(this, applicationContext))
@@ -265,6 +266,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     override fun onNewIntent(intent: Intent) {
+        Log.d(TAG, "onNewIntent() called with: intent = ${intent.action}")
         super.onNewIntent(intent)
         if (Intent.ACTION_SEARCH == intent.action) {
             val query = intent.getStringExtra(SearchManager.QUERY)
@@ -273,10 +275,19 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
                 fragment.performVoiceSearch(query)
             }
         }
+        else if (intent.action == AppHelper.getUninstallAction()) {
+            val extras = intent.extras
+            val status = extras?.getInt(PackageInstaller.EXTRA_STATUS, 0)
+            if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) {
+                val confirmIntent = extras.get(Intent.EXTRA_INTENT) as Intent
+                startActivity(confirmIntent)
+            }
+        }
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         mainViewModel.onPermissionResult()
     }
 

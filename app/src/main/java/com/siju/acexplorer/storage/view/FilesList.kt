@@ -13,7 +13,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.common.utils.ConfigurationHelper
+import com.siju.acexplorer.common.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.extensions.showToast
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
@@ -24,11 +27,8 @@ import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.storage.helper.RecentDataConverter
 import com.siju.acexplorer.storage.model.RecentTimeData
 import com.siju.acexplorer.storage.model.RecentTimeHelper.isRecentTimeLineCategory
-import com.siju.acexplorer.storage.model.ViewMode
-import com.siju.acexplorer.storage.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.ui.peekandpop.PeekPopUiView
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
-import com.siju.acexplorer.utils.ConfigurationHelper
 import com.siju.acexplorer.utils.ScrollInfo
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 
@@ -143,7 +143,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode, category: Category) {
         Log.d(TAG, "setLayoutManager viewMode: $viewMode")
         fileList.layoutManager = when (viewMode) {
-            ViewMode.LIST -> LinearLayoutManager(view.context)
+            ViewMode.LIST                   -> LinearLayoutManager(view.context)
             ViewMode.GRID, ViewMode.GALLERY -> {
                 val gridColumns = getGridColumns(view.resources.configuration, viewMode)
                 val gridLayoutManager = CustomGridLayoutManager(view.context,
@@ -316,7 +316,7 @@ class FilesList(private val fileListHelper: FileListHelper,
         val view = fileList.getChildAt(0)
         val offset = view?.top ?: 0
         val position = when (viewMode) {
-            ViewMode.LIST -> {
+            ViewMode.LIST                   -> {
                 val layoutManager = fileList.layoutManager as LinearLayoutManager
                 layoutManager.findFirstVisibleItemPosition()
             }
@@ -334,7 +334,7 @@ class FilesList(private val fileListHelper: FileListHelper,
             Log.d(TAG,
                     "scrollToPosition:${scrollInfo.position}, offset:${scrollInfo.offset}")
             when (viewMode) {
-                ViewMode.LIST -> {
+                ViewMode.LIST                   -> {
                     val layoutManager = fileList.layoutManager as LinearLayoutManager
                     scrollListView(scrollInfo, layoutManager)
                 }

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/dialog_margin"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/buttonPositive"
+        style="@style/DialogPositiveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        tools:text="Test" />
+
+    <Button
+        android:id="@+id/buttonNeutral"
+        style="@style/DialogNeutralButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/buttonPositive"
+        android:visibility="gone"
+        tools:visibility="visible"
+        tools:text="Negative" />
+
+
+    <Button
+        android:id="@+id/buttonNegative"
+        style="@style/DialogNegativeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/buttonNeutral"
+        tools:text="@string/dialog_cancel" />
+
+
+</RelativeLayout>

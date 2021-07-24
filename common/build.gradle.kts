@@ -1,0 +1,56 @@
+plugins {
+    id ("com.android.library")
+    id ("kotlin-android")
+    kotlin(BuildPlugins.kotlinKapt)
+}
+
+android {
+
+    defaultConfig {
+        minSdkVersion(AndroidSdk.min)
+        compileSdkVersion(AndroidSdk.compile)
+        targetSdkVersion(AndroidSdk.target)
+    }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = true
+            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
+        }
+    }
+    kotlinOptions.apply {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+    compileOptions.apply {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
+    }
+}
+
+dependencies {
+
+    implementation(Libraries.Kotlin.stdlib)
+    implementation(Libraries.Kotlin.coroutineCore)
+    implementation(Libraries.Kotlin.coroutineAndroid)
+
+    implementation(Libraries.viewModelKtx)
+    implementation(Libraries.lifecycleLiveData)
+    implementation(Libraries.lifecycleRuntime)
+    implementation(Libraries.constraintLayout)
+    kapt(Libraries.lifecycleCompiler)
+    implementation(Libraries.hilt)
+    kapt(Libraries.hiltCompiler)
+
+    implementation(Libraries.appCompat)
+    implementation(Libraries.recyclerView)
+    implementation(Libraries.design)
+
+    implementation(Libraries.ExternalLibs.glideRuntime)
+    kapt(Libraries.ExternalLibs.glideCompiler)
+    implementation(Libraries.palette)
+
+}

@@ -7,7 +7,7 @@ import androidx.preference.PreferenceManager
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.preferences.PreferenceConstants
-import com.siju.acexplorer.storage.model.SortMode
+import com.siju.acexplorer.storage.helper.SortModeHelper
 import java.util.*
 
 interface DataFetcher {
@@ -21,7 +21,7 @@ interface DataFetcher {
 
     fun getSortMode(context: Context, category: Category = Category.FILES): Int {
         Log.d(this.javaClass.simpleName, "getSortMode() called with: category = $category")
-        return SortMode.getSortMode(PreferenceManager.getDefaultSharedPreferences(context), category).value
+        return SortModeHelper.getSortMode(PreferenceManager.getDefaultSharedPreferences(context), category).value
     }
 
     companion object {

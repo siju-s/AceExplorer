@@ -18,7 +18,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
 import com.siju.acexplorer.storage.model.RecentTimeData
-import com.siju.acexplorer.storage.model.ViewMode
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils
 

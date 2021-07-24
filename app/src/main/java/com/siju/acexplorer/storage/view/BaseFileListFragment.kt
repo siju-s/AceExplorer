@@ -38,7 +38,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.analytics.Analytics
@@ -46,6 +45,10 @@ import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.appmanager.view.AppDetailActivity
+import com.siju.acexplorer.common.ActionModeState
+import com.siju.acexplorer.common.SortDialog
+import com.siju.acexplorer.common.SortMode
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.databinding.MainListBinding
 import com.siju.acexplorer.extensions.showToast
@@ -66,8 +69,6 @@ import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.PasteOpData
-import com.siju.acexplorer.storage.model.SortMode
-import com.siju.acexplorer.storage.model.ViewMode
 import com.siju.acexplorer.storage.model.operations.*
 import com.siju.acexplorer.storage.modules.picker.model.PickerModelImpl
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
@@ -108,7 +109,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     private var category = Category.FILES
     private var showNavigation = true
     private var tabPos = -1
-    private var packageReceiverRegistered = false
     private var binding : MainListBinding? = null
 
     override fun onCreateView(
@@ -260,9 +260,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         mainViewModel.permissionStatus.observe(viewLifecycleOwner, { permissionStatus ->
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> {
-                    if (isAppManager(category)) {
-                        registerPackageReceiver(AceApplication.appContext)
-                    }
                     fileListViewModel.loadData(path,
                                                category)
                 }
@@ -366,7 +363,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         mainViewModel.sortEvent.observe(viewLifecycleOwner, {
             it.getContentIfNotHandled()?.let { sortMode ->
                 context?.let { context ->
-                    DialogHelper.showSortDialog(context, sortMode, sortDialogListener)
+                    SortDialog.show(context, sortMode, sortDialogListener)
                 }
             }
         })
@@ -388,7 +385,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                     ActionModeState.STARTED -> {
                         onActionModeStarted()
                     }
-                    ActionModeState.ENDED -> {
+                    ActionModeState.ENDED   -> {
                         onActionModeEnded()
                     }
                 }
@@ -669,30 +666,10 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         fileListViewModel.onResume()
     }
 
-    private fun registerPackageReceiver(context: Context) {
-        packageReceiverRegistered = true
-        val filter = IntentFilter(Intent.ACTION_PACKAGE_REMOVED)
-        filter.addAction(Intent.ACTION_PACKAGE_ADDED)
-        filter.addDataScheme(AppHelper.SCHEME_PACKAGE)
-        context.registerReceiver(packageChangeReceiver, filter)
-    }
 
-    private fun unregisterPackageReceiver(context: Context) {
-        if (packageReceiverRegistered) {
-            context.unregisterReceiver(packageChangeReceiver)
-            packageReceiverRegistered = false
-        }
-    }
 
     private fun handlePasteOperation(pasteConflictCheckData: PasteConflictCheckData) {
         context?.let { DialogHelper.showConflictDialog(it, pasteConflictCheckData, fileListViewModel.pasteConflictListener) }
-    }
-
-    private val packageChangeReceiver = object : BroadcastReceiver() {
-
-        override fun onReceive(context: Context, intent: Intent?) {
-            fileListViewModel.loadData(null, Category.APP_MANAGER)
-        }
     }
 
     private fun handleOperationResult(operationResult: Pair<Operations, OperationAction>) {
@@ -1175,14 +1152,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             super.onActivityResult(requestCode, resultCode, intent)
         }
 
-
-        override fun onDestroy() {
-            super.onDestroy()
-            if (isAppManager(category)) {
-                unregisterPackageReceiver(AceApplication.appContext)
-            }
-        }
-
         private fun navigateToSearchScreen() {
             Log.d(TAG, "navigateToSearchScreen:$this")
             mainViewModel.navigateToSearch()
@@ -1210,9 +1179,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                     mainViewModel.onSortClicked()
                 }
                 R.id.action_search -> {
-                    if (category != Category.APP_MANAGER) {
-                        navigateToSearchScreen()
-                    }
+                    navigateToSearchScreen()
                 }
                 R.id.action_apps_all -> {
                     item.isChecked = true
@@ -1272,7 +1239,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             fileListViewModel.refreshList()
         }
 
-        private val sortDialogListener = object : DialogHelper.SortDialogListener {
+        private val sortDialogListener = object : SortDialog.Listener {
             override fun onPositiveButtonClick(sortMode: SortMode) {
                 fileListViewModel.onSort(sortMode)
                 reloadPane()

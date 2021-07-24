@@ -12,6 +12,7 @@ import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
@@ -20,7 +21,6 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.shouldShowSort
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.main.viewmodel.MainViewModel
-import com.siju.acexplorer.storage.model.ViewMode
 
 
 private const val TAG = "MenuControls"
@@ -63,7 +63,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     }
 
     private fun shouldInflateBaseMenu() =
-            CategoryHelper.checkIfFileCategory(category) || category == Category.SCREENSHOT || category == Category.APP_MANAGER ||
+            CategoryHelper.checkIfFileCategory(category) || category == Category.SCREENSHOT  ||
                     category == Category.APPS || category == Category.PDF
 
     fun onStartActionMode() {
@@ -184,8 +184,8 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private fun toggleViewModeMenuItemState(viewMode: ViewMode, menu: Menu) {
         Log.d(TAG, "toggleViewModeMenuItemState:$viewMode")
         when (viewMode) {
-            ViewMode.LIST -> menu.findItem(R.id.action_view_list).isChecked = true
-            ViewMode.GRID -> menu.findItem(R.id.action_view_grid).isChecked = true
+            ViewMode.LIST    -> menu.findItem(R.id.action_view_list).isChecked = true
+            ViewMode.GRID    -> menu.findItem(R.id.action_view_grid).isChecked = true
             ViewMode.GALLERY -> menu.findItem(R.id.action_view_gallery).isChecked = true
         }
     }
@@ -198,7 +198,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         Log.d(TAG, "setupMenuItemVisibility:$category")
         searchItem.isVisible = !mainViewModel.isFilePicker()
         sortItem.isVisible = shouldShowSort(category)
-        if (Category.APP_MANAGER == category || CategoryHelper.checkIfLibraryCategory(category)) {
+        if (CategoryHelper.checkIfLibraryCategory(category)) {
             hiddenMenuItem?.isVisible = false
         }
     }
@@ -286,10 +286,6 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         }
 
         when {
-            category == Category.APP_MANAGER -> {
-                toggleAppManagerMenuVisibility()
-            }
-
             category == Category.FAVORITES -> {
                 deleteFavItem.isVisible = true
                 deleteItem.isVisible = false
@@ -316,17 +312,6 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
             hideItem.setIcon(R.drawable.ic_hide)
             hideItem.setTitle(R.string.hide)
         }
-    }
-
-    private fun toggleAppManagerMenuVisibility() {
-        renameItem.isVisible = false
-        permissionItem.isVisible = false
-        extractItem.isVisible = false
-        archiveItem.isVisible = false
-        shareItem.isVisible = false
-        hideItem.isVisible = false
-        favItem.isVisible = false
-        deleteFavItem.isVisible = false
     }
 
     private fun toggleRootMenuVisibility(isRoot: Boolean) {

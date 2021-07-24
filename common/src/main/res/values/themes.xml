@@ -1,0 +1,43 @@
+<resources>
+
+    <!--TODO 08-Feb-21 Note adding this fixes overflow and back button color in Light theme but the View menu option -> also becomes white in Light theme-->
+    <style name="ToolbarTheme">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="ToolbarTitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="ToolbarSubtitle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textSize">@dimen/toolbar_text_size</item>
+    </style>
+
+    <style name="DialogPositiveButton" parent="@style/Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/dialog_positive_color</item>
+        <item name="android:layout_marginStart">@dimen/dialog_button_margin</item>
+        <item name="android:layout_marginEnd">@dimen/dialog_button_margin</item>
+    </style>
+
+    <style name="DialogNegativeButton" parent="@style/Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/dialog_negative_color</item>
+        <!--<item name="android:layout_marginLeft">@dimen/margin_16</item>-->
+        <item name="android:layout_marginRight">@dimen/dialog_button_margin</item>
+    </style>
+
+    <style name="DialogNeutralButton" parent="@style/Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/dialog_neutral_color</item>
+        <item name="android:layout_marginLeft">@dimen/dialog_button_margin</item>
+        <item name="android:layout_marginRight">@dimen/dialog_button_margin</item>
+    </style>
+
+    <style name="RadioButtonTextStyle">
+        <item name="android:textSize">@dimen/dialog_radio_btn_text_size</item>
+        <item name="android:layout_marginLeft">@dimen/dialog_margin</item>
+        <item name="android:layout_marginRight">@dimen/dialog_margin</item>
+        <item name="android:layout_marginTop">@dimen/dialog_margin</item>
+        <item name="paddingStart">@dimen/dialog_margin</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+
+</resources>

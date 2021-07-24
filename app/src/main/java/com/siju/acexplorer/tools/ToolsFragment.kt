@@ -34,7 +34,7 @@ class ToolsFragment : Fragment() {
 
         context?.let { context ->
             toolsList.adapter = Adapter(context) {
-                val actions = ToolsFragmentDirections.actionNavigationToolsToFileListFragment(null, it.category, true)
+                val actions = ToolsFragmentDirections.actionNavigationToolsToAppMgr()
                 findNavController().navigate(actions)
             }
         }

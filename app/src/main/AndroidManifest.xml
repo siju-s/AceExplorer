@@ -27,8 +27,6 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- To install apps -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
-    <!-- For deleting packages in App manager on Android P and above -->
-    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
 
     <!-- Required from Android 11 to list all apps -->
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"
@@ -94,9 +92,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".appmanager.view.AppDetailActivity"/>
 
         <activity
             android:name=".imageviewer.ImageViewerActivity"

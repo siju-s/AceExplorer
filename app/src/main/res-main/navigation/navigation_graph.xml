@@ -5,6 +5,9 @@
     android:id="@+id/navigation_graph"
     app:startDestination="@id/navigation_home">
 
+    <include
+        app:graph = "@navigation/appmanger_navigation" />
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.siju.acexplorer.home.view.HomeScreenFragment"
@@ -44,8 +47,8 @@
         android:label="ToolsFragment"
         tools:layout="@layout/tools_list">
         <action
-            android:id="@+id/action_navigation_tools_to_fileListFragment"
-            app:destination="@id/fileListFragment" />
+            android:id="@+id/action_navigation_tools_to_app_mgr"
+            app:destination="@id/appmanger_navigation" />
     </fragment>
 
     <fragment

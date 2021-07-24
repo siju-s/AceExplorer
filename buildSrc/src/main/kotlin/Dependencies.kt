@@ -49,6 +49,9 @@ object Libraries {
        const val navigation   = "2.3.5"
        const val constraintLayout = "2.0.4"
        const val exif             = "1.3.2"
+       const val activity         = "1.1.0"
+       const val fragment         = "1.3.6"
+
    }
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
     const val design    = "com.google.android.material:material:${Versions.design}"
@@ -63,6 +66,8 @@ object Libraries {
     const val lifecycleLiveData      = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
     const val viewModelKtx           = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
     const val lifecycleCompiler      = "androidx.lifecycle:lifecycle-compiler:${Versions.lifecycle}"
+    const val activityKtx           = "androidx.activity:activity-ktx:${Versions.activity}"
+    const val fragmentKtx           = "androidx.fragment:fragment-ktx:${Versions.fragment}"
 
     const val roomRuntime = "androidx.room:room-runtime:${Versions.room}"
     const val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
@@ -73,6 +78,7 @@ object Libraries {
 
     const val navigation     = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi   = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
+    const val navFeature     = "androidx.navigation:navigation-dynamic-features-fragment:${Versions.navigation}"
     const val hilt           = "com.google.dagger:hilt-android:${BuildPlugins.Versions.hilt}"
     const val hiltCompiler   = "com.google.dagger:hilt-android-compiler:${BuildPlugins.Versions.hilt}"
 
@@ -94,7 +100,7 @@ object Libraries {
 
     object Kotlin {
         private object Versions {
-            const val stdlib          = "1.4.21"
+            const val stdlib          = "1.5.21"
             const val coroutineCore      = "1.4.1"
         }
 

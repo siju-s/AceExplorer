@@ -31,9 +31,6 @@ import com.siju.acexplorer.extensions.inflateLayout
 import com.siju.acexplorer.main.model.helper.FileUtils.getFileNameWithoutExt
 import com.siju.acexplorer.main.model.helper.UriHelper.canGrantUriPermission
 import com.siju.acexplorer.main.view.PasteConflictAdapter
-import com.siju.acexplorer.storage.model.SortMode
-import com.siju.acexplorer.storage.model.SortMode.Companion.getSortModeFromValue
-import com.siju.acexplorer.storage.model.SortMode.Companion.isAscending
 import com.siju.acexplorer.storage.model.operations.Operations
 import com.siju.acexplorer.storage.model.operations.PasteConflictCheckData
 import com.stericson.RootTools.RootTools
@@ -139,54 +136,6 @@ object DialogHelper {
         alertDialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
     }
 
-    fun showSortDialog(context: Context, sortMode: SortMode, sortDialogListener: SortDialogListener) {
-        val title = context.getString(R.string.action_sort)
-        val texts = arrayOf(title, context.getString(R.string.msg_ok), "", context
-                .getString(R.string.dialog_cancel))
-        val builder = AlertDialog.Builder(context)
-        val inflater = LayoutInflater.from(context)
-        val dialogView = inflater.inflateLayout(R.layout.dialog_sort, null)
-        builder.setView(dialogView)
-        builder.setCancelable(true)
-        val alertDialog = builder.create()
-
-        val textTitle = dialogView.findViewById<TextView>(R.id.textTitle)
-        val radioGroup = dialogView.findViewById<RadioGroup>(R.id.radioGroupSort)
-        val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
-        val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
-        val ascendingOrderCheckbox = dialogView.findViewById<CheckBox>(R.id.checkBoxOrder)
-        ascendingOrderCheckbox.isChecked = isAscending(sortMode)
-        textTitle.text = title
-        positiveButton.text = texts[1]
-        negativeButton.text = texts[3]
-        val radioButton = radioGroup.getChildAt(indexToCheck(sortMode))
-        radioGroup.check(radioButton.id)
-
-        positiveButton.setOnClickListener {
-            val checkedId = radioGroup.checkedRadioButtonId
-            val checkedButton = radioGroup.findViewById<View>(checkedId)
-            val index = radioGroup.indexOfChild(checkedButton)
-            val sortModeNew = getSortModeFromValue(newSortMode(index, ascendingOrderCheckbox.isChecked))
-            sortDialogListener.onPositiveButtonClick(sortModeNew)
-            alertDialog.dismiss()
-        }
-        negativeButton.setOnClickListener {
-            alertDialog.dismiss()
-        }
-        alertDialog.show()
-    }
-
-    private fun indexToCheck(sortMode: SortMode): Int {
-        return sortMode.value / 2
-    }
-
-    private fun newSortMode(selectedOption: Int, isAscending: Boolean): Int {
-        var newSortMode = selectedOption * 2
-        if (!isAscending) {
-            newSortMode += 1
-        }
-        return newSortMode
-    }
 
     fun showInputDialog(context: Context, text: Array<String>,
                         operation: Operations?,
@@ -631,10 +580,6 @@ object DialogHelper {
         fun onInstallClicked(path: String?)
         fun onCancelClicked()
         fun onOpenApkClicked(path: String?)
-    }
-
-    interface SortDialogListener {
-        fun onPositiveButtonClick(sortMode: SortMode)
     }
 
     interface DeleteDialogListener {

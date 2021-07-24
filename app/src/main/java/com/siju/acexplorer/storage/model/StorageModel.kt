@@ -17,6 +17,8 @@
 package com.siju.acexplorer.storage.model
 
 import android.net.Uri
+import com.siju.acexplorer.common.SortMode
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.storage.model.operations.OperationHelper

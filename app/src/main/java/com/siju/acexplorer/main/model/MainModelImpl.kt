@@ -24,6 +24,7 @@ import androidx.preference.PreferenceManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
+import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.main.model.FileConstants.PREFS_FIRST_RUN
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SdkHelper
@@ -31,7 +32,7 @@ import com.siju.acexplorer.preferences.PreferenceConstants
 import com.siju.acexplorer.preferences.SharedPreferenceBooleanLiveData
 import com.siju.acexplorer.preferences.SharedPreferenceIntLiveData
 import com.siju.acexplorer.settings.SettingsPreferenceFragment
-import com.siju.acexplorer.storage.model.SortMode
+import com.siju.acexplorer.storage.helper.SortModeHelper
 import com.siju.acexplorer.theme.Theme
 import com.siju.acexplorer.utils.Utils
 
@@ -75,7 +76,7 @@ class MainModelImpl : MainModel {
     }
 
     fun getSortMode(category : Category? = Category.FILES): SortMode {
-        return SortMode.getSortMode(preferences, category)
+        return SortModeHelper.getSortMode(preferences, category)
     }
 
     private fun setupAnalytics(preferences: SharedPreferences) {

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/appmanger_navigation"
+    app:startDestination="@id/appMgrFragment">
+
+    <fragment
+        android:id="@+id/appMgrFragment"
+        android:name="com.siju.acexplorer.appmanager.view.AppMgrFragment"
+        android:label="AppMgrFragment" >
+        <action
+            android:id="@+id/action_appMgrFragment_to_appDetailActivity"
+            app:destination="@id/appDetailActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/appDetailActivity"
+        android:name="com.siju.acexplorer.appmanager.view.AppDetailActivity"
+        android:label="AppDetailActivity" >
+        <argument
+            android:name="packageName"
+            app:argType="string" />
+    </activity>
+</navigation>

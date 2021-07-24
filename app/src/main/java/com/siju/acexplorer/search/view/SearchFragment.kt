@@ -28,7 +28,7 @@ import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.search.model.SearchSuggestionProvider
 import com.siju.acexplorer.search.viewmodel.SearchViewModel
 import com.siju.acexplorer.storage.helper.RecentDataConverter
-import com.siju.acexplorer.storage.model.ViewMode
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
 import com.siju.acexplorer.storage.view.FileListAdapter
 import com.siju.acexplorer.storage.view.FileListHelper

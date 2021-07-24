@@ -16,14 +16,8 @@
   -->
 
 <resources>
-    <color name="colorPrimary">#73066e</color>
-    <color name="colorPrimaryDark">#800080</color>
-    <color name="colorAccent">#FF4081</color>
     <color name="navButtons">#73000000</color>
     <!--20% transparent -->
-    <color name="actionModeItemSelected">#33800080</color>
-    <color name="white">#ffffff</color>
-    <color name="whiteOverlay">#F3F3F3</color>
     <color name="fabButtonText">#727272</color>
 
     <!-- Light Theme -->
@@ -32,7 +26,6 @@
     <color name="dark_background">#292929</color>
     <color name="dark_overlay">#595959</color>
 
-    <color name="blue">#1e91d0</color>
     <color name="color_text">#5D6A77</color>
 
     <color name="tab_bg_color">#ff212121</color>

@@ -9,7 +9,7 @@ import com.siju.acexplorer.main.model.data.DataFetcherFactory
 import com.siju.acexplorer.main.model.data.DataLoader
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.StorageFetcher
-import com.siju.acexplorer.utils.ConfigurationHelper
+import com.siju.acexplorer.common.utils.ConfigurationHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 

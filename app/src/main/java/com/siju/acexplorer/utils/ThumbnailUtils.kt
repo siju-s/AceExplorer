@@ -17,9 +17,9 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
+import com.siju.acexplorer.common.utils.AppUtils
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
-import com.siju.acexplorer.main.model.helper.AppUtils
 import java.io.File
 import java.util.*
 
@@ -76,10 +76,6 @@ object ThumbnailUtils {
                 var extension = fileInfo.extension
                 extension = extension?.toLowerCase(Locale.ROOT)
                 changeFileIcon(context, imageIcon, extension, null)
-                setThumbHiddenFilter(imageIcon, fileName)
-            }
-            Category.APP_MANAGER -> {
-                loadAppIcon(context, imageIcon, fileInfo.filePath)
                 setThumbHiddenFilter(imageIcon, fileName)
             }
             else -> imageIcon.setImageResource(R.drawable.ic_folder)

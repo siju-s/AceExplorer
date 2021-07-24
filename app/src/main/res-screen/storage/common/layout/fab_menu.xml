@@ -8,7 +8,7 @@
     android:layout_height="match_parent"
     android:visibility="gone"
     android:background="@color/fab_bg"
-    tools:showIn="@layout/main_list"
+    tools:showIn="@layout/apps_list_container"
     tools:ignore="MergeRootFrame">
 
     <com.getbase.floatingactionbutton.FloatingActionsMenu

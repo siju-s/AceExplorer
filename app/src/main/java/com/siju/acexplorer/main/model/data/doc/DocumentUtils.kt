@@ -2,12 +2,12 @@ package com.siju.acexplorer.main.model.data.doc
 
 import android.provider.MediaStore
 import android.webkit.MimeTypeMap
+import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.helper.SortHelper
-import com.siju.acexplorer.storage.model.SortMode
 import java.util.*
 
 object DocumentUtils {

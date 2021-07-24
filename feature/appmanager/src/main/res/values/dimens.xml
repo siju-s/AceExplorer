@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="app_detail_icon_size">60dp</dimen>
+    <dimen name="padding_10">10dp</dimen>
+    <dimen name="padding_5">5dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="app_list_item_min_height">80dp</dimen>
+    <dimen name="app_list_item_margin">16dp</dimen>
+    <dimen name="app_list_item_thumb_size">60dp</dimen>
+    <dimen name="app_grid_item_thumb_size">75dp</dimen>
+    <dimen name="app_gallery_item_thumb_size">60dp</dimen>
+    <dimen name="app_gallery_item_min_height">150dp</dimen>
+    <dimen name="app_gallery_item_text_min_height">36dp</dimen>
+    <dimen name="app_gallery_item_sel_margin">8dp</dimen>
+    <dimen name="app_grid_item_sel_margin">8dp</dimen>
+
+</resources>

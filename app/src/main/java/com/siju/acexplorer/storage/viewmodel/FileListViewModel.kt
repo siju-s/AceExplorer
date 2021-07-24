@@ -9,6 +9,9 @@ import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
+import com.siju.acexplorer.common.ActionModeState
+import com.siju.acexplorer.common.SortMode
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category

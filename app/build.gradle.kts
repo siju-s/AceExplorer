@@ -134,8 +134,11 @@ dependencies {
     implementation(Libraries.ExternalLibs.rootTools) {
         exclude(module = "RootShell")
     }
-    implementation(Libraries.ExternalLibs.rootShell)
+    implementation(project(":common"))
+    implementation(project(":feature:appmanager"))
     implementation(project(":billingsecure"))
+
+    implementation(Libraries.ExternalLibs.rootShell)
 
     implementation(Libraries.Kotlin.stdlib)
     implementation(Libraries.Kotlin.coroutineCore)
@@ -165,6 +168,7 @@ dependencies {
     implementation(Libraries.preference)
     implementation(Libraries.navigation)
     implementation(Libraries.navigationUi)
+    implementation(Libraries.navFeature)
     kapt(Libraries.annotation)
 
     implementation(Libraries.Firebase.ads)

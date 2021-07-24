@@ -81,19 +81,6 @@ object SortHelper {
         return files
     }
 
-    fun sortAppManager(files: ArrayList<FileInfo>, sortMode: Int): ArrayList<FileInfo> {
-        when (sortMode) {
-            0 -> Collections.sort(files, comparatorByName)
-            1 -> Collections.sort(files, comparatorByNameDesc)
-            2 -> Collections.sort(files, comparatorByType)
-            3 -> Collections.sort(files, comparatorByTypeDesc)
-            4 -> Collections.sort(files, comparatorBySizeApk)
-            5 -> Collections.sort(files, comparatorBySizeApkDesc)
-            6 -> Collections.sort(files, comparatorByDateApk)
-            7 -> Collections.sort(files, comparatorByDateApkDesc)
-        }
-        return files
-    }
 
     fun sortRecentCategory(files: ArrayList<FileInfo>) {
         Collections.sort(files, comparatorRecentCategory)
@@ -160,26 +147,7 @@ object SortHelper {
         val second = getSize(File(filePath2))
         second.compareTo(first)
     }
-    private val comparatorBySizeApk: Comparator<in FileInfo> = Comparator { file1, file2 ->
-        val first = file1.size
-        val second = file2.size
-        first.compareTo(second)
-    }
-    private val comparatorBySizeApkDesc: Comparator<in FileInfo> = Comparator { file1, file2 ->
-        val first = file1.size
-        val second = file2.size
-        second.compareTo(first)
-    }
-    private val comparatorByDateApk: Comparator<in FileInfo> = Comparator { file1, file2 ->
-        val date1 = file1.date
-        val date2 = file2.date
-        date1.compareTo(date2)
-    }
-    private val comparatorByDateApkDesc: Comparator<in FileInfo> = Comparator { file1, file2 ->
-        val date1 = file1.date
-        val date2 = file2.date
-        date2.compareTo(date1)
-    }
+
     private val comparatorRecentCategory: Comparator<in FileInfo> = Comparator { file1, file2 ->
         val category1 = file1?.category
         val category2 = file2?.category

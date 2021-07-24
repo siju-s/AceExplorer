@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.billing.repository.BillingRepository
 import com.siju.acexplorer.billing.repository.localdb.Premium
+import com.siju.acexplorer.common.SortMode
+import com.siju.acexplorer.common.utils.Event
 import com.siju.acexplorer.home.view.CategoryMenuHelper
 import com.siju.acexplorer.home.view.MenuItemWrapper
 import com.siju.acexplorer.main.helper.SingleLiveEvent
@@ -17,8 +19,7 @@ import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.preferences.PreferenceConstants
-import com.siju.acexplorer.storage.helper.Event
-import com.siju.acexplorer.storage.model.SortMode
+import com.siju.acexplorer.storage.helper.SortModeHelper
 import com.siju.acexplorer.theme.Theme
 
 enum class Pane {
@@ -221,12 +222,11 @@ class MainViewModel : ViewModel() {
         }
         val value = sortMode.value
         value?.let {
-            _sortEvent.value = Event(SortMode.getSortModeFromValue(value))
+            _sortEvent.value = Event(SortModeHelper.getSortModeFromValue(value))
         }
     }
 
     fun navigateToSearch() {
         navigateToSearch.value = Event(true)
     }
-
 }

@@ -72,7 +72,7 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun setupToolbar() {
-        val toolbar = binding.appBar.toolbar.toolbar
+        val toolbar = binding.toolbarContainer.toolbar
         toolbar.title = resources.getString(R.string.app_name)
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
     }

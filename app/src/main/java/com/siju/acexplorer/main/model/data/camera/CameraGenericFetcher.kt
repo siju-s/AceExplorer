@@ -2,13 +2,13 @@ package com.siju.acexplorer.main.model.data.camera
 
 import android.content.Context
 import android.util.Log
+import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.data.FileDataFetcher
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SortHelper
-import com.siju.acexplorer.storage.model.SortMode
 import java.io.File
 
 private const val TAG = "FileDataFetcher"
