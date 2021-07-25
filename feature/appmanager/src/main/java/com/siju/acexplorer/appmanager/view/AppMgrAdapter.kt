@@ -26,6 +26,7 @@ import com.siju.acexplorer.appmanager.types.AppInfo
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
 import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.utils.DateUtils
+import com.siju.acexplorer.common.utils.SearchHelper
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -37,6 +38,7 @@ class AppMgrAdapter(private val viewModel : AppMgrViewModel,
 {
     private var unfilteredList = arrayListOf<AppInfo>()
     private var selectionMode = false
+    private var searchedText = ""
 
     fun onDataLoaded(list : ArrayList<AppInfo>) {
         unfilteredList = list
@@ -64,7 +66,7 @@ class AppMgrAdapter(private val viewModel : AppMgrViewModel,
     }
 
     override fun onBindViewHolder(holder: AppViewHolder, position: Int) {
-        holder.bind(getItem(position), viewModel.isSelected(position), clickListener, longClickListener)
+        holder.bind(getItem(position), viewModel.isSelected(position), clickListener, longClickListener, searchedText)
     }
 
     class AppViewHolder(val binding : ViewBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -80,11 +82,15 @@ class AppMgrAdapter(private val viewModel : AppMgrViewModel,
             appInfo: AppInfo,
             selected: Boolean,
             clickListener: (AppInfo, Int) -> Unit,
-            longClickListener: (AppInfo, Int, View) -> Unit
+            longClickListener: (AppInfo, Int, View) -> Unit,
+            searchedText: String
         ) {
             onSelection(selected, selectIcon)
-            appNameText.text = appInfo.name
-            packageNameText?.text = appInfo.packageName
+            val name = appInfo.name
+            val packageName = appInfo.packageName
+            SearchHelper.addSpanToText(name, searchedText, appNameText)
+            SearchHelper.addSpanToText(packageName, searchedText, packageNameText)
+
             val context = itemView.context
             sizeText.text = Formatter.formatFileSize(context, appInfo.size)
             dateText?.text = DateUtils.convertDate(appInfo.updatedDate)
@@ -137,7 +143,9 @@ class AppMgrAdapter(private val viewModel : AppMgrViewModel,
 
     fun filter(text: String) {
         if (text.isEmpty()) {
-           submitList(unfilteredList)
+            searchedText = ""
+            submitList(unfilteredList)
+            notifyDataSetChanged()
         } else {
             addSearchResults(text)
         }
@@ -146,14 +154,14 @@ class AppMgrAdapter(private val viewModel : AppMgrViewModel,
     private fun addSearchResults(query: String) {
         var text = query
         val result: ArrayList<AppInfo> = ArrayList()
-        text = text.lowercase(Locale.getDefault())
-
+        text = text.toLowerCase(Locale.getDefault())
+        searchedText = text
         result.addAll(unfilteredList.filter {
             it.name.contains(text) || it.packageName.contains(text)
         })
         submitList(result)
+        notifyDataSetChanged()
     }
-
 
     class ItemCallback : DiffUtil.ItemCallback<AppInfo>() {
        override fun areItemsTheSame(oldItem: AppInfo, newItem: AppInfo) = oldItem.packageName == newItem.packageName
