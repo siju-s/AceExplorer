@@ -62,7 +62,15 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     val refreshList : LiveData<Event<Boolean>>
     get() = _refreshList
 
+    private val _closeSearch = MutableLiveData<Event<Boolean>>()
+
+    val closeSearch : LiveData<Event<Boolean>>
+    get() = _closeSearch
+
+    val backPressed = MutableLiveData<Event<Boolean>>()
+
     private var appType = AppType.USER_APP
+    private var searchActive = false
 
     init {
         multiSelection.setListener(this)
@@ -183,4 +191,24 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
         multiSelection.clearSelection()
     }
 
+    fun handleBackPress() {
+        if (isActionModeActive()) {
+            multiSelection.clearSelection()
+            _actionModeState.postValue(ActionModeState.ENDED)
+        }
+        else if (searchActive) {
+            _closeSearch.postValue(Event(true))
+        }
+        else {
+            backPressed.postValue(Event(true))
+        }
+    }
+
+    fun onSearchActive() {
+        this.searchActive = true
+    }
+
+    fun onSearchInactive() {
+        this.searchActive = false
+    }
 }

@@ -47,6 +47,7 @@ dependencies {
     implementation(Libraries.constraintLayout)
     implementation(Libraries.activityKtx)
     implementation(Libraries.fragmentKtx)
+    implementation(Libraries.swipeRefresh)
     kapt(Libraries.lifecycleCompiler)
     implementation(Libraries.hilt)
     implementation(Libraries.navigation)

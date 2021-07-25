@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -64,8 +65,9 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
         setupUi()
         initObservers()
-        fetchData()
+        fetchData(AppType.USER_APP)
         registerPackageReceiver()
+        activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
     }
 
     private fun setupUi() {
@@ -120,6 +122,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         viewModel.appsList.observe(viewLifecycleOwner, {
             it?.let {
                 Log.d("AppFrag", "initObservers: ${it.size}")
+                hideLoadingIndicator()
                 binding.appsListContainer.appsList.layoutManager?.scrollToPosition(0)
                 setToolbarSubtitle(it.size)
                 adapter.onDataLoaded(it)
@@ -173,6 +176,27 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                 adapter.notifyDataSetChanged()
             }
         })
+        viewModel.backPressed.observe(viewLifecycleOwner, {
+            it?.getContentIfNotHandled()?.let {
+                backPressedCallback.isEnabled = false
+                activity?.onBackPressed()
+            }
+        })
+        viewModel.closeSearch.observe(viewLifecycleOwner, {
+            it?.getContentIfNotHandled()?.let {
+                if (it) {
+                    searchView?.isIconified = true
+                }
+            }
+        })
+    }
+
+    private fun showLoadingIndicator() {
+        binding.appsListContainer.swipeRefresh.isRefreshing = true
+    }
+
+    private fun hideLoadingIndicator() {
+        binding.appsListContainer.swipeRefresh.isRefreshing = false
     }
 
     private fun setToolbarSubtitle(count : Int?) {
@@ -224,8 +248,9 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         bottomToolbar.visibility = View.GONE
     }
 
-    private fun fetchData() {
-        viewModel.fetchPackages(AppType.USER_APP)
+    private fun fetchData(appType: AppType) {
+        showLoadingIndicator()
+        viewModel.fetchPackages(appType)
     }
 
     private fun setupMenuItems(menu: Menu, viewMode: ViewMode) {
@@ -256,8 +281,10 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             }
         })
         searchView?.setOnSearchClickListener {
+            viewModel.onSearchActive()
         }
         searchView?.setOnCloseListener {
+            viewModel.onSearchInactive()
             false
         }
     }
@@ -275,19 +302,19 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             R.id.action_apps_system  -> {
                 installSourceItem.isEnabled = false
                 allSourceItem.isChecked = true
-                viewModel.fetchPackages(AppType.SYSTEM_APP)
+                fetchData(AppType.SYSTEM_APP)
                 applyBadgeToMenuItem(R.id.action_filter)
             }
             R.id.action_apps_user    -> {
                 allSourceItem.isChecked = true
                 installSourceItem.isEnabled = true
-                viewModel.fetchPackages(AppType.USER_APP)
+                fetchData(AppType.USER_APP)
                 clearBadgeMenuItem(R.id.action_filter)
             }
             R.id.action_apps_all     -> {
                 allSourceItem.isChecked = true
                 installSourceItem.isEnabled = true
-                viewModel.fetchPackages(AppType.ALL_APPS)
+                fetchData(AppType.ALL_APPS)
                 applyBadgeToMenuItem(R.id.action_filter)
             }
             R.id.action_playstore    -> onAppSourceClicked(AppSource.PLAYSTORE)
@@ -430,7 +457,9 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         }
     }
 
-    fun onAppUninstalled() {
-//        viewModel.fetchPackagesCurrentType()
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            viewModel.handleBackPress()
+        }
     }
 }

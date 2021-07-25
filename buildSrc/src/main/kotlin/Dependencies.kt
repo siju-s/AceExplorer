@@ -51,6 +51,7 @@ object Libraries {
        const val exif             = "1.3.2"
        const val activity         = "1.1.0"
        const val fragment         = "1.3.6"
+       const val swiperefresh     = "1.1.0"
 
    }
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
@@ -68,6 +69,7 @@ object Libraries {
     const val lifecycleCompiler      = "androidx.lifecycle:lifecycle-compiler:${Versions.lifecycle}"
     const val activityKtx           = "androidx.activity:activity-ktx:${Versions.activity}"
     const val fragmentKtx           = "androidx.fragment:fragment-ktx:${Versions.fragment}"
+    const val swipeRefresh          = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swiperefresh}"
 
     const val roomRuntime = "androidx.room:room-runtime:${Versions.room}"
     const val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
