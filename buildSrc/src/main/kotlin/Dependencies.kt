@@ -3,7 +3,7 @@ const val kotlinVersion = "1.4.21"
 object BuildPlugins {
 
     object Versions {
-        const val gradlePlugin = "4.2.2"
+        const val gradlePlugin = "7.0.0"
         const val crashlytics = "2.6.1"
         const val googleServices = "4.3.8"
         const val safeArgsPlugin = "2.3.5"
