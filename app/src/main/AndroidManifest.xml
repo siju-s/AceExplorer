@@ -48,7 +48,8 @@
         <activity
             android:name=".welcome.WelcomeActivity"
             android:screenOrientation="fullSensor"
-            android:theme="@style/WelcomeScreen">
+            android:theme="@style/WelcomeScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -67,7 +68,8 @@
             android:launchMode="singleTask"
             android:resizeableActivity="true"
             android:windowSoftInputMode="adjustPan"
-            tools:targetApi="n">
+            tools:targetApi="n"
+            android:exported="false">
 
             <meta-data
                 android:name="android.app.searchable"
@@ -86,7 +88,8 @@
 
         <activity
             android:name=".picker.TransparentActivity"
-            android:theme="@style/TransparentTheme">
+            android:theme="@style/TransparentTheme"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.RINGTONE_PICKER" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -96,7 +99,8 @@
         <activity
             android:name=".imageviewer.ImageViewerActivity"
             android:label="@string/image_viewer_title"
-            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize">
+            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|smallestScreenSize"
+            android:exported="true">
             <intent-filter tools:ignore="AppLinkUrlError">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

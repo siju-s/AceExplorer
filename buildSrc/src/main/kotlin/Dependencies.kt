@@ -28,7 +28,7 @@ object BuildPlugins {
 
 object AndroidSdk {
     const val min = 21
-    const val compile = 30
+    const val compile = 31
     const val target = compile
     const val applicationId = "com.siju.acexplorer"
 }
@@ -52,6 +52,7 @@ object Libraries {
        const val activity         = "1.1.0"
        const val fragment         = "1.3.6"
        const val swiperefresh     = "1.1.0"
+       const val pagination       = "3.0.1"
 
    }
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
@@ -70,6 +71,7 @@ object Libraries {
     const val activityKtx           = "androidx.activity:activity-ktx:${Versions.activity}"
     const val fragmentKtx           = "androidx.fragment:fragment-ktx:${Versions.fragment}"
     const val swipeRefresh          = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swiperefresh}"
+    const val pagination            =  "androidx.paging:paging-runtime:${Versions.pagination}"
 
     const val roomRuntime = "androidx.room:room-runtime:${Versions.room}"
     const val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
