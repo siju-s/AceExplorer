@@ -34,6 +34,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationBarView
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.install.model.ActivityResult
 import com.siju.acexplorer.R
@@ -126,8 +127,8 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     fun getViewModel() = mainViewModel
 
     private fun initListeners() {
-        binding.bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener)
-        binding.bottomNavigation.setOnNavigationItemReselectedListener(navigationItemReselectedListener)
+        binding.bottomNavigation.setOnItemSelectedListener(navigationItemSelectedListener)
+        binding.bottomNavigation.setOnItemReselectedListener(navigationItemReselectedListener)
     }
 
     private fun initObservers() {
@@ -239,7 +240,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         return false
     }
 
-    private val navigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { menuItem ->
+    private val navigationItemSelectedListener = NavigationBarView.OnItemSelectedListener { menuItem ->
         clearBackStack(menuItem.itemId)
         disableDualPane()
         Log.d(TAG, "navItemSelected: $menuItem")
@@ -247,7 +248,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         true
     }
 
-    private val navigationItemReselectedListener = BottomNavigationView.OnNavigationItemReselectedListener { menuItem ->
+    private val navigationItemReselectedListener = NavigationBarView.OnItemReselectedListener { menuItem ->
         clearBackStack(menuItem.itemId)
         disableDualPane()
         navController.navigate(menuItem.itemId)

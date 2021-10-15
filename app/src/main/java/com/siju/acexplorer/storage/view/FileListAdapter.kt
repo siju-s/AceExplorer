@@ -161,14 +161,15 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             onSelection(selected, pos, draggedPos)
             bindViewByCategory(itemView.context, item, viewMode, mainCategory, peekPopView, pos)
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = absoluteAdapterPosition
+                Log.d(TAG, "bind: click:$position")
                 if (position < count && position != RecyclerView.NO_POSITION) {
                     clickListener(Pair(item, position))
                 }
             }
 
             itemView.setOnLongClickListener {
-                val position = adapterPosition
+                val position = absoluteAdapterPosition
                 if (position < count && position != RecyclerView.NO_POSITION) {
                     longClickListener(item, position, it)
                 }
@@ -176,7 +177,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
 
             imageIcon.setOnLongClickListener {
-                val position = adapterPosition
+                val position = absoluteAdapterPosition
                 if (position < count && position != RecyclerView.NO_POSITION) {
                     longClickListener(item, position, it)
                 }

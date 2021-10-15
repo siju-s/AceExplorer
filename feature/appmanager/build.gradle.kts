@@ -9,9 +9,9 @@ plugins {
 android {
 
     defaultConfig {
-        minSdkVersion(AndroidSdk.min)
-        compileSdkVersion(AndroidSdk.compile)
-        targetSdkVersion(AndroidSdk.target)
+        minSdk = AndroidSdk.min
+        compileSdk = AndroidSdk.compile
+        targetSdk = AndroidSdk.target
     }
 
     buildTypes {

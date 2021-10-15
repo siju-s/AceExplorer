@@ -43,15 +43,16 @@ android {
 
     defaultConfig {
         applicationId = AndroidSdk.applicationId
-        minSdkVersion(AndroidSdk.min)
-        compileSdkVersion(AndroidSdk.compile)
-        targetSdkVersion(AndroidSdk.target)
+        minSdk = AndroidSdk.min
+        compileSdk = AndroidSdk.compile
+        targetSdk = AndroidSdk.target
         versionCode = rootProject.extra["versionCode"] as Int
         versionName = rootProject.extra["versionName"] as String
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
-        resConfigs("en", "af", "ar", "bg", "da", "de", "el", "es", "fa", "fr", "ga", "hi", "hr", "hu",
+        resourceConfigurations.addAll(
+           setOf("en", "af", "ar", "bg", "da", "de", "el", "es", "fa", "fr", "ga", "hi", "hr", "hu",
                 "hy", "in", "is", "it", "iw", "ja", "ka", "ko", "mk", "nl", "no", "pl", "pt", "ro", "ru",
-                "sl", "sq", "sr", "sv", "th", "tr", "uk", "vi", "zh", "zh-rCN", "zh-rTW")
+                "sl", "sq", "sr", "sv", "th", "tr", "uk", "vi", "zh", "zh-rCN", "zh-rTW"))
     }
 
 
@@ -84,8 +85,7 @@ android {
         )
     }
 
-
-    flavorDimensions("dimen")
+    flavorDimensions.add("dimen")
     productFlavors {
         create("dev") {
             applicationIdSuffix = ".dev"
@@ -95,7 +95,8 @@ android {
             buildConfigField("boolean", "IS_DEV_VERSION", "false")
         }
     }
-    lintOptions {
+
+    lint {
         isAbortOnError = false
     }
 
@@ -144,6 +145,20 @@ dependencies {
     implementation(Libraries.Kotlin.coroutineCore)
     implementation(Libraries.Kotlin.coroutineAndroid)
 
+    implementation(Libraries.appCompat)
+    implementation(Libraries.preference)
+
+    implementation(Libraries.navigation)
+    implementation(Libraries.navigationUi)
+    implementation(Libraries.navFeature)
+
+    implementation(Libraries.recyclerView)
+    implementation(Libraries.design)
+    implementation(Libraries.viewpager)
+    implementation(Libraries.cardView)
+    implementation(Libraries.palette)
+    implementation(Libraries.pagination)
+
     implementation(Libraries.viewModelKtx)
     implementation(Libraries.lifecycleLiveData)
     implementation(Libraries.lifecycleRuntime)
@@ -158,17 +173,6 @@ dependencies {
 
     implementation(Libraries.exif)
 
-// Support libraries
-    implementation(Libraries.appCompat)
-    implementation(Libraries.recyclerView)
-    implementation(Libraries.design)
-    implementation(Libraries.viewpager)
-    implementation(Libraries.cardView)
-    implementation(Libraries.palette)
-    implementation(Libraries.preference)
-    implementation(Libraries.navigation)
-    implementation(Libraries.navigationUi)
-    implementation(Libraries.navFeature)
     kapt(Libraries.annotation)
 
     implementation(Libraries.Firebase.ads)
@@ -189,7 +193,6 @@ dependencies {
     implementation(Libraries.ExternalLibs.fastScrollRecyclerview)
 
 //    debugImplementation(Libraries.ExternalLibs.leakCanary)
-
 
     testImplementation(Libraries.TestLibs.junit)
     testImplementation(Libraries.TestLibs.mockito)
