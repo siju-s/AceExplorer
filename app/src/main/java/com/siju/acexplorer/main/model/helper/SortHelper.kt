@@ -40,8 +40,8 @@ object SortHelper {
         } else if (filename2 == null) {
             return -1
         }
-        return filename1.toLowerCase(Locale.ROOT)
-                .compareTo(filename2.toLowerCase(Locale.ROOT))
+        return filename1.lowercase()
+                .compareTo(filename2.lowercase())
     }
 
     private fun compareFileNamesDesc(filename1: String?, filename2: String?): Int {
@@ -52,8 +52,8 @@ object SortHelper {
         } else if (filename2 == null) {
             return 1
         }
-        return filename2.toLowerCase(Locale.ROOT)
-                .compareTo(filename1.toLowerCase(Locale.ROOT))
+        return filename2.lowercase()
+                .compareTo(filename1.lowercase())
     }
 
     val comparatorByNameZipViewer: Comparator<in ZipModel> = Comparator { file1, file2 ->
@@ -236,7 +236,7 @@ object SortHelper {
             dotIndex1 == -1 == (dotIndex2 == -1) -> { // both or neither
                 fileName1 = fileName1.substring(dotIndex1 + 1)
                 fileName2 = fileName2.substring(dotIndex2 + 1)
-                fileName1.toLowerCase(Locale.ROOT).compareTo(fileName2.toLowerCase(Locale.ROOT))
+                fileName1.lowercase().compareTo(fileName2.lowercase())
             }
             dotIndex1 == -1 -> { // only s2 has an extension, so s1 goes first
                 -1
@@ -265,7 +265,7 @@ object SortHelper {
             dotIndex2 == -1 == (dotIndex1 == -1) -> { // both or neither
                 fileName2 = fileName2.substring(dotIndex2 + 1)
                 fileName1 = fileName1.substring(dotIndex1 + 1)
-                fileName2.toLowerCase(Locale.ROOT).compareTo(fileName1.toLowerCase(Locale.ROOT))
+                fileName2.lowercase().compareTo(fileName1.lowercase())
             }
             dotIndex2 == -1 -> { // only s2 has an extension, so s1 goes first
                 -1

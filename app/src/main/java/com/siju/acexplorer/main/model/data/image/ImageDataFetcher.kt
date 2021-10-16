@@ -25,6 +25,8 @@ class ImageDataFetcher : DataFetcher {
         return getCursorCount(cursor)
     }
 
+    // DATA field is required to check path. Works fine till Android 12 even though deprecated
+    @Suppress("Deprecation")
     private fun fetchImages(context: Context): Cursor? {
         val uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
         val projection = arrayOf(MediaStoreColumnHelper.getBucketIdColumn(), MediaStore.Images.Media.BUCKET_DISPLAY_NAME, MediaStore.Images.Media.DATA)

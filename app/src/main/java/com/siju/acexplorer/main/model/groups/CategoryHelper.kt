@@ -172,7 +172,7 @@ object CategoryHelper {
         if (ext == null) {
             return RECENT_DOCS
         }
-        ext = ext.toLowerCase(Locale.ROOT) // necessary
+        ext = ext.lowercase() // necessary
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
         //        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
         if (mimeType != null) {
@@ -193,7 +193,7 @@ object CategoryHelper {
         if (ext == null) {
             return DOCS
         }
-        ext = ext.toLowerCase(Locale.ROOT) // necessary
+        ext = ext.lowercase() // necessary
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
         //        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
         if (mimeType != null) {
@@ -214,7 +214,7 @@ object CategoryHelper {
         if (ext == null) {
             return LARGE_FILES_OTHER
         }
-        ext = ext.toLowerCase(Locale.ROOT)
+        ext = ext.lowercase()
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
         //        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
         if (mimeType != null) {
@@ -242,7 +242,7 @@ object CategoryHelper {
         if (ext == null) {
             return LARGE_FILES_OTHER
         }
-        ext = ext.toLowerCase(Locale.ROOT)
+        ext = ext.lowercase()
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(ext)
         //        Log.d("CategoryHelper", "getCategoryForRecentFromExtension: ext;"+extension + " mime:"+mimeType);
         if (mimeType != null) {

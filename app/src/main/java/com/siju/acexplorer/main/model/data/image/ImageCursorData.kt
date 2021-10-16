@@ -7,7 +7,8 @@ import com.siju.acexplorer.helper.MediaStoreColumnHelper
 import com.siju.acexplorer.main.model.groups.Category
 import java.io.File
 import java.util.*
-
+// DATA field is required to check path. Works fine till Android 12 even though deprecated
+@Suppress("Deprecation")
 object ImageCursorData {
 
     fun getImageDataFromCursor(cursor: Cursor?, category: Category): ArrayList<FileInfo> {

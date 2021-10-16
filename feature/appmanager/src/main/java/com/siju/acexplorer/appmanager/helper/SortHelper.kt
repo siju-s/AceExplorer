@@ -34,8 +34,8 @@ object SortHelper {
         } else if (filename2 == null) {
             return -1
         }
-        return filename1.toLowerCase(Locale.ROOT)
-            .compareTo(filename2.toLowerCase(Locale.ROOT))
+        return filename1.lowercase()
+            .compareTo(filename2.lowercase())
     }
 
     private fun compareFileNamesDesc(filename1: String?, filename2: String?): Int {
@@ -46,8 +46,8 @@ object SortHelper {
         } else if (filename2 == null) {
             return 1
         }
-        return filename2.toLowerCase(Locale.ROOT)
-            .compareTo(filename1.toLowerCase(Locale.ROOT))
+        return filename2.lowercase()
+            .compareTo(filename1.lowercase())
     }
 
     private val comparatorBySizeApk: Comparator<in AppInfo> = Comparator { file1, file2 ->

@@ -195,7 +195,7 @@ object StorageUtils {
             val files = storageDir.listFiles()
             if (files != null) {
                 for (file in files) {
-                    if (isValidDrive(file) && file.name.toLowerCase(Locale.ROOT).contains("usb")) {
+                    if (isValidDrive(file) && file.name.lowercase().contains("usb")) {
                         return file
                     }
                 }

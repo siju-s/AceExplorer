@@ -33,7 +33,6 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.install.model.ActivityResult
@@ -74,25 +73,34 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     private val mainViewModel: MainViewModel by viewModels()
     private val premiumUtils = PremiumUtils()
 
+    private lateinit var permissionHelper: PermissionHelper
     private lateinit var navController: NavController
-    private var updateChecker: UpdateChecker? = null
     private lateinit var binding : ActivityMainBinding
     private lateinit var reviewManager : ReviewManager
+
+    private var updateChecker: UpdateChecker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         reviewManager = ReviewManager(this)
-        setContentView(binding.root)
-        setupNavController()
 
-        mainViewModel.setupPermission(PermissionHelper(this, applicationContext))
+        setContentView(binding.root)
+
+        setupNavController()
+        setupPermission()
         handleIntent(intent)
         initObservers()
         initListeners()
+        setupPermission()
         updateChecker = UpdateChecker(applicationContext, this, updateCallback)
         setupPremiumUtils()
         checkIfInAppShortcut(intent)
+    }
+
+    private fun setupPermission() {
+        permissionHelper = PermissionHelper(this, applicationContext)
+        permissionHelper.checkPermissions()
     }
 
     private fun handleIntent(intent: Intent?) {
@@ -132,10 +140,11 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     private fun initObservers() {
-        mainViewModel.permissionStatus.observe(this, { permissionStatus ->
+        permissionHelper.permissionStatus.observe(this, { permissionStatus ->
             when (permissionStatus) {
-                is PermissionHelper.PermissionState.Required -> mainViewModel.requestPermissions()
-                is PermissionHelper.PermissionState.Rationale -> mainViewModel.showPermissionRationale()
+                is PermissionHelper.PermissionState.Required -> permissionHelper.requestPermission()
+                is PermissionHelper.PermissionState.Rationale -> permissionHelper.showRationale()
+                is PermissionHelper.PermissionState.Granted -> mainViewModel.onPermissionsGranted()
                 else -> {}
             }
         })
@@ -289,7 +298,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        mainViewModel.onPermissionResult()
+        permissionHelper.onPermissionResult()
     }
 
     override fun onStart() {
@@ -299,7 +308,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     override fun onResume() {
         super.onResume()
-        mainViewModel.onResume()
+        permissionHelper.onForeground()
         updateChecker?.onResume()
     }
 

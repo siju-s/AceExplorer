@@ -59,8 +59,17 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val fileInfo = getItem(position)
         fileInfo?.let {
-            viewHolder.bind(fileInfo, itemCount, viewMode, mainCategory, multiSelectionHelper?.isSelected(position), position, draggedPosition,
-                    clickListener, longClickListener, peekPopView)
+            viewHolder.bind(
+                fileInfo,
+                itemCount,
+                mainCategory,
+                multiSelectionHelper?.isSelected(position),
+                position,
+                draggedPosition,
+                clickListener,
+                longClickListener,
+                peekPopView
+            )
         }
     }
 
@@ -112,18 +121,18 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
     private fun addSearchResults(query: String) {
         var text = query
         val result: ArrayList<FileInfo> = ArrayList()
-        text = text.toLowerCase(Locale.getDefault())
+        text = text.lowercase(Locale.getDefault())
         for (item in filteredList) {
             val fileName = item.fileName
             val packageName = item.filePath
             fileName?.let {
-                if (fileName.toLowerCase(Locale.getDefault()).contains(text)) {
+                if (fileName.lowercase(Locale.getDefault()).contains(text)) {
                     result.add(item)
                 }
             }
             if (!result.contains(item)) {
                 packageName?.let {
-                    if (packageName.toLowerCase(Locale.getDefault()).contains(text)) {
+                    if (packageName.lowercase(Locale.getDefault()).contains(text)) {
                         result.add(item)
                     }
                 }
@@ -153,13 +162,20 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        fun bind(item: FileInfo, count: Int, viewMode: ViewMode, mainCategory: Category?, selected: Boolean?, pos: Int, draggedPos: Int,
-                 clickListener: (Pair<FileInfo, Int>) -> Unit,
-                 longClickListener: (FileInfo, Int, View) -> Unit,
-                 peekPopView: PeekPopView?) {
+        fun bind(
+            item: FileInfo,
+            count: Int,
+            mainCategory: Category?,
+            selected: Boolean?,
+            pos: Int,
+            draggedPos: Int,
+            clickListener: (Pair<FileInfo, Int>) -> Unit,
+            longClickListener: (FileInfo, Int, View) -> Unit,
+            peekPopView: PeekPopView?
+        ) {
 //            Log.d("FileListAdapter", "bind:${item.fileName}, pos:$pos")
             onSelection(selected, pos, draggedPos)
-            bindViewByCategory(itemView.context, item, viewMode, mainCategory, peekPopView, pos)
+            bindViewByCategory(itemView.context, item, mainCategory, peekPopView, pos)
             itemView.setOnClickListener {
                 val position = absoluteAdapterPosition
                 Log.d(TAG, "bind: click:$position")
@@ -204,12 +220,13 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
             }
         }
 
-        private fun bindViewByCategory(context: Context,
-                                       fileInfo: FileInfo,
-                                       viewMode: ViewMode,
-                                       mainCategory: Category?,
-                                       peekPopView: PeekPopView?,
-                                       pos: Int) {
+        private fun bindViewByCategory(
+            context: Context,
+            fileInfo: FileInfo,
+            mainCategory: Category?,
+            peekPopView: PeekPopView?,
+            pos: Int
+        ) {
             val category = fileInfo.category
 //            Log.d(TAG, "bindViewByCategory:$category, file:${fileInfo.filePath}, date:${fileInfo.date}")
             when {

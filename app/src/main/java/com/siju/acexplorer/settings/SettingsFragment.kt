@@ -98,8 +98,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         setupUnlockFullVersionPref()
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
 

@@ -27,6 +27,8 @@ class GenreDetailFetcher : DataFetcher {
         return 0
     }
 
+    // DATA field is required to check path. Works fine till Android 12 even though deprecated
+    @Suppress("Deprecation")
     private fun getGenreDetailCursorData(cursor: Cursor?): ArrayList<FileInfo> {
         val projection = arrayOf(MediaStore.Audio.Genres.Members.TITLE,
                                  MediaStore.Audio.Genres.Members._ID,

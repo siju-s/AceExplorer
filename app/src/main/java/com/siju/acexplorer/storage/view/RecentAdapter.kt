@@ -13,12 +13,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
 import com.siju.acexplorer.storage.model.RecentTimeData
-import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils
 
@@ -106,13 +106,13 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
                 bindViewByCategory(itemView.context, it, peekPopView, pos)
 
                 itemView.setOnClickListener {
-                    val position = adapterPosition
+                    val position = absoluteAdapterPosition
                     if (position != RecyclerView.NO_POSITION) {
                         clickListener(Pair(item, position))
                     }
                 }
                 itemView.setOnLongClickListener { view ->
-                    val position = adapterPosition
+                    val position = absoluteAdapterPosition
                     if (position < count && position != RecyclerView.NO_POSITION) {
                         longClickListener(item, position, view)
                     }

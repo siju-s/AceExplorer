@@ -9,9 +9,11 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SortHelper
 import java.util.*
 
+// DATA field is required to check path. Works fine till Android 12 even though deprecated
+@Suppress("Deprecation")
 class ArtistDetailDataFetcher : DataFetcher {
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {
-        val data = fetchArtistDetail(context, path, category, canShowHiddenFiles(context))
+        val data = fetchArtistDetail(context, path, canShowHiddenFiles(context))
         return SortHelper.sortFiles(data, getSortMode(context))
     }
 
@@ -19,8 +21,7 @@ class ArtistDetailDataFetcher : DataFetcher {
       return 0
     }
 
-    private fun fetchArtistDetail(context: Context, bucketId: String?, category: Category,
-                                 showHidden: Boolean): ArrayList<FileInfo> {
+    private fun fetchArtistDetail(context: Context, bucketId: String?, showHidden: Boolean): ArrayList<FileInfo> {
 
         val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
         val selection = MediaStore.Audio.Media.ARTIST_ID + " =?"
@@ -32,6 +33,6 @@ class ArtistDetailDataFetcher : DataFetcher {
 
         val cursor = context.contentResolver.query(uri, projection, selection, selectionArgs, null)
 
-        return AudioDetailCursorData.getDetailCursorData(cursor, category, showHidden)
+        return AudioDetailCursorData.getDetailCursorData(cursor, showHidden)
     }
 }

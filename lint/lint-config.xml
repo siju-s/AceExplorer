@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <issue id="UnusedResources" severity="informational"/>
+    <issue id="MissingTranslation" severity="informational"/>
+    <issue id="StringFormatCount" severity="fatal" />
+    <issue id="StringFormatMatches" severity="fatal" />
+    <issue id="StringFormatInvalid" severity="fatal" />
+    <issue id="NewApi" severity="fatal" />
+    <issue id="HardcodedText" severity="fatal" />
+    <issue id="InlinedApi" severity="fatal" />
+
+</lint>

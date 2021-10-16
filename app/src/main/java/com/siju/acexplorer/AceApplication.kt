@@ -17,7 +17,6 @@
 package com.siju.acexplorer
 
 import android.app.Application
-import android.os.StrictMode
 import com.kobakei.ratethisapp.RateThisApp
 import com.siju.acexplorer.theme.Theme
 import dagger.hilt.android.HiltAndroidApp
@@ -33,28 +32,11 @@ class AceApplication : Application() {
         Theme.setTheme(Theme.getTheme(applicationContext))
         appContext = this
         initRateApp()
-        setupPerformanceCheckers()
     }
 
     private fun initRateApp() {
         val config = RateThisApp.Config(RATE_APP_CRITERIA_INSTALL_DAYS, RATE_APP_CRITERIA_LAUNCH_TIMES)
         RateThisApp.init(config)
-    }
-
-    private fun setupPerformanceCheckers() {
-        if (BuildConfig.DEBUG) {
-//            setupStrictMode()
-        }
-    }
-
-    private fun setupStrictMode() {
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder().detectAll()
-                .penaltyLog().build())
-        StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
-                .detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
-                .penaltyLog()
-                .build())
     }
 
     companion object {

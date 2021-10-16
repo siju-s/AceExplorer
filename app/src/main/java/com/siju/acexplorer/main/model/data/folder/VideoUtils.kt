@@ -34,8 +34,8 @@ object VideoUtils {
     }
 
     private fun isVideoFile(name: String?): Boolean {
-        return name?.toLowerCase(Locale.ROOT)?.endsWith(".mp4") == true ||
-                name?.toLowerCase(Locale.ROOT)?.endsWith(".ts") == true ||
-                name?.toLowerCase(Locale.ROOT)?.endsWith(".mkv") == true
+        return name?.lowercase()?.endsWith(".mp4") == true ||
+                name?.lowercase()?.endsWith(".ts") == true ||
+                name?.lowercase()?.endsWith(".mkv") == true
     }
 }

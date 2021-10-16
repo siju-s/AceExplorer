@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
-import androidx.fragment.app.Fragment
+import androidx.activity.result.ActivityResultLauncher
 import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.helper.FileUtils.showMessage
 import com.siju.acexplorer.main.model.helper.IntentResolver
@@ -14,7 +14,6 @@ import com.siju.acexplorer.main.model.helper.UriHelper
 object InstallHelper {
 
     private const val PACKAGE = "package"
-    const val UNKNOWN_APPS_INSTALL_REQUEST = 300
 
     fun canInstallApp(context: Context): Boolean {
         return if (SdkHelper.isAtleastOreo) {
@@ -23,13 +22,13 @@ object InstallHelper {
         else true
     }
 
-    fun requestUnknownAppsInstallPermission(fragment: Fragment) {
-        val context = fragment.context ?: return
+    fun requestUnknownAppsInstallPermission(context: Context?, launcher: ActivityResultLauncher<Intent>) {
+        context ?: return
         if (SdkHelper.isAtleastOreo) {
             val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
             val uri = Uri.fromParts(PACKAGE, context.packageName, null)
             intent.data = uri
-            fragment.startActivityForResult(intent, UNKNOWN_APPS_INSTALL_REQUEST)
+            launcher.launch(intent)
         }
     }
 

@@ -2,14 +2,16 @@ plugins {
     id ("com.android.library")
     id ("kotlin-android")
     kotlin(BuildPlugins.kotlinKapt)
+    id("dagger.hilt.android.plugin")
+    id("org.sonarqube")
 }
 
 android {
 
     defaultConfig {
-        minSdkVersion(AndroidSdk.min)
-        compileSdkVersion(AndroidSdk.compile)
-        targetSdkVersion(AndroidSdk.target)
+        minSdk = AndroidSdk.min
+        compileSdk = AndroidSdk.compile
+        targetSdk = AndroidSdk.target
     }
 
     buildTypes {
@@ -26,7 +28,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     buildFeatures {
-        dataBinding = true
         viewBinding = true
     }
 }

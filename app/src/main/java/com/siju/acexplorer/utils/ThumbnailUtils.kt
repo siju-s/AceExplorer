@@ -21,7 +21,6 @@ import com.siju.acexplorer.common.utils.AppUtils
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
 import java.io.File
-import java.util.*
 
 object ThumbnailUtils {
     private val AUDIO_URI = Uri.parse("content://media/external/audio/albumart")
@@ -49,7 +48,7 @@ object ThumbnailUtils {
                     imageIcon.setImageDrawable(null)
                     val extension = fileInfo.extension
                     if (extension != null) {
-                        changeFileIcon(context, imageIcon, extension.toLowerCase(Locale.ROOT), filePath)
+                        changeFileIcon(context, imageIcon, extension.lowercase(), filePath)
                     } else {
                         imageIcon.setImageResource(R.drawable.ic_doc_white)
                     }
@@ -74,7 +73,7 @@ object ThumbnailUtils {
             Category.DOCS, Category.RECENT_DOCS -> {
                 hideThumb(imageThumbIcon)
                 var extension = fileInfo.extension
-                extension = extension?.toLowerCase(Locale.ROOT)
+                extension = extension?.lowercase()
                 changeFileIcon(context, imageIcon, extension, null)
                 setThumbHiddenFilter(imageIcon, fileName)
             }
@@ -130,6 +129,8 @@ object ThumbnailUtils {
                 .into(imageIcon)
     }
 
+    // DATA field is required to check path. Works fine till Android 12 even though deprecated
+    @Suppress("Deprecation")
     private fun displayAudioAlbumArt(context: Context, bucketId: Long, imageIcon: ImageView,
                                      path: String?) {
         if (bucketId != -1L) {

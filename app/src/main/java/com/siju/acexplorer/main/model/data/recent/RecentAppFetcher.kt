@@ -23,6 +23,8 @@ class RecentAppFetcher : DataFetcher {
         return getCursorCount(cursor)
     }
 
+    // DATA field is required to check path. Works fine till Android 12 even though deprecated
+    @Suppress("Deprecation")
     private fun fetchRecentApps(context: Context, showHidden: Boolean): Cursor? {
         val uri = MediaStore.Files.getContentUri("external")
         val where = MediaStore.Files.FileColumns.DATA + " LIKE ?"

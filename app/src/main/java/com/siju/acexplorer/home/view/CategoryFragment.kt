@@ -78,7 +78,7 @@ class CategoryFragment : Fragment(), CategoryMenuHelper, Toolbar.OnMenuItemClick
     }
 
     override fun setToolbarTitle() {
-        binding?.toolbarContainer?.toolbar?.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
+        binding?.toolbarContainer?.toolbar?.title = CategoryHelper.getCategoryName(context, category).uppercase(Locale.getDefault())
     }
 
     override fun setTabSubtitle(subtitle: String, position : Int) {

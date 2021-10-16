@@ -100,7 +100,7 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
         }
 
         categoryChipGroup.setOnCheckedChangeListener { _, checkedChipId ->
-            Log.d(TAG, "categoryChipGroup, pos:$checkedChipId, count :${categoryChipGroup.childCount}, ${checkedChipId}")
+            Log.d(TAG, "categoryChipGroup, pos:$checkedChipId, count :${categoryChipGroup.childCount}, $checkedChipId")
             if (!clearAll) {
                 if (isDocAndCamOrScreenChecked()) {
                     folderChipGroup.clearCheck()

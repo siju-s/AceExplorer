@@ -154,7 +154,7 @@ class AppMgrAdapter(private val viewModel : AppMgrViewModel,
     private fun addSearchResults(query: String) {
         var text = query
         val result: ArrayList<AppInfo> = ArrayList()
-        text = text.toLowerCase(Locale.getDefault())
+        text = text.lowercase(Locale.getDefault())
         searchedText = text
         result.addAll(unfilteredList.filter {
             it.name.contains(text) || it.packageName.contains(text)

@@ -34,12 +34,12 @@
         android:visibility="gone" />
 
 
-    <!--<androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
-        <!--android:id="@+id/swipeRefreshLayout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:layout_above="@+id/layoutDummy">-->
+<!--    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout-->
+<!--        android:id="@+id/swipeRefreshLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_above="@+id/layoutDummy">-->
 
         <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
             android:id="@+id/recyclerViewFileList"
@@ -54,7 +54,7 @@
             tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             tools:listitem="@layout/apps_gallery_item" />
 
-    <!--</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
+<!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 
 
     <LinearLayout

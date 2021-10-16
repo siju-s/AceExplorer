@@ -34,6 +34,8 @@ class ImageAllFetcher : DataFetcher {
         return context.contentResolver.query(uri, null, null, null, sortOrder)
     }
 
+    // DATA field is required to check path. Works fine till Android 12 even though deprecated
+    @Suppress("Deprecation")
     private fun getImageAllDataFromCursor(cursor: Cursor?, category: Category,
                                           showHidden: Boolean): ArrayList<FileInfo> {
         val fileInfoList = ArrayList<FileInfo>()
@@ -45,7 +47,7 @@ class ImageAllFetcher : DataFetcher {
         val dateIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATE_MODIFIED)
         val imageIdIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
         val bucketIdIndex = cursor.getColumnIndexOrThrow(MediaStoreColumnHelper.getBucketIdColumn())
-        val pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media .DATA)
+        val pathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
         val widthIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.WIDTH)
         val heightIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.HEIGHT)
 

@@ -35,10 +35,10 @@ object ImageUtils {
     }
 
     private fun isImageFile(name: String?): Boolean {
-        return name?.toLowerCase(Locale.ROOT)?.endsWith(".jpg") == true ||
-                name?.toLowerCase(Locale.ROOT)?.endsWith(".jpeg") == true ||
-                name?.toLowerCase(Locale.ROOT)?.endsWith(".heif") == true ||
-                name?.toLowerCase(Locale.ROOT)?.endsWith(".heic") == true ||
-                name?.toLowerCase(Locale.ROOT)?.endsWith(".png") == true
+        return name?.lowercase()?.endsWith(".jpg") == true ||
+                name?.lowercase()?.endsWith(".jpeg") == true ||
+                name?.lowercase()?.endsWith(".heif") == true ||
+                name?.lowercase()?.endsWith(".heic") == true ||
+                name?.lowercase()?.endsWith(".png") == true
     }
 }

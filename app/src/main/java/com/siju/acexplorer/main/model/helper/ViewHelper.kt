@@ -44,7 +44,7 @@ object ViewHelper {
         else {
             UriHelper.createContentUri(context, path)
         }
-        val ext = extension?.toLowerCase(Locale.ROOT)
+        val ext = extension?.lowercase()
         val mimeType = getSingleton().getMimeTypeFromExtension(ext)
 
         if (mimeType == null) {

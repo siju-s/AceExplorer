@@ -31,7 +31,6 @@ import com.siju.acexplorer.storage.modules.zipviewer.model.ZipViewerModelImpl
 import com.siju.acexplorer.storage.modules.zipviewer.viewmodel.ZipViewerViewModel
 import com.siju.acexplorer.storage.modules.zipviewer.viewmodel.ZipViewerViewModelFactory
 import com.siju.acexplorer.utils.InstallHelper
-import java.util.*
 
 private const val TAG = "ZipViewerFragment"
 
@@ -72,9 +71,6 @@ class ZipViewerFragment(
             val canInstall = it.first
             if (canInstall) {
                 openInstallScreen(it.second)
-            }
-            else {
-                InstallHelper.requestUnknownAppsInstallPermission(fragment)
             }
         })
         viewModel.zipFailEvent.observe(fragment.viewLifecycleOwner, {
@@ -122,7 +118,7 @@ class ZipViewerFragment(
         Log.d(TAG, "Viewfile:path:$path, extension:$extension")
         val context = fragment.context
         context?.let {
-            when (extension?.toLowerCase(Locale.ROOT)) {
+            when (extension?.lowercase()) {
                 null               -> {
                     val uri = UriHelper.createContentUri(context, path)
                     uri?.let {

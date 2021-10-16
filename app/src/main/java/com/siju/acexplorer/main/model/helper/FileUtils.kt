@@ -129,7 +129,7 @@ object FileUtils {
         if (extension == null) {
             return Category.FILES
         }
-        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase(Locale.ROOT))
+        val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.lowercase())
         if (mimeType != null) {
             when {
                 mimeType.indexOf("image") == 0 -> {
@@ -198,9 +198,9 @@ object FileUtils {
 
     fun isFileCompressed(filePath: String?): Boolean {
         filePath ?: return false
-        return filePath.toLowerCase(Locale.ROOT).endsWith(".zip") ||
-                filePath.toLowerCase(Locale.ROOT).endsWith(".tar") ||
-                filePath.toLowerCase(Locale.ROOT).endsWith(".tar.gz")
+        return filePath.lowercase().endsWith(".zip") ||
+                filePath.lowercase().endsWith(".tar") ||
+                filePath.lowercase().endsWith(".tar.gz")
     }
 
     fun isApk(extension: String?): Boolean {

@@ -12,7 +12,8 @@ import com.siju.acexplorer.main.model.helper.SortHelper.sortFiles
 import java.io.File
 import java.util.*
 
-
+// DATA field is required to check path. Works fine till Android 12 even though deprecated
+@Suppress("Deprecation")
 class AppDataFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {

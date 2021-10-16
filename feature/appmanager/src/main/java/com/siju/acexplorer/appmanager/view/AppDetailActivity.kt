@@ -17,6 +17,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -69,6 +70,12 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private var packageValue: String? = null
 
+    private val uninstallResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            finish()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_detail_ui)
@@ -99,6 +106,8 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
     private fun setupData(packageName: String?) {
         viewModel.fetchPackageInfo(packageName)
     }
+
+    fun getUninstallLauncher() = uninstallResultLauncher
 
     private fun initObservers() {
         viewModel.versionInfo.observe(this, {
@@ -272,18 +281,18 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_UNINSTALL && resultCode == Activity.RESULT_OK) {
-            finish()
-        }
-    }
+//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+//        super.onActivityResult(requestCode, resultCode, data)
+//        if (requestCode == REQUEST_CODE_UNINSTALL && resultCode == Activity.RESULT_OK) {
+//            finish()
+//        }
+//    }
 
 
     override fun onClick(view: View) {
         when (view.id) {
             R.id.settingsButton  -> packageValue?.let { AppHelper.openAppSettings(this, it) }
-            R.id.uninstallButton -> packageValue?.let { AppHelper.uninstallApp(this, it) }
+            R.id.uninstallButton -> packageValue?.let { AppHelper.uninstallApp(this, it, uninstallResultLauncher) }
             R.id.fabStore        -> try {
                 startActivity(
                     Intent(

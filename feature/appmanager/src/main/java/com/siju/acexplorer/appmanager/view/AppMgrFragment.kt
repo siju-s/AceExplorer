@@ -1,6 +1,7 @@
 package com.siju.acexplorer.appmanager.view
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -11,6 +12,7 @@ import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -54,6 +56,12 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     private lateinit var toolbar: Toolbar
     private lateinit var bottomToolbar: Toolbar
     private var packageReceiverRegistered = false
+
+    private val uninstallResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            activity?.finish()
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = AppsListContainerBinding.inflate(inflater, container, false)
@@ -161,7 +169,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         viewModel.multiOperationData.observe(viewLifecycleOwner, {
             it?.let {
                 for (item in it) {
-                    AppHelper.uninstallApp(activity as? AppCompatActivity, item.packageName)
+                    AppHelper.uninstallApp(activity as? AppCompatActivity, item.packageName, uninstallResultLauncher)
                 }
             }
         })

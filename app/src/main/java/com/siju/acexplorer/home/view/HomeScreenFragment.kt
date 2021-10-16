@@ -58,8 +58,8 @@ class HomeScreenFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         setHasOptionsMenu(true)
         adView = AdsView(binding.container)
@@ -122,6 +122,7 @@ class HomeScreenFragment : Fragment() {
         })
 
         mainViewModel.permissionStatus.observe(viewLifecycleOwner, { permissionStatus ->
+            Log.d(TAG, "initObservers: permstatus:$permissionStatus")
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> homeViewModel.loadData()
                 else -> {}

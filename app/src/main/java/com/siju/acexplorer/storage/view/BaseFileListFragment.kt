@@ -29,12 +29,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.*
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -43,7 +42,6 @@ import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
-import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.appmanager.view.AppDetailActivity
 import com.siju.acexplorer.common.ActionModeState
 import com.siju.acexplorer.common.SortDialog
@@ -72,6 +70,9 @@ import com.siju.acexplorer.storage.model.PasteOpData
 import com.siju.acexplorer.storage.model.operations.*
 import com.siju.acexplorer.storage.modules.picker.model.PickerModelImpl
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
+import com.siju.acexplorer.storage.modules.picker.view.COPY_REQUEST_KEY
+import com.siju.acexplorer.storage.modules.picker.view.CUT_REQUEST_KEY
+import com.siju.acexplorer.storage.modules.picker.view.EXTRACT_REQUEST_KEY
 import com.siju.acexplorer.storage.modules.picker.view.PickerFragment
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
@@ -83,17 +84,15 @@ import java.util.*
 const val KEY_PATH = "path"
 const val KEY_CATEGORY = "category"
 const val KEY_SHOW_NAVIGATION = "show_navigation"
- const val KEY_TAB_POS = "tab_pos"
+const val KEY_TAB_POS = "tab_pos"
 
- private const val TAG = "BaseFileListFragment"
+private const val TAG = "BaseFileListFragment"
 private const val SAF_REQUEST = 2000
-private const val EXTRACT_PATH_REQUEST = 5000
-private const val COPY_PATH_REQUEST = 6000
-private const val CUT_PATH_REQUEST = 7000
 private const val TAG_DIALOG = "Browse Fragment"
 
+
 @AndroidEntryPoint
-abstract class BaseFileListFragment : Fragment(), FileListHelper {
+abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResultListener {
 
     private val fileListViewModel: FileListViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
@@ -111,6 +110,13 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     private var tabPos = -1
     private var binding : MainListBinding? = null
 
+    private val installResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == RESULT_OK) {
+            openInstallScreen(context, fileListViewModel.apkPath)
+            fileListViewModel.apkPath = null
+        }
+    }
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
@@ -118,19 +124,22 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         return binding?.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         getArgs()
-        Log.d(TAG, "onActivityCreated:$this, category:$category, path:$path, dest:${findNavController().currentDestination}")
-        val view = view
-        val container = view?.findViewById<CoordinatorLayout>(R.id.main_content)
+        Log.d(TAG, "onViewCreated:$this, category:$category, path:$path, dest:${findNavController().currentDestination}")
+        val container = view.findViewById<CoordinatorLayout>(R.id.main_content)
         container?.let {
             adView = AdsView(it)
         }
         setupToolbar()
         setupViewModels()
 
-        view?.let {
+        parentFragmentManager.setFragmentResultListener(EXTRACT_REQUEST_KEY, viewLifecycleOwner, this)
+        parentFragmentManager.setFragmentResultListener(COPY_REQUEST_KEY, viewLifecycleOwner, this)
+        parentFragmentManager.setFragmentResultListener(CUT_REQUEST_KEY, viewLifecycleOwner, this)
+
+        view.let {
             val viewMode = fileListViewModel.getViewMode(category)
             filesList = FilesList(this, view, viewMode, category, mainViewModel.getSortMode())
             floatingView = FloatingView(view, this)
@@ -183,7 +192,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                 toolbar?.title = resources.getString(R.string.app_name)
             }
             else -> {
-                toolbar?.title = CategoryHelper.getCategoryName(context, category).toUpperCase(Locale.getDefault())
+                toolbar?.title = CategoryHelper.getCategoryName(context, category).uppercase(Locale.getDefault())
             }
         }
     }
@@ -374,7 +383,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                 openInstallScreen(context, it.second)
             }
             else {
-                InstallHelper.requestUnknownAppsInstallPermission(this)
+                InstallHelper.requestUnknownAppsInstallPermission(context, installResultLauncher)
             }
         })
 
@@ -484,6 +493,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
 
         fileListViewModel.directoryClicked.observe(viewLifecycleOwner, {
             it?.apply {
+                filesList.showLoadingIndicator()
                 fileListViewModel.saveScrollInfo(filesList.getScrollInfo())
                 mainViewModel.setPaneFocus(this@BaseFileListFragment is DualPaneFragment)
             }
@@ -783,14 +793,14 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
         when (operationData.first) {
             Operations.DELETE -> {
                 context?.let { context ->
-                    if (isAppManager(category)) {
-                        for (fileInfo in operationData.second) {
-                            AppHelper.uninstallApp(activity as AppCompatActivity, fileInfo.filePath)
-                        }
-                    }
-                    else {
+//                    if (isAppManager(category)) {
+//                        for (fileInfo in operationData.second) {
+//                            AppHelper.uninstallApp(activity as AppCompatActivity, fileInfo.filePath)
+//                        }
+//                    }
+//                    else {
                         showDeleteDialog(context, operationData.second)
-                    }
+//                    }
                 }
             }
             Operations.PICKER -> {
@@ -948,7 +958,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
             activity?.let {
                 val dialogFragment = PickerFragment.newInstance(PickerType.FILE)
-                dialogFragment.setTargetFragment(this@BaseFileListFragment, EXTRACT_PATH_REQUEST)
                 this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                     dialogFragment.show(fragmentManager, TAG_DIALOG)
                 }
@@ -959,7 +968,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     private fun showCopyToDialog() {
         activity?.let {
             val dialogFragment = PickerFragment.newInstance(PickerType.COPY)
-            dialogFragment.setTargetFragment(this@BaseFileListFragment, COPY_PATH_REQUEST)
             this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                 dialogFragment.show(fragmentManager, TAG_DIALOG)
             }
@@ -969,7 +977,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
     private fun showCutToDialog() {
         activity?.let {
             val dialogFragment = PickerFragment.newInstance(PickerType.CUT)
-            dialogFragment.setTargetFragment(this@BaseFileListFragment, CUT_PATH_REQUEST)
             this@BaseFileListFragment.parentFragmentManager.let { fragmentManager ->
                 dialogFragment.show(fragmentManager, TAG_DIALOG)
             }
@@ -1083,7 +1090,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             Log.d(TAG, "viewFile:path:$path, extension:$extension")
             val context = context
             context?.let {
-                when (extension?.toLowerCase(Locale.ROOT)) {
+                when (extension?.lowercase()) {
                     null -> {
                         val uri = UriHelper.createContentUri(context, path)
                         uri?.let {
@@ -1097,15 +1104,29 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
             }
         }
 
+    override fun onFragmentResult(requestKey: String, result: Bundle) {
+        Log.d(TAG, "onFragmentResult() called with: requestKey = $requestKey, result = $result")
+        when (requestKey) {
+            EXTRACT_REQUEST_KEY -> {
+                    val destDir = result.getString(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
+                    val pathButton = dialog?.findViewById<Button>(R.id.buttonPathSelect)
+                    pathButton?.text = destDir
+            }
+
+            COPY_REQUEST_KEY    -> {
+                    val destDir = result.getString(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
+                    fileListViewModel.copyTo(destDir)
+            }
+
+            CUT_REQUEST_KEY     -> {
+                    val destDir = result.getString(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
+                    fileListViewModel.cutTo(destDir)
+            }
+        }
+    }
+
         override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
             when (requestCode) {
-                InstallHelper.UNKNOWN_APPS_INSTALL_REQUEST -> {
-                    if (resultCode == RESULT_OK) {
-                        openInstallScreen(context, fileListViewModel.apkPath)
-                        fileListViewModel.apkPath = null
-                    }
-                }
-
                 SAF_REQUEST -> {
                     if (resultCode == RESULT_OK) {
                         val uri = intent?.data
@@ -1127,27 +1148,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper {
                     }
                 }
 
-                EXTRACT_PATH_REQUEST -> {
-                    if (resultCode == RESULT_OK) {
-                        val destDir = intent?.getStringExtra(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
-                        val pathButton = dialog?.findViewById<Button>(R.id.buttonPathSelect)
-                        pathButton?.text = destDir
-                    }
-                }
 
-                COPY_PATH_REQUEST -> {
-                    if (resultCode == RESULT_OK) {
-                        val destDir = intent?.getStringExtra(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
-                        fileListViewModel.copyTo(destDir)
-                    }
-                }
-
-                CUT_PATH_REQUEST -> {
-                    if (resultCode == RESULT_OK) {
-                        val destDir = intent?.getStringExtra(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
-                        fileListViewModel.cutTo(destDir)
-                    }
-                }
             }
             super.onActivityResult(requestCode, resultCode, intent)
         }

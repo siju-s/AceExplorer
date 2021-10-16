@@ -9,7 +9,7 @@ fun File.getMimeType(fallback: String = "*/*"): String {
     val extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(this).toString())
             ?: return fallback
     val mimeType = MimeTypeMap.getSingleton()
-            .getMimeTypeFromExtension(extension.toLowerCase(Locale.ROOT))
+            .getMimeTypeFromExtension(extension.lowercase())
     return mimeType ?: return fallback
 
 }

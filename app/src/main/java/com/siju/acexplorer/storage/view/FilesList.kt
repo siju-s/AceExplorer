@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
@@ -45,6 +46,7 @@ class FilesList(private val fileListHelper: FileListHelper,
 
     private lateinit var fileList: FastScrollRecyclerView
     private lateinit var emptyText: TextView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
     private var recentData: ArrayList<RecentTimeData.RecentDataItem>? = null
     private var itemView: View? = null
@@ -61,6 +63,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     private fun initializeViews() {
         fileList = view.findViewById(R.id.recyclerViewFileList)
         emptyText = view.findViewById(R.id.textEmpty)
+//        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -216,6 +219,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     fun onDataLoaded(data: ArrayList<FileInfo>, category: Category, isZipMode : Boolean = false) {
         Log.d(TAG, "onDataLoaded:${data.size}")
         this.category = category
+        hideLoadingIndicator()
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
         } else {
@@ -240,10 +244,15 @@ class FilesList(private val fileListHelper: FileListHelper,
         adapter?.onDataLoaded(data)
     }
 
+    private fun hideLoadingIndicator() {
+//        swipeRefreshLayout.isRefreshing = false
+    }
+
     fun onRecentDataLoaded(category: Category, data: ArrayList<RecentTimeData.RecentDataItem>) {
         Log.d(TAG, "onRecentDataLoaded:${data.size}, recentAdapter:$recentAdapter")
         this.recentData = data
         this.category = category
+        hideLoadingIndicator()
         peekAndPop?.setFileList(RecentDataConverter.getRecentItemList(data))
         if (data.isEmpty()) {
             emptyText.visibility = View.VISIBLE
@@ -512,5 +521,9 @@ class FilesList(private val fileListHelper: FileListHelper,
         if (query != null ) {
             peekAndPop?.let { adapter?.filter(query) }
         }
+    }
+
+    fun showLoadingIndicator() {
+//        swipeRefreshLayout.isRefreshing = true
     }
 }

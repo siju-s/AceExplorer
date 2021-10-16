@@ -93,7 +93,7 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
         searchResultCallback.onSearchResultFound(searchData)
     }
     private fun isSearchResultFound(file: File, query: String) =
-            file.name.toLowerCase(Locale.getDefault()).contains(query.toLowerCase(Locale.getDefault()))
+            file.name.lowercase(Locale.getDefault()).contains(query.lowercase(Locale.getDefault()))
 
     interface SearchResultCallback {
         fun onSearchResultFound(result: ArrayList<FileInfo>)

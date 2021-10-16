@@ -40,6 +40,8 @@ class ImageDetailFetcher : DataFetcher {
 
     companion object {
 
+        // DATA field is required to check path. Works fine till Android 12 even though deprecated
+        @Suppress("Deprecation")
         fun getBucketDataFromCursor(cursor: Cursor?, category: Category,
                                     showHidden: Boolean): ArrayList<FileInfo> {
             val fileInfoList = ArrayList<FileInfo>()

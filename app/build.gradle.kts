@@ -98,6 +98,8 @@ android {
 
     lint {
         isAbortOnError = false
+        lintConfig = File("lint/lint-config.xml")
+        htmlOutput = File("lint/lint-report.html")
     }
 
     buildFeatures {
@@ -107,15 +109,12 @@ android {
 
     sonarqube {
         properties {
-            property("sonar.projectName", "ace-explorer")
-            property("sonar.projectKey", "ace-explorer")
+            property("sonar.projectKey", "AceExplorer")
             property("sonar.language", "kotlin")
             property("sonar.sources", "src/main/java/")
             property("sonar.tests", "src/test/java/")
             property("sonar.binaries", "build")
             property("sonar.sourceEncoding", "UTF-8")
-            property("sonar.login", "admin")
-            property("sonar.password", "admin")
             property("sonar.host.url", "http://localhost:9000")
         }
     }

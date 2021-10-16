@@ -31,6 +31,8 @@ class LargeAppFilesFetcher : DataFetcher {
         return getCursorCount(cursor)
     }
 
+    // DATA field is required to check path. Works fine till Android 12 even though deprecated
+    @Suppress("Deprecation")
     private fun fetchLargeApps(context: Context, showHidden: Boolean): Cursor? {
         val uri = MediaStore.Files.getContentUri("external")
         var selection = ""

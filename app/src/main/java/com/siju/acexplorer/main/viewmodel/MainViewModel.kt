@@ -27,7 +27,6 @@ enum class Pane {
     DUAL
 }
 class MainViewModel : ViewModel() {
-    private lateinit var permissionHelper: PermissionHelper
     private var categoryMenuHelper: CategoryMenuHelper? = null
     val navigateToSearch = MutableLiveData<Event<Boolean>>()
     var isDualPaneInFocus = false
@@ -36,7 +35,6 @@ class MainViewModel : ViewModel() {
     private val billingRepository = BillingRepository.getInstance(AceApplication.appContext)
     val premiumLiveData: LiveData<Premium>
     private val mainModel = MainModelImpl()
-    lateinit var permissionStatus: LiveData<PermissionHelper.PermissionState>
     val theme: LiveData<Theme>
     private var storageList: ArrayList<StorageItem>? = null
     val dualMode : LiveData<Boolean>
@@ -79,6 +77,8 @@ class MainViewModel : ViewModel() {
     val sortEvent: LiveData<Event<SortMode>>
         get() = _sortEvent
 
+    val permissionStatus: MutableLiveData<PermissionHelper.PermissionState> = MutableLiveData()
+
     init {
         Log.d("MainViewModel", "init")
         billingRepository.startDataSourceConnections()
@@ -97,12 +97,6 @@ class MainViewModel : ViewModel() {
         billingRepository.purchaseFullVersion(activity)
     }
 
-    fun setupPermission(permissionHelper: PermissionHelper) {
-        this.permissionHelper = permissionHelper
-        permissionStatus = permissionHelper.permissionStatus
-        permissionHelper.checkPermissions()
-    }
-
     fun isPremiumVersion() = premiumLiveData.value?.entitled == true
 
     fun isFreeVersion() = premiumLiveData.value?.entitled == false
@@ -113,20 +107,8 @@ class MainViewModel : ViewModel() {
         return sortMode.value ?: PreferenceConstants.DEFAULT_VALUE_SORT_MODE
     }
 
-    fun onPermissionResult() {
-        permissionHelper.onPermissionResult()
-    }
-
-    fun onResume() {
-        permissionHelper.onForeground()
-    }
-
-    fun requestPermissions() {
-        permissionHelper.requestPermission()
-    }
-
-    fun showPermissionRationale() {
-        permissionHelper.showRationale()
+    fun onPermissionsGranted() {
+        permissionStatus.value = PermissionHelper.PermissionState.Granted
     }
 
     fun setStorageList(storageList: ArrayList<StorageItem>) {

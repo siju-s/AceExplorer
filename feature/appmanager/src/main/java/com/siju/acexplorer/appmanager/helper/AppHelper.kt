@@ -8,12 +8,11 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
-
+import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import com.siju.acexplorer.appmanager.R
 import com.siju.acexplorer.appmanager.extensions.getPackageInstaller
 import com.siju.acexplorer.appmanager.filter.AppSource
-
 import com.siju.acexplorer.appmanager.view.AppDetailActivity.Companion.REQUEST_CODE_UNINSTALL
 import com.siju.acexplorer.common.utils.SdkHelper
 
@@ -27,10 +26,11 @@ object AppHelper {
     const val SCHEME_PACKAGE = "package"
     private const val PREFIX_PACKAGE_URI = "package:"
 
-    fun uninstallApp(activity: AppCompatActivity?, packageName: String?) {
+    @Suppress("Deprecation")
+    fun uninstallApp(activity: AppCompatActivity?, packageName: String?, launcher: ActivityResultLauncher<Intent>) {
         packageName ?: return
         activity ?: return
-        if (SdkHelper.isAtleastAndroid11) {
+        if (SdkHelper.isAtleastAndroid10) {
             val intent = Intent(activity, activity.javaClass)
             intent.action = ACTION_UNINSTALL
             val intentSender = PendingIntent.getActivity(activity, REQUEST_CODE_UNINSTALL, intent, 0).intentSender
@@ -40,7 +40,7 @@ object AppHelper {
             val packageUri = Uri.parse(PREFIX_PACKAGE_URI + packageName)
             val uninstallIntent = Intent(Intent.ACTION_UNINSTALL_PACKAGE, packageUri)
             uninstallIntent.putExtra(Intent.EXTRA_RETURN_RESULT, true)
-            activity.startActivityForResult(uninstallIntent, REQUEST_CODE_UNINSTALL)
+            launcher.launch(uninstallIntent)
         }
     }
 

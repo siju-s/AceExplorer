@@ -568,7 +568,7 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
 
     private fun isZipFile(path: String?) : Boolean {
         path ?: return false
-        return !zipPresenter.isZipMode && path.toLowerCase(Locale.ROOT).endsWith(ZIP_EXT)
+        return !zipPresenter.isZipMode && path.lowercase().endsWith(ZIP_EXT)
     }
 
     private fun onZipClicked(path: String?, extension: String? = null) {

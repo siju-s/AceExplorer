@@ -17,9 +17,8 @@ package com.siju.acexplorer.utils
 
 import android.content.Context
 
-private const val PRIVATE_MODE = 0
 class PrefManager(context: Context) {
-    private val pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE)
+    private val pref = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
 
     fun setFirstTimeLaunch() {
         pref.edit().putBoolean(IS_FIRST_TIME_LAUNCH, false).apply()

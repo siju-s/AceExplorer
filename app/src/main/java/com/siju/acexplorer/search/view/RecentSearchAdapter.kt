@@ -28,7 +28,7 @@ class RecentSearchAdapter(private val clickListener: (String) -> Unit) : ListAda
         fun bind(title: String, clickListener: (String) -> Unit) {
             titleText.text = title
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = absoluteAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     clickListener(title)
                 }

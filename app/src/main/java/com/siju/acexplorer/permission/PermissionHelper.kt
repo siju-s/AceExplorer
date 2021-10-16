@@ -43,7 +43,6 @@ import javax.inject.Inject
 
 
 private const val TAG = "PermissionHelper"
-private const val PHONE_SETTINGS_REQUEST = 2000
 private const val SCHEMA_PACKAGE = "package"
 private const val PERMISSIONS_REQUEST = 1000
 private const val storagePermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -62,6 +61,7 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
         else {
             permissionStatus.value = PermissionState.Required
         }
+        Log.d(TAG, "checkPermissions: permissionstatus:${permissionStatus.value}")
     }
 
     fun onForeground() {
@@ -70,11 +70,9 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
             dismissRationaleDialog()
             permissionStatus.value = PermissionState.Granted
         }
-        else if (permissionRationaleDialog?.isShowing == true && !allFilesAccessNeeded) {
-            if (hasPermissions(context)) {
+        else if (permissionRationaleDialog?.isShowing == true && !allFilesAccessNeeded && hasPermissions(context)) {
                 dismissRationaleDialog()
                 permissionStatus.value = PermissionState.Granted
-            }
         }
     }
 
@@ -234,7 +232,7 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
         intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
         val uri = Uri.fromParts(SCHEMA_PACKAGE, context.packageName, null)
         intent.data = uri
-        activity.startActivityForResult(intent, PHONE_SETTINGS_REQUEST)
+        activity.startActivity(intent)
     }
 
     private fun dismissRationaleDialog() {

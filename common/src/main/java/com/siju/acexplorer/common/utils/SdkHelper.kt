@@ -18,24 +18,31 @@ package com.siju.acexplorer.common.utils
 
 
 import android.os.Build
+import androidx.annotation.ChecksSdkIntAtLeast
 
 object SdkHelper {
 
+    @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.Q)
     val isAtleastAndroid10: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
+    @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.O)
     val isAtleastOreo: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
 
+    @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.N)
     val isAtleastNougat: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
 
+    @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.M)
     val isAtleastMarsh: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 
+    @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.P)
     val isAtleastPie: Boolean
         get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P
 
+    @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.R)
     val isAtleastAndroid11: Boolean
         get() = Build.VERSION.SDK_INT >= 30
 

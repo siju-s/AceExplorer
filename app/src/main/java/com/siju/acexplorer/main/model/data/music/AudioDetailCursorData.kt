@@ -9,9 +9,11 @@ import com.siju.acexplorer.main.model.helper.FileUtils
 import java.io.File
 import java.util.*
 
+// DATA field is required to check path. Works fine till Android 12 even though deprecated
+@Suppress("Deprecation")
 object AudioDetailCursorData {
 
-    fun getDetailCursorData(cursor: Cursor?, category: Category, showHidden: Boolean): ArrayList<FileInfo> {
+    fun getDetailCursorData(cursor: Cursor?, showHidden: Boolean): ArrayList<FileInfo> {
         val fileInfoList = ArrayList<FileInfo>()
 
         if (cursor == null) {

@@ -10,6 +10,8 @@ import com.siju.acexplorer.main.model.helper.FileUtils
 import java.io.File
 import java.util.*
 
+// DATA field is required to check path. Works fine till Android 12 even though deprecated
+@Suppress("Deprecation")
 object RecentCursorData {
 
     fun getDataFromCursor(cursor: Cursor?, category: Category, showHidden: Boolean): ArrayList<FileInfo> {

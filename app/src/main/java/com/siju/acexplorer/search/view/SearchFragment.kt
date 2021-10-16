@@ -3,13 +3,13 @@ package com.siju.acexplorer.search.view
 import android.app.Activity
 import android.app.SearchManager
 import android.content.Context.SEARCH_SERVICE
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.SearchRecentSuggestions
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
@@ -17,6 +17,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.databinding.SearchMainBinding
 import com.siju.acexplorer.helper.KeyboardHelper
@@ -28,7 +29,6 @@ import com.siju.acexplorer.main.view.dialog.DialogHelper
 import com.siju.acexplorer.search.model.SearchSuggestionProvider
 import com.siju.acexplorer.search.viewmodel.SearchViewModel
 import com.siju.acexplorer.storage.helper.RecentDataConverter
-import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
 import com.siju.acexplorer.storage.view.FileListAdapter
 import com.siju.acexplorer.storage.view.FileListHelper
@@ -55,14 +55,20 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     private var fileListAdapter: FileListAdapter? = null
     private var searchView: SearchView? = null
     private var binding : SearchMainBinding? = null
+    private val installResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        if (it.resultCode == Activity.RESULT_OK) {
+            InstallHelper.openInstallScreen(context, fileListViewModel.apkPath)
+            fileListViewModel.apkPath = null
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = SearchMainBinding.inflate(inflater, container, false)
         return binding!!.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
         binding?.let {
@@ -203,7 +209,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
             if (canInstall) {
                 InstallHelper.openInstallScreen(context, it.second)
             } else {
-                InstallHelper.requestUnknownAppsInstallPermission(this)
+                InstallHelper.requestUnknownAppsInstallPermission(context, installResultLauncher)
             }
         })
 
@@ -237,7 +243,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     private fun viewFile(path: String, extension: String?) {
         val context = context
         context?.let {
-            when (extension?.toLowerCase(Locale.ROOT)) {
+            when (extension?.lowercase()) {
                 null -> {
                     val uri = UriHelper.createContentUri(context, path)
                     uri?.let {
@@ -408,17 +414,6 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
             searchSuggestions.clearAllCheckedItems()
         }
         return backPressNotHandled
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
-        when (requestCode) {
-            InstallHelper.UNKNOWN_APPS_INSTALL_REQUEST -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    InstallHelper.openInstallScreen(context, fileListViewModel.apkPath)
-                    fileListViewModel.apkPath = null
-                }
-            }
-        }
     }
 
     override fun refreshList() {

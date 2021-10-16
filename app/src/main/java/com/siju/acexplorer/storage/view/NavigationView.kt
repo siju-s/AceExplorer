@@ -77,14 +77,14 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
         addViewToNavigation(button)
         button.setOnClickListener {
             navigationCallback.onNavButtonClicked(category, getCategoryName(context,
-                                                                            category).toUpperCase(
+                                                                            category).uppercase(
                     Locale.getDefault()))
         }
     }
 
     private fun createLibraryTitleButton(
             category: Category): MaterialButton {
-        val title = getCategoryName(context, category).toUpperCase(Locale.getDefault())
+        val title = getCategoryName(context, category).uppercase(Locale.getDefault())
         val button = LayoutInflater.from(context).inflate(R.layout.material_button,
                                                           null) as MaterialButton
         button.text = title
@@ -94,8 +94,8 @@ class NavigationView(view: View, private val navigationCallback: NavigationCallb
     private fun addLibSpecificTitle(category: Category, bucketName: String?) {
         val button = LayoutInflater.from(context).inflate(R.layout.material_button,
                                                           null) as MaterialButton
-        val title = bucketName?.toUpperCase(Locale.getDefault()) ?: getCategoryName(context,
-                                                                                    category).toUpperCase(
+        val title = bucketName?.uppercase(Locale.getDefault()) ?: getCategoryName(context,
+                                                                                    category).uppercase(
                 Locale.getDefault())
         button.text = title
 

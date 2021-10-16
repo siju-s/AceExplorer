@@ -25,7 +25,8 @@ import android.net.Uri
 import android.provider.MediaStore
 import java.io.File
 
-
+// DATA field is required to check path. Works fine till Android 12 even though deprecated
+@Suppress("Deprecation")
 object RingtoneHelper {
 
     fun getCustomRingtoneUri(contentResolver: ContentResolver, path: String,

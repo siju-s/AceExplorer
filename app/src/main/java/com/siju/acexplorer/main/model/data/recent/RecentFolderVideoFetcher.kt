@@ -23,6 +23,8 @@ class RecentFolderVideoFetcher : DataFetcher {
         return getCursorCount(cursor)
     }
 
+    // DATA field is required to check path. Works fine till Android 12 even though deprecated
+    @Suppress("Deprecation")
     private fun fetchRecentVideos(context: Context, path: String?, showHidden: Boolean): Cursor? {
         if (path == null) {
             return null

@@ -10,6 +10,8 @@ import com.siju.acexplorer.helper.MediaStoreColumnHelper
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.FileUtils
 
+// DATA field is required to check path. Works fine till Android 12 even though deprecated
+@Suppress("Deprecation")
 object SingleImageDataFetcher {
 
     fun fetchData(context: Context, uri: Uri): FileInfo? {

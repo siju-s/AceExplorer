@@ -21,7 +21,7 @@ private const val PREFS_VERSION = "prefsVersion"
 
 class AboutFragment : PreferenceFragmentCompat() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val root: View? = super.onCreateView(inflater, container, savedInstanceState)
         val activity = activity as AppCompatActivity?
         val appbar = root?.findViewById(R.id.appbar) as AppBarLayout

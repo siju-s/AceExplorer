@@ -56,6 +56,8 @@ class FolderGenericFetcher : DataFetcher {
                 filePath.endsWith(".wav", true)
     }
 
+    // DATA field is required to check path. Works fine till Android 12 even though deprecated
+    @Suppress("Deprecation")
     private fun getFolderCursor(context: Context, path: String, showHidden: Boolean): Cursor? {
         val uri = MediaStore.Files.getContentUri("external")
         val projection = arrayOf(MediaStore.Files.FileColumns.DATA)

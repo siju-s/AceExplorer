@@ -31,16 +31,17 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.extensions.inflateLayout
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.permission.PermissionHelper
-import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.storage.modules.picker.model.PickerAction
 import com.siju.acexplorer.storage.modules.picker.model.PickerResultAction
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
@@ -56,6 +57,10 @@ private const val PERMISSIONS_REQUEST = 1
 const val KEY_PICKER_TYPE = "picker_type"
 const val RINGTONE_TYPE = "ringtone_type"
 private const val DELAY_SCROLL_UPDATE_MS = 100L
+const val EXTRACT_REQUEST_KEY = "Extract"
+const val COPY_REQUEST_KEY = "Copy"
+const val CUT_REQUEST_KEY = "Cut"
+const val REQUEST_KEY = "key"
 
 @AndroidEntryPoint
 class PickerFragment : DialogFragment() {
@@ -82,13 +87,12 @@ class PickerFragment : DialogFragment() {
         return inflater.inflateLayout(R.layout.dialog_browse, container)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
         setHasOptionsMenu(false)
         setupViewModels()
-        view?.let {
-            setupUI(it)
-        }
+        setupUI(view)
         initObservers()
         getArgs()
         loadData()
@@ -342,8 +346,19 @@ class PickerFragment : DialogFragment() {
     }
 
     private fun onOkButtonResult(pickerResultAction: PickerResultAction) {
-        targetFragment?.onActivityResult(targetRequestCode, RESULT_OK, pickerResultAction.data)
+        val requestKey = getRequestCode(arguments?.getSerializable(KEY_PICKER_TYPE) as PickerType)
+        pickerResultAction.data?.extras?.let {
+            setFragmentResult(requestKey, it)
+        }
         dialog?.dismiss()
+    }
+
+    private fun getRequestCode(pickerType: PickerType) : String {
+        return when(pickerType) {
+            PickerType.COPY -> COPY_REQUEST_KEY
+            PickerType.CUT -> CUT_REQUEST_KEY
+            else -> EXTRACT_REQUEST_KEY
+        }
     }
 
     private fun onCancelButtonResult(pickerResultAction: PickerResultAction) {

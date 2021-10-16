@@ -10,6 +10,8 @@ import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFi
 import com.siju.acexplorer.main.model.groups.Category
 import java.util.*
 
+// DATA field is required to check path. Works fine till Android 12 even though deprecated
+@Suppress("Deprecation")
 class RecentFolderAudioFetcher : DataFetcher {
 
     override fun fetchData(context: Context, path: String?, category: Category): ArrayList<FileInfo> {

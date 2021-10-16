@@ -24,10 +24,8 @@ class ToolsFragment : Fragment() {
         return inflater.inflate(R.layout.tools_list, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        val view = view ?: return
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         toolsList = view.findViewById(R.id.toolsListView)
         setupToolbar(view)
