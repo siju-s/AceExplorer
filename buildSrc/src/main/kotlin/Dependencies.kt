@@ -1,4 +1,4 @@
-const val kotlinVersion = "1.4.21"
+const val kotlinVersion = "1.5.31"
 
 object BuildPlugins {
 
@@ -7,8 +7,8 @@ object BuildPlugins {
         const val crashlytics = "2.6.1"
         const val googleServices = "4.3.8"
         const val safeArgsPlugin = "2.3.5"
-        const val sonarqube = "3.0"
-        const val hilt = "2.37"
+        const val sonarqube = "3.3"
+        const val hilt = "2.38.1"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradlePlugin}"
@@ -35,41 +35,42 @@ object AndroidSdk {
 
 object Libraries {
    private object Versions {
-       const val appCompat    = "1.2.0"
+       const val appCompat    = "1.3.1"
        const val design       = "1.4.0"
        const val support      = "1.0.0"
-       const val annotation   = "1.1.0"
-       const val recyclerview = "1.1.0"
-       const val preference   = "1.1.0"
+       const val annotation   = "1.2.0"
+       const val recyclerview = "1.2.1"
+       const val preference   = "1.1.1"
        const val viewpager    = "1.0.0"
-       const val lifecycle    = "2.2.0"
-       const val room         = "2.2.6"
-       const val playCore     = "1.10.0"
+       const val lifecycle    = "2.3.1"
+       const val room         = "2.3.0"
+       const val playCore     = "1.10.2"
        const val billing      = "3.0.0"
        const val navigation   = "2.3.5"
-       const val constraintLayout = "2.0.4"
-       const val exif             = "1.3.2"
-       const val activity         = "1.1.0"
+       const val constraintLayout = "2.1.1"
+       const val exif             = "1.3.3"
+       const val activity         = "1.3.1"
        const val fragment         = "1.3.6"
        const val swiperefresh     = "1.1.0"
        const val pagination       = "3.0.1"
 
    }
+    const val activityKtx           = "androidx.activity:activity-ktx:${Versions.activity}"
+    const val fragmentKtx           = "androidx.fragment:fragment-ktx:${Versions.fragment}"
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
-    const val design    = "com.google.android.material:material:${Versions.design}"
-    const val viewpager   = "androidx.viewpager2:viewpager2:${Versions.viewpager}"
-    const val annotation = "androidx.annotation:annotation:${Versions.annotation}"
-    const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.recyclerview}"
-    const val preference   = "androidx.preference:preference:${Versions.preference}"
-    const val cardView     = "androidx.cardview:cardview:${Versions.support}"
-    const val palette      = "androidx.palette:palette:${Versions.support}"
-    const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
     const val lifecycleRuntime       = "androidx.lifecycle:lifecycle-runtime-ktx:${Versions.lifecycle}"
     const val lifecycleLiveData      = "androidx.lifecycle:lifecycle-livedata-ktx:${Versions.lifecycle}"
     const val viewModelKtx           = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
     const val lifecycleCompiler      = "androidx.lifecycle:lifecycle-compiler:${Versions.lifecycle}"
-    const val activityKtx           = "androidx.activity:activity-ktx:${Versions.activity}"
-    const val fragmentKtx           = "androidx.fragment:fragment-ktx:${Versions.fragment}"
+    const val preference   = "androidx.preference:preference:${Versions.preference}"
+    const val annotation = "androidx.annotation:annotation:${Versions.annotation}"
+
+    const val design    = "com.google.android.material:material:${Versions.design}"
+    const val viewpager   = "androidx.viewpager2:viewpager2:${Versions.viewpager}"
+    const val recyclerView = "androidx.recyclerview:recyclerview:${Versions.recyclerview}"
+    const val cardView     = "androidx.cardview:cardview:${Versions.support}"
+    const val palette      = "androidx.palette:palette:${Versions.support}"
+    const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.constraintLayout}"
     const val swipeRefresh          = "androidx.swiperefreshlayout:swiperefreshlayout:${Versions.swiperefresh}"
     const val pagination            =  "androidx.paging:paging-runtime:${Versions.pagination}"
 
@@ -83,6 +84,7 @@ object Libraries {
     const val navigation     = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi   = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"
     const val navFeature     = "androidx.navigation:navigation-dynamic-features-fragment:${Versions.navigation}"
+
     const val hilt           = "com.google.dagger:hilt-android:${BuildPlugins.Versions.hilt}"
     const val hiltCompiler   = "com.google.dagger:hilt-android-compiler:${BuildPlugins.Versions.hilt}"
 
@@ -93,8 +95,8 @@ object Libraries {
 
        private object Versions {
            const val ads          = "20.1.0"
-           const val analytics    = "19.0.0"
-           const val crashlytics  = "18.0.0"
+           const val analytics    = "19.0.2"
+           const val crashlytics  = "18.2.3"
        }
 
        const val ads     = "com.google.android.gms:play-services-ads:${Versions.ads}"
@@ -104,11 +106,10 @@ object Libraries {
 
     object Kotlin {
         private object Versions {
-            const val stdlib          = "1.5.21"
             const val coroutineCore      = "1.4.1"
         }
 
-        const val stdlib            = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Versions.stdlib}"
+        const val stdlib            = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${kotlinVersion}"
         const val coroutineCore     = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutineCore}"
         const val coroutineAndroid  = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutineCore}"
     }

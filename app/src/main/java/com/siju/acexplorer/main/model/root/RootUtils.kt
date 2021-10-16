@@ -106,8 +106,10 @@ object RootUtils {
     }
 
     fun copy(source: String, destination: String) {
-        executeCommand("cp -fr " + getCommandLineString(source) + " " +
-                getCommandLineString(destination))
+        executeCommand(
+            "cp -fr " + getCommandLineString(source) + " " +
+                    getCommandLineString(destination)
+        )
     }
 
     fun mkDir(path: String?) {
@@ -135,8 +137,10 @@ object RootUtils {
     }
 
     fun move(source: String, destination: String) {
-        executeCommand("mv " + getCommandLineString(source) + " " +
-                getCommandLineString(destination))
+        executeCommand(
+            "mv " + getCommandLineString(source) + " " +
+                    getCommandLineString(destination)
+        )
     }
 
 

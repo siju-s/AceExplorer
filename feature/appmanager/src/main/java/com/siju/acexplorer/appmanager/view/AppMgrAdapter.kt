@@ -97,13 +97,13 @@ class AppMgrAdapter(private val viewModel : AppMgrViewModel,
             loadAppIcon(context, icon, appInfo.packageName)
 
             itemView.setOnClickListener {
-                val pos = adapterPosition
+                val pos = absoluteAdapterPosition
                 if (pos != RecyclerView.NO_POSITION) {
                     clickListener(appInfo, pos)
                 }
             }
             itemView.setOnLongClickListener {
-                val pos = adapterPosition
+                val pos = absoluteAdapterPosition
                 if (pos != RecyclerView.NO_POSITION) {
                     longClickListener(appInfo, pos, it)
                 }

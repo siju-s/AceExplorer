@@ -42,7 +42,7 @@ private const val UNIX_ESCAPE_EXPRESSION = "(\\(|\\)|\\[|\\]|\\s|\'|\"|`|\\{|\\}
 object RootHelper {
     private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ENGLISH)
 
-    fun executeCommand(cmd: String, path : String = ""): ArrayList<String> {
+    fun executeCommand(cmd: String): ArrayList<String> {
         Log.d(TAG, "executeCommand: $cmd")
         val list = ArrayList<String>()
         val resultRef = AtomicReference<ArrayList<String>>()
@@ -193,7 +193,7 @@ object RootHelper {
         val rootAccessGiven = RootTools.isAccessGiven()
         val rooted = root || rootAccessGiven
         if (rooted) {
-            list = executeCommand("ls -l" + hidden + getCommandLineString(path), path)
+            list = executeCommand("ls -l" + hidden + getCommandLineString(path))
             val newTime = System.currentTimeMillis()
             Log.d(TAG, "getRootedList: time taken for ls:" + (newTime - time) + " list:" + list)
             for (i in list.indices) {
