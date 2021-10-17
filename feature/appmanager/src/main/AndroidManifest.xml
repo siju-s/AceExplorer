@@ -6,7 +6,10 @@
 
     <application>
 
-        <activity android:name=".view.AppDetailActivity" />
+        <activity
+            android:name=".view.AppDetailActivity"
+            android:exported="false"
+            android:launchMode="singleTop" />
 
     </application>
 

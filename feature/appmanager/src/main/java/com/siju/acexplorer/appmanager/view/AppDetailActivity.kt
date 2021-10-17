@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageInstaller
 import android.content.res.ColorStateList
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -84,6 +85,18 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
         initListeners()
         initObservers()
         setupData(getPackage())
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        if (intent.action == AppHelper.getUninstallAction()) {
+            val extras = intent.extras
+            val status = extras?.getInt(PackageInstaller.EXTRA_STATUS, 0)
+            if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) {
+                val confirmIntent = extras.get(Intent.EXTRA_INTENT) as Intent
+                startActivity(confirmIntent)
+            }
+        }
     }
 
     private fun getPackage(): String? {
