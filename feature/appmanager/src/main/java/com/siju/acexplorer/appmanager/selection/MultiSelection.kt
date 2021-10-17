@@ -1,4 +1,4 @@
-package com.siju.acexplorer.common
+package com.siju.acexplorer.appmanager.selection
 
 import android.util.SparseBooleanArray
 import androidx.lifecycle.LiveData

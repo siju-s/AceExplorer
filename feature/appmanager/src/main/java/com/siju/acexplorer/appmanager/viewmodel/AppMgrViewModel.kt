@@ -9,8 +9,12 @@ import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.SortHelper
 import com.siju.acexplorer.appmanager.model.AppMgrModel
+import com.siju.acexplorer.appmanager.selection.MultiSelection
 import com.siju.acexplorer.appmanager.types.AppInfo
-import com.siju.acexplorer.common.*
+import com.siju.acexplorer.common.ActionModeState
+import com.siju.acexplorer.common.SortMode
+import com.siju.acexplorer.common.SortModeData
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

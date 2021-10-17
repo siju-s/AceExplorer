@@ -15,7 +15,6 @@ import com.siju.acexplorer.imageviewer.presenter.ImageViewerPresenter
 import com.siju.acexplorer.imageviewer.presenter.ImageViewerPresenterImpl
 import com.siju.acexplorer.imageviewer.view.ImageViewerUiView
 import com.siju.acexplorer.imageviewer.view.ImageViewerView
-import com.siju.acexplorer.imageviewer.view.REQUEST_CODE_DELETE
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModel
 import com.siju.acexplorer.imageviewer.viewmodel.ImageViewerViewModelFactory
 
@@ -108,15 +107,7 @@ class ImageViewerActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
-        if (requestCode == REQUEST_CODE_DELETE) {
-            if (resultCode == RESULT_OK) {
-                view.onDeleteSuccess()
-            }
-            else {
-                view.onDeleteFailed()
-            }
-        }
-        else if (requestCode == SAF_REQUEST_ID) {
+        if (requestCode == SAF_REQUEST_ID) {
             if (resultCode == Activity.RESULT_OK) {
                 val uri = intent?.data
                 if (uri == null) {

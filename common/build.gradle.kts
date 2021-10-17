@@ -2,7 +2,6 @@ plugins {
     id ("com.android.library")
     id ("kotlin-android")
     kotlin(BuildPlugins.kotlinKapt)
-    id("dagger.hilt.android.plugin")
     id("org.sonarqube")
 }
 
@@ -43,8 +42,6 @@ dependencies {
     implementation(Libraries.lifecycleRuntime)
     implementation(Libraries.constraintLayout)
     kapt(Libraries.lifecycleCompiler)
-    implementation(Libraries.hilt)
-    kapt(Libraries.hiltCompiler)
 
     implementation(Libraries.appCompat)
     implementation(Libraries.recyclerView)

@@ -21,6 +21,7 @@
     android:layout_height="wrap_content"
     android:minHeight="@dimen/app_list_item_min_height"
     android:paddingStart="@dimen/app_list_item_margin"
+    android:layout_marginBottom="@dimen/app_list_item_margin_bottom"
     android:paddingEnd="@dimen/app_list_item_margin">
 
 

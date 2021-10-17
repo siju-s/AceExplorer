@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.preference.PreferenceManager
 import com.siju.acexplorer.appmanager.model.AppMgrModel
 import com.siju.acexplorer.appmanager.model.AppMgrModelImpl
-import com.siju.acexplorer.common.MultiSelection
-import com.siju.acexplorer.common.MultiSelectionImpl
+import com.siju.acexplorer.appmanager.selection.MultiSelection
+import com.siju.acexplorer.appmanager.selection.MultiSelectionImpl
 import com.siju.acexplorer.common.SortModeData
 import dagger.Binds
 import dagger.Module

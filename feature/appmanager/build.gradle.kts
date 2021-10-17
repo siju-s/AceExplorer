@@ -32,6 +32,11 @@ android {
         viewBinding = true
 //        dataBinding = true
     }
+    lint {
+        isAbortOnError = false
+        lintConfig = File("${project.rootDir}/lint/lint-config.xml")
+        htmlOutput = File("${project.rootDir}/lint/lint-report.html")
+    }
 }
 
 dependencies {

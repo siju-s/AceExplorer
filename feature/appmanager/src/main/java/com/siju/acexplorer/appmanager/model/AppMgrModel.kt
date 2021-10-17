@@ -10,7 +10,4 @@ interface AppMgrModel {
     fun getUserApps() : ArrayList<AppInfo>
     fun saveViewMode(viewMode: ViewMode)
     fun getViewMode() : ViewMode
-    fun registerAppUninstallReceiver()
-    fun unregisterAppUninstallReceiver()
-
 }

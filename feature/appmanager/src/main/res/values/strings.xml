@@ -12,7 +12,6 @@
     <string name="updated">Updated</string>
     <string name="play_store" translatable="false">Play store</string>
     <string name="amazon_play_store" translatable="false">Amazon app store</string>
-    <string name="zip_open_error">Cannot open this zip file</string>
     <string name="filter">Filter</string>
     <string name="all_apps">All apps</string>
     <string name="user_apps">Installed apps</string>

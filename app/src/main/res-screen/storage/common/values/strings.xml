@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="zip_open_error">Cannot open this zip file</string>
+</resources>

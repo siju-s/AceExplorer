@@ -26,6 +26,7 @@ object SearchHelper {
             view?.text = spannable
         }
         else {
+
             view?.text = name
         }
     }

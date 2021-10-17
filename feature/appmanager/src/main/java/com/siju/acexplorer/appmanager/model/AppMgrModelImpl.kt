@@ -1,9 +1,7 @@
 package com.siju.acexplorer.appmanager.model
 
-import android.content.BroadcastReceiver
+import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import com.siju.acexplorer.appmanager.extensions.getInstallerPackage
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.AppHelper
@@ -15,10 +13,7 @@ import java.io.File
 import java.util.*
 import javax.inject.Inject
 
-private const val ACTION_UNINSTALL = "action_uninstall"
-class AppMgrModelImpl @Inject constructor(@ApplicationContext val context: Context, val viewModeData: ViewModeData) : AppMgrModel {
-
-   private val receiver = AppUninstallReceiver()
+class AppMgrModelImpl @Inject constructor(@ApplicationContext val context: Context, private val viewModeData: ViewModeData) : AppMgrModel {
 
     override fun getViewMode(): ViewMode {
         return viewModeData.getViewMode()
@@ -40,6 +35,8 @@ class AppMgrModelImpl @Inject constructor(@ApplicationContext val context: Conte
         return getAppPackageInfo(context, AppType.USER_APP)
     }
 
+    // Querying applications allowed since it's a file manager app @see https://support.google.com/googleplay/android-developer/answer/10158779#zippy=%2Cpermitted-uses-of-the-query-all-packages-permission
+    @SuppressLint("QueryPermissionsNeeded")
     private fun getAppPackageInfo(context: Context, appType: AppType): ArrayList<AppInfo> {
         val packages = context.packageManager.getInstalledPackages(0)
         val appsList = ArrayList<AppInfo>()
@@ -65,23 +62,5 @@ class AppMgrModelImpl @Inject constructor(@ApplicationContext val context: Conte
             )
         }
         return appsList
-    }
-
-    override fun registerAppUninstallReceiver() {
-        val filter = IntentFilter(ACTION_UNINSTALL)
-        context.registerReceiver(receiver, filter)
-    }
-
-    override fun unregisterAppUninstallReceiver() {
-        context.unregisterReceiver(receiver)
-    }
-
-    class AppUninstallReceiver : BroadcastReceiver() {
-
-        override fun onReceive(context: Context, intent: Intent?) {
-            if (intent?.action == ACTION_UNINSTALL) {
-
-            }
-        }
     }
 }

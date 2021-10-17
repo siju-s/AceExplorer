@@ -2,6 +2,7 @@
 <lint>
     <issue id="UnusedResources" severity="informational"/>
     <issue id="MissingTranslation" severity="informational"/>
+    <issue id="IconMissingDensityFolder" severity="informational" />
     <issue id="StringFormatCount" severity="fatal" />
     <issue id="StringFormatMatches" severity="fatal" />
     <issue id="StringFormatInvalid" severity="fatal" />

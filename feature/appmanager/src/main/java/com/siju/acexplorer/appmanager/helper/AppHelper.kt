@@ -33,7 +33,8 @@ object AppHelper {
         if (SdkHelper.isAtleastAndroid10) {
             val intent = Intent(activity, activity.javaClass)
             intent.action = ACTION_UNINSTALL
-            val intentSender = PendingIntent.getActivity(activity, REQUEST_CODE_UNINSTALL, intent, 0).intentSender
+            val intentSender = PendingIntent.getActivity(activity, REQUEST_CODE_UNINSTALL, intent,
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT).intentSender
             activity.applicationContext.getPackageInstaller().uninstall(packageName, intentSender)
         }
         else {

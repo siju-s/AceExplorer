@@ -1,6 +1,7 @@
 package com.siju.acexplorer.imageviewer.view
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.RecoverableSecurityException
 import android.content.Context
 import android.net.Uri
@@ -13,6 +14,9 @@ import android.widget.ImageButton
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.documentfile.provider.DocumentFile
@@ -30,8 +34,6 @@ import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.view.InfoFragment
 import com.siju.acexplorer.main.view.dialog.DialogHelper
 
-
-const val REQUEST_CODE_DELETE = 1000
 
 class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayout(context, attrs),
         ImageViewerView,
@@ -55,7 +57,9 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
     private var pos = 0
     private var safRequestComplete = false
 
-    override fun setActivity(activity: AppCompatActivity) {
+    private lateinit var deleteIntentSenderResult : ActivityResultLauncher<IntentSenderRequest>
+
+        override fun setActivity(activity: AppCompatActivity) {
         this.activity = activity
     }
 
@@ -78,6 +82,14 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
     override fun inflate() {
         LayoutInflater.from(context).inflate(R.layout.image_viewer, this, true)
         setupUI()
+        deleteIntentSenderResult = activity.registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
+            if (it.resultCode == Activity.RESULT_OK) {
+                onDeleteSuccess()
+            }
+            else {
+                onDeleteFailed()
+            }
+        }
     }
 
     override fun setViewModel(viewModel: ImageViewerViewModel) {
@@ -136,7 +148,8 @@ class ImageViewerUiView(context: Context?, attrs: AttributeSet?) : RelativeLayou
             viewModel.deleteClicked(uri)
         } catch (exception: SecurityException) {
             if (SdkHelper.isAtleastAndroid10 && exception is RecoverableSecurityException) {
-                activity.startIntentSenderForResult(exception.userAction.actionIntent.intentSender, REQUEST_CODE_DELETE, null, 0, 0, 0)
+                val intentSenderRequest = IntentSenderRequest.Builder(exception.userAction.actionIntent.intentSender).build()
+                deleteIntentSenderResult.launch(intentSenderRequest)
             } else if (safRequestComplete) {
                 onDeleteFailed()
                 safRequestComplete = false
