@@ -18,7 +18,9 @@ package com.siju.acexplorer.storage.view
 
 import android.app.Activity.RESULT_OK
 import android.app.Dialog
-import android.content.*
+import android.content.ClipData
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -32,13 +34,14 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.fragment.app.*
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentResultListener
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.siju.acexplorer.R
-import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
@@ -102,7 +105,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
     private lateinit var navigationView: NavigationView
     private lateinit var menuControls: MenuControls
 
-    private var adView: AdsView? = null
     private var categoryMenuHelper: CategoryMenuHelper? = null
     private var path: String? = null
     private var category = Category.FILES
@@ -128,10 +130,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         super.onViewCreated(view, savedInstanceState)
         getArgs()
         Log.d(TAG, "onViewCreated:$this, category:$category, path:$path, dest:${findNavController().currentDestination}")
-        val container = view.findViewById<CoordinatorLayout>(R.id.main_content)
-        container?.let {
-            adView = AdsView(it)
-        }
         setupToolbar()
         setupViewModels()
 
@@ -273,17 +271,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
                                                category)
                 }
                 else -> {
-                }
-            }
-        })
-
-        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, {
-            it?.apply {
-                if (it.entitled) {
-                    hideAds()
-                }
-                else {
-                    showAds()
                 }
             }
         })
@@ -613,7 +600,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
 
     private fun onActionModeStarted() {
         floatingView.hideFab()
-        hideAds()
         menuControls.onStartActionMode()
         if (!showNavigation) {
             categoryMenuHelper?.disableTab()
@@ -626,9 +612,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         }
         menuControls.onEndActionMode()
         filesList.onEndActionMode()
-        if (mainViewModel.isFreeVersion()) {
-            showAds()
-        }
         if (showNavigation) {
             setToolbarTitle(binding?.toolbarContainer?.toolbar)
         }
@@ -1032,14 +1015,6 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
             Toast.makeText(context, context?.getString(R.string.error), Toast
                     .LENGTH_SHORT).show()
         }
-    }
-
-    private fun showAds() {
-        adView?.showAds()
-    }
-
-    private fun hideAds() {
-        adView?.hideAds()
     }
 
     override fun handleItemClick(fileInfo: FileInfo, position: Int) {

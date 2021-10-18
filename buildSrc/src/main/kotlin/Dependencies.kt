@@ -94,12 +94,10 @@ object Libraries {
    object Firebase {
 
        private object Versions {
-           const val ads          = "20.1.0"
            const val analytics    = "19.0.2"
            const val crashlytics  = "18.2.3"
        }
 
-       const val ads     = "com.google.android.gms:play-services-ads:${Versions.ads}"
        const val analytics = "com.google.firebase:firebase-analytics-ktx:${Versions.analytics}"
        const val crashlytics = "com.google.firebase:firebase-crashlytics-ktx:${Versions.crashlytics}"
    }

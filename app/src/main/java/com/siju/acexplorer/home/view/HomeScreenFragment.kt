@@ -27,7 +27,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.siju.acexplorer.R
-import com.siju.acexplorer.ads.AdsView
 import com.siju.acexplorer.databinding.HomescreenBinding
 import com.siju.acexplorer.home.viewmodel.HomeViewModel
 import com.siju.acexplorer.main.helper.UpdateChecker
@@ -45,7 +44,6 @@ class HomeScreenFragment : Fragment() {
     private val homeViewModel: HomeViewModel by viewModels()
     private lateinit var categoryAdapter: HomeLibAdapter
     private lateinit var storageAdapter: HomeStorageAdapter
-    private lateinit var adView: AdsView
 
     private var searchItem: MenuItem? = null
     private var _binding: HomescreenBinding? = null
@@ -62,8 +60,6 @@ class HomeScreenFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setHasOptionsMenu(true)
-        adView = AdsView(binding.container)
-        lifecycle.addObserver(adView)
 
         setupToolbar()
         initList()
@@ -91,17 +87,6 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun initObservers() {
-        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, {
-            Log.d(TAG, "Premium state:$it")
-            it?.apply {
-                if (it.entitled) {
-                    hideAds()
-                } else {
-                    showAds()
-                }
-            }
-        })
-
         mainViewModel.navigateToRecent.observe(viewLifecycleOwner, { navigateToRecent ->
             if (navigateToRecent == true) {
                 navigateToRecent()
@@ -150,7 +135,6 @@ class HomeScreenFragment : Fragment() {
 
     private fun onFilePicker() {
         hideSearch()
-        hideAds()
     }
 
     private fun navigateToRecent() {
@@ -159,14 +143,6 @@ class HomeScreenFragment : Fragment() {
 
     private fun hideSearch() {
         searchItem?.isVisible = false
-    }
-
-    private fun showAds() {
-        adView.showAds()
-    }
-
-    private fun hideAds() {
-        adView.hideAds()
     }
 
     private fun setupCategoriesList() {
@@ -251,7 +227,6 @@ class HomeScreenFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        lifecycle.removeObserver(adView)
         _binding = null
     }
 }

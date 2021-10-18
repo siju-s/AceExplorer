@@ -175,7 +175,6 @@ dependencies {
 
     kapt(Libraries.annotation)
 
-    implementation(Libraries.Firebase.ads)
     implementation(Libraries.Firebase.analytics)
     implementation(Libraries.Firebase.crashlytics)
 

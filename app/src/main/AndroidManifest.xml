@@ -130,10 +130,6 @@
             android:authorities="${applicationId}.SearchSuggestionProvider"
             android:exported="false" />
 
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
-
         <!-- Required for targeting API level 28 and higher -->
         <uses-library
             android:name="org.apache.http.legacy"
