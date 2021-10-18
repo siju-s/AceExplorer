@@ -141,28 +141,10 @@ dependencies {
 
     implementation(Libraries.ExternalLibs.rootShell)
 
-    implementation(Libraries.Kotlin.stdlib)
-    implementation(Libraries.Kotlin.coroutineCore)
-    implementation(Libraries.Kotlin.coroutineAndroid)
-
-    implementation(Libraries.appCompat)
-    implementation(Libraries.preference)
-
-    implementation(Libraries.navigation)
-    implementation(Libraries.navigationUi)
-    implementation(Libraries.navFeature)
-
-    implementation(Libraries.recyclerView)
-    implementation(Libraries.design)
     implementation(Libraries.viewpager)
     implementation(Libraries.cardView)
-    implementation(Libraries.palette)
     implementation(Libraries.pagination)
 
-    implementation(Libraries.viewModelKtx)
-    implementation(Libraries.lifecycleLiveData)
-    implementation(Libraries.lifecycleRuntime)
-    implementation(Libraries.constraintLayout)
     kapt(Libraries.lifecycleCompiler)
 
     implementation(Libraries.hilt)
@@ -170,8 +152,6 @@ dependencies {
 
     implementation(Libraries.roomRuntime)
     kapt(Libraries.roomCompiler)
-
-    implementation(Libraries.exif)
 
     kapt(Libraries.annotation)
 
@@ -182,14 +162,12 @@ dependencies {
     implementation(Libraries.ExternalLibs.gson)
     implementation(Libraries.playCore)
 
-    implementation(Libraries.ExternalLibs.glideRuntime)
     kapt(Libraries.ExternalLibs.glideCompiler)
 
     implementation(Libraries.ExternalLibs.apacheCompress)
     implementation(Libraries.ExternalLibs.floatingButton)
     implementation(Libraries.ExternalLibs.rateApp)
     implementation(Libraries.ExternalLibs.photoView)
-    implementation(Libraries.ExternalLibs.fastScrollRecyclerview)
 
 //    debugImplementation(Libraries.ExternalLibs.leakCanary)
 

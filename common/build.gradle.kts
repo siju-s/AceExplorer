@@ -33,22 +33,34 @@ android {
 
 dependencies {
 
-    implementation(Libraries.Kotlin.stdlib)
-    implementation(Libraries.Kotlin.coroutineCore)
-    implementation(Libraries.Kotlin.coroutineAndroid)
+    api(Libraries.Kotlin.stdlib)
+    api(Libraries.Kotlin.coroutineCore)
+    api(Libraries.Kotlin.coroutineAndroid)
 
-    implementation(Libraries.viewModelKtx)
-    implementation(Libraries.lifecycleLiveData)
-    implementation(Libraries.lifecycleRuntime)
-    implementation(Libraries.constraintLayout)
+    api(Libraries.appCompat)
+    api(Libraries.activityKtx)
+    api(Libraries.fragmentKtx)
+    api(Libraries.preference)
+
+    api(Libraries.viewModelKtx)
+    api(Libraries.lifecycleLiveData)
+    api(Libraries.lifecycleRuntime)
+
     kapt(Libraries.lifecycleCompiler)
 
-    implementation(Libraries.appCompat)
-    implementation(Libraries.recyclerView)
-    implementation(Libraries.design)
+    api(Libraries.recyclerView)
+    api(Libraries.design)
+    api(Libraries.swipeRefresh)
+    api(Libraries.constraintLayout)
+    api(Libraries.palette)
 
-    implementation(Libraries.ExternalLibs.glideRuntime)
+    api(Libraries.navigation)
+    api(Libraries.navigationUi)
+    api(Libraries.navFeature)
+    api(Libraries.exif)
+
+    api(Libraries.ExternalLibs.glideRuntime)
     kapt(Libraries.ExternalLibs.glideCompiler)
-    implementation(Libraries.palette)
+    api(Libraries.ExternalLibs.fastScrollRecyclerview)
 
 }
