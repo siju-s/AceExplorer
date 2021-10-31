@@ -92,7 +92,6 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         handleIntent(intent)
         initObservers()
         initListeners()
-        setupPermission()
         updateChecker = UpdateChecker(applicationContext, this, updateCallback)
         setupPremiumUtils()
         checkIfInAppShortcut(intent)
