@@ -30,10 +30,8 @@ import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.fragment.app.activityViewModels
 import androidx.preference.*
 import com.google.android.material.appbar.AppBarLayout
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.R
@@ -44,8 +42,6 @@ import com.siju.acexplorer.main.MainCommunicator
 import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.root.RootUtils
-import com.siju.acexplorer.main.viewmodel.MainViewModel
-import com.siju.acexplorer.premium.Premium
 import com.siju.acexplorer.theme.CURRENT_THEME
 import com.siju.acexplorer.theme.PREFS_THEME
 import com.siju.acexplorer.theme.Theme
@@ -54,11 +50,9 @@ import com.siju.acexplorer.utils.NetworkHelper
 
 const val PREFS_UPDATE = "prefsUpdate"
 const val PREFS_LANGUAGE = "prefLanguage"
-private const val PREFS_FULL_VERSION = "prefsUnlockFull"
 
 class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
-    private val mainViewModel: MainViewModel by activityViewModels()
     private val handler = Handler(Looper.getMainLooper())
 
     private lateinit var mainCommunicator: MainCommunicator
@@ -95,7 +89,6 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.pref_settings, rootKey)
         setupUpdatePref()
-        setupUnlockFullVersionPref()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,44 +96,11 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         preferences = PreferenceManager.getDefaultSharedPreferences(context)
 
-        setupViewModels()
         setupRootPref()
         setupLanguagePreference()
         setupThemePref()
         setupAnalyticsPref()
         setupResetFavPref()
-    }
-
-    private fun setupViewModels() {
-        mainViewModel.premiumLiveData.observe(viewLifecycleOwner, {
-            it?.apply {
-                if (it.entitled) {
-                    findPreference<Preference>(PREFS_FULL_VERSION)?.isVisible = false
-                }
-            }
-        })
-    }
-
-    private fun setupUnlockFullVersionPref() {
-        val preference = findPreference<Preference>(PREFS_FULL_VERSION)
-        preference?.isVisible = !mainCommunicator.isPremiumVersion()
-        preference?.setOnPreferenceClickListener {
-            onUnlockFullClicked()
-            true
-        }
-    }
-
-    private fun onUnlockFullClicked() {
-        val activity = activity as AppCompatActivity?
-        activity?.let {
-            if (NetworkHelper.isConnectedToInternet(it)) {
-                val premium = Premium(it, mainViewModel)
-                premium.showPremiumDialog(it)
-            }
-            else {
-                view?.let { it1 -> Snackbar.make(it1, getString(R.string.connect_internet_download_update), Snackbar.LENGTH_SHORT).show() }
-            }
-        }
     }
 
     private fun setupRootPref() {

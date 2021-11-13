@@ -137,7 +137,6 @@ dependencies {
     }
     implementation(project(":common"))
     implementation(project(":feature:appmanager"))
-    implementation(project(":billingsecure"))
 
     implementation(Libraries.ExternalLibs.rootShell)
 
@@ -158,7 +157,6 @@ dependencies {
     implementation(Libraries.Firebase.analytics)
     implementation(Libraries.Firebase.crashlytics)
 
-    implementation(Libraries.billingKtx)
     implementation(Libraries.ExternalLibs.gson)
     implementation(Libraries.playCore)
 

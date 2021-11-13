@@ -45,7 +45,6 @@ object Libraries {
        const val lifecycle    = "2.3.1"
        const val room         = "2.3.0"
        const val playCore     = "1.10.2"
-       const val billing      = "3.0.0"
        const val navigation   = "2.3.5"
        const val constraintLayout = "2.1.1"
        const val exif             = "1.3.3"
@@ -78,8 +77,6 @@ object Libraries {
     const val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
 
     const val playCore       = "com.google.android.play:core:${Versions.playCore}"
-
-    const val billingKtx     = "com.android.billingclient:billing-ktx:${Versions.billing}"
 
     const val navigation     = "androidx.navigation:navigation-fragment-ktx:${Versions.navigation}"
     const val navigationUi   = "androidx.navigation:navigation-ui-ktx:${Versions.navigation}"

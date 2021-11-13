@@ -51,7 +51,6 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
-import com.siju.acexplorer.premium.PremiumUtils
 import com.siju.acexplorer.search.view.SearchFragment
 import com.siju.acexplorer.settings.SettingsPreferenceFragment
 import com.siju.acexplorer.storage.view.BaseFileListFragment
@@ -71,7 +70,6 @@ private const val ACTION_RECENT = "android.intent.action.SHORTCUT_RECENT"
 class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     private val mainViewModel: MainViewModel by viewModels()
-    private val premiumUtils = PremiumUtils()
 
     private lateinit var permissionHelper: PermissionHelper
     private lateinit var navController: NavController
@@ -93,7 +91,6 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         initObservers()
         initListeners()
         updateChecker = UpdateChecker(applicationContext, this, updateCallback)
-        setupPremiumUtils()
         checkIfInAppShortcut(intent)
     }
 
@@ -125,10 +122,6 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     override fun getUpdateChecker(): UpdateChecker? {
         return updateChecker
-    }
-
-    override fun isPremiumVersion(): Boolean {
-        return mainViewModel.isPremiumVersion()
     }
 
     fun getViewModel() = mainViewModel
@@ -184,11 +177,6 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
                 }
             }
         })
-    }
-
-    private fun setupPremiumUtils() {
-        premiumUtils.onStart(this)
-        premiumUtils.showPremiumDialogIfNeeded(this, mainViewModel)
     }
 
     private fun checkIfInAppShortcut(intent: Intent?) {
