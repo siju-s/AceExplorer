@@ -12,4 +12,4 @@ jobs:
           java-version: '11'
           cache: 'gradle'
       - name: Build the app
-        run: ./gradlew build --no-daemon
+        run: ./gradlew assembleDevDebug --no-daemon
