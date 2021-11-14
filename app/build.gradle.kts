@@ -15,12 +15,6 @@ plugins {
 
 android {
     signingConfigs {
-        getByName("debug") {
-            storeFile = rootProject.file("debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
-        }
         val keyProperties = Properties()
         try {
             keyProperties.load(FileInputStream(rootProject.file("keystore.properties")))
