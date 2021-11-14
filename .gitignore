@@ -42,12 +42,14 @@ app/app.iml___jb_tmp___
 .idea/navEditor.xml
 .idea/codeStyles
 .idea/kotlinc.xml
+projectFilesBackup/
 
 # Keystore files
 # Uncomment the following line if you do not want to check your keystore files in.
 *.jks
 keystore.properties
 .DS_Store
+debug.keystore
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
