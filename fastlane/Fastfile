@@ -8,18 +8,12 @@ default_platform :android
 # Fastfile actions accept additional configuration, but
 # don't worry, fastlane will prompt you for required
 # info which you can add here later
-lane :beta do
+lane :playstore do
   # build the release variant
    gradle(
       task: 'clean bundle',
       flavor: "prod",
       build_type: 'Release',
-      properties: {
-          "android.injected.signing.store.file" => "path-to-keystore",
-          "android.injected.signing.store.password" => "",
-          "android.injected.signing.key.alias" => "",
-          "android.injected.signing.key.password" => "",
-        }
     )
 
 upload_to_play_store(track: 'beta',
