@@ -19,7 +19,7 @@ jobs:
         id: buildAllApks
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: assembleProdRelease
+          arguments: assembleProdRelease --no-daemon
 
       ## Sign our artifact##
       - name: Sign artifact
