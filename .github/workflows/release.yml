@@ -9,6 +9,9 @@ jobs:
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
+      - run: |
+          echo "${{ secrets.KEYSTORE}}" > release.keystore.asc
+          gpg --batch --passphrase "${{ secrets.KEYSTORE_PASSWORD }}" -d -o release.keystore release.keystore.asc
       - uses: actions/setup-java@v2
         with:
           distribution: 'temurin'
@@ -18,9 +21,6 @@ jobs:
       - name: Build all artifacts
         id: buildAllApks
         uses: gradle/gradle-build-action@v2
-        run: |
-          echo "${{ secrets.KEYSTORE}}" > release.keystore.asc
-          gpg --batch --passphrase "${{ secrets.KEYSTORE_PASSWORD }}" -d -o release.keystore release.keystore.asc
         with:
           arguments: assembleProdRelease --no-daemon
 #
