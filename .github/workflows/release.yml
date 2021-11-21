@@ -18,19 +18,22 @@ jobs:
       - name: Build all artifacts
         id: buildAllApks
         uses: gradle/gradle-build-action@v2
+        run: |
+          echo "${{ secrets.KEYSTORE}}" > release.keystore.asc
+          gpg --batch --passphrase "${{ secrets.KEYSTORE_PASSWORD }}" -d -o release.keystore release.keystore.asc
         with:
           arguments: assembleProdRelease --no-daemon
-
-      ## Sign our artifact##
-      - name: Sign artifact
-        id: signArtifact
-        uses: r0adkll/sign-android-release@v1.0.1
-        with:
-          releaseDirectory: app/build/outputs/apk/prod/release
-          alias: ${{ secrets.KEYALIAS }}
-          signingKeyBase64: ${{ secrets.KEYSTORE }}
-          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+#
+#      ## Sign our artifact##
+#      - name: Sign artifact
+#        id: signArtifact
+#        uses: r0adkll/sign-android-release@v1.0.1
+#        with:
+#          releaseDirectory: app/build/outputs/apk/prod/release
+#          alias: ${{ secrets.KEYALIAS }}
+#          signingKeyBase64: ${{ secrets.KEYSTORE }}
+#          keyStorePassword: ${{ secrets.KEYSTORE_PASSWORD }}
+#          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Upload our APK
         uses: actions/upload-artifact@v2.2.0
