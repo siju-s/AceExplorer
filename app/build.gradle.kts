@@ -25,12 +25,6 @@ android {
                 keyPassword = keyProperties.getProperty("keyPassword")
             }
         } catch (exception: java.io.IOException) {
-            create("release") {
-                storeFile = rootProject.file("release.keystore")
-                storePassword = System.getenv("KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("KEYALIAS")
-                keyPassword = System.getenv("KEY_PASSWORD")
-            }
         }
     }
 
