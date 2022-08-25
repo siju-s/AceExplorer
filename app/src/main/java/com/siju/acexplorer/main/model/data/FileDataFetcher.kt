@@ -72,7 +72,7 @@ class FileDataFetcher : DataFetcher {
             val fileInfoArrayList: ArrayList<FileInfo>
             val file = File(path)
             fileInfoArrayList = if (file.canRead()) {
-                getNonRootedList(file, showHidden, ringtonePicker)
+                getAndroid11NonRootedListMedia(file, showHidden, ringtonePicker)
             } else {
                 RootHelper.getRootedList(path, root, showHidden)
             }

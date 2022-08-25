@@ -3,7 +3,7 @@ const val kotlinVersion = "1.5.31"
 object BuildPlugins {
 
     object Versions {
-        const val gradlePlugin = "7.0.3"
+        const val gradlePlugin = "7.2.2"
         const val crashlytics = "2.6.1"
         const val googleServices = "4.3.8"
         const val safeArgsPlugin = "2.3.5"
@@ -28,7 +28,7 @@ object BuildPlugins {
 
 object AndroidSdk {
     const val min = 21
-    const val compile = 31
+    const val compile = 32
     const val target = compile
     const val applicationId = "com.siju.acexplorer"
 }

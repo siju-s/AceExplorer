@@ -109,8 +109,8 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
     lint {
-        isCheckDependencies = true
-        isAbortOnError = false
+        //isCheckDependencies = true
+        //isAbortOnError = false
         xmlReport = false
         lintConfig = File("${project.rootDir}/lint/lint-config.xml")
         htmlOutput = File("${project.rootDir}/lint/lint-report.html")
