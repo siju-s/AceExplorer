@@ -19,6 +19,11 @@ Ace Explorer brings you a simple and easy way to browse your files, media librar
 
 • Peek and pop images and videos
 
+
+### Playstore
+
+https://play.google.com/store/apps/details?id=com.siju.acexplorer
+
 ### Sonar Setup
 1. Download and install `Docker Desktop` from <https://www.docker.com/products/docker-desktop>
 2. Run using `Terminal` to run `sonarqube` server. Installs `Sonarqube` also if not existing already
