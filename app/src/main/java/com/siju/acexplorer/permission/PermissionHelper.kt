@@ -100,6 +100,7 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
             allFilesAccessNeeded = !Environment.isExternalStorageManager()
             permissionsNeeded.remove(storagePermission)
             permissionsNeeded.remove(Manifest.permission.READ_EXTERNAL_STORAGE)
+            //permissionsNeeded.remove("android.permission.POST_NOTIFICATIONS")
         }
         return permissionsNeeded.isEmpty()
     }

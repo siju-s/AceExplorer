@@ -3,7 +3,7 @@ const val kotlinVersion = "1.5.31"
 object BuildPlugins {
 
     object Versions {
-        const val gradlePlugin = "7.2.2"
+        const val gradlePlugin = "7.3.0"
         const val crashlytics = "2.6.1"
         const val googleServices = "4.3.8"
         const val safeArgsPlugin = "2.3.5"
@@ -42,7 +42,7 @@ object Libraries {
        const val recyclerview = "1.2.1"
        const val preference   = "1.1.1"
        const val viewpager    = "1.0.0"
-       const val lifecycle    = "2.3.1"
+       const val lifecycle    = "2.4.0"
        const val room         = "2.3.0"
        const val playCore     = "1.10.2"
        const val navigation   = "2.3.5"

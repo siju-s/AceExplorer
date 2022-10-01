@@ -8,7 +8,7 @@ import com.siju.acexplorer.imageviewer.view.ImageViewerView
 @Suppress("UNCHECKED_CAST")
 class ImageViewerViewModelFactory(private val view : ImageViewerView, private val presenter: ImageViewerPresenter) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ImageViewerViewModel::class.java)) {
             return ImageViewerViewModel(view, presenter) as T
         }

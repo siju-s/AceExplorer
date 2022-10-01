@@ -8,7 +8,7 @@ import com.siju.acexplorer.storage.modules.zipviewer.model.ZipViewerModel
 @Suppress("UNCHECKED_CAST")
 class ZipViewerViewModelFactory(private val model: ZipViewerModel, private val zipViewerCallback: ZipViewerCallback) : ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ZipViewerViewModel::class.java)) {
             return ZipViewerViewModel(model, zipViewerCallback) as T
         }
