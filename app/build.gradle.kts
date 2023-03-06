@@ -13,19 +13,23 @@ plugins {
     id("dagger.hilt.android.plugin")
 }
 
+val keyProperties = Properties()
+try {
+    keyProperties.load(FileInputStream(rootProject.file("keystore.properties")))
+} catch (exception: java.io.IOException) {
+
+}
+
+
 android {
     signingConfigs {
-        val keyProperties = Properties()
-        try {
-            keyProperties.load(FileInputStream(rootProject.file("keystore.properties")))
             create("release") {
                 storeFile = rootProject.file(keyProperties.getProperty("storeFile"))
                 storePassword = keyProperties.getProperty("storePassword")
                 keyAlias = keyProperties.getProperty("keyAlias")
                 keyPassword = keyProperties.getProperty("keyPassword")
             }
-        } catch (exception: java.io.IOException) {
-        }
+
     }
 
 
@@ -52,6 +56,7 @@ android {
 
 
         getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
@@ -63,7 +68,6 @@ android {
                     }
                 }
             }
-            signingConfig = signingConfigs.getByName("release")
         }
     }
 
@@ -84,8 +88,11 @@ android {
         }
     }
 
+    viewBinding {
+        android.buildFeatures.viewBinding = true
+    }
+
     buildFeatures {
-        viewBinding = true
         dataBinding = true
     }
 
