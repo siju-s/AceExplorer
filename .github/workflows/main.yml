@@ -5,12 +5,10 @@ on: [pull_request, push]
 jobs:
   build:
     name: Setup Environment and build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout the code to specific branch
+      - name: Checkout the code
         uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.inputs.branch }}
             
       - name: Set up JDK
         uses: actions/setup-java@v2
