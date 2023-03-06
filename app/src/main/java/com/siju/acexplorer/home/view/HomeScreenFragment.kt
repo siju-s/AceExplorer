@@ -119,12 +119,12 @@ class HomeScreenFragment : Fragment() {
             categoryAdapter.notifyDataSetChanged()
         })
 
-        homeViewModel.categoryClickEvent.observe(viewLifecycleOwner, {
+        homeViewModel.categoryClickEvent.observe(viewLifecycleOwner) {
             it?.apply {
                 loadCategory(first, second)
                 homeViewModel.setCategoryClickEvent(null)
             }
-        })
+        }
     }
 
     private fun checkIfFilePicker() {

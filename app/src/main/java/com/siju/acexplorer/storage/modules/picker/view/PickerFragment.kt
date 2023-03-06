@@ -342,6 +342,10 @@ class PickerFragment : DialogFragment() {
                 activity?.setResult(RESULT_OK, pickerResultAction.data)
                 activity?.finish()
             }
+            else -> {
+                activity?.setResult(RESULT_CANCELED, pickerResultAction.data)
+                activity?.finish()
+            }
         }
     }
 

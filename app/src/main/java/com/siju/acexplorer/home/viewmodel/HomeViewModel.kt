@@ -24,7 +24,7 @@ class HomeViewModel @Inject constructor(private val homeModel: HomeModel) : View
     private val _categories = MutableLiveData<ArrayList<HomeLibraryInfo>>()
     private val _storage = MutableLiveData<ArrayList<StorageItem>>()
     private val _categoryData = MutableLiveData<Pair<Int, HomeLibraryInfo>>()
-    private val _categoryClickEvent = MutableLiveData<Pair<String?, Category>>()
+    private val _categoryClickEvent = MutableLiveData<Pair<String?, Category>?>()
 
     val storage: LiveData<ArrayList<StorageItem>>
         get() = _storage
@@ -35,7 +35,7 @@ class HomeViewModel @Inject constructor(private val homeModel: HomeModel) : View
     val categoryData: LiveData<Pair<Int, HomeLibraryInfo>>
         get() = _categoryData
 
-    val categoryClickEvent: LiveData<Pair<String?, Category>>
+    val categoryClickEvent: MutableLiveData<Pair<String?, Category>?>
         get() = _categoryClickEvent
 
     private val viewModelJob = SupervisorJob()
