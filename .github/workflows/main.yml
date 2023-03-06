@@ -2,15 +2,6 @@ name: Android Build and Deployment Pipeline
 
 on: [pull_request, push]
 
-  workflow_dispatch:
-    inputs:
-      app_id:
-        description: 'The application Id of the current build'
-        required: true
-      branch:
-        description: 'The branch from which we have to build'
-        required: true
-
 jobs:
   build:
     name: Setup Environment and build
