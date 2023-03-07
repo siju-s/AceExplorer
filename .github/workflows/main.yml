@@ -6,6 +6,11 @@ jobs:
   build:
     name: Setup Environment and build
     runs-on: ubuntu-latest
+    env:
+      KEYSTORE: ${{ secrets.KEYSTORE }}
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEYALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
@@ -22,16 +27,18 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
         
-      - name: Restore playstore.keystore.jks
-        run: echo $KEYSTORE_FILE | base64 -d > playstore.keystore.jks   
+      - run: touch $RELEASE_KEYSTORE_PATH
+      - run: echo $KEYSTORE | base64 --decode > $RELEASE_KEYSTORE_PATH
+        
+      - run: touch local.properties
+      - run: echo -e "\nKEYSTORE_FILE=$RELEASE_KEYSTORE_PATH" >> local.properties
+      - run: echo -e "\nKEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> local.properties
+      - run: echo -e "\nKEY_ALIAS=$KEY_ALIAS" >> local.properties
+      - run: echo -e "\nKEY_PASSWORD=$KEY_PASSWORD" >> local.properties
+      - run: cat local.properties 
 
       - name: Generate app bundle
-        run: ./gradlew
-              -PKEYSTORE_FILE="../${{ playstore.keystore.jks }}"
-              -PKEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
-              -PSIGNING_KEY_ALIAS=${{ secrets.KEY_ALIAS }}
-              -PSIGNING_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
-               app:bundleRelease
+        run: ./gradlew app:bundleRelease
        
           
 #   STEP 2 : Upload the Artifact
