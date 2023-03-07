@@ -24,10 +24,10 @@ try {
 android {
     signingConfigs {
             create("release") {
-                storeFile = rootProject.file(keyProperties.getProperty("storeFile"))
-                storePassword = keyProperties.getProperty("storePassword")
-                keyAlias = keyProperties.getProperty("keyAlias")
-                keyPassword = keyProperties.getProperty("keyPassword")
+                storeFile = file(project.property("KEYSTORE_FILE").toString())
+                storePassword = project.property("KEYSTORE_PASSWORD").toString()
+                keyAlias = project.property("KEY_ALIAS").toString()
+                keyPassword = project.property("KEY_PASSWORD").toString()
             }
 
     }
