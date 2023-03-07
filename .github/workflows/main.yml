@@ -18,28 +18,27 @@ jobs:
                 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v2
-              
-      - uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
             
       - name: Make gradlew executable
         run: chmod +x ./gradlew
+        
+      - name: Restore playstore.keystore.jks
+        run: echo $KEYSTORE_FILE | base64 -d > playstore.keystore.jks   
 
       - name: Generate app bundle
-        run: ./gradlew -PKEYSTORE_FILE=$KEYSTORE -PKEYSTORE_PASSWORD=$KEYSTORE_PASSWORD -PKEY_ALIAS=$KEY_ALIAS -PKEY_PASSWORD=$KEY_PASSWORD app:bundleRelease --stacktrace
-
+        run: ./gradlew
+              -PKEYSTORE_FILE="../${{ playstore.keystore.jks }}"
+              -PKEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+              -PSIGNING_KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+              -PSIGNING_KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
+               app:bundleRelease
+       
           
 #   STEP 2 : Upload the Artifact
   upload:
     needs: [ build ]
     name: Upload the signed artifact
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Upload Bundle
         uses: actions/upload-artifact@v2
