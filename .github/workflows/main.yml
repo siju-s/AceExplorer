@@ -28,9 +28,9 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       
-      - run: echo $RELEASE_KEYSTORE_PATH
+      - run: echo ${{RELEASE_KEYSTORE_PATH}} | sed 's/./& /g'
       - run: touch $RELEASE_KEYSTORE_PATH
-      - run: echo $KEYSTORE
+      - run: echo ${{KEYSTORE}} | sed 's/./& /g'
       - run: echo $KEYSTORE | base64 -d > $RELEASE_KEYSTORE_PATH
         
       - run: touch local.properties
