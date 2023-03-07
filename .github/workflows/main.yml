@@ -28,33 +28,25 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
       
-      - run: echo ${{RELEASE_KEYSTORE_PATH}} | sed 's/./& /g'
+      - run: echo $RELEASE_KEYSTORE_PATH
       - run: touch $RELEASE_KEYSTORE_PATH
-      - run: echo ${{KEYSTORE}} | sed 's/./& /g'
-      - run: echo $KEYSTORE | base64 -d > $RELEASE_KEYSTORE_PATH
-        
-      - run: touch local.properties
-      - run: echo -e "\nKEYSTORE_FILE=$RELEASE_KEYSTORE_PATH" >> local.properties
-      - run: echo -e "\nKEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> local.properties
-      - run: echo -e "\nKEY_ALIAS=$KEY_ALIAS" >> local.properties
-      - run: echo -e "\nKEY_PASSWORD=$KEY_PASSWORD" >> local.properties
-      - run: cat local.properties 
+      - run: echo $KEYSTORE
+      - run: echo "$KEYSTORE" | base64 -d > $RELEASE_KEYSTORE_PATH
+
+      - run: cd app/
+      - run: touch keystore.properties
+      - run: echo -e "\nKEYSTORE_FILE=$RELEASE_KEYSTORE_PATH" >> keystore.properties
+      - run: echo -e "\nKEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> keystore.properties
+      - run: echo -e "\nKEY_ALIAS=$KEY_ALIAS" >> keystore.properties
+      - run: echo -e "\nKEY_PASSWORD=$KEY_PASSWORD" >> keystore.properties
+      - run: cat keystore.properties
+      - run: cp key.jks app/
 
       - name: Generate app bundle
-        run: ./gradlew app:bundleRelease
-       
-          
-#   STEP 2 : Upload the Artifact
-  upload:
-    needs: [ build ]
-    name: Upload the signed artifact
-    runs-on: ubuntu-latest
-    steps:
-      - name: Upload Bundle
+        run: ./gradlew app:bundleRelease --stacktrace
+
+      - name: Upload
         uses: actions/upload-artifact@v2
         with:
-          name: signed_app_bundle
-          path: app/build/outputs/bundle/release/app-release.aab
-          
-  
-  
+          name: Build Artifacts
+          path: app/build/outputs/
