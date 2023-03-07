@@ -32,13 +32,8 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Generate app bundle
-        run: ./gradlew app:bundleRelease --stacktrace
-        
-      - name: Sign app bundle
-        run: |
-          jarsigner -keystore app/*.jks \
-          -storepass ${{ secrets.KEYSTORE_PASSWORD }} -keypass ${{ secrets.KEY_PASSWORD }} \
-          app/build/outputs/bundle/release/app-release.aab ${{ secrets.KEYALIAS }}
+        run: ./gradlew -PKEYSTORE_FILE=$KEYSTORE -PKEYSTORE_PASSWORD=$KEYSTORE_PASSWORD -PKEY_ALIAS=$KEY_ALIAS -PKEY_PASSWORD=$KEY_PASSWORD app:bundleRelease --stacktrace
+
           
 #   STEP 2 : Upload the Artifact
   upload:
