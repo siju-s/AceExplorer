@@ -39,7 +39,6 @@ jobs:
       - run: echo -e "\nKEYSTORE_PASSWORD=$KEYSTORE_PASSWORD" >> keystore.properties
       - run: echo -e "\nKEY_ALIAS=$KEY_ALIAS" >> keystore.properties
       - run: echo -e "\nKEY_PASSWORD=$KEY_PASSWORD" >> keystore.properties
-      - run: cat keystore.properties
       - run: cp key.jks app/
 
       - name: Generate app bundle
