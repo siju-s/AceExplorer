@@ -75,9 +75,9 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val root: View? = super.onCreateView(inflater, container, savedInstanceState)
+        val root: View = super.onCreateView(inflater, container, savedInstanceState)
         val activity = activity as AppCompatActivity?
-        val appbar = root?.findViewById(R.id.appbar) as AppBarLayout
+        val appbar = root.findViewById(R.id.appbar) as AppBarLayout
         val toolbar = appbar.findViewById<Toolbar>(R.id.toolbarContainer)
         activity?.setSupportActionBar(toolbar)
         val actionBar: ActionBar? = activity?.supportActionBar
@@ -94,7 +94,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        preferences = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
 
         setupRootPref()
         setupLanguagePreference()
@@ -272,16 +272,17 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
      * @see [bindPreferenceSummaryToValueListener]
      */
     private fun bindPreferenceSummaryToValue(preference: Preference?) {
+        preference ?: return
         // Set the listener to watch for value changes.
-        preference?.onPreferenceChangeListener = bindPreferenceSummaryToValueListener
+        preference.onPreferenceChangeListener = bindPreferenceSummaryToValueListener
 
         // Trigger the listener immediately with the preference's
         // current value.
         bindPreferenceSummaryToValueListener.onPreferenceChange(preference,
                 PreferenceManager
                         .getDefaultSharedPreferences(
-                                preference?.context)
-                        .getString(preference?.key,
+                                preference.context)
+                        .getString(preference.key,
                                 ""))
     }
 

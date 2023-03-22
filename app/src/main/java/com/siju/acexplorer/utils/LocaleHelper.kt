@@ -48,6 +48,7 @@ object LocaleHelper {
     }
 
     fun persist(context: Context?, language: String?) {
+        context ?: return
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val editor = preferences.edit()
         log(TAG, "persist: $language")

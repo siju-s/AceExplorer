@@ -48,7 +48,7 @@ enum class Theme constructor(val value: Int) {
         }
 
         fun getUserThemeValue(context: Context?): Int {
-            context ?: DARK.value
+            context ?: return DARK.value
             return PreferenceManager.getDefaultSharedPreferences(context)
                     .getInt(CURRENT_THEME, DARK.value)
         }

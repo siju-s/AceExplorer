@@ -299,8 +299,8 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
 
         //TODO 23 Feb 2020 Empty observer since we need atleast 1 observer for sort mode to reflect changes and we don't need lambda that's why suppressed lint warning.
         mainViewModel.sortMode.observe(viewLifecycleOwner, object : Observer<Int> {
-            override fun onChanged(t: Int?) {
-                Log.d(TAG, "Sort mode:$t")
+            override fun onChanged(value: Int) {
+                Log.d(TAG, "Sort mode:$value")
             }
         })
 
@@ -1245,7 +1245,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
             val navController = navHost.navController
             val graph = navController.navInflater.inflate(R.navigation.navigation_graph_dual)
 
-            graph.startDestination = R.id.dualPaneFragment2
+            graph.setStartDestination(R.id.dualPaneFragment2)
             val args = Bundle()
             args.putString("path", StorageUtils.internalStorage)
             args.putSerializable("category", Category.FILES)

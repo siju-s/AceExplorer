@@ -398,6 +398,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     @SuppressLint("UnsafeExperimentalUsageError")
+    @androidx.annotation.OptIn(com.google.android.material.badge.ExperimentalBadgeUtils::class)
     private fun applyBadgeToMenuItem(itemId: Int) {
         val context = context
         if (menuItemBadge == null) {
@@ -413,6 +414,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     @SuppressLint("UnsafeExperimentalUsageError")
+    @androidx.annotation.OptIn(com.google.android.material.badge.ExperimentalBadgeUtils::class)
     private fun clearBadgeMenuItem(itemId: Int) {
         val context = context
         context ?: return

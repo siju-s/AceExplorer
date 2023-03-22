@@ -11,8 +11,8 @@ class OpenSourceDialogFragmentCompat : PreferenceDialogFragmentCompat() {
 
     }
 
-    override fun onBindDialogView(view: View?) {
-        val webView : WebView? = view?.findViewById(R.id.webViewLicense)
+    override fun onBindDialogView(view: View) {
+        val webView : WebView? = view.findViewById(R.id.webViewLicense)
         webView?.loadUrl("file:///android_asset/open_source_licenses.html")
         super.onBindDialogView(view)
     }

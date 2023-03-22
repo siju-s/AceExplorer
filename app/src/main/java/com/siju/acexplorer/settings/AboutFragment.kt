@@ -52,7 +52,7 @@ class AboutFragment : PreferenceFragmentCompat() {
         }
     }
 
-    override fun onDisplayPreferenceDialog(preference: Preference?) {
+    override fun onDisplayPreferenceDialog(preference: Preference) {
         var dialogFragment: DialogFragment? = null
         if (preference is OpenSourceDialogPreference) {
             dialogFragment = OpenSourceDialogFragmentCompat()

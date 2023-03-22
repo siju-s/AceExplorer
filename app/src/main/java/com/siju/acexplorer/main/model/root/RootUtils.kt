@@ -29,7 +29,7 @@ import java.util.*
 
 object RootUtils {
 
-    fun isRooted(context: Context?): Boolean {
+    fun isRooted(context: Context): Boolean {
         val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         return preferences.getBoolean(SettingsPreferenceFragment.PREF_ROOT, false)
     }
