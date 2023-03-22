@@ -122,6 +122,7 @@ android {
         lintConfig = File("${project.rootDir}/lint/lint-config.xml")
         htmlOutput = File("${project.rootDir}/lint/lint-report.html")
     }
+    namespace = "com.siju.acexplorer"
 }
 
 dependencies {
