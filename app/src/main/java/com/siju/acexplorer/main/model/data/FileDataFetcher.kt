@@ -138,15 +138,13 @@ class FileDataFetcher : DataFetcher {
             Log.d(TAG, "getNonRootedList: count:${cursor?.count}")
             if (cursor != null && cursor.moveToFirst()) {
                 do {
-                    val filePath = cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA))
-                    val relPath =  cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.RELATIVE_PATH))
-                    val parent =  cursor.getString(cursor.getColumnIndex(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME))
+                    val columnIndex = cursor.getColumnIndex(MediaStore.Files.FileColumns.DATA)
+
+                    val filePath = cursor.getString(columnIndex)
 
                     if (sourceFile.absolutePath.equals(filePath)) {
                         continue
                     }
-
-                    Log.d(TAG, "getNonRootedList: path:$filePath, relPath:$relPath,parent:$parent, name:${sourceFile.name}, selection:$selection")
 
                     var isDirectory = false
                     val size: Long
