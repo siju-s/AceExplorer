@@ -61,7 +61,6 @@
     <string name="dialog_from_placeholder">From</string>
     <string name="dialog_to_placeholder">To</string>
     <string name="msg_error_invalid_name">Enter a valid name</string>
-    <string name="msg_operation_failed">Operation failed</string>
     <string name="permission_read">Read</string>
     <string name="permission_write">Write</string>
     <string name="permission_execute">Execute</string>

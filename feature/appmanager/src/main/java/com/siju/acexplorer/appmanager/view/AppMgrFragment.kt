@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -36,6 +37,7 @@ import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.utils.ConfigurationHelper
 import com.siju.acexplorer.common.view.custom.CustomGridLayoutManager
+import com.siju.acexplorer.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -58,8 +60,8 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     private var packageReceiverRegistered = false
 
     private val uninstallResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            activity?.finish()
+        if (result.resultCode != Activity.RESULT_OK) {
+            context.showToast(getString(R.string.msg_operation_failed))
         }
     }
 

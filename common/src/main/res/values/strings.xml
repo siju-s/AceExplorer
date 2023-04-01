@@ -16,4 +16,6 @@
     <string name="sort_date">Date</string>
     <string name="action_select_all">Select All</string>
     <string name="action_delete">Delete</string>
+    <string name="msg_operation_failed">Operation failed</string>
+
 </resources>

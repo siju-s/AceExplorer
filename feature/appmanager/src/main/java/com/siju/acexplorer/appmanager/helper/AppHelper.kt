@@ -30,19 +30,10 @@ object AppHelper {
     fun uninstallApp(activity: AppCompatActivity?, packageName: String?, launcher: ActivityResultLauncher<Intent>) {
         packageName ?: return
         activity ?: return
-        if (SdkHelper.isAtleastAndroid10) {
-            val intent = Intent(activity, activity.javaClass)
-            intent.action = ACTION_UNINSTALL
-            val intentSender = PendingIntent.getActivity(activity, REQUEST_CODE_UNINSTALL, intent,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT).intentSender
-            activity.applicationContext.getPackageInstaller().uninstall(packageName, intentSender)
-        }
-        else {
-            val packageUri = Uri.parse(PREFIX_PACKAGE_URI + packageName)
-            val uninstallIntent = Intent(Intent.ACTION_UNINSTALL_PACKAGE, packageUri)
-            uninstallIntent.putExtra(Intent.EXTRA_RETURN_RESULT, true)
-            launcher.launch(uninstallIntent)
-        }
+        val packageUri = Uri.parse(PREFIX_PACKAGE_URI + packageName)
+        val uninstallIntent = Intent(Intent.ACTION_UNINSTALL_PACKAGE, packageUri)
+        uninstallIntent.putExtra(Intent.EXTRA_RETURN_RESULT, true)
+        launcher.launch(uninstallIntent)
     }
 
     fun openAppSettings(context: Context, packageName: String) {

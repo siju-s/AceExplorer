@@ -50,7 +50,6 @@
     <string name="dialog_from_placeholder">من عند</string>
     <string name="dialog_to_placeholder">إلى</string>
     <string name="msg_error_invalid_name">أدخل اسمًا صالحًا</string>
-    <string name="msg_operation_failed">فشلت العملية</string>
     <string name="permission_read">اقرأ</string>
     <string name="permission_write">كتابة</string>
     <string name="permission_execute">نفذ - اعدم</string>

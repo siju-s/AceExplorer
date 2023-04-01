@@ -294,14 +294,6 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == REQUEST_CODE_UNINSTALL && resultCode == Activity.RESULT_OK) {
-//            finish()
-//        }
-//    }
-
-
     override fun onClick(view: View) {
         when (view.id) {
             R.id.settingsButton  -> packageValue?.let { AppHelper.openAppSettings(this, it) }
