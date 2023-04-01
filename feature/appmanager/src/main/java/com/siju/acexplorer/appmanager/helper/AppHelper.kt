@@ -1,7 +1,6 @@
 package com.siju.acexplorer.appmanager.helper
 
 
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ApplicationInfo
@@ -11,10 +10,7 @@ import android.provider.Settings
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import com.siju.acexplorer.appmanager.R
-import com.siju.acexplorer.appmanager.extensions.getPackageInstaller
 import com.siju.acexplorer.appmanager.filter.AppSource
-import com.siju.acexplorer.appmanager.view.AppDetailActivity.Companion.REQUEST_CODE_UNINSTALL
-import com.siju.acexplorer.common.utils.SdkHelper
 
 
 private const val PACKAGE_NAME_PLAYSTORE = "com.android.vending"
@@ -27,7 +23,11 @@ object AppHelper {
     private const val PREFIX_PACKAGE_URI = "package:"
 
     @Suppress("Deprecation")
-    fun uninstallApp(activity: AppCompatActivity?, packageName: String?, launcher: ActivityResultLauncher<Intent>) {
+    fun uninstallApp(
+        activity: AppCompatActivity?,
+        packageName: String?,
+        launcher: ActivityResultLauncher<Intent>
+    ) {
         packageName ?: return
         activity ?: return
         val packageUri = Uri.parse(PREFIX_PACKAGE_URI + packageName)
@@ -72,7 +72,7 @@ object AppHelper {
         }
     }
 
-    fun getInstallerSourceName(isSystemApp : Boolean, packageName: String?): AppSource {
+    fun getInstallerSourceName(isSystemApp: Boolean, packageName: String?): AppSource {
         if (isSystemApp) {
             return AppSource.SYSTEM
         }
