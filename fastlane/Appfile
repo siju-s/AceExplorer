@@ -6,4 +6,4 @@
 
 # app_identifier "com.your.app" # the bundle identifier of your app
 # apple_id "apple@fastlane.tools" # Your Apple ID
-json_key_file "/Volumes/TECH/PUBLISHED APPS/ACE/KEYSTORE/Fastlane_Google_Console_Credentials.json"
+json_key_file "/Volumes/TECH/ANDROID_WS/ACE/KEYSTORE/Fastlane_Google_Console_Credentials.json"
