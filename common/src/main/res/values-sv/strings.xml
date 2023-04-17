@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Listvy</string>
+    <string name="action_view_grid">Rastervy</string>
+    <string name="action_view_gallery">Gallerivyn</string>
+    <string name="package_name">Paketnamn</string>
+    <string name="action_view">Se</string>
+</resources>

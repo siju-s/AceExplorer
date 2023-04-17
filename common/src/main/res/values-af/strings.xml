@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Lys sig</string>
+    <string name="action_view_grid">Roosteruitsig</string>
+    <string name="action_view_gallery">Galery-aansig</string>
+    <string name="package_name">Pakket naam</string>
+    <string name="action_view">Beskou</string>
+</resources>

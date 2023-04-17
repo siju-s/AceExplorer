@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Tampilan daftar</string>
+    <string name="action_view_grid">Tampilan bergaris</string>
+    <string name="action_view_gallery">Tampilan galeri</string>
+    <string name="package_name">Nama paket</string>
+    <string name="action_view">Melihat</string>
+</resources>

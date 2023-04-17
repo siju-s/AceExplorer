@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Liste görünümü</string>
+    <string name="action_view_grid">Izgara görünümü</string>
+    <string name="action_view_gallery">Galeri görünümü</string>
+    <string name="package_name">Paket ismi</string>
+    <string name="action_view">Görünüm</string>
+</resources>

@@ -284,7 +284,7 @@ object CategoryHelper {
             GENRES -> return context.getString(R.string.genres)
             PODCASTS -> return context.getString(R.string.podcasts)
             ALL_TRACKS -> return context.getString(R.string.all_tracks)
-            APP_MANAGER -> return context.getString(R.string.app_manager)
+            APP_MANAGER -> return context.getString(com.siju.acexplorer.common.R.string.app_manager)
             CAMERA, CAMERA_GENERIC -> return context.getString(R.string.category_camera)
             SCREENSHOT -> return context.getString(R.string.category_screenshot)
             WHATSAPP -> return context.getString(R.string.category_whatsapp)

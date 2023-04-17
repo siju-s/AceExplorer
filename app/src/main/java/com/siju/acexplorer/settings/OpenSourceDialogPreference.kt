@@ -23,7 +23,7 @@ import com.siju.acexplorer.R
 class OpenSourceDialogPreference(context: Context, attrs: AttributeSet?) : DialogPreference(context, attrs) {
     init {
         dialogLayoutResource = R.layout.open_source_licenses
-        positiveButtonText = getContext().getString(R.string.msg_ok)
+        positiveButtonText = getContext().getString(com.siju.acexplorer.common.R.string.msg_ok)
         negativeButtonText = null
     }
 }

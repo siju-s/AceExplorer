@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Lista nézet</string>
+    <string name="action_view_grid">Rácsnézet</string>
+    <string name="action_view_gallery">Galéria nézet</string>
+    <string name="package_name">Csomag név</string>
+    <string name="action_view">Kilátás</string>
+</resources>

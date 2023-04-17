@@ -133,8 +133,8 @@ class PickerFragment : DialogFragment() {
         currentPathText = view.findViewById(R.id.textPath)
         okButton = view.findViewById(R.id.buttonPositive)
         cancelButton = view.findViewById(R.id.buttonNegative)
-        okButton.text = getString(R.string.msg_ok)
-        cancelButton.text = getString(R.string.dialog_cancel)
+        okButton.text = getString(com.siju.acexplorer.common.R.string.msg_ok)
+        cancelButton.text = getString(com.siju.acexplorer.common.R.string.dialog_cancel)
     }
 
 

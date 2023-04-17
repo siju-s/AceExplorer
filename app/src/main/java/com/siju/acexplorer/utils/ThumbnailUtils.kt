@@ -186,7 +186,7 @@ object ThumbnailUtils {
     private fun loadAppIcon(context: Context, imageIcon: ImageView, name: String?) {
         val options = RequestOptions()
                 .centerCrop()
-                .placeholder(R.drawable.ic_apk_green)
+                .placeholder(com.siju.acexplorer.common.R.drawable.ic_apk_green)
                 .diskCacheStrategy(DiskCacheStrategy.NONE) // cannot disk cache
         // ApplicationInfo, nor Drawables
         Glide.with(context)

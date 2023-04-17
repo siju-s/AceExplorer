@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Pamja e listës</string>
+    <string name="action_view_grid">Pamja e rrjetit</string>
+    <string name="action_view_gallery">Pamja e galerisë</string>
+    <string name="package_name">Emri i paketës</string>
+    <string name="action_view">Pamje</string>
+</resources>

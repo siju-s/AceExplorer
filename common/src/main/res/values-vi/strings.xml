@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Danh sách xem</string>
+    <string name="action_view_grid">Chế độ hiển thị theo ô</string>
+    <string name="action_view_gallery">Xem thư viện</string>
+    <string name="package_name">Tên gói hàng</string>
+    <string name="action_view">Lượt xem</string>
+</resources>

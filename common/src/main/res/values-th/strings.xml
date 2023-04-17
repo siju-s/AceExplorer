@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">มุมมองรายการ</string>
+    <string name="action_view_grid">มุมมองตาราง</string>
+    <string name="action_view_gallery">มุมมองแกลเลอรี่</string>
+    <string name="package_name">ชื่อแพ็กเกจ</string>
+    <string name="action_view">ดู</string>
+</resources>

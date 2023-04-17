@@ -40,6 +40,8 @@ import com.siju.acexplorer.appmanager.viewmodel.AppDetailViewModel
 import com.siju.acexplorer.common.utils.SdkHelper
 import com.siju.acexplorer.common.utils.ToolbarHelper
 import dagger.hilt.android.AndroidEntryPoint
+import com.siju.acexplorer.common.R.menu.*
+import com.siju.acexplorer.common.R.string.*
 
 
 private const val URL_STORE = "https://play.google" + ".com/store/apps/details?id="
@@ -148,7 +150,7 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun setupToolbar() {
-        toolbar = findViewById(R.id.toolbar)
+        toolbar = findViewById(com.siju.acexplorer.common.R.id.toolbar)
         setSupportActionBar(toolbar)
         ToolbarHelper.setToolbarTitle(this, getString(R.string.app_detail))
         ToolbarHelper.showToolbarAsUp(this)
@@ -199,8 +201,8 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
     private fun setupAppProperties(appDetailInfo: AppDetailInfo) {
         packageNameText.text = packageValue
         val enabled = appDetailInfo.enabled
-        enabledText.text = if (enabled) getString(R.string.yes)
-        else getString(R.string.no)
+        enabledText.text = if (enabled) getString(yes)
+        else getString(no)
         appNameText.text = appDetailInfo.appName
         toolbar.title = appDetailInfo.appName
         imageIcon.contentDescription = appDetailInfo.appName
@@ -223,7 +225,7 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
     private fun setupAppIcon(packageName: String) {
         val options = RequestOptions()
             .centerCrop()
-            .placeholder(R.drawable.ic_apk_green)
+            .placeholder(com.siju.acexplorer.common.R.drawable.ic_apk_green)
             .diskCacheStrategy(DiskCacheStrategy.NONE) // cannot disk cache
 
         Glide.with(this)
@@ -277,10 +279,10 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun updateBackground(fab: FloatingActionButton, palette: Palette) {
         val lightVibrantColor = palette.getLightVibrantColor(
-            ContextCompat.getColor(applicationContext, R.color.colorPrimary)
+            ContextCompat.getColor(applicationContext, com.siju.acexplorer.common.R.color.colorPrimary)
         )
         val vibrantColor = palette.getVibrantColor(
-            ContextCompat.getColor(applicationContext, R.color.colorAccent)
+            ContextCompat.getColor(applicationContext, com.siju.acexplorer.common.R.color.colorAccent)
         )
 
         fab.rippleColor = lightVibrantColor

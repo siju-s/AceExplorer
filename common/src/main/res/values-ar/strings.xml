@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">عرض القائمة</string>
+    <string name="action_view_grid">عرض شبكي</string>
+    <string name="action_view_gallery">عرض معرض</string>
+    <string name="package_name">اسم الحزمة</string>
+    <string name="action_view">رأي</string>
+</resources>

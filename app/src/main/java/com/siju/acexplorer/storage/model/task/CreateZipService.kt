@@ -94,7 +94,7 @@ class CreateZipService : Service() {
             setOnlyAlertOnce(true)
             setDefaults(0)
             addAction(NotificationCompat.Action(R.drawable.ic_cancel,
-                    getString(R.string.dialog_cancel),
+                    getString(com.siju.acexplorer.common.R.string.dialog_cancel),
                     pendingCancelIntent))
         }
 

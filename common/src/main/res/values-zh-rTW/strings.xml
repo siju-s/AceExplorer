@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">列表顯示</string>
+    <string name="action_view_grid">網格視圖</string>
+    <string name="action_view_gallery">圖庫視圖</string>
+    <string name="package_name">包裹名字</string>
+    <string name="action_view">視圖</string>
+</resources>

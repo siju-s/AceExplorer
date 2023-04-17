@@ -94,6 +94,7 @@ android {
 
     buildFeatures {
         dataBinding = true
+        buildConfig= true
     }
 
     sonarqube {
@@ -108,12 +109,12 @@ android {
         }
     }
 
-    kotlinOptions.apply {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    kotlin {
+        jvmToolchain(17)
     }
     compileOptions.apply {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     lint {
         //isCheckDependencies = true

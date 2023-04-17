@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Amharcliosta</string>
+    <string name="action_view_grid">Amharc ar an eangach</string>
+    <string name="action_view_gallery">Dearcadh an ghailearaí</string>
+    <string name="package_name">Ainm an phacáiste</string>
+    <string name="action_view">Amharc</string>
+</resources>

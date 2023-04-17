@@ -36,7 +36,7 @@ import com.siju.acexplorer.storage.model.operations.PasteConflictCheckData
 import com.stericson.RootTools.RootTools
 import java.io.File
 import java.util.*
-
+import com.siju.acexplorer.common.R as RC
 /**
  * Created by Siju on 29 August,2017
  */
@@ -44,8 +44,8 @@ object DialogHelper {
     fun showDeleteDialog(context: Context, files: ArrayList<FileInfo>,
                          trashEnabled: Boolean, deleteDialogListener: DeleteDialogListener) {
         val title = context.getString(R.string.dialog_delete_title, files.size)
-        val texts = arrayOf(title, context.getString(R.string.msg_ok), "", context
-                .getString(R.string.dialog_cancel))
+        val texts = arrayOf(title, context.getString(RC.string.msg_ok), "", context
+                .getString(RC.string.dialog_cancel))
         val builder = AlertDialog.Builder(context)
         val inflater = LayoutInflater.from(context)
         val dialogView = inflater.inflateLayout(R.layout.dialog_delete, null)
@@ -72,8 +72,8 @@ object DialogHelper {
     fun showDeleteDialog(context: Context, uri: Uri,
                          deleteDialogListener: DeleteDialogListener) {
         val title = context.getString(R.string.dialog_delete_title, 1)
-        val texts = arrayOf(title, context.getString(R.string.msg_ok), "", context
-                .getString(R.string.dialog_cancel))
+        val texts = arrayOf(title, context.getString(RC.string.msg_ok), "", context
+                .getString(RC.string.dialog_cancel))
         val builder = AlertDialog.Builder(context)
         val inflater = LayoutInflater.from(context)
         val dialogView = inflater.inflateLayout(R.layout.dialog_delete, null)
@@ -108,7 +108,7 @@ object DialogHelper {
         val msg = dialogView.findViewById<TextView>(R.id.textMessage)
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
-        val neutralButton = dialogView.findViewById<Button>(R.id.buttonNeutral)
+        val neutralButton = dialogView.findViewById<Button>(com.siju.acexplorer.common.R.id.buttonNeutral)
         title.text = text[0]
         msg.text = text[1]
         positiveButton.text = text[2]
@@ -184,7 +184,7 @@ object DialogHelper {
         val msg = dialogView.findViewById<TextView>(R.id.textMessage)
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
-        val neutralButton = dialogView.findViewById<Button>(R.id.buttonNeutral)
+        val neutralButton = dialogView.findViewById<Button>(com.siju.acexplorer.common.R.id.buttonNeutral)
         title.text = text[0]
         msg.text = text[1]
         positiveButton.text = text[2]
@@ -220,7 +220,7 @@ object DialogHelper {
         builder.setCancelable(false)
         val dialogTitle = context.getString(R.string.needsaccess)
         val text = arrayOf(dialogTitle, context.getString(R.string.needs_access_summary, path),
-                context.getString(R.string.open), context.getString(R.string.dialog_cancel))
+                context.getString(R.string.open), context.getString(RC.string.dialog_cancel))
         val alertDialog = builder.create()
         val title = dialogView.findViewById<TextView>(R.id.textTitle)
         val msg = dialogView.findViewById<TextView>(R.id.textMessage)
@@ -332,8 +332,8 @@ object DialogHelper {
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
 
-        positiveButton.text = context.getString(R.string.msg_ok)
-        negativeButton.text = context.getString(R.string.dialog_cancel)
+        positiveButton.text = context.getString(RC.string.msg_ok)
+        negativeButton.text = context.getString(RC.string.dialog_cancel)
 
         val read = permissions[0]
         val write = permissions[1]
@@ -429,7 +429,7 @@ object DialogHelper {
         titleText.text = title
         inputText.setText(zipName)
         positiveButton.text = context.getString(R.string.create)
-        negativeButton.text = context.getString(R.string.dialog_cancel)
+        negativeButton.text = context.getString(RC.string.dialog_cancel)
         positiveButton.setOnClickListener {
             val name = inputText.text.toString().trim { it <= ' ' }
             dialogListener.onPositiveButtonClick(alertDialog, Operations.COMPRESS, name,
@@ -449,7 +449,7 @@ object DialogHelper {
         val currentFileName = zipFilePath.substring(zipFilePath.lastIndexOf("/")
                 + 1, zipFilePath
                 .lastIndexOf("."))
-        val texts = arrayOf(context.getString(R.string.extract), context.getString(R.string.dialog_cancel))
+        val texts = arrayOf(context.getString(R.string.extract), context.getString(RC.string.dialog_cancel))
         val builder = AlertDialog.Builder(context)
         val inflater = LayoutInflater.from(context)
         val dialogView = inflater.inflateLayout(R.layout.dialog_extract, null)
@@ -503,8 +503,8 @@ object DialogHelper {
         textMessage.text = String.format("%s %s", context.getString(R.string.dialog_to_placeholder), destinationDir)
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
-        positiveButton.text = context.getString(R.string.msg_ok)
-        negativeButton.text = context.getString(R.string.dialog_cancel)
+        positiveButton.text = context.getString(RC.string.msg_ok)
+        negativeButton.text = context.getString(RC.string.dialog_cancel)
         val operation: Operations = if (radioButtonCopy.isChecked) {
             Operations.COPY
         } else {

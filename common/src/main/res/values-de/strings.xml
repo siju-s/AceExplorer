@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Listenansicht</string>
+    <string name="action_view_grid">Rasteransicht</string>
+    <string name="action_view_gallery">Galerieansicht</string>
+    <string name="package_name">Paketnamen</string>
+    <string name="action_view">Aussicht</string>
+</resources>

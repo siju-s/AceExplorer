@@ -40,7 +40,7 @@ import com.siju.acexplorer.storage.model.task.CreateZipService
 import com.siju.acexplorer.storage.model.task.ExtractService
 import java.util.*
 import kotlin.collections.ArrayList
-
+import com.siju.acexplorer.common.R as RC
 private const val TAG = "OperationProgress"
 
 
@@ -78,7 +78,7 @@ class OperationProgress {
             context.getString(R.string.copying)
         }
         val texts = arrayOf(title, context.getString(R.string.background),
-                            context.getString(R.string.dialog_cancel))
+                            context.getString(RC.string.dialog_cancel))
 
         val builder = AlertDialog.Builder(context)
         val inflater = LayoutInflater.from(context)
@@ -137,7 +137,7 @@ class OperationProgress {
         registerReceiver(context)
         val title = context.getString(R.string.zip_progress_title)
         val texts = arrayOf(title, context.getString(R.string.background),
-                            context.getString(R.string.dialog_cancel))
+                            context.getString(RC.string.dialog_cancel))
 
         val builder = AlertDialog.Builder(context)
         val inflater = LayoutInflater.from(context)
@@ -189,7 +189,7 @@ class OperationProgress {
 
         val title = context.getString(R.string.extracting)
         val texts = arrayOf(title, context.getString(R.string.background),
-                            context.getString(R.string.dialog_cancel))
+                            context.getString(RC.string.dialog_cancel))
         val builder = AlertDialog.Builder(context)
 
         val inflater = LayoutInflater.from(context)

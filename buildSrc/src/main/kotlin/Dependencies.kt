@@ -1,17 +1,17 @@
 const val kotlinVersion = "1.8.10"
+const val gradleVersion = "8.0.0"
 
 object BuildPlugins {
 
     object Versions {
-        const val gradlePlugin = "7.4.2"
         const val crashlytics = "2.9.4"
         const val googleServices = "4.3.15"
-        const val safeArgsPlugin = "2.3.5"
+        const val safeArgsPlugin = "2.5.3"
         const val sonarqube = "3.3"
         const val hilt = "2.45"
     }
 
-    const val androidGradlePlugin = "com.android.tools.build:gradle:${Versions.gradlePlugin}"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:${gradleVersion}"
     const val kotlinGradlePlugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     const val googleServices = "com.google.gms:google-services:${Versions.googleServices}"
     const val androidApp     = "com.android.application"

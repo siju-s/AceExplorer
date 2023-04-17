@@ -81,7 +81,7 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         val toolbar = appbar.findViewById<Toolbar>(R.id.toolbarContainer)
         activity?.setSupportActionBar(toolbar)
         val actionBar: ActionBar? = activity?.supportActionBar
-        actionBar?.setTitle(R.string.action_settings)
+        actionBar?.setTitle(com.siju.acexplorer.common.R.string.action_settings)
         setHasOptionsMenu(true)
         return root
     }

@@ -124,10 +124,10 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
             R.id.action_permissions -> {
                 onPermissionClicked()
             }
-            R.id.action_select_all -> {
+            com.siju.acexplorer.common.R.id.action_select_all -> {
                 onSelectAllClicked()
             }
-            R.id.action_done -> {
+            com.siju.acexplorer.common.R.id.action_done -> {
                 onDoneClicked()
             }
 

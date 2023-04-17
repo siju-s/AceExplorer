@@ -21,7 +21,7 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.getCategoryName
 import com.siju.acexplorer.storage.model.RecentTimeData
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils
-
+import com.siju.acexplorer.common.R as RC
 
 class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<FileInfo, Int>) -> Unit,
                     private val longClickListener: (FileInfo, Int, View) -> Unit,
@@ -171,7 +171,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
         }
 
         private fun onSelection(selected: Boolean?, position: Int, draggedPos: Int) {
-            val color =  ContextCompat.getColor(itemView.context, R.color.actionModeItemSelected)
+            val color =  ContextCompat.getColor(itemView.context, RC.color.actionModeItemSelected)
             when {
                 selected == true       -> {
                     itemView.setBackgroundColor(color)
@@ -199,7 +199,7 @@ class RecentAdapter(var viewMode: ViewMode, private val clickListener: (Pair<Fil
                     imageIcon.visibility = View.GONE
                     imageGalleryThumb.visibility = View.VISIBLE
                     textFileName.visibility = View.VISIBLE
-                    textFileName.setBackgroundResource(R.color.gallery_item_text_background)
+                    textFileName.setBackgroundResource(RC.color.gallery_item_text_background)
                 } else {
                     imageIcon.visibility = View.GONE
                     textFileName.visibility = View.GONE

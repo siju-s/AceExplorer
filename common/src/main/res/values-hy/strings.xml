@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Listանկի տեսք</string>
+    <string name="action_view_grid">Idանց տեսք</string>
+    <string name="action_view_gallery">Պատկերասրահի տեսքը</string>
+    <string name="package_name">Փաթեթի անունը</string>
+    <string name="action_view">Տեսարան</string>
+</resources>

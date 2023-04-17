@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Popisni prikaz</string>
+    <string name="action_view_grid">Prikaz rešetke</string>
+    <string name="action_view_gallery">Galerijski prikaz</string>
+    <string name="package_name">Naziv paketa</string>
+    <string name="action_view">Pogled</string>
+</resources>

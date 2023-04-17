@@ -114,7 +114,7 @@ class AppMgrAdapter(private val viewModel : AppMgrViewModel,
         private fun loadAppIcon(context: Context, imageIcon: ImageView, name: String?) {
             val options = RequestOptions()
                 .centerCrop()
-                .placeholder(R.drawable.ic_apk_green)
+                .placeholder(com.siju.acexplorer.common.R.drawable.ic_apk_green)
                 .diskCacheStrategy(DiskCacheStrategy.NONE) // cannot disk cache
             Glide.with(context)
                 .`as`(Drawable::class.java)
@@ -124,7 +124,7 @@ class AppMgrAdapter(private val viewModel : AppMgrViewModel,
         }
 
         private fun onSelection(selected: Boolean, imageSelection : ImageView) {
-            val color = ContextCompat.getColor(itemView.context, R.color.actionModeItemSelected)
+            val color = ContextCompat.getColor(itemView.context, com.siju.acexplorer.common.R.color.actionModeItemSelected)
             when {
                 selected               -> {
                     itemView.setBackgroundColor(color)

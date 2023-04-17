@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">सूची दृश्य</string>
+    <string name="action_view_grid">जाली देखना</string>
+    <string name="action_view_gallery">गैलरी का दृश्य</string>
+    <string name="package_name">पैकेज का नाम</string>
+    <string name="action_view">राय</string>
+</resources>

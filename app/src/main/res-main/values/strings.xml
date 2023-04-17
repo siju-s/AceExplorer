@@ -184,8 +184,6 @@
     <string name="resolution_format" translatable="false">%d X %d</string>
     <string name="moved" tools:ignore="PluralsCandidate">%d files moved</string>
     <string name="copied" tools:ignore="PluralsCandidate">%d files copied</string>
-    <string name="action_view">View</string>
-    <string name="action_view_gallery">Gallery view</string>
     <string name="update_available">Update available</string>
     <string name="restart">Restart</string>
     <string name="update_downloading">Downloading update &#8230;</string>

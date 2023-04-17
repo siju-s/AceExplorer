@@ -33,7 +33,7 @@ import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
 import java.util.*
 import kotlin.collections.ArrayList
-
+import com.siju.acexplorer.common.R as RC
 
 const val INVALID_POS = -1
 private const val TAG = "FileListAdapter"
@@ -202,7 +202,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         }
 
         private fun onSelection(selected: Boolean?, position: Int, draggedPos: Int) {
-            val color = ContextCompat.getColor(itemView.context, R.color.actionModeItemSelected)
+            val color = ContextCompat.getColor(itemView.context, RC.color.actionModeItemSelected)
 
             when {
                 selected == true       -> {
@@ -396,7 +396,7 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
                         CategoryHelper.isGalleryMusicCategory(category) || category == Category.DOCS) {
                     imageIcon.visibility = View.GONE
                     imageGalleryThumb.visibility = View.VISIBLE
-                    textFileName.setBackgroundColor(ContextCompat.getColor(textFileName.context, R.color.gallery_item_text_background))
+                    textFileName.setBackgroundColor(ContextCompat.getColor(textFileName.context, RC.color.gallery_item_text_background))
                     textFileName.visibility = View.VISIBLE
                 }
                 else {

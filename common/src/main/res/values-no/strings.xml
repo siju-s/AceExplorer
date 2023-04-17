@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Listevisning</string>
+    <string name="action_view_grid">Rutenett visning</string>
+    <string name="action_view_gallery">Gallerivisning</string>
+    <string name="package_name">Pakkenavn</string>
+    <string name="action_view">Utsikt</string>
+</resources>

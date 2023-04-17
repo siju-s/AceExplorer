@@ -21,7 +21,7 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.shouldShowSort
 import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.main.viewmodel.MainViewModel
-
+import com.siju.acexplorer.common.R as RC
 
 private const val TAG = "MenuControls"
 
@@ -120,11 +120,11 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     private fun setupActionModeToolbar() {
         toolbar.menu.clear()
-        toolbar.setNavigationIcon(R.drawable.ic_back_white)
-        toolbar.inflateMenu(R.menu.action_mode)
+        toolbar.setNavigationIcon(RC.drawable.ic_back_white)
+        toolbar.inflateMenu(RC.menu.action_mode)
         toolbar.setOnMenuItemClickListener(this)
         if (mainViewModel.isPickerMultiSelection()) {
-            toolbar.menu.findItem(R.id.action_done).isVisible = true
+            toolbar.menu.findItem(RC.id.action_done).isVisible = true
         }
         toolbar.setNavigationOnClickListener {
             fragment.onBackPressed()
@@ -139,7 +139,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
     private fun setupBaseMenu() {
         toolbar.menu.clear()
         if (CategoryHelper.isAppManager(category)) {
-            toolbar.inflateMenu(R.menu.app_manager)
+            toolbar.inflateMenu(RC.menu.app_manager)
         } else {
             toolbar.inflateMenu(R.menu.filelist_base)
         }
@@ -174,11 +174,11 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     private fun setupAppManagerMenuItems(menu: Menu) {
         searchView = searchItem.actionView as SearchView
-        menu.findItem(R.id.action_apps_user).isChecked = true
-        menu.findItem(R.id.action_source_all).isChecked = true
-        installSourceItem = menu.findItem(R.id.action_installed_source)
-        allSourceItem = menu.findItem(R.id.action_source_all)
-        userSourceItem = menu.findItem(R.id.action_apps_user)
+        menu.findItem(RC.id.action_apps_user).isChecked = true
+        menu.findItem(RC.id.action_source_all).isChecked = true
+        installSourceItem = menu.findItem(RC.id.action_installed_source)
+        allSourceItem = menu.findItem(RC.id.action_source_all)
+        userSourceItem = menu.findItem(RC.id.action_apps_user)
     }
 
     private fun toggleViewModeMenuItemState(viewMode: ViewMode, menu: Menu) {
@@ -210,7 +210,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         searchView?.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
         searchView?.imeOptions = EditorInfo.IME_ACTION_SEARCH
         searchView?.setOnQueryTextListener(this)
-        searchView?.queryHint = searchView?.context?.getString(R.string.search_name_or_package)
+        searchView?.queryHint = searchView?.context?.getString(RC.string.search_name_or_package)
         searchView?.maxWidth = Int.MAX_VALUE
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
@@ -335,27 +335,27 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
 
     override fun onMenuItemClick(item: MenuItem): Boolean {
         when(item.itemId) {
-            R.id.action_apps_system -> {
+            RC.id.action_apps_system -> {
                 installSourceItem.isEnabled = false
                 allSourceItem.isChecked = true
-                applyBadgeToMenuItem(R.id.action_filter)
+                applyBadgeToMenuItem(RC.id.action_filter)
             }
-            R.id.action_apps_user -> {
+            RC.id.action_apps_user -> {
                 allSourceItem.isChecked = true
                 installSourceItem.isEnabled = true
-                clearBadgeMenuItem(R.id.action_filter)
+                clearBadgeMenuItem(RC.id.action_filter)
             }
-            R.id.action_apps_all -> {
+            RC.id.action_apps_all -> {
                 allSourceItem.isChecked = true
                 installSourceItem.isEnabled = true
-                applyBadgeToMenuItem(R.id.action_filter)
+                applyBadgeToMenuItem(com.siju.acexplorer.common.R.id.action_filter)
             }
-            R.id.action_playstore, R.id.action_amazon_store, R.id.action_unknown -> {
-                applyBadgeToMenuItem(R.id.action_filter)
+            RC.id.action_playstore, RC.id.action_amazon_store, RC.id.action_unknown -> {
+                applyBadgeToMenuItem(RC.id.action_filter)
             }
-            R.id.action_source_all -> {
+            RC.id.action_source_all -> {
                 if (userSourceItem.isChecked) {
-                    clearBadgeMenuItem(R.id.action_installed_source)
+                    clearBadgeMenuItem(RC.id.action_installed_source)
                 }
             }
         }

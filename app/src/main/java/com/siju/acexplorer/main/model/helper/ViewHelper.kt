@@ -67,7 +67,7 @@ object ViewHelper {
         val texts = arrayOf(context.getString(R.string.package_installer),
                             context.getString(R.string.package_installer_content),
                             context.getString(R.string.install),
-                            context.getString(R.string.dialog_cancel),
+                            context.getString(com.siju.acexplorer.common.R.string.dialog_cancel),
                             context.getString(R.string.view))
         DialogHelper.showApkDialog(context, texts, path, apkDialogListener)
     }

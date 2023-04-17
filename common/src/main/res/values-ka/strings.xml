@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Ჩამონათვალი</string>
+    <string name="action_view_grid">ქსელის ხედი</string>
+    <string name="action_view_gallery">გალერეის ხედი</string>
+    <string name="package_name">პაკეტის სახელი</string>
+    <string name="action_view">ხედი</string>
+</resources>

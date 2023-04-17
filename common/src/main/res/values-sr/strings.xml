@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Лист лист</string>
+    <string name="action_view_grid">Поглед мрежа</string>
+    <string name="action_view_gallery">Приказ галерије</string>
+    <string name="package_name">Назив пакета</string>
+    <string name="action_view">Поглед</string>
+</resources>

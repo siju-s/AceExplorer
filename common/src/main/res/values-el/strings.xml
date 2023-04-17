@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Προβολή λίστας</string>
+    <string name="action_view_grid">Προβολή πλέγματος</string>
+    <string name="action_view_gallery">Προβολή γκαλερί</string>
+    <string name="package_name">Ονομα πακέτου</string>
+    <string name="action_view">Θέα</string>
+</resources>

@@ -134,7 +134,7 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
                         setAction(R.string.restart) {
                             startUpdate()
                         }
-                        setActionTextColor(ContextCompat.getColor(context, R.color.colorAccent))
+                        setActionTextColor(ContextCompat.getColor(context, com.siju.acexplorer.common.R.color.colorAccent))
                     }
             snackbar.addCallback(object : BaseTransientBottomBar.BaseCallback<Snackbar?>() {
                 override fun onDismissed(transientBottomBar: Snackbar?, event: Int) {

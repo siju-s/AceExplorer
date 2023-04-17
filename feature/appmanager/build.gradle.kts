@@ -1,6 +1,6 @@
 plugins {
     id ("com.android.library")
-    kotlin(BuildPlugins.kotlinAndroid)
+    id("org.jetbrains.kotlin.android")
     kotlin(BuildPlugins.kotlinKapt)
     id("androidx.navigation.safeargs")
     id("dagger.hilt.android.plugin")
@@ -20,17 +20,17 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
-    kotlinOptions.apply {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    kotlin {
+        jvmToolchain(17)
     }
     compileOptions.apply {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     buildFeatures {
         viewBinding = true
-//        dataBinding = true
+        dataBinding = true
     }
     lint {
 //        isAbortOnError = false

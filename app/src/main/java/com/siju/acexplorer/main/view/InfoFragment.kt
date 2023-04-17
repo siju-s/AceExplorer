@@ -87,7 +87,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         super.onStart()
         val dialog = dialog
         dialog?.let {
-            val sheetView = it.findViewById<View>(R.id.design_bottom_sheet)
+            val sheetView = it.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
             sheetView.layoutParams.height = ViewGroup.LayoutParams.MATCH_PARENT
         }
         val view = sheetView
@@ -114,7 +114,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         val pathPlaceholder = sheetView?.findViewById<TextView>(R.id.textPathPlaceholder)
 
         if (CategoryHelper.isAppManager(category)) {
-            pathPlaceholder?.text = getString(R.string.package_name)
+            pathPlaceholder?.text = getString(com.siju.acexplorer.common.R.string.package_name)
         }
 
         if (path == null) {

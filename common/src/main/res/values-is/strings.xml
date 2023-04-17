@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Listasýn</string>
+    <string name="action_view_grid">Rist útsýni</string>
+    <string name="action_view_gallery">Gallerí útsýni</string>
+    <string name="package_name">Pakki nafn</string>
+    <string name="action_view">Útsýni</string>
+</resources>

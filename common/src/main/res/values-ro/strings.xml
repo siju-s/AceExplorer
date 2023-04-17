@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Vizualizare listă</string>
+    <string name="action_view_grid">Vizualizare grilă</string>
+    <string name="action_view_gallery">Vizualizare galerie</string>
+    <string name="package_name">Numele pachetului</string>
+    <string name="action_view">Vedere</string>
+</resources>

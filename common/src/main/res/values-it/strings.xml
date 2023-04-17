@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Visualizzazione elenco</string>
+    <string name="action_view_grid">Vista a griglia</string>
+    <string name="action_view_gallery">Vista galleria</string>
+    <string name="package_name">Nome del pacchetto</string>
+    <string name="action_view">Visualizza</string>
+</resources>

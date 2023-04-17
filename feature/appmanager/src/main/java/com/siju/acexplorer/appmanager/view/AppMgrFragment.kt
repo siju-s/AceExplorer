@@ -39,6 +39,10 @@ import com.siju.acexplorer.common.utils.ConfigurationHelper
 import com.siju.acexplorer.common.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import com.siju.acexplorer.common.R.string.*
+import com.siju.acexplorer.common.R.menu.*
+import com.siju.acexplorer.common.R as RC
+
 
 @AndroidEntryPoint
 class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.OnQueryTextListener {
@@ -61,7 +65,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     private val uninstallResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode != Activity.RESULT_OK) {
-            context.showToast(getString(R.string.msg_operation_failed))
+            context.showToast(getString(msg_operation_failed))
         }
     }
 
@@ -108,15 +112,15 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     private fun setupToolbar(toolbar: Toolbar, viewMode: ViewMode) {
         this.toolbar = toolbar
         toolbar.title = getString(R.string.app_manager)
-        toolbar.inflateMenu(R.menu.app_manager)
+        toolbar.inflateMenu(RC.menu.app_manager)
         toolbar.setOnMenuItemClickListener(this)
         setupMenuItems(toolbar.menu, viewMode)
     }
 
     private fun setupActionModeToolbar() {
         toolbar.menu.clear()
-        toolbar.setNavigationIcon(R.drawable.ic_back_white)
-        toolbar.inflateMenu(R.menu.action_mode)
+        toolbar.setNavigationIcon(com.siju.acexplorer.common.R.drawable.ic_back_white)
+        toolbar.inflateMenu(com.siju.acexplorer.common.R.menu.action_mode)
         toolbar.setOnMenuItemClickListener(this)
         toolbar.setNavigationOnClickListener {
             activity?.onBackPressed()
@@ -214,7 +218,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             toolbar.subtitle = ""
         }
         else {
-            toolbar.subtitle = context?.resources?.getQuantityString(R.plurals.number_of_apps, count, count)
+            toolbar.subtitle = context?.resources?.getQuantityString(RC.plurals.number_of_apps, count, count)
         }
     }
 
@@ -264,13 +268,13 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     private fun setupMenuItems(menu: Menu, viewMode: ViewMode) {
-        searchItem = menu.findItem(R.id.action_search)
+        searchItem = menu.findItem(RC.id.action_search)
         setupSearchView()
-        menu.findItem(R.id.action_apps_user).isChecked = true
-        menu.findItem(R.id.action_source_all).isChecked = true
-        installSourceItem = menu.findItem(R.id.action_installed_source)
-        allSourceItem = menu.findItem(R.id.action_source_all)
-        userSourceItem = menu.findItem(R.id.action_apps_user)
+        menu.findItem(RC.id.action_apps_user).isChecked = true
+        menu.findItem(RC.id.action_source_all).isChecked = true
+        installSourceItem = menu.findItem(RC.id.action_installed_source)
+        allSourceItem = menu.findItem(RC.id.action_source_all)
+        userSourceItem = menu.findItem(RC.id.action_apps_user)
         toggleViewModeMenuItemState(viewMode, menu)
     }
 
@@ -279,7 +283,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         searchView?.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
         searchView?.imeOptions = EditorInfo.IME_ACTION_SEARCH
         searchView?.setOnQueryTextListener(this)
-        searchView?.queryHint = searchView?.context?.getString(R.string.search_name_or_package)
+        searchView?.queryHint = searchView?.context?.getString(RC.string.search_name_or_package)
         searchView?.maxWidth = Int.MAX_VALUE
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {
@@ -301,56 +305,56 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     private fun toggleViewModeMenuItemState(viewMode: ViewMode, menu: Menu) {
         when (viewMode) {
-            ViewMode.LIST    -> menu.findItem(R.id.action_view_list).isChecked = true
-            ViewMode.GRID    -> menu.findItem(R.id.action_view_grid).isChecked = true
-            ViewMode.GALLERY -> menu.findItem(R.id.action_view_gallery).isChecked = true
+            ViewMode.LIST    -> menu.findItem(RC.id.action_view_list).isChecked = true
+            ViewMode.GRID    -> menu.findItem(RC.id.action_view_grid).isChecked = true
+            ViewMode.GALLERY -> menu.findItem(RC.id.action_view_gallery).isChecked = true
         }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.action_apps_system  -> {
+            RC.id.action_apps_system  -> {
                 installSourceItem.isEnabled = false
                 allSourceItem.isChecked = true
                 fetchData(AppType.SYSTEM_APP)
-                applyBadgeToMenuItem(R.id.action_filter)
+                applyBadgeToMenuItem(RC.id.action_filter)
             }
-            R.id.action_apps_user    -> {
+            RC.id.action_apps_user    -> {
                 allSourceItem.isChecked = true
                 installSourceItem.isEnabled = true
                 fetchData(AppType.USER_APP)
-                clearBadgeMenuItem(R.id.action_filter)
+                clearBadgeMenuItem(RC.id.action_filter)
             }
-            R.id.action_apps_all     -> {
+            RC.id.action_apps_all     -> {
                 allSourceItem.isChecked = true
                 installSourceItem.isEnabled = true
                 fetchData(AppType.ALL_APPS)
-                applyBadgeToMenuItem(R.id.action_filter)
+                applyBadgeToMenuItem(RC.id.action_filter)
             }
-            R.id.action_playstore    -> onAppSourceClicked(AppSource.PLAYSTORE)
-            R.id.action_amazon_store -> onAppSourceClicked(AppSource.AMAZON_APPSTORE)
-            R.id.action_unknown      -> onAppSourceClicked(AppSource.UNKNOWN)
-            R.id.action_source_all   -> {
+            RC.id.action_playstore    -> onAppSourceClicked(AppSource.PLAYSTORE)
+            RC.id.action_amazon_store -> onAppSourceClicked(AppSource.AMAZON_APPSTORE)
+            RC.id.action_unknown      -> onAppSourceClicked(AppSource.UNKNOWN)
+            RC.id.action_source_all   -> {
                 if (userSourceItem.isChecked) {
-                    clearBadgeMenuItem(R.id.action_installed_source)
+                    clearBadgeMenuItem(RC.id.action_installed_source)
                 }
                 onAppSourceClicked(AppSource.ALL)
             }
-            R.id.action_view_list    -> {
+            RC.id.action_view_list    -> {
                 onViewModeChanged(ViewMode.LIST)
             }
-            R.id.action_view_grid    -> {
+            RC.id.action_view_grid    -> {
                 onViewModeChanged(ViewMode.GRID)
             }
-            R.id.action_view_gallery -> {
+            RC.id.action_view_gallery -> {
                 onViewModeChanged(ViewMode.GALLERY)
             }
-            R.id.action_sort         -> {
+            RC.id.action_sort         -> {
                 context?.let {
                     SortDialog.show(it, viewModel.getSortMode(), sortListener, true)
                 }
             }
-            R.id.action_select_all   -> {
+            com.siju.acexplorer.common.R.id.action_select_all   -> {
                 viewModel.onSelectAllClicked()
             }
             R.id.action_delete       -> {
@@ -395,7 +399,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     private fun onAppSourceClicked(source: AppSource) {
-        applyBadgeToMenuItem(R.id.action_filter)
+        applyBadgeToMenuItem(RC.id.action_filter)
         viewModel.filterAppBySource(source)
     }
 

@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">תצוגת רשימה</string>
+    <string name="action_view_grid">נוף רשת</string>
+    <string name="action_view_gallery">תצוגת גלריה</string>
+    <string name="package_name">שם חבילה</string>
+    <string name="action_view">נוף</string>
+</resources>

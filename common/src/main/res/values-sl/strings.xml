@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Pogled seznama</string>
+    <string name="action_view_grid">Pogled mreže</string>
+    <string name="action_view_gallery">Pogled v galerijo</string>
+    <string name="package_name">Ime paketa</string>
+    <string name="action_view">Pogled</string>
+</resources>

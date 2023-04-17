@@ -48,7 +48,7 @@ class ToolsFragment : Fragment() {
         private val list = arrayListOf<ToolsInfo>()
 
         init {
-            list.add(ToolsInfo(Category.APP_MANAGER, R.drawable.ic_app_manager, context.getString(R.string.app_manager)))
+            list.add(ToolsInfo(Category.APP_MANAGER, com.siju.acexplorer.common.R.drawable.ic_app_manager, context.getString(com.siju.acexplorer.common.R.string.app_manager)))
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {

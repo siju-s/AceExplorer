@@ -40,6 +40,7 @@ import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.model.helper.SdkHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
+import com.siju.acexplorer.common.R as RC
 
 
 private const val TAG = "PermissionHelper"
@@ -188,7 +189,7 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
         }
 
         if (showSettings) {
-            buttonGrant?.setText(R.string.action_settings)
+            buttonGrant?.setText(RC.string.action_settings)
             textViewPermissionHint?.visibility = View.VISIBLE
         }
         buttonGrant?.setOnClickListener {

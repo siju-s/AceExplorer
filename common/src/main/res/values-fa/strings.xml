@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">نمای لیست</string>
+    <string name="action_view_grid">نمای شبکه</string>
+    <string name="action_view_gallery">نمای گالری</string>
+    <string name="package_name">نام بسته</string>
+    <string name="action_view">چشم انداز</string>
+</resources>

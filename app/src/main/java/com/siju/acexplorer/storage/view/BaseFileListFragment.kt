@@ -83,6 +83,7 @@ import com.siju.acexplorer.utils.InstallHelper
 import com.siju.acexplorer.utils.InstallHelper.openInstallScreen
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.*
+import com.siju.acexplorer.common.R as RC
 
 const val KEY_PATH = "path"
 const val KEY_CATEGORY = "category"
@@ -184,7 +185,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
     private fun setToolbarTitle(toolbar: Toolbar?) {
         when {
             isAppManager(category) -> {
-                toolbar?.title = resources.getString(R.string.app_manager)
+                toolbar?.title = resources.getString(RC.string.app_manager)
             }
             category == Category.FILES -> {
                 toolbar?.title = resources.getString(R.string.app_name)
@@ -215,7 +216,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
 
     private fun getFileCountText(context: Context, fileCount: Int, category: Category) : String {
         val resourceId = if (category == Category.APP_MANAGER) {
-            R.plurals.number_of_apps
+            RC.plurals.number_of_apps
         }
         else {
             R.plurals.number_of_files
@@ -699,7 +700,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
 
     private fun onOperationFailed(context: Context) {
         dismissDialog()
-        context.showToast(getString(R.string.msg_operation_failed))
+        context.showToast(getString(RC.string.msg_operation_failed))
     }
 
     private fun onOperationSuccess(operation: Operations, operationAction: OperationAction) {
@@ -842,7 +843,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
             val title = context.getString(R.string.new_folder)
             val texts = arrayOf(title, context.getString(R.string.enter_name),
                                 context.getString(R.string.create),
-                                context.getString(R.string.dialog_cancel))
+                                context.getString(RC.string.dialog_cancel))
 
             DialogHelper.showInputDialog(context, texts, Operations.FOLDER_CREATION, null,
                                          alertDialogListener)
@@ -854,7 +855,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
             val title = context.getString(R.string.new_file)
             val texts = arrayOf(title, context.getString(R.string.enter_name),
                                 context.getString(R.string.create),
-                                context.getString(R.string.dialog_cancel))
+                                context.getString(RC.string.dialog_cancel))
 
             DialogHelper.showInputDialog(context, texts, Operations.FILE_CREATION, null,
                                          alertDialogListener)
@@ -888,7 +889,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         val title = context.getString(R.string.action_rename)
         val texts = arrayOf(title, context.getString(R.string.enter_name),
                             context.getString(R.string.action_rename),
-                            context.getString(R.string.dialog_cancel))
+                            context.getString(RC.string.dialog_cancel))
         DialogHelper.showInputDialog(context, texts, Operations.RENAME, fileInfo.filePath,
                                      alertDialogListener)
     }
@@ -1157,27 +1158,27 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
                 R.id.action_search -> {
                     navigateToSearchScreen()
                 }
-                R.id.action_apps_all -> {
+                RC.id.action_apps_all -> {
                     item.isChecked = true
                     fileListViewModel.filterAppByType(AppType.ALL_APPS)
                 }
-                R.id.action_apps_user -> {
+                RC.id.action_apps_user -> {
                     item.isChecked = true
                     fileListViewModel.filterAppByType(AppType.USER_APP)
                 }
-                R.id.action_apps_system -> {
+                RC.id.action_apps_system -> {
                     item.isChecked = true
                     fileListViewModel.filterAppByType(AppType.SYSTEM_APP)
                 }
-                R.id.action_playstore -> {
+                RC.id.action_playstore -> {
                     item.isChecked = true
                     fileListViewModel.filterAppBySource(AppSource.PLAYSTORE)
                 }
-                R.id.action_amazon_store -> {
+                RC.id.action_amazon_store -> {
                     item.isChecked = true
                     fileListViewModel.filterAppBySource(AppSource.AMAZON_APPSTORE)
                 }
-                R.id.action_unknown -> {
+                RC.id.action_unknown -> {
                     item.isChecked = true
                     fileListViewModel.filterAppBySource(AppSource.UNKNOWN)
                 }

@@ -1,0 +1,7 @@
+<resources>
+    <string name="action_view_list">Lijstweergave</string>
+    <string name="action_view_grid">Rasterweergave</string>
+    <string name="action_view_gallery">Galerijweergave</string>
+    <string name="package_name">Verpakkingsnaam</string>
+    <string name="action_view">Visie</string>
+</resources>
