@@ -1,5 +1,5 @@
-const val kotlinVersion = "1.8.10"
-const val gradleVersion = "8.0.0"
+const val kotlinVersion = "1.8.20"
+const val gradleVersion = "8.0.1"
 
 object BuildPlugins {
 
