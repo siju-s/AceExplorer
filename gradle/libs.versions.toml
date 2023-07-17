@@ -1,0 +1,108 @@
+[versions]
+kotlin = "1.8.20"
+compose = "1.4.2"
+activityKtx = "1.6.1"
+fragmentKtx = "1.5.5"
+appCompat = "1.6.1"
+design       = "1.8.0"
+support      = "1.0.0"
+annotation   = "1.6.0"
+recyclerview = "1.3.0"
+preference   = "1.2.0"
+viewpager    = "1.0.0"
+lifecycle    = "2.6.0"
+room         = "2.3.0"
+playCore     = "1.10.3"
+navigation   = "2.5.3"
+constraintLayout = "2.1.4"
+exif             = "1.3.6"
+activity         = "1.6.1"
+fragment         = "1.5.5"
+swiperefresh     = "1.1.0"
+pagination       = "3.1.1"
+hilt = "2.45"
+
+analytics    = "21.2.0"
+crashlytics  = "18.3.5"
+coroutine      = "1.4.1"
+
+# External libraries
+gson = "2.8.6"
+glide = "4.12.0"
+apacheCompress = "1.20"
+ratethisapp = "1.2.0"
+floatingButton     = "1.10.1"
+leakCanary          = "2.6"
+photoView           = "2.3.0"
+fastscrollRecycler = "2.0.1"
+rootTools          = "5.0"
+rootShell          = "1.6"
+
+# Test libraries
+junit =    "4.12"
+mockito  = "3.3.3"
+
+[libraries]
+compose_runtime = {module = "androidx.compose.runtime:runtime", version.ref = "compose"}
+compose_ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+compose_material = { module = "androidx.compose.material:material", version.ref = "compose" }
+compose_tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+
+#compose_icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
+activityKtx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+fragmentKtx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
+appCompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
+
+lifecycle_runtime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+lifecycle_liveData = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
+viewModelKtx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+lifecycle_compiler = { group = "androidx.lifecycle", name = "lifecycle-compiler", version.ref = "lifecycle" }
+
+design = { group = "com.google.android.material", name = "material", version.ref = "design" }
+preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
+annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+viewpager = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager" }
+recyclerView = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+cardView = { group = "androidx.cardview", name = "cardview", version.ref = "support" }
+palette = { group = "androidx.palette", name = "palette", version.ref = "support" }
+constraintLayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }
+swipeRefresh = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefresh" }
+pagination = { group = "androidx.paging", name = "paging-runtime", version.ref = "pagination" }
+room_runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room_compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
+play_core = { group = "com.google.android.play", name = "core", version.ref = "playCore" }
+
+navigation = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
+navigation_ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
+navfeature = { group = "androidx.navigation", name = "navigation-dynamic-features-fragment", version.ref = "navigation" }
+
+hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt_compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+exif = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exif" }
+
+analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx", version.ref = "analytics" }
+crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx", version.ref = "crashlytics" }
+stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk7", version.ref = "kotlin" }
+coroutine_core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutine" }
+coroutine_android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutine" }
+
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+glide_runtime = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide_compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+apacheCompress = { group = "org.apache.commons", name = "commons-compress", version.ref = "apacheCompress" }
+floatingButton = { group = "com.getbase", name = "floatingactionbutton", version.ref = "floatingButton" }
+rateApp = { group = "io.github.kobakei", name = "ratethisapp", version.ref = "ratethisapp" }
+leakCanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakCanary" }
+photoView = { group = "com.github.chrisbanes", name = "PhotoView", version.ref = "photoView" }
+fastScrollRecyclerview = { group = "com.simplecityapps", name = "recyclerview-fastscroll", version.ref = "fastscrollRecycler" }
+root_tools = { group = "com.github.Stericson", name = "RootTools", version.ref = "rootTools" }
+root_shell = { group = "com.github.Stericson", name = "RootShell", version.ref = "rootShell" }
+
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
+
+
+
+
+[bundles]
+compose = ["compose.ui", "compose.material", "compose.tooling", "compose.runtime"]

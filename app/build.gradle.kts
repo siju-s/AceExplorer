@@ -73,7 +73,7 @@ android {
 
     sourceSets {
         getByName("main").res.srcDirs(
-                Libraries.ResDirs.directories
+                ResDirs.directories
         )
     }
 
@@ -95,6 +95,11 @@ android {
     buildFeatures {
         dataBinding = true
         buildConfig= true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.6"
     }
 
     sonarqube {
@@ -129,43 +134,49 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
-    implementation(Libraries.ExternalLibs.rootTools) {
+    implementation(libs.root.tools) {
         exclude(module = "RootShell")
     }
     implementation(project(":common"))
     implementation(project(":feature:appmanager"))
 
-    implementation(Libraries.ExternalLibs.rootShell)
+    implementation(libs.root.shell)
 
-    implementation(Libraries.viewpager)
-    implementation(Libraries.cardView)
-    implementation(Libraries.pagination)
+    implementation(libs.viewpager)
+    implementation(libs.cardView)
+    implementation(libs.pagination)
 
-    kapt(Libraries.lifecycleCompiler)
+    implementation(libs.compose.runtime)
+    implementation(libs.compose.ui)
+    implementation(libs.compose.material)
 
-    implementation(Libraries.hilt)
-    kapt(Libraries.hiltCompiler)
 
-    implementation(Libraries.roomRuntime)
-    kapt(Libraries.roomCompiler)
 
-    kapt(Libraries.annotation)
+    kapt(libs.lifecycle.compiler)
 
-    implementation(Libraries.Firebase.analytics)
-    implementation(Libraries.Firebase.crashlytics)
+    implementation(libs.hilt)
+    kapt(libs.hilt.compiler)
 
-    implementation(Libraries.ExternalLibs.gson)
-    implementation(Libraries.playCore)
+    implementation(libs.room.runtime)
+    kapt(libs.room.compiler)
 
-    kapt(Libraries.ExternalLibs.glideCompiler)
+    kapt(libs.annotation)
 
-    implementation(Libraries.ExternalLibs.apacheCompress)
-    implementation(Libraries.ExternalLibs.floatingButton)
-    implementation(Libraries.ExternalLibs.rateApp)
-    implementation(Libraries.ExternalLibs.photoView)
+    implementation(libs.analytics)
+    implementation(libs.crashlytics)
+
+    implementation(libs.gson)
+    implementation(libs.play.core)
+
+    kapt(libs.glide.compiler)
+
+    implementation(libs.apacheCompress)
+    implementation(libs.floatingButton)
+    implementation(libs.rateApp)
+    implementation(libs.photoView)
 
 //    debugImplementation(Libraries.ExternalLibs.leakCanary)
 
-    testImplementation(Libraries.TestLibs.junit)
-    testImplementation(Libraries.TestLibs.mockito)
+    testImplementation(libs.junit)
+    testImplementation(libs.mockito)
 }

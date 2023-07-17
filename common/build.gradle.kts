@@ -35,34 +35,34 @@ android {
 
 dependencies {
 
-    api(Libraries.Kotlin.stdlib)
-    api(Libraries.Kotlin.coroutineCore)
-    api(Libraries.Kotlin.coroutineAndroid)
+    api(libs.stdlib)
+    api(libs.coroutine.core)
+    api(libs.coroutine.android)
 
-    api(Libraries.appCompat)
-    api(Libraries.activityKtx)
-    api(Libraries.fragmentKtx)
-    api(Libraries.preference)
+    api(libs.appCompat)
+    api(libs.activityKtx)
+    api(libs.fragmentKtx)
+    api(libs.preference)
 
-    api(Libraries.viewModelKtx)
-    api(Libraries.lifecycleLiveData)
-    api(Libraries.lifecycleRuntime)
+    api(libs.viewModelKtx)
+    api(libs.lifecycle.liveData)
+    api(libs.lifecycle.runtime)
 
-    kapt(Libraries.lifecycleCompiler)
+    kapt(libs.lifecycle.compiler)
 
-    api(Libraries.recyclerView)
-    api(Libraries.design)
-    api(Libraries.swipeRefresh)
-    api(Libraries.constraintLayout)
-    api(Libraries.palette)
+    api(libs.recyclerView)
+    api(libs.design)
+    api(libs.swipeRefresh)
+    api(libs.constraintLayout)
+    api(libs.palette)
 
-    api(Libraries.navigation)
-    api(Libraries.navigationUi)
-    api(Libraries.navFeature)
-    api(Libraries.exif)
+    api(libs.navigation)
+    api(libs.navigation.ui)
+//    api(libs.navigation.navfeature)
+    api(libs.exif)
 
-    api(Libraries.ExternalLibs.glideRuntime)
-    kapt(Libraries.ExternalLibs.glideCompiler)
-    api(Libraries.ExternalLibs.fastScrollRecyclerview)
+    api(libs.glide.runtime)
+    kapt(libs.glide.compiler)
+    api(libs.fastScrollRecyclerview)
 
 }

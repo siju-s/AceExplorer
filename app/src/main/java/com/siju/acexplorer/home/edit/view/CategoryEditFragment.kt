@@ -130,7 +130,7 @@ class CategoryEditFragment : Fragment(), OnStartDragListener {
 
     private fun getGridColumns(): Int {
         val imageSize = resources.getDimensionPixelSize(R.dimen.home_library_width) +
-                2 * resources.getDimensionPixelSize(R.dimen.margin_16)
+                2 * resources.getDimensionPixelSize(com.siju.acexplorer.common.R.dimen.margin_16)
         return Resources.getSystem().displayMetrics.widthPixels / imageSize
     }
 

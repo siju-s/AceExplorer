@@ -5,4 +5,7 @@
     <dimen name="dialog_margin">16dp</dimen>
     <dimen name="dialog_button_margin">16dp</dimen>
     <dimen name="dialog_radio_btn_text_size">16sp</dimen>
+    <dimen name="margin_16">16dp</dimen>
+    <dimen name="height_48">48dp</dimen>
+
 </resources>

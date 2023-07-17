@@ -43,12 +43,12 @@ android {
 dependencies {
     implementation(project(":common"))
 
-    kapt(Libraries.lifecycleCompiler)
+    kapt(libs.lifecycle.compiler)
 
-    implementation(Libraries.hilt)
-    kapt(Libraries.hiltCompiler)
-    kapt(Libraries.annotation)
+    implementation(libs.hilt)
+    kapt(libs.hilt.compiler)
+    kapt(libs.annotation)
 
-    kapt(Libraries.ExternalLibs.glideCompiler)
+    kapt(libs.glide.compiler)
 
 }
