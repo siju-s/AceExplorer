@@ -16,7 +16,7 @@ plugins {
 val keyProperties = Properties()
 try {
     keyProperties.load(FileInputStream(rootProject.file("keystore.properties")))
-} catch (exception: java.io.IOException) {
+} catch (_: java.io.IOException) {
 
 }
 

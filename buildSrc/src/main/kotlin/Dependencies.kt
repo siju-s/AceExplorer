@@ -1,5 +1,5 @@
 const val kotlinVersion = "1.8.20"
-const val gradleVersion = "8.0.2"
+const val gradleVersion = "8.2.0"
 
 object BuildPlugins {
 
@@ -28,7 +28,7 @@ object BuildPlugins {
 
 object AndroidSdk {
     const val min = 21
-    const val compile = 33
+    const val compile = 34
     const val target = compile
     const val applicationId = "com.siju.acexplorer"
 }
