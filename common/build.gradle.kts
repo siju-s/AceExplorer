@@ -29,8 +29,13 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        compose = true
     }
     namespace = "com.siju.acexplorer.common"
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.6"
+    }
 }
 
 dependencies {
@@ -62,7 +67,15 @@ dependencies {
     api(libs.exif)
 
     api(libs.glide.runtime)
+    api(libs.glide.compose)
     kapt(libs.glide.compiler)
     api(libs.fastScrollRecyclerview)
+
+    api(libs.compose.runtime)
+    api(libs.compose.ui)
+    api(libs.compose.material)
+    api(libs.compose.tooling)
+    api(libs.compose.livedata)
+    api(libs.compose.compiler)
 
 }

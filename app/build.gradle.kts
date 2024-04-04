@@ -99,7 +99,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.6"
+        kotlinCompilerExtensionVersion = "1.5.6"
     }
 
     sonarqube {
@@ -149,6 +149,9 @@ dependencies {
     implementation(libs.compose.runtime)
     implementation(libs.compose.ui)
     implementation(libs.compose.material)
+    implementation(libs.compose.tooling)
+    implementation(libs.compose.livedata)
+
 
 
 
@@ -166,7 +169,10 @@ dependencies {
     implementation(libs.crashlytics)
 
     implementation(libs.gson)
-    implementation(libs.play.core)
+//    implementation(libs.play.core)
+    implementation(libs.play.app.update)
+    implementation(libs.play.review)
+
 
     kapt(libs.glide.compiler)
 

@@ -48,7 +48,8 @@ class OperationHelper(val context: Context) {
     private fun registerReceiver() {
         val intentFilter = IntentFilter(ACTION_OP_REFRESH)
         receiverRegistered = true
-        context.registerReceiver(operationResultReceiver, intentFilter)
+        context.registerReceiver(operationResultReceiver, intentFilter,
+            Context.RECEIVER_NOT_EXPORTED)
     }
 
     private fun unregisterReceiver() {

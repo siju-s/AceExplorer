@@ -42,9 +42,9 @@ import com.siju.acexplorer.main.MainCommunicator
 import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.root.RootUtils
-import com.siju.acexplorer.theme.CURRENT_THEME
-import com.siju.acexplorer.theme.PREFS_THEME
-import com.siju.acexplorer.theme.Theme
+import com.siju.acexplorer.common.theme.CURRENT_THEME
+import com.siju.acexplorer.common.theme.PREFS_THEME
+import com.siju.acexplorer.common.theme.Theme
 import com.siju.acexplorer.utils.LocaleHelper
 import com.siju.acexplorer.utils.NetworkHelper
 

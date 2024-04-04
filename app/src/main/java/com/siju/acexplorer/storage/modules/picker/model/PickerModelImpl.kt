@@ -20,7 +20,7 @@ import com.siju.acexplorer.storage.modules.picker.ringtone.RingtoneHelper
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.view.KEY_PICKER_TYPE
 import com.siju.acexplorer.storage.modules.picker.view.RINGTONE_TYPE
-import com.siju.acexplorer.theme.Theme
+import com.siju.acexplorer.common.theme.Theme
 import java.io.File
 import javax.inject.Inject
 

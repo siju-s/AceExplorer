@@ -11,25 +11,78 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.EditorInfo
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
+import com.siju.acexplorer.appmanager.AppInfoProvider
 import com.siju.acexplorer.appmanager.R
 import com.siju.acexplorer.appmanager.databinding.AppsListContainerBinding
 import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.appmanager.types.AppInfo
+import com.siju.acexplorer.appmanager.view.AppMgrFragmentDirections
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
 import com.siju.acexplorer.common.ActionModeState
 import com.siju.acexplorer.common.SortDialog
@@ -41,7 +94,15 @@ import com.siju.acexplorer.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import com.siju.acexplorer.common.R.string.*
 import com.siju.acexplorer.common.R.menu.*
+import com.siju.acexplorer.common.theme.LocalDim
+import com.siju.acexplorer.common.theme.MyApplicationTheme
+import com.siju.acexplorer.common.theme.Theme
+import com.siju.acexplorer.common.theme.itemSelection
+import com.siju.acexplorer.common.theme.itemSelectionDark
+import com.siju.acexplorer.common.theme.transparent
+import com.siju.acexplorer.common.utils.DateUtils
 import com.siju.acexplorer.common.R as RC
+
 
 
 @AndroidEntryPoint
@@ -63,14 +124,24 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     private lateinit var bottomToolbar: Toolbar
     private var packageReceiverRegistered = false
 
-    private val uninstallResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode != Activity.RESULT_OK) {
-            context.showToast(getString(msg_operation_failed))
+    private val uninstallResultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode != Activity.RESULT_OK) {
+                context.showToast(getString(msg_operation_failed))
+            }
         }
-    }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
         _binding = AppsListContainerBinding.inflate(inflater, container, false)
+        _binding!!.appsListContainer.composeView.setContent {
+            MyApplicationTheme(appTheme = Theme.DARK, isDarkMode = true) {
+                SetupLazyList(viewModel)
+            }
+        }
         return binding.root
     }
 
@@ -96,9 +167,135 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             })
         setupToolbar(binding.appBarContainer.toolbarContainer.toolbar, viewMode)
         this.bottomToolbar = binding.appsListContainer.bottomToolbar
-        val appsList = binding.appsListContainer.appsList
-        setLayoutManager(appsList, viewMode)
-        appsList.adapter = adapter
+
+
+//        val appsList = binding.appsListContainer.appsList
+//        setLayoutManager(appsList, viewMode)
+//        appsList.adapter = adapter
+    }
+
+
+    @Composable
+    private fun SetupLazyList(viewModel: AppMgrViewModel) {
+        val apps = viewModel.appsList.observeAsState(initial = emptyList())
+
+        LazyColumn {
+            itemsIndexed(apps.value) { index, item ->
+                println("ITEM SET :${item.packageName}")
+                ListItem(item, requestManager = Glide.with(requireContext()),
+                    selected = viewModel.isSelected(index), onItemClick = {
+                    onItemClick(it, index)
+                }, onItemLongClick = {
+                    onItemLongClicked(index)
+                })
+            }
+        }
+
+    }
+
+
+    @OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
+    @Composable
+    fun ListItem(
+         data: AppInfo, modifier: Modifier = Modifier,
+        requestManager: RequestManager = Glide.with(LocalContext.current),
+        selected: Boolean,
+         onItemClick: (AppInfo) -> Unit,
+         onItemLongClick : (AppInfo) -> Unit
+    ) {
+        var visible by remember { mutableStateOf(false) }
+        var selectedPos by remember { mutableStateOf(false) }
+        val drawableResource = if (selectedPos) com.siju.acexplorer.common.R.drawable.ic_select_checked else com.siju.acexplorer.common.R.drawable.ic_select_unchecked
+        val haptics = LocalHapticFeedback.current
+        val bgColor = if (selectedPos) itemSelectionDark else transparent
+
+        Surface(color = bgColor, modifier = modifier.combinedClickable(
+            onClick = {
+                visible = !viewModel.isActionModeActive()
+                println("onclick Visible :$visible")
+                selectedPos = !selectedPos
+                onItemClick(data)
+                      },
+            onLongClick = {
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                visible = !viewModel.isActionModeActive()
+                selectedPos = !selectedPos
+                println("longclick Visible :$visible")
+                onItemLongClick(data)
+            })) {
+            Column(modifier = Modifier
+                .defaultMinSize(minHeight = dimensionResource(id = R.dimen.app_list_item_min_height))
+                .padding(LocalDim.current.spaceSmall)) {
+                if (visible) {
+                    Image(
+                        painterResource(id = drawableResource),
+                        contentDescription = "Select",
+                        modifier = Modifier
+                            .width(20.dp)
+                            .height(20.dp),
+                    )
+                }
+                Row(modifier.fillMaxWidth()) {
+                    GlideImage(
+                        model = data.packageName,
+                        contentDescription = "App icon",
+                        modifier = Modifier
+                            .width(LocalDim.current.space50)
+                            .height(LocalDim.current.space50)
+                            .align(Alignment.CenterVertically),
+                        loading = placeholder(com.siju.acexplorer.common.R.drawable.ic_apk_green)
+                    ) {
+                        it.thumbnail(
+                            requestManager
+                                .asDrawable()
+                                .load(data.name)
+                        )
+                    }
+                    Column(Modifier.padding(LocalDim.current.spaceSmall)) {
+                        Text(text = data.name)
+                        Text(text = data.packageName)
+                    }
+                    Spacer(Modifier.weight(1f))
+
+                }
+                Text(
+                    text = DateUtils.convertDate(data.installDate), modifier = Modifier
+                        .wrapContentHeight()
+                        .align(Alignment.End)
+                )
+
+            }
+
+        }
+    }
+
+    @Composable
+    @Preview
+    fun ListItemPreview(@PreviewParameter(AppInfoProvider::class) data: AppInfo) {
+        ListItem(
+            data = data,
+            selected = false,
+            onItemClick = {  },
+            onItemLongClick = { }
+        )
+    }
+
+
+    private fun onSelection(context: Context, rootView: View, selected: Boolean, imageSelection : ImageView) {
+        val color = ContextCompat.getColor(context, com.siju.acexplorer.common.R.color.actionModeItemSelected)
+        when {
+            selected               -> {
+                rootView.setBackgroundColor(color)
+                imageSelection.visibility = View.VISIBLE
+                imageSelection.isSelected = true
+
+            }
+            else                   -> {
+                rootView.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+                imageSelection.isSelected = false
+                imageSelection.visibility = View.GONE
+            }
+        }
     }
 
     private fun onItemLongClicked(pos: Int) {
@@ -137,9 +334,9 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             it?.let {
                 Log.d("AppFrag", "initObservers: ${it.size}")
                 hideLoadingIndicator()
-                binding.appsListContainer.appsList.layoutManager?.scrollToPosition(0)
+//                binding.appsListContainer.appsList.layoutManager?.scrollToPosition(0)
                 setToolbarSubtitle(it.size)
-                adapter.onDataLoaded(it)
+//                adapter.onDataLoaded(it)
             }
         })
         viewModel.updateList.observe(viewLifecycleOwner, {
@@ -175,13 +372,18 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         viewModel.multiOperationData.observe(viewLifecycleOwner, {
             it?.let {
                 for (item in it) {
-                    AppHelper.uninstallApp(activity as? AppCompatActivity, item.packageName, uninstallResultLauncher)
+                    AppHelper.uninstallApp(
+                        activity as? AppCompatActivity,
+                        item.packageName,
+                        uninstallResultLauncher
+                    )
                 }
             }
         })
         viewModel.navigateToAppDetail.observe(viewLifecycleOwner, {
             it?.getContentIfNotHandled()?.let {
-                val directions = AppMgrFragmentDirections.actionAppMgrFragmentToAppDetailActivity(it.first.packageName)
+                val directions =
+                    AppMgrFragmentDirections.actionAppMgrFragmentToAppDetailActivity(it.first.packageName)
                 findNavController().navigate(directions)
             }
         })
@@ -213,12 +415,12 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         binding.appsListContainer.swipeRefresh.isRefreshing = false
     }
 
-    private fun setToolbarSubtitle(count : Int?) {
+    private fun setToolbarSubtitle(count: Int?) {
         if (count == 0 || count == null) {
             toolbar.subtitle = ""
-        }
-        else {
-            toolbar.subtitle = context?.resources?.getQuantityString(RC.plurals.number_of_apps, count, count)
+        } else {
+            toolbar.subtitle =
+                context?.resources?.getQuantityString(RC.plurals.number_of_apps, count, count)
         }
     }
 
@@ -226,8 +428,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         if (actionModeState == ActionModeState.STARTED) {
             adapter.setSelectionMode(true)
             onActionModeStarted()
-        }
-        else {
+        } else {
             adapter.setSelectionMode(false)
             onActionModeEnd()
         }
@@ -305,59 +506,68 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     private fun toggleViewModeMenuItemState(viewMode: ViewMode, menu: Menu) {
         when (viewMode) {
-            ViewMode.LIST    -> menu.findItem(RC.id.action_view_list).isChecked = true
-            ViewMode.GRID    -> menu.findItem(RC.id.action_view_grid).isChecked = true
+            ViewMode.LIST -> menu.findItem(RC.id.action_view_list).isChecked = true
+            ViewMode.GRID -> menu.findItem(RC.id.action_view_grid).isChecked = true
             ViewMode.GALLERY -> menu.findItem(RC.id.action_view_gallery).isChecked = true
         }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            RC.id.action_apps_system  -> {
+            RC.id.action_apps_system -> {
                 installSourceItem.isEnabled = false
                 allSourceItem.isChecked = true
                 fetchData(AppType.SYSTEM_APP)
                 applyBadgeToMenuItem(RC.id.action_filter)
             }
-            RC.id.action_apps_user    -> {
+
+            RC.id.action_apps_user -> {
                 allSourceItem.isChecked = true
                 installSourceItem.isEnabled = true
                 fetchData(AppType.USER_APP)
                 clearBadgeMenuItem(RC.id.action_filter)
             }
-            RC.id.action_apps_all     -> {
+
+            RC.id.action_apps_all -> {
                 allSourceItem.isChecked = true
                 installSourceItem.isEnabled = true
                 fetchData(AppType.ALL_APPS)
                 applyBadgeToMenuItem(RC.id.action_filter)
             }
-            RC.id.action_playstore    -> onAppSourceClicked(AppSource.PLAYSTORE)
+
+            RC.id.action_playstore -> onAppSourceClicked(AppSource.PLAYSTORE)
             RC.id.action_amazon_store -> onAppSourceClicked(AppSource.AMAZON_APPSTORE)
-            RC.id.action_unknown      -> onAppSourceClicked(AppSource.UNKNOWN)
-            RC.id.action_source_all   -> {
+            RC.id.action_unknown -> onAppSourceClicked(AppSource.UNKNOWN)
+            RC.id.action_source_all -> {
                 if (userSourceItem.isChecked) {
                     clearBadgeMenuItem(RC.id.action_installed_source)
                 }
                 onAppSourceClicked(AppSource.ALL)
             }
-            RC.id.action_view_list    -> {
+
+            RC.id.action_view_list -> {
                 onViewModeChanged(ViewMode.LIST)
             }
-            RC.id.action_view_grid    -> {
+
+            RC.id.action_view_grid -> {
                 onViewModeChanged(ViewMode.GRID)
             }
+
             RC.id.action_view_gallery -> {
                 onViewModeChanged(ViewMode.GALLERY)
             }
-            RC.id.action_sort         -> {
+
+            RC.id.action_sort -> {
                 context?.let {
                     SortDialog.show(it, viewModel.getSortMode(), sortListener, true)
                 }
             }
-            com.siju.acexplorer.common.R.id.action_select_all   -> {
+
+            com.siju.acexplorer.common.R.id.action_select_all -> {
                 viewModel.onSelectAllClicked()
             }
-            R.id.action_delete       -> {
+
+            R.id.action_delete -> {
                 viewModel.onDeleteClicked()
             }
 
@@ -370,11 +580,11 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     private fun onViewModeChanged(viewMode: ViewMode) {
         if (adapter.getViewMode() != viewMode) {
-            val fileList = binding.appsListContainer.appsList
-            setLayoutManager(fileList, viewMode)
-            adapter.setViewMode(viewMode)
-            fileList.adapter = adapter
-            viewModel.saveViewMode(viewMode)
+//            val fileList = binding.appsListContainer.appsList
+//            setLayoutManager(fileList, viewMode)
+//            adapter.setViewMode(viewMode)
+////            fileList.adapter = adapter
+//            viewModel.saveViewMode(viewMode)
         }
     }
 
@@ -382,7 +592,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         Log.d("AppMgr", "setLayoutManager viewMode: $viewMode")
         val context = fileList.context
         fileList.layoutManager = when (viewMode) {
-            ViewMode.LIST                   -> LinearLayoutManager(context)
+            ViewMode.LIST -> LinearLayoutManager(context)
             ViewMode.GRID, ViewMode.GALLERY -> {
                 val gridColumns = getGridColumns(resources.configuration, viewMode)
                 val gridLayoutManager = CustomGridLayoutManager(
@@ -425,7 +635,11 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         val context = context
         context ?: return
         menuItemBadge?.let {
-            BadgeUtils.detachBadgeDrawable(it, binding.appBarContainer.toolbarContainer.toolbar, itemId)
+            BadgeUtils.detachBadgeDrawable(
+                it,
+                binding.appBarContainer.toolbarContainer.toolbar,
+                itemId
+            )
         }
         menuItemBadge = null
     }

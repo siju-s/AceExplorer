@@ -1,9 +1,9 @@
 plugins {
     id ("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    kotlin(BuildPlugins.kotlinKapt)
+    kotlin(BuildPlugins.kotlinAndroid)
     id("androidx.navigation.safeargs")
     id("dagger.hilt.android.plugin")
+    kotlin(BuildPlugins.kotlinKapt)
 }
 
 android {
@@ -31,7 +31,13 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        compose = true
     }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.6"
+    }
+
     lint {
 //        isAbortOnError = false
         lintConfig = File("${project.rootDir}/lint/lint-config.xml")
@@ -43,12 +49,16 @@ android {
 dependencies {
     implementation(project(":common"))
 
-    kapt(libs.lifecycle.compiler)
+//    kapt(libs.lifecycle.compiler)
 
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
     kapt(libs.annotation)
 
-    kapt(libs.glide.compiler)
+//    kapt(libs.glide.compiler)
+//    implementation(libs.glide.compose)
+
+
+
 
 }

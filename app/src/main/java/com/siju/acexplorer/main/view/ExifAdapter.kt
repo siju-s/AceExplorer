@@ -9,6 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.ExifData
@@ -31,7 +41,7 @@ class ExifAdapter(private val exif: ArrayList<ExifData>, private val latLong: Do
         return when (viewtype) {
             VIEW_MAIN -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.info_exif_item, parent, false)
-                ViewHolder(view)
+                ViewHolder(ComposeView(view.context))
             }
             else      -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.info_exif_gps, parent, false)
@@ -61,13 +71,22 @@ class ExifAdapter(private val exif: ArrayList<ExifData>, private val latLong: Do
 
     }
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        private val labelText: TextView = view.findViewById(R.id.textLabel)
-        private val valueText: TextView = view.findViewById(R.id.textLabelValue)
+    class ViewHolder(val view: ComposeView) : RecyclerView.ViewHolder(view) {
+//        private val labelText: TextView = view.findViewById(R.id.textLabel)
+//        private val valueText: TextView = view.findViewById(R.id.textLabelValue)
 
         fun bind(tag: String, value: String) {
-            labelText.text = tag
-            valueText.text = value
+//            labelText.text = tag
+//            valueText.text = value
+            view.setContent {
+                MaterialTheme {
+                    Row(modifier = Modifier.fillMaxSize()) {
+                        Text(tag, style = TextStyle(fontStyle = FontStyle.Italic))
+                        Text(value)
+                    }
+                }
+
+            }
         }
     }
 

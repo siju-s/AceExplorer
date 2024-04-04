@@ -20,6 +20,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.os.Environment
+import android.os.storage.StorageManager
+import android.os.storage.StorageVolume
 import android.text.TextUtils
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
@@ -153,6 +155,7 @@ object StorageUtils {
         get() {
             val context = AceApplication.appContext
             val paths = ArrayList<String>()
+            listExFATDrives()
 
             populateExternalFilesDirPaths(context, paths)
 
@@ -162,6 +165,29 @@ object StorageUtils {
             }
             return paths.toTypedArray()
         }
+
+    fun listExFATDrives(): List<String> {
+        val context = AceApplication.appContext
+        val exFATDrives = mutableListOf<String>()
+
+        val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
+        val storageVolumes = storageManager.storageVolumes
+
+        for (storageVolume in storageVolumes) {
+            if (storageVolume.isRemovable && isExFAT(storageVolume)) {
+                val path = storageVolume.directory!!.absolutePath
+                exFATDrives.add(path)
+            }
+        }
+
+        return exFATDrives
+    }
+
+    private fun isExFAT(storageVolume: StorageVolume): Boolean {
+        // Check if the filesystem type is exFAT
+        val fsType = storageVolume.uuid ?: ""
+        return fsType.equals("exfat", ignoreCase = true)
+    }
 
     private fun populateExternalFilesDirPaths(context: Context, paths: ArrayList<String>) {
         val externalFilesDirs = context.getExternalFilesDirs("external") ?: return

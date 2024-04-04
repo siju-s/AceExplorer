@@ -18,7 +18,7 @@ package com.siju.acexplorer
 
 import android.app.Application
 import com.kobakei.ratethisapp.RateThisApp
-import com.siju.acexplorer.theme.Theme
+import com.siju.acexplorer.common.theme.Theme
 import dagger.hilt.android.HiltAndroidApp
 
 private const val RATE_APP_CRITERIA_INSTALL_DAYS = 7

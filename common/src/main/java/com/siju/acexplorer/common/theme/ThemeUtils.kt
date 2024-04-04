@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.siju.acexplorer.theme
+package com.siju.acexplorer.common.theme
 
 import android.content.Context
 import android.util.Log
@@ -25,7 +25,8 @@ import androidx.preference.PreferenceManager
 const val PREFS_THEME = "prefThemes"
 const val CURRENT_THEME = "theme"
 
-enum class Theme constructor(val value: Int) {
+
+enum class Theme(val value: Int) {
 
     LIGHT(0),
     DARK(1),
@@ -50,7 +51,7 @@ enum class Theme constructor(val value: Int) {
         fun getUserThemeValue(context: Context?): Int {
             context ?: return DARK.value
             return PreferenceManager.getDefaultSharedPreferences(context)
-                    .getInt(CURRENT_THEME, DARK.value)
+                .getInt(CURRENT_THEME, DARK.value)
         }
 
         fun setTheme(theme: Theme?) {
@@ -66,3 +67,7 @@ enum class Theme constructor(val value: Int) {
     }
 
 }
+
+
+
+

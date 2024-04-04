@@ -33,7 +33,7 @@ import com.siju.acexplorer.preferences.SharedPreferenceBooleanLiveData
 import com.siju.acexplorer.preferences.SharedPreferenceIntLiveData
 import com.siju.acexplorer.settings.SettingsPreferenceFragment
 import com.siju.acexplorer.storage.helper.SortModeHelper
-import com.siju.acexplorer.theme.Theme
+import com.siju.acexplorer.common.theme.Theme
 import com.siju.acexplorer.utils.Utils
 
 

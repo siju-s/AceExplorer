@@ -16,7 +16,7 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.preferences.PreferenceConstants
 import com.siju.acexplorer.storage.helper.SortModeHelper
-import com.siju.acexplorer.theme.Theme
+import com.siju.acexplorer.common.theme.Theme
 
 enum class Pane {
     SINGLE,

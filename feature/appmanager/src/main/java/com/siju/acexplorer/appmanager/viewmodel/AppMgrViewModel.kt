@@ -162,7 +162,7 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
 
     fun isSelected(pos: Int) = multiSelection.isSelected(pos)
 
-    private fun isActionModeActive() = actionModeState.value == ActionModeState.STARTED
+    fun isActionModeActive() = actionModeState.value == ActionModeState.STARTED
 
     fun onSelectAllClicked() {
         val list = _appsList.value

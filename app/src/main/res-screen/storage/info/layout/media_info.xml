@@ -37,7 +37,7 @@
                 android:id="@+id/imageIcon"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/info_image_height"
-                android:scaleType="centerCrop"
+                android:scaleType="fitCenter"
                 app:layout_collapseMode="parallax"
                 app:layout_collapseParallaxMultiplier="1.0"
                 tools:ignore="ContentDescription" />

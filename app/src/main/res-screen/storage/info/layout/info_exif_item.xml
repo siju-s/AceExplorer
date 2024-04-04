@@ -6,27 +6,32 @@
     android:layout_height="wrap_content"
     android:weightSum="1"
     android:orientation="horizontal">
+    
+    <androidx.compose.ui.platform.ComposeView
+        android:id="@+id/compose_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
-    <TextView
-        android:id="@+id/textLabel"
-        style="@style/InfoItem"
-        android:layout_weight=".3"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="@dimen/margin_16"
-        android:textStyle="bold"
-        tools:text="Title" />
+<!--    <TextView-->
+<!--        android:id="@+id/textLabel"-->
+<!--        style="@style/InfoItem"-->
+<!--        android:layout_weight=".3"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="@dimen/margin_16"-->
+<!--        android:textStyle="bold"-->
+<!--        tools:text="Title" />-->
 
-    <TextView
-        android:id="@+id/textLabelValue"
-        style="@style/InfoItemDetail"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight=".7"
-        android:layout_marginEnd="@dimen/margin_16"
-        android:layout_marginTop="@dimen/margin_16"
-        android:layout_marginStart="@dimen/margin_16"
-        tools:text="Subtitle" />
+<!--    <TextView-->
+<!--        android:id="@+id/textLabelValue"-->
+<!--        style="@style/InfoItemDetail"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_weight=".7"-->
+<!--        android:layout_marginEnd="@dimen/margin_16"-->
+<!--        android:layout_marginTop="@dimen/margin_16"-->
+<!--        android:layout_marginStart="@dimen/margin_16"-->
+<!--        tools:text="Subtitle" />-->
 
 </LinearLayout>

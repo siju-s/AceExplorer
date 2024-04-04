@@ -1,5 +1,5 @@
-const val kotlinVersion = "1.8.20"
-const val gradleVersion = "8.2.0"
+const val kotlinVersion = "1.9.21"
+const val gradleVersion = "8.2.1"
 
 object BuildPlugins {
 
@@ -8,7 +8,7 @@ object BuildPlugins {
         const val googleServices = "4.3.15"
         const val safeArgsPlugin = "2.5.3"
         const val sonarqube = "3.3"
-        const val hilt = "2.45"
+        const val hilt = "2.49"
     }
 
     const val androidGradlePlugin = "com.android.tools.build:gradle:${gradleVersion}"
@@ -27,7 +27,7 @@ object BuildPlugins {
 }
 
 object AndroidSdk {
-    const val min = 21
+    const val min = 26
     const val compile = 34
     const val target = compile
     const val applicationId = "com.siju.acexplorer"

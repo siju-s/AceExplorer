@@ -30,18 +30,23 @@
         android:layout_marginTop="8dp"
         android:layout_above="@+id/layoutDummy">
 
-        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
-            android:id="@+id/appsList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/layoutDummy"
-            app:fastScrollAutoHide="true"
-            app:fastScrollAutoHideDelay="1500"
-            app:fastScrollThumbColor="@color/colorAccent"
-            app:fastScrollEnableThumbInactiveColor="true"
-            app:fastScrollThumbInactiveColor="@color/colorPrimary"
-            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            tools:listitem="@layout/apps_list_item" />
+<androidx.compose.ui.platform.ComposeView
+    android:id="@+id/composeView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+
+<!--        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView-->
+<!--            android:id="@+id/appsList"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_above="@+id/layoutDummy"-->
+<!--            app:fastScrollAutoHide="true"-->
+<!--            app:fastScrollAutoHideDelay="1500"-->
+<!--            app:fastScrollThumbColor="@color/colorAccent"-->
+<!--            app:fastScrollEnableThumbInactiveColor="true"-->
+<!--            app:fastScrollThumbInactiveColor="@color/colorPrimary"-->
+<!--            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"-->
+<!--            tools:listitem="@layout/apps_list_item" />-->
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
