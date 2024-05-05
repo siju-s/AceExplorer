@@ -104,7 +104,7 @@ import com.siju.acexplorer.common.utils.DateUtils
 import com.siju.acexplorer.common.R as RC
 
 
-
+private const val TAG = "AppMgrFragment"
 @AndroidEntryPoint
 class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.OnQueryTextListener {
 
@@ -203,6 +203,10 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
          onItemClick: (AppInfo) -> Unit,
          onItemLongClick : (AppInfo) -> Unit
     ) {
+        Log.d(
+            TAG,
+            "ListItem() called with: data = $data, modifier = $modifier, requestManager = $requestManager, selected = $selected, onItemClick = $onItemClick, onItemLongClick = $onItemLongClick"
+        )
         var visible by remember { mutableStateOf(false) }
         var selectedPos by remember { mutableStateOf(false) }
         val drawableResource = if (selectedPos) com.siju.acexplorer.common.R.drawable.ic_select_checked else com.siju.acexplorer.common.R.drawable.ic_select_unchecked
@@ -211,9 +215,11 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
         Surface(color = bgColor, modifier = modifier.combinedClickable(
             onClick = {
-                visible = !viewModel.isActionModeActive()
+                if (viewModel.isActionModeActive()) {
+                    selectedPos = !selectedPos
+                    visible = !visible
+                }
                 println("onclick Visible :$visible")
-                selectedPos = !selectedPos
                 onItemClick(data)
                       },
             onLongClick = {
