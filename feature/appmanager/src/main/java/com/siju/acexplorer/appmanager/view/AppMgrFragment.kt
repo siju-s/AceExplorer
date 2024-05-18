@@ -9,70 +9,29 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
-import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
-import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.placeholder
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
 import com.siju.acexplorer.appmanager.AppInfoProvider
@@ -82,29 +41,23 @@ import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.appmanager.types.AppInfo
-import com.siju.acexplorer.appmanager.view.AppMgrFragmentDirections
+import com.siju.acexplorer.appmanager.view.compose.ListItem
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
 import com.siju.acexplorer.common.ActionModeState
+import com.siju.acexplorer.common.R.menu.*
+import com.siju.acexplorer.common.R.string.*
 import com.siju.acexplorer.common.SortDialog
 import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.common.ViewMode
+import com.siju.acexplorer.common.theme.MyApplicationTheme
+import com.siju.acexplorer.common.theme.Theme
 import com.siju.acexplorer.common.utils.ConfigurationHelper
 import com.siju.acexplorer.common.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import com.siju.acexplorer.common.R.string.*
-import com.siju.acexplorer.common.R.menu.*
-import com.siju.acexplorer.common.theme.LocalDim
-import com.siju.acexplorer.common.theme.MyApplicationTheme
-import com.siju.acexplorer.common.theme.Theme
-import com.siju.acexplorer.common.theme.itemSelection
-import com.siju.acexplorer.common.theme.itemSelectionDark
-import com.siju.acexplorer.common.theme.transparent
-import com.siju.acexplorer.common.utils.DateUtils
 import com.siju.acexplorer.common.R as RC
 
 
-private const val TAG = "AppMgrFragment"
 @AndroidEntryPoint
 class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.OnQueryTextListener {
 
@@ -167,11 +120,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             })
         setupToolbar(binding.appBarContainer.toolbarContainer.toolbar, viewMode)
         this.bottomToolbar = binding.appsListContainer.bottomToolbar
-
-
-//        val appsList = binding.appsListContainer.appsList
-//        setLayoutManager(appsList, viewMode)
-//        appsList.adapter = adapter
     }
 
 
@@ -184,95 +132,15 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                 println("ITEM SET :${item.packageName}")
                 ListItem(item, requestManager = Glide.with(requireContext()),
                     selected = viewModel.isSelected(index), onItemClick = {
-                    onItemClick(it, index)
-                }, onItemLongClick = {
-                    onItemLongClicked(index)
-                })
-            }
-        }
-
-    }
-
-
-    @OptIn(ExperimentalGlideComposeApi::class, ExperimentalFoundationApi::class)
-    @Composable
-    fun ListItem(
-         data: AppInfo, modifier: Modifier = Modifier,
-        requestManager: RequestManager = Glide.with(LocalContext.current),
-        selected: Boolean,
-         onItemClick: (AppInfo) -> Unit,
-         onItemLongClick : (AppInfo) -> Unit
-    ) {
-        Log.d(
-            TAG,
-            "ListItem() called with: data = $data, modifier = $modifier, requestManager = $requestManager, selected = $selected, onItemClick = $onItemClick, onItemLongClick = $onItemLongClick"
-        )
-        var visible by remember { mutableStateOf(false) }
-        var selectedPos by remember { mutableStateOf(false) }
-        val drawableResource = if (selectedPos) com.siju.acexplorer.common.R.drawable.ic_select_checked else com.siju.acexplorer.common.R.drawable.ic_select_unchecked
-        val haptics = LocalHapticFeedback.current
-        val bgColor = if (selectedPos) itemSelectionDark else transparent
-
-        Surface(color = bgColor, modifier = modifier.combinedClickable(
-            onClick = {
-                if (viewModel.isActionModeActive()) {
-                    selectedPos = !selectedPos
-                    visible = !visible
-                }
-                println("onclick Visible :$visible")
-                onItemClick(data)
-                      },
-            onLongClick = {
-                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                visible = !viewModel.isActionModeActive()
-                selectedPos = !selectedPos
-                println("longclick Visible :$visible")
-                onItemLongClick(data)
-            })) {
-            Column(modifier = Modifier
-                .defaultMinSize(minHeight = dimensionResource(id = R.dimen.app_list_item_min_height))
-                .padding(LocalDim.current.spaceSmall)) {
-                if (visible) {
-                    Image(
-                        painterResource(id = drawableResource),
-                        contentDescription = "Select",
-                        modifier = Modifier
-                            .width(20.dp)
-                            .height(20.dp),
-                    )
-                }
-                Row(modifier.fillMaxWidth()) {
-                    GlideImage(
-                        model = data.packageName,
-                        contentDescription = "App icon",
-                        modifier = Modifier
-                            .width(LocalDim.current.space50)
-                            .height(LocalDim.current.space50)
-                            .align(Alignment.CenterVertically),
-                        loading = placeholder(com.siju.acexplorer.common.R.drawable.ic_apk_green)
-                    ) {
-                        it.thumbnail(
-                            requestManager
-                                .asDrawable()
-                                .load(data.name)
-                        )
-                    }
-                    Column(Modifier.padding(LocalDim.current.spaceSmall)) {
-                        Text(text = data.name)
-                        Text(text = data.packageName)
-                    }
-                    Spacer(Modifier.weight(1f))
-
-                }
-                Text(
-                    text = DateUtils.convertDate(data.installDate), modifier = Modifier
-                        .wrapContentHeight()
-                        .align(Alignment.End)
+                        onItemClick(it, index)
+                    }, onItemLongClick = {
+                        onItemLongClicked(index)
+                    },
+                    viewModel = viewModel
                 )
-
             }
-
         }
+
     }
 
     @Composable
@@ -281,27 +149,10 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         ListItem(
             data = data,
             selected = false,
-            onItemClick = {  },
-            onItemLongClick = { }
+            onItemClick = { },
+            onItemLongClick = { },
+            viewModel = viewModel
         )
-    }
-
-
-    private fun onSelection(context: Context, rootView: View, selected: Boolean, imageSelection : ImageView) {
-        val color = ContextCompat.getColor(context, com.siju.acexplorer.common.R.color.actionModeItemSelected)
-        when {
-            selected               -> {
-                rootView.setBackgroundColor(color)
-                imageSelection.visibility = View.VISIBLE
-                imageSelection.isSelected = true
-
-            }
-            else                   -> {
-                rootView.setBackgroundColor(android.graphics.Color.TRANSPARENT)
-                imageSelection.isSelected = false
-                imageSelection.visibility = View.GONE
-            }
-        }
     }
 
     private fun onItemLongClicked(pos: Int) {
