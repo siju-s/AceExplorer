@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
@@ -43,6 +44,7 @@ import com.siju.acexplorer.common.theme.transparent
 import com.siju.acexplorer.common.utils.DateUtils
 
 private const val TAG = "ListItem"
+
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun ListItem(
@@ -50,7 +52,7 @@ fun ListItem(
     requestManager: RequestManager = Glide.with(LocalContext.current),
     selected: Boolean,
     onItemClick: (AppInfo) -> Unit,
-    onItemLongClick : (AppInfo) -> Unit,
+    onItemLongClick: (AppInfo) -> Unit,
     viewModel: AppMgrViewModel
 ) {
     Log.d(
@@ -63,61 +65,69 @@ fun ListItem(
     val haptics = LocalHapticFeedback.current
     val bgColor = getBackgroundColor(selectedPos)
 
-    Surface(color = bgColor, modifier = modifier.combinedClickable(
-        onClick = {
-            if (viewModel.isActionModeActive()) {
+    Surface(
+        color = bgColor, modifier = modifier.combinedClickable(
+            onClick = {
+                if (viewModel.isActionModeActive()) {
+                    selectedPos = !selectedPos
+                    visible = !visible
+                }
+                println("onclick Visible :$visible")
+                onItemClick(data)
+            },
+            onLongClick = {
+                haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                visible = !viewModel.isActionModeActive()
                 selectedPos = !selectedPos
-                visible = !visible
+                println("longclick Visible :$visible")
+                onItemLongClick(data)
+            })
+    ) {
+        Box(
+            modifier = Modifier
+                .defaultMinSize(minHeight = dimensionResource(id = R.dimen.app_list_item_min_height))
+                .padding(LocalDim.current.spaceSmall)
+        ) {
+            GlideImage(
+                model = data.packageName,
+                contentDescription = "App icon",
+                modifier = Modifier
+                    .width(LocalDim.current.space50)
+                    .height(LocalDim.current.space50)
+                    .align(Alignment.CenterStart),
+                loading = placeholder(com.siju.acexplorer.common.R.drawable.ic_apk_green)
+            ) {
+                it.thumbnail(
+                    requestManager
+                        .asDrawable()
+                        .load(data.name)
+                )
             }
-            println("onclick Visible :$visible")
-            onItemClick(data)
-        },
-        onLongClick = {
-            haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-            visible = !viewModel.isActionModeActive()
-            selectedPos = !selectedPos
-            println("longclick Visible :$visible")
-            onItemLongClick(data)
-        })) {
-        Column(modifier = Modifier
-            .defaultMinSize(minHeight = dimensionResource(id = R.dimen.app_list_item_min_height))
-            .padding(LocalDim.current.spaceSmall)) {
+            Column(
+                Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(start = LocalDim.current.space50 + LocalDim.current.spaceSmall)
+            ) {
+                Text(text = data.name)
+                Text(text = data.packageName)
+            }
+            Spacer(Modifier.fillMaxSize(1f))
+
             if (visible) {
                 Image(
                     painterResource(id = drawableResource),
                     contentDescription = "Select",
                     modifier = Modifier
                         .width(20.dp)
-                        .height(20.dp),
+                        .height(20.dp)
+                        .zIndex(1f),
                 )
             }
-            Row(modifier.fillMaxWidth()) {
-                GlideImage(
-                    model = data.packageName,
-                    contentDescription = "App icon",
-                    modifier = Modifier
-                        .width(LocalDim.current.space50)
-                        .height(LocalDim.current.space50)
-                        .align(Alignment.CenterVertically),
-                    loading = placeholder(com.siju.acexplorer.common.R.drawable.ic_apk_green)
-                ) {
-                    it.thumbnail(
-                        requestManager
-                            .asDrawable()
-                            .load(data.name)
-                    )
-                }
-                Column(Modifier.padding(LocalDim.current.spaceSmall)) {
-                    Text(text = data.name)
-                    Text(text = data.packageName)
-                }
-                Spacer(Modifier.weight(1f))
 
-            }
             Text(
                 text = DateUtils.convertDate(data.installDate), modifier = Modifier
                     .wrapContentHeight()
-                    .align(Alignment.End)
+                    .align(Alignment.BottomEnd)
             )
 
         }
