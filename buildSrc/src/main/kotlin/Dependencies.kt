@@ -6,7 +6,7 @@ object BuildPlugins {
     object Versions {
         const val crashlytics = "2.9.4"
         const val googleServices = "4.3.15"
-        const val safeArgsPlugin = "2.5.3"
+        const val safeArgsPlugin = "2.7.7"
         const val sonarqube = "3.3"
         const val hilt = "2.49"
     }

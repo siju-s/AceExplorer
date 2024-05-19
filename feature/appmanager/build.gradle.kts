@@ -1,7 +1,7 @@
 plugins {
     id ("com.android.library")
     kotlin(BuildPlugins.kotlinAndroid)
-    id("androidx.navigation.safeargs")
+    id("androidx.navigation.safeargs.kotlin")
     id("dagger.hilt.android.plugin")
     kotlin(BuildPlugins.kotlinKapt)
 }

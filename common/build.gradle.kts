@@ -77,5 +77,6 @@ dependencies {
     api(libs.compose.tooling)
     api(libs.compose.livedata)
     api(libs.compose.compiler)
+    api(libs.compose.navigation)
 
 }
