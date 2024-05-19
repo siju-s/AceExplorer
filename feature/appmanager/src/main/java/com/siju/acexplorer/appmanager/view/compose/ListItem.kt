@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,7 +38,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.siju.acexplorer.appmanager.R
 import com.siju.acexplorer.appmanager.types.AppInfo
-import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
+import com.siju.acexplorer.appmanager.viewmodel.AppMgr
 import com.siju.acexplorer.common.theme.LocalDim
 import com.siju.acexplorer.common.theme.itemSelectionDark
 import com.siju.acexplorer.common.theme.transparent
@@ -53,7 +54,7 @@ fun ListItem(
     selected: Boolean,
     onItemClick: (AppInfo) -> Unit,
     onItemLongClick: (AppInfo) -> Unit,
-    viewModel: AppMgrViewModel
+    appMgr: AppMgr
 ) {
     Log.d(
         TAG,
@@ -68,7 +69,7 @@ fun ListItem(
     Surface(
         color = bgColor, modifier = modifier.combinedClickable(
             onClick = {
-                if (viewModel.isActionModeActive()) {
+                if (appMgr.isActionModeActive()) {
                     selectedPos = !selectedPos
                     visible = !visible
                 }
@@ -77,7 +78,7 @@ fun ListItem(
             },
             onLongClick = {
                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                visible = !viewModel.isActionModeActive()
+                visible = !appMgr.isActionModeActive()
                 selectedPos = !selectedPos
                 println("longclick Visible :$visible")
                 onItemLongClick(data)
@@ -87,6 +88,7 @@ fun ListItem(
             modifier = Modifier
                 .defaultMinSize(minHeight = dimensionResource(id = R.dimen.app_list_item_min_height))
                 .padding(LocalDim.current.spaceSmall)
+                .height(IntrinsicSize.Min)
         ) {
             GlideImage(
                 model = data.packageName,

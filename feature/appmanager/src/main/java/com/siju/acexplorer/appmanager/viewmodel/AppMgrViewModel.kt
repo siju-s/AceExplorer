@@ -25,6 +25,7 @@ import javax.inject.Inject
 class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
                                           private val sortModeData: SortModeData,
                                           private val multiSelection: MultiSelection) : ViewModel(),
+    AppMgr,
     MultiSelection.Listener {
 
     private val _appsList =  MutableLiveData<ArrayList<AppInfo>>()
@@ -165,7 +166,8 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
 
     fun isSelected(pos: Int) = multiSelection.isSelected(pos)
 
-    fun isActionModeActive() = actionModeState.value == ActionModeState.STARTED
+
+    override fun isActionModeActive() = actionModeState.value == ActionModeState.STARTED
 
     fun onSelectAllClicked() {
         val list = _appsList.value

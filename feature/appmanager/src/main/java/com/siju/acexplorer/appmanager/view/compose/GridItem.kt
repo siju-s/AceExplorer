@@ -31,6 +31,7 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.siju.acexplorer.appmanager.types.AppInfo
+import com.siju.acexplorer.appmanager.viewmodel.AppMgr
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
 import com.siju.acexplorer.common.theme.LocalDim
 import com.siju.acexplorer.common.theme.itemSelectionDark
@@ -46,7 +47,7 @@ fun GridItem(
     selected: Boolean,
     onItemClick: (AppInfo) -> Unit,
     onItemLongClick: (AppInfo) -> Unit,
-    viewModel: AppMgrViewModel
+    appMgr: AppMgr
 ) {
     Log.d(
         TAG,
@@ -61,7 +62,7 @@ fun GridItem(
     Surface(
         color = bgColor, modifier = modifier.combinedClickable(
             onClick = {
-                if (viewModel.isActionModeActive()) {
+                if (appMgr.isActionModeActive()) {
                     selectedPos = !selectedPos
                     visible = !visible
                 }
@@ -70,7 +71,7 @@ fun GridItem(
             },
             onLongClick = {
                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                visible = !viewModel.isActionModeActive()
+                visible = !appMgr.isActionModeActive()
                 selectedPos = !selectedPos
                 println("longclick Visible :$visible")
                 onItemLongClick(data)

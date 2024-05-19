@@ -45,8 +45,8 @@ import com.siju.acexplorer.appmanager.types.AppInfo
 import com.siju.acexplorer.appmanager.view.compose.GridItem
 import com.siju.acexplorer.appmanager.view.compose.ListItem
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
+import com.siju.acexplorer.appmanager.viewmodel.MockAppMgrViewModel
 import com.siju.acexplorer.common.ActionModeState
-import com.siju.acexplorer.common.R.menu.*
 import com.siju.acexplorer.common.R.string.*
 import com.siju.acexplorer.common.SortDialog
 import com.siju.acexplorer.common.SortMode
@@ -148,7 +148,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                     }, onItemLongClick = {
                         onItemLongClicked(index)
                     },
-                    viewModel = viewModel
+                    appMgr = viewModel
                 )
             }
         }
@@ -156,7 +156,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     @Composable
-    private fun SetupLazyGrid(viewModel: AppMgrViewModel) {
+    private fun SetupLazyGrid(appMgr: AppMgrViewModel) {
         val apps = viewModel.appsList.observeAsState(initial = emptyList())
         val gridColumns = getGridColumns(resources.configuration, viewModel.getViewMode())
 
@@ -170,7 +170,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                     }, onItemLongClick = {
                         onItemLongClicked(index)
                     },
-                    viewModel = viewModel
+                    appMgr = appMgr
                 )
             }
         }
@@ -184,7 +184,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             selected = false,
             onItemClick = { },
             onItemLongClick = { },
-            viewModel = viewModel
+            appMgr = MockAppMgrViewModel()
         )
     }
 
@@ -196,7 +196,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             selected = false,
             onItemClick = { },
             onItemLongClick = { },
-            viewModel = viewModel
+            appMgr = MockAppMgrViewModel()
         )
     }
 
