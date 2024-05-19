@@ -43,6 +43,11 @@ app/app.iml___jb_tmp___
 .idea/codeStyles
 .idea/kotlinc.xml
 projectFilesBackup/
+.idea/inspectionProfiles
+.idea/appInsightsSettings.xml
+.idea/deploymentTargetDropDown.xml
+.idea/deploymentTargetSelector.xml
+.idea/migrations.xml
 
 # Keystore files
 # Uncomment the following line if you do not want to check your keystore files in.
