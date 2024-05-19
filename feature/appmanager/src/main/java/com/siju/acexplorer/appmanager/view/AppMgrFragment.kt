@@ -21,6 +21,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
@@ -29,8 +32,6 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.android.material.badge.BadgeDrawable
 import com.google.android.material.badge.BadgeUtils
@@ -41,6 +42,7 @@ import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.appmanager.types.AppInfo
+import com.siju.acexplorer.appmanager.view.compose.GridItem
 import com.siju.acexplorer.appmanager.view.compose.ListItem
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
 import com.siju.acexplorer.common.ActionModeState
@@ -52,7 +54,6 @@ import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.theme.MyApplicationTheme
 import com.siju.acexplorer.common.theme.Theme
 import com.siju.acexplorer.common.utils.ConfigurationHelper
-import com.siju.acexplorer.common.view.custom.CustomGridLayoutManager
 import com.siju.acexplorer.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import com.siju.acexplorer.common.R as RC
@@ -92,7 +93,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         _binding = AppsListContainerBinding.inflate(inflater, container, false)
         _binding!!.appsListContainer.composeView.setContent {
             MyApplicationTheme(appTheme = Theme.DARK, isDarkMode = true) {
-                SetupLazyList(viewModel)
+                Content(viewModel)
             }
         }
         return binding.root
@@ -124,6 +125,17 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
 
     @Composable
+    private fun Content(viewModel: AppMgrViewModel) {
+        val viewMode = viewModel.viewMode.observeAsState()
+        if (viewMode.value == ViewMode.LIST) {
+            SetupLazyList(viewModel)
+        } else {
+            SetupLazyGrid(viewModel)
+        }
+    }
+
+
+    @Composable
     private fun SetupLazyList(viewModel: AppMgrViewModel) {
         val apps = viewModel.appsList.observeAsState(initial = emptyList())
 
@@ -144,9 +156,42 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     @Composable
+    private fun SetupLazyGrid(viewModel: AppMgrViewModel) {
+        val apps = viewModel.appsList.observeAsState(initial = emptyList())
+        val gridColumns = getGridColumns(resources.configuration, viewModel.getViewMode())
+
+
+        LazyVerticalGrid(columns = GridCells.Fixed(gridColumns)) {
+            itemsIndexed(apps.value) { index, item ->
+                println("ITEM SET :${item.packageName}")
+                GridItem(item, requestManager = Glide.with(requireContext()),
+                    selected = viewModel.isSelected(index), onItemClick = {
+                        onItemClick(it, index)
+                    }, onItemLongClick = {
+                        onItemLongClicked(index)
+                    },
+                    viewModel = viewModel
+                )
+            }
+        }
+    }
+
     @Preview
+    @Composable
     fun ListItemPreview(@PreviewParameter(AppInfoProvider::class) data: AppInfo) {
         ListItem(
+            data = data,
+            selected = false,
+            onItemClick = { },
+            onItemLongClick = { },
+            viewModel = viewModel
+        )
+    }
+
+    @Preview
+    @Composable
+    fun GridItemPreview(@PreviewParameter(AppInfoProvider::class) data: AppInfo) {
+        GridItem(
             data = data,
             selected = false,
             onItemClick = { },
@@ -403,15 +448,15 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             }
 
             RC.id.action_view_list -> {
-                onViewModeChanged(ViewMode.LIST)
+                viewModel.setSelectedViewMode(ViewMode.LIST)
             }
 
             RC.id.action_view_grid -> {
-                onViewModeChanged(ViewMode.GRID)
+                viewModel.setSelectedViewMode(ViewMode.GRID)
             }
 
             RC.id.action_view_gallery -> {
-                onViewModeChanged(ViewMode.GALLERY)
+                viewModel.setSelectedViewMode(ViewMode.GALLERY)
             }
 
             RC.id.action_sort -> {
@@ -433,32 +478,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             item.isChecked = !item.isChecked
         }
         return true
-    }
-
-    private fun onViewModeChanged(viewMode: ViewMode) {
-        if (adapter.getViewMode() != viewMode) {
-//            val fileList = binding.appsListContainer.appsList
-//            setLayoutManager(fileList, viewMode)
-//            adapter.setViewMode(viewMode)
-////            fileList.adapter = adapter
-//            viewModel.saveViewMode(viewMode)
-        }
-    }
-
-    private fun setLayoutManager(fileList: RecyclerView, viewMode: ViewMode) {
-        Log.d("AppMgr", "setLayoutManager viewMode: $viewMode")
-        val context = fileList.context
-        fileList.layoutManager = when (viewMode) {
-            ViewMode.LIST -> LinearLayoutManager(context)
-            ViewMode.GRID, ViewMode.GALLERY -> {
-                val gridColumns = getGridColumns(resources.configuration, viewMode)
-                val gridLayoutManager = CustomGridLayoutManager(
-                    context,
-                    gridColumns
-                )
-                gridLayoutManager
-            }
-        }
     }
 
     private fun getGridColumns(configuration: Configuration, viewMode: ViewMode): Int {

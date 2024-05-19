@@ -76,6 +76,9 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     private var appType = AppType.USER_APP
     private var searchActive = false
 
+    private val _viewMode = MutableLiveData(model.getViewMode())
+    val viewMode : LiveData<ViewMode> = _viewMode
+
     init {
         multiSelection.setListener(this)
     }
@@ -214,5 +217,10 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
 
     fun onSearchInactive() {
         this.searchActive = false
+    }
+
+    fun setSelectedViewMode(viewMode: ViewMode) {
+        _viewMode.value = viewMode
+        saveViewMode(viewMode)
     }
 }
