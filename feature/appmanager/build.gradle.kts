@@ -49,16 +49,7 @@ android {
 dependencies {
     implementation(project(":common"))
 
-//    kapt(libs.lifecycle.compiler)
-
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
     kapt(libs.annotation)
-
-//    kapt(libs.glide.compiler)
-//    implementation(libs.glide.compose)
-
-
-
-
 }
