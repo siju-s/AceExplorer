@@ -65,7 +65,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     private var _binding: AppsListContainerBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapter: AppMgrAdapter
+//    private lateinit var adapter: AppMgrAdapter
     private val viewModel: AppMgrViewModel by viewModels()
     private lateinit var installSourceItem: MenuItem
     private lateinit var allSourceItem: MenuItem
@@ -111,14 +111,14 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     private fun setupUi() {
         val viewMode = viewModel.getViewMode()
-        adapter = AppMgrAdapter(
-            viewModel,
-            viewMode, { appInfo, pos ->
-                onItemClick(appInfo, pos)
-            },
-            { _, pos, _ ->
-                onItemLongClicked(pos)
-            })
+//        adapter = AppMgrAdapter(
+//            viewModel,
+//            viewMode, { appInfo, pos ->
+//                onItemClick(appInfo, pos)
+//            },
+//            { _, pos, _ ->
+//                onItemLongClicked(pos)
+//            })
         setupToolbar(binding.appBarContainer.toolbarContainer.toolbar, viewMode)
         this.bottomToolbar = binding.appsListContainer.bottomToolbar
     }
@@ -141,7 +141,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
         LazyColumn {
             itemsIndexed(apps.value) { index, item ->
-                println("ITEM SET :${item.packageName}")
+                println("ITEM :${item.packageName}")
                 ListItem(item, requestManager = Glide.with(requireContext()),
                     selected = viewModel.isSelected(index), onItemClick = {
                         onItemClick(it, index)
@@ -159,7 +159,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     private fun SetupLazyGrid(appMgr: AppMgrViewModel) {
         val apps = viewModel.appsList.observeAsState(initial = emptyList())
         val gridColumns = getGridColumns(resources.configuration, viewModel.getViewMode())
-
 
         LazyVerticalGrid(columns = GridCells.Fixed(gridColumns)) {
             itemsIndexed(apps.value) { index, item ->
@@ -232,7 +231,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     private fun initObservers() {
-        viewModel.appsList.observe(viewLifecycleOwner, {
+        viewModel.appsList.observe(viewLifecycleOwner) {
             it?.let {
                 Log.d("AppFrag", "initObservers: ${it.size}")
                 hideLoadingIndicator()
@@ -240,38 +239,31 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                 setToolbarSubtitle(it.size)
 //                adapter.onDataLoaded(it)
             }
-        })
-        viewModel.updateList.observe(viewLifecycleOwner, {
-            it?.getContentIfNotHandled()?.let {
-                if (it) {
-                    adapter.notifyDataSetChanged()
-                }
-            }
-        })
-        viewModel.appsSourceFilteredList.observe(viewLifecycleOwner, {
+        }
+//        viewModel.updateList.observe(viewLifecycleOwner) {
+//            it?.getContentIfNotHandled()?.let {
+//                if (it) {
+//                    adapter.notifyDataSetChanged()
+//                }
+//            }
+//        }
+        viewModel.appsSourceFilteredList.observe(viewLifecycleOwner) {
             it?.let {
                 setToolbarSubtitle(it.size)
-                adapter.onDataLoaded(it)
+//                adapter.onDataLoaded(it)
             }
-        })
-        viewModel.actionModeState.observe(viewLifecycleOwner, {
+        }
+        viewModel.actionModeState.observe(viewLifecycleOwner) {
             it?.let {
                 onActionModeStateChanged(it)
             }
-        })
-        viewModel.selectedItemCount.observe(viewLifecycleOwner, {
+        }
+        viewModel.selectedItemCount.observe(viewLifecycleOwner) {
             it?.let {
-                if (it > 0) {
-                    toolbar.title = it.toString()
-                }
+                setToolbarSubtitle(it)
             }
-        })
-        viewModel.selectedItemChanged.observe(viewLifecycleOwner, {
-            it?.let {
-                adapter.notifyItemChanged(it)
-            }
-        })
-        viewModel.multiOperationData.observe(viewLifecycleOwner, {
+        }
+        viewModel.multiOperationData.observe(viewLifecycleOwner) {
             it?.let {
                 for (item in it) {
                     AppHelper.uninstallApp(
@@ -281,32 +273,32 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                     )
                 }
             }
-        })
-        viewModel.navigateToAppDetail.observe(viewLifecycleOwner, {
+        }
+        viewModel.navigateToAppDetail.observe(viewLifecycleOwner) {
             it?.getContentIfNotHandled()?.let {
                 val directions =
                     AppMgrFragmentDirections.actionAppMgrFragmentToAppDetailActivity(it.first.packageName)
                 findNavController().navigate(directions)
             }
-        })
-        viewModel.refreshList.observe(viewLifecycleOwner, {
+        }
+        viewModel.refreshList.observe(viewLifecycleOwner) {
             it?.getContentIfNotHandled()?.let {
-                adapter.notifyDataSetChanged()
+//                adapter.notifyDataSetChanged()
             }
-        })
-        viewModel.backPressed.observe(viewLifecycleOwner, {
+        }
+        viewModel.backPressed.observe(viewLifecycleOwner) {
             it?.getContentIfNotHandled()?.let {
                 backPressedCallback.isEnabled = false
                 activity?.onBackPressed()
             }
-        })
-        viewModel.closeSearch.observe(viewLifecycleOwner, {
+        }
+        viewModel.closeSearch.observe(viewLifecycleOwner) {
             it?.getContentIfNotHandled()?.let {
                 if (it) {
                     searchView?.isIconified = true
                 }
             }
-        })
+        }
     }
 
     private fun showLoadingIndicator() {
@@ -328,13 +320,13 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     private fun onActionModeStateChanged(actionModeState: ActionModeState) {
         if (actionModeState == ActionModeState.STARTED) {
-            adapter.setSelectionMode(true)
+//            adapter.setSelectionMode(true)
             onActionModeStarted()
         } else {
-            adapter.setSelectionMode(false)
+//            adapter.setSelectionMode(false)
             onActionModeEnd()
         }
-        adapter.notifyDataSetChanged()
+//        adapter.notifyDataSetChanged()
     }
 
     private fun onActionModeStarted() {
@@ -525,7 +517,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     override fun onQueryTextChange(newText: String): Boolean {
-        adapter.filter(newText)
+//        adapter.filter(newText)
         return true
     }
 
