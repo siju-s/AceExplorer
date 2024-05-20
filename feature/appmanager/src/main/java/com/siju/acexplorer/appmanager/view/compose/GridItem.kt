@@ -94,7 +94,7 @@ fun GridItem(
                 it.thumbnail(
                     requestManager
                         .asDrawable()
-                        .load(data.name)
+                        .load(data.packageName)
                 )
             }
             Column(
