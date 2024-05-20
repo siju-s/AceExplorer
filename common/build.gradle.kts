@@ -1,16 +1,16 @@
 plugins {
-    id ("com.android.library")
-    id("org.jetbrains.kotlin.android")
-    kotlin(BuildPlugins.kotlinKapt)
-    id("org.sonarqube")
+    alias(libs.plugins.com.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.sonarqube)
 }
 
 android {
 
     defaultConfig {
-        minSdk = AndroidSdk.min
-        compileSdk = AndroidSdk.compile
-        targetSdk = AndroidSdk.target
+        minSdk = libs.versions.minSdk.get().toInt()
+        compileSdk = libs.versions.compileSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
     }
 
     buildTypes {
@@ -34,7 +34,7 @@ android {
     namespace = "com.siju.acexplorer.common"
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.6"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 }
 

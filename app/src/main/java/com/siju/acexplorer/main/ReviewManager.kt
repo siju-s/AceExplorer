@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.play.core.review.ReviewInfo
 import com.google.android.play.core.review.ReviewManagerFactory
-import com.kobakei.ratethisapp.RateThisApp
+//import com.kobakei.ratethisapp.RateThisApp
 
 private const val TAG = "ReviewManager"
 class ReviewManager(val activity: AppCompatActivity) {
@@ -12,10 +12,10 @@ class ReviewManager(val activity: AppCompatActivity) {
     private val manager = ReviewManagerFactory.create(activity)
 
     fun checkCanShowReviewDialog() {
-        RateThisApp.onCreate(activity)
-        if (RateThisApp.shouldShowRateDialog()) {
-            showReviewDialog()
-        }
+//        RateThisApp.onCreate(activity)
+//        if (RateThisApp.shouldShowRateDialog()) {
+//            showReviewDialog()
+//        }
     }
 
     private fun showReviewDialog() {
@@ -41,6 +41,6 @@ class ReviewManager(val activity: AppCompatActivity) {
     }
 
     private fun showCustomRateDialog() {
-        RateThisApp.showRateDialog(activity)
+//        RateThisApp.showRateDialog(activity)
     }
 }

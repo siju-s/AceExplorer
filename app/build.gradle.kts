@@ -2,15 +2,15 @@ import java.io.FileInputStream
 import java.util.*
 
 plugins {
-    id(BuildPlugins.androidApp)
-    kotlin(BuildPlugins.kotlinAndroid)
-    kotlin(BuildPlugins.kotlinKapt)
-    id(BuildPlugins.kotlinParcelize)
-    id(BuildPlugins.googleServicesPlugin)
-    id(BuildPlugins.crashlyticsAppPlugin)
-    id("androidx.navigation.safeargs")
-    id("org.sonarqube")
-    id("dagger.hilt.android.plugin")
+    alias(libs.plugins.com.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.google.services)
+    alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.safeargs)
+    alias(libs.plugins.sonarqube)
+    alias(libs.plugins.hilt)
 }
 
 val keyProperties = Properties()
@@ -34,10 +34,10 @@ android {
 
 
     defaultConfig {
-        applicationId = AndroidSdk.applicationId
-        minSdk = AndroidSdk.min
-        compileSdk = AndroidSdk.compile
-        targetSdk = AndroidSdk.target
+        applicationId = "com.siju.acexplorer"
+        minSdk = libs.versions.minSdk.get().toInt()
+        compileSdk = libs.versions.compileSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = rootProject.extra["versionCode"] as Int
         versionName = rootProject.extra["versionName"] as String
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
@@ -73,7 +73,28 @@ android {
 
     sourceSets {
         getByName("main").res.srcDirs(
-                ResDirs.directories
+            arrayOf(
+                "src/main/res-appmanager",
+                "src/main/res-common",
+                "src/main/res-main",
+                "src/main/res-permission",
+                "src/main/res-screen",
+                "src/main/res-screen/common",
+                "src/main/res-screen/home",
+                "src/main/res-screen/imageviewer",
+                "src/main/res-screen/tools",
+                "src/main/res-screen/storage",
+                "src/main/res-screen/search",
+                "src/main/res-screen/storage/common",
+                "src/main/res-screen/storage/info",
+                "src/main/res-screen/storage/operations",
+                "src/main/res-screen/storage/operations/paste",
+                "src/main/res-screen/storage/peekpop",
+                "src/main/res-screen/storage/sort",
+                "src/main/res-settings",
+                "src/main/res-settings/about",
+                "src/main/res-welcome")
+
         )
     }
 
@@ -99,7 +120,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.6"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
     sonarqube {
@@ -178,7 +199,7 @@ dependencies {
 
     implementation(libs.apacheCompress)
     implementation(libs.floatingButton)
-    implementation(libs.rateApp)
+//    implementation(libs.rateApp)
     implementation(libs.photoView)
 
 //    debugImplementation(Libraries.ExternalLibs.leakCanary)

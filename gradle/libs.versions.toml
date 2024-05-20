@@ -1,8 +1,19 @@
 [versions]
+minSdk = "26"
+targetSdk = "34"
+compileSdk = "34"
+
 kotlin = "1.9.24"
 composeCompiler = "1.5.14"
 compose = "1.6.7"
 composeNavigation = "2.7.7"
+androidGradlePlugin = "8.2.2"
+googleServices = "4.4.1"
+crashlyticsPlugin  = "2.9.4"
+safeArgsPlugin = "2.5.3"
+sonarqube = "3.3"
+hiltPlugin = "2.51.1"
+
 
 activityKtx = "1.8.1"
 fragmentKtx = "1.6.2"
@@ -106,7 +117,7 @@ glide_compose = { group = "com.github.bumptech.glide", name = "compose", version
 
 apacheCompress = { group = "org.apache.commons", name = "commons-compress", version.ref = "apacheCompress" }
 floatingButton = { group = "com.getbase", name = "floatingactionbutton", version.ref = "floatingButton" }
-rateApp = { group = "io.github.kobakei", name = "ratethisapp", version.ref = "ratethisapp" }
+#rateApp = { group = "io.github.kobakei", name = "ratethisapp", version.ref = "ratethisapp" }
 leakCanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakCanary" }
 photoView = { group = "com.github.chrisbanes", name = "PhotoView", version.ref = "photoView" }
 fastScrollRecyclerview = { group = "com.simplecityapps", name = "recyclerview-fastscroll", version.ref = "fastscrollRecycler" }
@@ -116,8 +127,19 @@ root_shell = { group = "com.github.Stericson", name = "RootShell", version.ref =
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 
+[plugins]
 
+com-android-application = {id = "com.android.application", version.ref = "androidGradlePlugin"}
+com-android-library = {id = "com.android.library", version.ref = "androidGradlePlugin"}
 
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt" , version.ref = "kotlin"}
+google-services = { id = "com.google.gms.google-services", version.ref="googleServices" }
+safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "safeArgsPlugin" }
+sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref="crashlyticsPlugin" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltPlugin" }
 
 [bundles]
 compose = ["compose.ui", "compose.material", "compose.tooling", "compose.runtime"]

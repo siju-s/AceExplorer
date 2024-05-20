@@ -17,7 +17,6 @@
 package com.siju.acexplorer
 
 import android.app.Application
-import com.kobakei.ratethisapp.RateThisApp
 import com.siju.acexplorer.common.theme.Theme
 import dagger.hilt.android.HiltAndroidApp
 
@@ -31,13 +30,13 @@ class AceApplication : Application() {
         super.onCreate()
         Theme.setTheme(Theme.getTheme(applicationContext))
         appContext = this
-        initRateApp()
+//        initRateApp()
     }
 
-    private fun initRateApp() {
-        val config = RateThisApp.Config(RATE_APP_CRITERIA_INSTALL_DAYS, RATE_APP_CRITERIA_LAUNCH_TIMES)
-        RateThisApp.init(config)
-    }
+//    private fun initRateApp() {
+//        val config = RateThisApp.Config(RATE_APP_CRITERIA_INSTALL_DAYS, RATE_APP_CRITERIA_LAUNCH_TIMES)
+//        RateThisApp.init(config)
+//    }
 
     companion object {
         lateinit var appContext: AceApplication

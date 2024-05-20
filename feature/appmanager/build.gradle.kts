@@ -1,17 +1,17 @@
 plugins {
-    id ("com.android.library")
-    kotlin(BuildPlugins.kotlinAndroid)
-    id("androidx.navigation.safeargs.kotlin")
-    id("dagger.hilt.android.plugin")
-    kotlin(BuildPlugins.kotlinKapt)
+    alias(libs.plugins.com.android.library)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.safeargs)
+    alias(libs.plugins.hilt)
 }
 
 android {
 
     defaultConfig {
-        minSdk = AndroidSdk.min
-        compileSdk = AndroidSdk.compile
-        targetSdk = AndroidSdk.target
+        minSdk = libs.versions.minSdk.get().toInt()
+        compileSdk = libs.versions.compileSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
     }
 
     buildTypes {
@@ -35,7 +35,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.6"
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 
     lint {
