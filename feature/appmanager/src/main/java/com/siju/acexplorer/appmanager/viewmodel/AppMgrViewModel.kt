@@ -128,7 +128,6 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
         viewModelScope.launch(Dispatchers.Default) {
             list?.let {
                 _appsList.postValue(SortHelper.sort(it, sortMode))
-                updateList.postValue(Event(true))
             }
         }
         sortModeData.saveSortMode(sortMode)

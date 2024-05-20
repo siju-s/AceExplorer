@@ -7,16 +7,18 @@ import java.util.*
 object SortHelper {
 
     fun sort(files: ArrayList<AppInfo>, sortMode: SortMode): ArrayList<AppInfo> {
+        val newList = ArrayList(files)
+
         when (sortMode) {
-            SortMode.NAME -> Collections.sort(files, comparatorByName)
-            SortMode.NAME_DESC                  -> Collections.sort(files, comparatorByNameDesc)
-            SortMode.SIZE           -> Collections.sort(files, comparatorBySizeApk)
-            SortMode.SIZE_DESC -> Collections.sort(files, comparatorBySizeApkDesc)
-            SortMode.DATE           -> Collections.sort(files, comparatorByDateApk)
-            SortMode.DATE_DESC -> Collections.sort(files, comparatorByDateApkDesc)
-            else -> Collections.sort(files, comparatorByName)
+            SortMode.NAME -> Collections.sort(newList, comparatorByName)
+            SortMode.NAME_DESC                  -> Collections.sort(newList, comparatorByNameDesc)
+            SortMode.SIZE           -> Collections.sort(newList, comparatorBySizeApk)
+            SortMode.SIZE_DESC -> Collections.sort(newList, comparatorBySizeApkDesc)
+            SortMode.DATE           -> Collections.sort(newList, comparatorByDateApk)
+            SortMode.DATE_DESC -> Collections.sort(newList, comparatorByDateApkDesc)
+            else -> Collections.sort(newList, comparatorByName)
         }
-        return files
+        return newList
     }
 
     private val comparatorByName: Comparator<in AppInfo> = Comparator { file1, file2 ->
