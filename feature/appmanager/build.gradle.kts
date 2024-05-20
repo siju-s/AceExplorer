@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.com.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.safeargs)
     alias(libs.plugins.hilt)
 }
@@ -50,6 +50,6 @@ dependencies {
     implementation(project(":common"))
 
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
-    kapt(libs.annotation)
+    ksp(libs.hilt.compiler)
+    ksp(libs.annotation)
 }

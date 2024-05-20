@@ -4,7 +4,7 @@ import java.util.*
 plugins {
     alias(libs.plugins.com.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
@@ -173,18 +173,15 @@ dependencies {
     implementation(libs.compose.tooling)
     implementation(libs.compose.livedata)
 
-
-
-
-    kapt(libs.lifecycle.compiler)
+    ksp(libs.lifecycle.compiler)
 
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
 
     implementation(libs.room.runtime)
-    kapt(libs.room.compiler)
+    ksp(libs.room.compiler)
 
-    kapt(libs.annotation)
+    ksp(libs.annotation)
 
     implementation(libs.analytics)
     implementation(libs.crashlytics)
@@ -195,7 +192,7 @@ dependencies {
     implementation(libs.play.review)
 
 
-    kapt(libs.glide.compiler)
+    ksp(libs.glide.compiler)
 
     implementation(libs.apacheCompress)
     implementation(libs.floatingButton)

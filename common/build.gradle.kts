@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.com.android.library)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.sonarqube)
 }
 
@@ -19,8 +19,10 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
-    kotlin {
-        jvmToolchain(17)
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs> {
+        kotlinOptions {
+            jvmTarget="17"
+        }
     }
     compileOptions.apply {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -53,7 +55,7 @@ dependencies {
     api(libs.lifecycle.liveData)
     api(libs.lifecycle.runtime)
 
-    kapt(libs.lifecycle.compiler)
+    ksp(libs.lifecycle.compiler)
 
     api(libs.recyclerView)
     api(libs.design)
@@ -68,7 +70,7 @@ dependencies {
 
     api(libs.glide.runtime)
     api(libs.glide.compose)
-    kapt(libs.glide.compiler)
+    ksp(libs.glide.compiler)
     api(libs.fastScrollRecyclerview)
 
     api(libs.compose.runtime)

@@ -13,14 +13,14 @@ crashlyticsPlugin  = "2.9.4"
 safeArgsPlugin = "2.5.3"
 sonarqube = "3.3"
 hiltPlugin = "2.51.1"
-
+kspPlugin = "1.9.24-1.0.20"
 
 activityKtx = "1.8.1"
 fragmentKtx = "1.6.2"
 appCompat = "1.6.1"
 design       = "1.10.0"
 support      = "1.0.0"
-annotation   = "1.7.0"
+annotation   = "1.8.0"
 recyclerview = "1.3.2"
 preference   = "1.2.1"
 viewpager    = "1.0.0"
@@ -112,7 +112,7 @@ coroutine_android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutine
 
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 glide_runtime = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
-glide_compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glide" }
+glide_compiler = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" }
 glide_compose = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide_compose" }
 
 apacheCompress = { group = "org.apache.commons", name = "commons-compress", version.ref = "apacheCompress" }
@@ -131,10 +131,9 @@ mockito = { group = "org.mockito", name = "mockito-core", version.ref = "mockito
 
 com-android-application = {id = "com.android.application", version.ref = "androidGradlePlugin"}
 com-android-library = {id = "com.android.library", version.ref = "androidGradlePlugin"}
-
+kotlin-ksp= {id="com.google.devtools.ksp", version.ref="kspPlugin"}
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt" , version.ref = "kotlin"}
 google-services = { id = "com.google.gms.google-services", version.ref="googleServices" }
 safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "safeArgsPlugin" }
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
