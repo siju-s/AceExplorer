@@ -65,7 +65,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     private var _binding: AppsListContainerBinding? = null
     private val binding get() = _binding!!
 
-//    private lateinit var adapter: AppMgrAdapter
     private val viewModel: AppMgrViewModel by viewModels()
     private lateinit var installSourceItem: MenuItem
     private lateinit var allSourceItem: MenuItem
@@ -111,14 +110,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     private fun setupUi() {
         val viewMode = viewModel.getViewMode()
-//        adapter = AppMgrAdapter(
-//            viewModel,
-//            viewMode, { appInfo, pos ->
-//                onItemClick(appInfo, pos)
-//            },
-//            { _, pos, _ ->
-//                onItemLongClicked(pos)
-//            })
         setupToolbar(binding.appBarContainer.toolbarContainer.toolbar, viewMode)
         this.bottomToolbar = binding.appsListContainer.bottomToolbar
     }
@@ -137,7 +128,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     @Composable
     private fun SetupLazyList(viewModel: AppMgrViewModel) {
-        val apps = viewModel.appsList.observeAsState(initial = emptyList())
+        val apps = viewModel.filteredAppsList.observeAsState(initial = emptyList())
 
         LazyColumn {
             itemsIndexed(apps.value) { index, item ->
@@ -157,7 +148,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     @Composable
     private fun SetupLazyGrid(appMgr: AppMgrViewModel) {
-        val apps = viewModel.appsList.observeAsState(initial = emptyList())
+        val apps = viewModel.filteredAppsList.observeAsState(initial = emptyList())
         val gridColumns = getGridColumns(resources.configuration, viewModel.getViewMode())
 
         LazyVerticalGrid(columns = GridCells.Fixed(gridColumns)) {
@@ -517,7 +508,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     override fun onQueryTextChange(newText: String): Boolean {
-//        adapter.filter(newText)
+        viewModel.updateSearchQuery(newText)
         return true
     }
 

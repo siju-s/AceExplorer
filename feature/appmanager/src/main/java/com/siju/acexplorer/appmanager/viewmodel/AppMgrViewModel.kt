@@ -18,6 +18,9 @@ import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -33,12 +36,14 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     val appsList : LiveData<ArrayList<AppInfo>>
     get() = _appsList
 
+    private val _filteredAppsList =  MutableLiveData<ArrayList<AppInfo>>()
+    val filteredAppsList : LiveData<ArrayList<AppInfo>>
+        get() = _filteredAppsList
+
     private val _appsSourceFilteredList =  MutableLiveData<ArrayList<AppInfo>>()
 
     val appsSourceFilteredList : LiveData<ArrayList<AppInfo>>
         get() = _appsSourceFilteredList
-
-    val updateList = MutableLiveData<Event<Boolean>>()
 
     val selectedItemCount = multiSelection.selectedItemCount()
 
@@ -80,6 +85,8 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     private val _viewMode = MutableLiveData(model.getViewMode())
     val viewMode : LiveData<ViewMode> = _viewMode
 
+    private val _searchQuery = MutableStateFlow("")
+
     init {
         multiSelection.setListener(this)
     }
@@ -97,7 +104,9 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
                 AppType.USER_APP -> model.getUserApps()
                 AppType.SYSTEM_APP -> model.getSystemApps()
             }
-            _appsList.postValue(SortHelper.sort(result, getSortMode()))
+            val list = SortHelper.sort(result, getSortMode())
+            _filteredAppsList.postValue(list)
+            _appsList.postValue(list)
         }
     }
 
@@ -218,6 +227,18 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
 
     fun onSearchInactive() {
         this.searchActive = false
+    }
+
+    fun updateSearchQuery(query: String) {
+        viewModelScope.launch {
+            _searchQuery.value = query
+            _filteredAppsList.value = if (query.isEmpty()) {
+                _appsList.value
+            } else {
+                ArrayList(_appsList.value?.filter { it.name.contains(query) || it.packageName.contains(query) }
+                    ?: emptyList())
+            }
+        }
     }
 
     fun setSelectedViewMode(viewMode: ViewMode) {
