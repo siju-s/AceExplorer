@@ -6,6 +6,6 @@ import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.types.AppInfo
 
 class AppInfoProvider : PreviewParameterProvider<AppInfo> {
-    override val values: Sequence<AppInfo> = listOf(AppInfo("Ace", "com.siju.acexplorer", AppType.USER_APP,AppSource.PLAYSTORE, "", 0, 0L, 0L),
-        AppInfo("AceDev", "com.siju.acexplorer.dev", AppType.USER_APP,AppSource.PLAYSTORE, "", 0, 200000L, 0L)).asSequence()
+    override val values: Sequence<AppInfo> = listOf(AppInfo("Ace", "com.siju.acexplorer", AppType.USER_APP,AppSource.PLAYSTORE, "", 200000000L, 0L, 0L),
+        AppInfo("AceDev", "com.siju.acexplorer.dev", AppType.USER_APP,AppSource.PLAYSTORE, "", 100000L, 200000L, 0L)).asSequence()
 }

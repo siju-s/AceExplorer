@@ -149,7 +149,8 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     @Composable
     private fun SetupLazyGrid(appMgr: AppMgrViewModel) {
         val apps = viewModel.filteredAppsList.observeAsState(initial = emptyList())
-        val gridColumns = getGridColumns(resources.configuration, viewModel.getViewMode())
+        val viewMode = viewModel.getViewMode()
+        val gridColumns = getGridColumns(resources.configuration, viewMode)
 
         LazyVerticalGrid(columns = GridCells.Fixed(gridColumns)) {
             itemsIndexed(apps.value) { index, item ->
@@ -160,7 +161,8 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                     }, onItemLongClick = {
                         onItemLongClicked(index)
                     },
-                    appMgr = appMgr
+                    appMgr = appMgr,
+                    viewMode = viewMode
                 )
             }
         }
@@ -186,7 +188,8 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             selected = false,
             onItemClick = { },
             onItemLongClick = { },
-            appMgr = MockAppMgrViewModel()
+            appMgr = MockAppMgrViewModel(),
+            viewMode = ViewMode.GALLERY
         )
     }
 

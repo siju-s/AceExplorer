@@ -1,5 +1,6 @@
 package com.siju.acexplorer.appmanager.view.compose
 
+import android.text.format.Formatter
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -33,6 +34,7 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.siju.acexplorer.appmanager.types.AppInfo
 import com.siju.acexplorer.appmanager.viewmodel.AppMgr
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
+import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.theme.LocalDim
 import com.siju.acexplorer.common.theme.itemSelectionDark
 import com.siju.acexplorer.common.theme.transparent
@@ -47,7 +49,8 @@ fun GridItem(
     selected: Boolean,
     onItemClick: (AppInfo) -> Unit,
     onItemLongClick: (AppInfo) -> Unit,
-    appMgr: AppMgr
+    appMgr: AppMgr,
+    viewMode: ViewMode = ViewMode.GRID
 ) {
     Log.d(
         TAG,
@@ -104,6 +107,9 @@ fun GridItem(
             ) {
                 Text(text = data.name, maxLines = 2)
                 Text(text = data.packageName, maxLines = 2)
+                if (viewMode == ViewMode.GALLERY) {
+                    Text(text = Formatter.formatFileSize(LocalContext.current, data.size), maxLines = 2)
+                }
             }
 
             if (visible) {
