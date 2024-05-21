@@ -51,8 +51,7 @@
             app:fastScrollThumbColor="@color/colorAccent"
             app:fastScrollEnableThumbInactiveColor="true"
             app:fastScrollThumbInactiveColor="@color/colorPrimary"
-            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-            tools:listitem="@layout/apps_gallery_item" />
+            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager" />
 
 <!--    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>-->
 
