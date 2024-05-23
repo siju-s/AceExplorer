@@ -17,36 +17,24 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="@layout/apps_list_container"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:showIn="@layout/apps_list_container">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        android:layout_above="@+id/layoutDummy">
+        android:layout_above="@+id/layoutDummy"
+        android:layout_marginTop="8dp">
 
-<androidx.compose.ui.platform.ComposeView
-    android:id="@+id/composeView"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/composeView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-<!--        <com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView-->
-<!--            android:id="@+id/appsList"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:layout_above="@+id/layoutDummy"-->
-<!--            app:fastScrollAutoHide="true"-->
-<!--            app:fastScrollAutoHideDelay="1500"-->
-<!--            app:fastScrollThumbColor="@color/colorAccent"-->
-<!--            app:fastScrollEnableThumbInactiveColor="true"-->
-<!--            app:fastScrollThumbInactiveColor="@color/colorPrimary"-->
-<!--            tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"-->
-<!--            tools:listitem="@layout/apps_list_item" />-->
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
@@ -64,9 +52,9 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/actionbar_height"
             android:layout_gravity="bottom"
+            android:background="@color/bottom_toolbar_bg"
             android:visibility="gone"
-            tools:visibility="visible"
-            android:background="@color/bottom_toolbar_bg" />
+            tools:visibility="visible" />
 
         <LinearLayout
             android:id="@+id/adviewLayout"
