@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.databinding.LibraryItemBinding
 import com.siju.acexplorer.home.types.HomeLibraryInfo
-import com.siju.acexplorer.home.viewmodel.HomeViewModel
+import com.siju.acexplorer.main.model.groups.CategoryHelper
 
-class HomeLibAdapter internal constructor(private val viewModel: HomeViewModel) :
+class HomeLibAdapter internal constructor(private val clickListener: (HomeLibraryInfo) -> Unit) :
         ListAdapter<HomeLibraryInfo, HomeLibAdapter.ViewHolder>(CategoryDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -19,16 +19,17 @@ class HomeLibAdapter internal constructor(private val viewModel: HomeViewModel) 
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
-        viewHolder.bind(item, viewModel)
+        viewHolder.bind(item, clickListener)
     }
 
     class ViewHolder(private val binding: LibraryItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: HomeLibraryInfo, viewModel: HomeViewModel) {
-            binding.viewModel = viewModel
-            binding.item = item
+        fun bind(item: HomeLibraryInfo, clickListener: (HomeLibraryInfo) -> Unit) {
             itemView.tag = item.category
-            binding.executePendingBindings()
+            binding.imageLibrary.setImageResource(item.resourceId)
+            binding.textLibrary.text = CategoryHelper.getCategoryName(itemView.context, item.category)
+            binding.textCount.text = item.count.toString()
+            itemView.setOnClickListener { clickListener(item) }
         }
     }
 

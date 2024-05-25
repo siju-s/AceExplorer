@@ -27,7 +27,6 @@ android {
     }
     buildFeatures {
         viewBinding = true
-        dataBinding = true
         compose = true
     }
     namespace = "com.siju.acexplorer.common"

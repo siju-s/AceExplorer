@@ -111,12 +111,8 @@ android {
         }
     }
 
-    viewBinding {
-        android.buildFeatures.viewBinding = true
-    }
-
     buildFeatures {
-        dataBinding = true
+        viewBinding = true
         buildConfig= true
         compose = true
     }
@@ -172,8 +168,6 @@ dependencies {
     implementation(libs.compose.tooling)
     implementation(libs.compose.livedata)
 
-    ksp(libs.lifecycle.compiler)
-
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
 
@@ -191,9 +185,7 @@ dependencies {
     implementation(libs.play.review)
 
 
-    ksp(libs.glide.compiler)
-
-    implementation(libs.apacheCompress)
+   implementation(libs.apacheCompress)
     implementation(libs.floatingButton)
 //    implementation(libs.rateApp)
     implementation(libs.photoView)

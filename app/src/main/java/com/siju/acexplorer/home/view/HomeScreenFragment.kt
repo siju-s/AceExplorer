@@ -146,7 +146,9 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun setupCategoriesList() {
-        categoryAdapter = HomeLibAdapter(homeViewModel)
+        categoryAdapter = HomeLibAdapter {
+            homeViewModel.onCategoryClick(it.category)
+        }
         setupCategoryAdapter()
     }
 

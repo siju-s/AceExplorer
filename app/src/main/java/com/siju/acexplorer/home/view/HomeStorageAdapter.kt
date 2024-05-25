@@ -5,8 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.siju.acexplorer.R
 import com.siju.acexplorer.databinding.StorageItemBinding
 import com.siju.acexplorer.main.model.StorageItem
+import com.siju.acexplorer.main.model.StorageUtils
+import java.util.Locale
 
 
 class HomeStorageAdapter(private val clickListener: (StorageItem) -> Unit) : ListAdapter<StorageItem,
@@ -22,13 +25,21 @@ class HomeStorageAdapter(private val clickListener: (StorageItem) -> Unit) : Lis
         holder.bind(item, clickListener)
     }
 
-    class ViewHolder constructor(private val binding: StorageItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(private val binding: StorageItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: StorageItem, clickListener: (StorageItem) -> Unit) {
-            binding.item = item
             itemView.tag = item.path
+            val context = binding.root.context
+            binding.progressBarSD.progress = item.progress
+            binding.textProgress.text = String.format(Locale.getDefault(), context.getString(R.string.storage_progress_percent), item.progress)
+            binding.textStorageName.text = if (item.storageType == StorageUtils.StorageType.EXTERNAL) {
+                item.name
+            }
+            else {
+                StorageUtils.StorageType.getStorageText(context, item.storageType)
+            }
+            binding.textStorageSpace.text = item.secondLine
             itemView.setOnClickListener { clickListener(item) }
-            binding.executePendingBindings()
         }
     }
 

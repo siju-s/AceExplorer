@@ -111,7 +111,8 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
     private var category = Category.FILES
     private var showNavigation = true
     private var tabPos = -1
-    private var binding : MainListBinding? = null
+    private var _binding : MainListBinding? = null
+    private val binding get() = _binding!!
 
     private val installResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
         if (it.resultCode == RESULT_OK) {
@@ -123,8 +124,9 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View? {
-        binding = MainListBinding.inflate(inflater, container, false)
-        return binding?.root
+        _binding = MainListBinding.inflate(inflater, container, false)
+        val view = binding.root
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -153,6 +155,11 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun getAppBarView(it: View): View? {
         return if (showNavigation) {
             it
@@ -175,10 +182,10 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
 
     private fun setupToolbar() {
         if (!showNavigation) {
-            binding?.appbar?.visibility = View.GONE
+            binding.appbar.visibility = View.GONE
         }
         else {
-            setToolbarTitle(binding?.toolbarContainer?.toolbar)
+            setToolbarTitle(binding.toolbarContainer.toolbar)
         }
     }
 
@@ -210,7 +217,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         if (fileCount != 0) {
             subtitle.append(getFileCountText(context, fileCount, category))
         }
-        binding?.toolbarContainer?.toolbar?.subtitle = subtitle.toString()
+        binding.toolbarContainer.toolbar.subtitle = subtitle.toString()
         categoryMenuHelper?.setTabSubtitle(subtitle.toString(), tabPos)
     }
 
@@ -614,7 +621,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         menuControls.onEndActionMode()
         filesList.onEndActionMode()
         if (showNavigation) {
-            setToolbarTitle(binding?.toolbarContainer?.toolbar)
+            setToolbarTitle(binding.toolbarContainer.toolbar)
         }
         else {
             categoryMenuHelper?.enableTab()
