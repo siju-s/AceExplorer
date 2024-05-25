@@ -3,7 +3,7 @@ minSdk = "26"
 targetSdk = "34"
 compileSdk = "34"
 
-kotlin = "1.9.24"
+kotlin = "2.0.0"
 composeCompiler = "1.5.14"
 compose = "1.6.7"
 composeNavigation = "2.7.7"
@@ -13,7 +13,7 @@ crashlyticsPlugin  = "2.9.4"
 safeArgsPlugin = "2.5.3"
 sonarqube = "3.3"
 hiltPlugin = "2.51.1"
-kspPlugin = "1.9.24-1.0.20"
+kspPlugin = "2.0.0-1.0.21"
 
 activityKtx = "1.8.1"
 fragmentKtx = "1.6.2"
@@ -139,6 +139,7 @@ safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "safeArgs
 sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref="crashlyticsPlugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltPlugin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
 [bundles]
 compose = ["compose.ui", "compose.material", "compose.tooling", "compose.runtime"]

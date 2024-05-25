@@ -24,6 +24,7 @@ plugins {
     alias(libs.plugins.safeargs) apply false
     alias(libs.plugins.sonarqube) apply false
     alias(libs.plugins.hilt) apply false
+    alias(libs.plugins.compose.compiler) apply false
 }
 
 

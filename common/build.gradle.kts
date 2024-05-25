@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.sonarqube)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -19,11 +20,7 @@ android {
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
-    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs> {
-        kotlinOptions {
-            jvmTarget="17"
-        }
-    }
+
     compileOptions.apply {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -35,9 +32,6 @@ android {
     }
     namespace = "com.siju.acexplorer.common"
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
 }
 
 dependencies {

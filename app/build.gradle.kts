@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.safeargs)
     alias(libs.plugins.sonarqube)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.compose.compiler)
+
 }
 
 val keyProperties = Properties()
@@ -119,9 +121,6 @@ android {
         compose = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
-    }
 
     sonarqube {
         properties {

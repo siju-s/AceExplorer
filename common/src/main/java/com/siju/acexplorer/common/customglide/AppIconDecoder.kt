@@ -27,7 +27,7 @@ internal class AppIconDecoder(private val context: Context) : ResourceDecoder<Ap
 
             override fun getSize(): Int {
                 return if (drawable is BitmapDrawable) {
-                    Util.getBitmapByteSize(drawable.bitmap)
+                    Util.getBitmapByteSize((drawable as BitmapDrawable).bitmap)
                 } else {
                     1
                 }
