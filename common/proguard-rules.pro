@@ -22,3 +22,4 @@
 
 -keep class com.siju.acexplorer.common.utils.SdkHelper
 -keep class com.siju.acexplorer.common.utils.ToolbarHelper
+-keep class com.siju.acexplorer.common.utils.Event

@@ -21,3 +21,6 @@
 #-renamesourcefileattribute SourceFile
 -dontwarn java.lang.invoke.StringConcatFactory
 
+-dontobfuscate
+-printmapping mapping.txt
+
