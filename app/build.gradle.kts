@@ -162,19 +162,11 @@ dependencies {
     implementation(libs.cardView)
     implementation(libs.pagination)
 
-    implementation(libs.compose.runtime)
-    implementation(libs.compose.ui)
-    implementation(libs.compose.material)
-    implementation(libs.compose.tooling)
-    implementation(libs.compose.livedata)
-
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
 
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
-
-    ksp(libs.annotation)
 
     implementation(libs.analytics)
     implementation(libs.crashlytics)
@@ -184,11 +176,13 @@ dependencies {
     implementation(libs.play.app.update)
     implementation(libs.play.review)
 
-
    implementation(libs.apacheCompress)
     implementation(libs.floatingButton)
 //    implementation(libs.rateApp)
     implementation(libs.photoView)
+
+    ksp(libs.glide.compiler)
+
 
 //    debugImplementation(Libraries.ExternalLibs.leakCanary)
 

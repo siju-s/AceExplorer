@@ -48,5 +48,8 @@ dependencies {
 
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
-    ksp(libs.annotation)
+    ksp(libs.lifecycle.compiler)
+
+    ksp(libs.glide.compiler)
+
 }

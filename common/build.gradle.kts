@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.sonarqube)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.safeargs)
 }
 
 android {
@@ -19,6 +20,10 @@ android {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
+    }
+
+    kotlin {
+        jvmToolchain(22)
     }
 
     compileOptions.apply {
@@ -43,6 +48,8 @@ dependencies {
     api(libs.activityKtx)
     api(libs.fragmentKtx)
     api(libs.preference)
+    api(libs.annotation)
+
 
     api(libs.viewModelKtx)
     api(libs.lifecycle.liveData)
