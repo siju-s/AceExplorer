@@ -73,3 +73,5 @@ fastlane/README.md
 
 reports/
 *.hprof
+/.idea/other.xml
+/.idea/studiobot.xml
