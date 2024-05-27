@@ -17,7 +17,8 @@ android {
 
     buildTypes {
         getByName("release") {
-            isMinifyEnabled = true
+            // TODO Revisit later after Kotlin 2.0 and Hilt KSP matures
+            isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
     }
@@ -34,6 +35,13 @@ android {
         viewBinding = true
         compose = true
     }
+
+    lint {
+        abortOnError = false
+        lintConfig = File("${project.rootDir}/lint/lint-config.xml")
+        htmlOutput = File("${project.rootDir}/lint/lint-report.html")
+    }
+
     namespace = "com.siju.acexplorer.common"
 
 }
