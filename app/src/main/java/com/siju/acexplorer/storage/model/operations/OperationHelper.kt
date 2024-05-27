@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.model.operations
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -45,11 +46,18 @@ class OperationHelper(val context: Context) {
         operationList.add(OperationInfo(operationId, operations, operationData))
     }
 
+    @SuppressLint("UnspecifiedRegisterReceiverFlag")
     private fun registerReceiver() {
         val intentFilter = IntentFilter(ACTION_OP_REFRESH)
         receiverRegistered = true
-        context.registerReceiver(operationResultReceiver, intentFilter,
-            Context.RECEIVER_NOT_EXPORTED)
+        if (SdkHelper.isAtleastAPI33) {
+            context.registerReceiver(operationResultReceiver, intentFilter,
+                Context.RECEIVER_NOT_EXPORTED)
+        }
+        else {
+            context.registerReceiver(operationResultReceiver, intentFilter)
+        }
+
     }
 
     private fun unregisterReceiver() {
