@@ -91,7 +91,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     ): View {
         _binding = AppsListContainerBinding.inflate(inflater, container, false)
         _binding!!.appsListContainer.composeView.setContent {
-            MyApplicationTheme(appTheme = Theme.DARK, isDarkMode = true) {
+            MyApplicationTheme(appTheme = Theme.getTheme(requireContext())) {
                 Content(viewModel)
             }
         }
@@ -168,7 +168,13 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         }
     }
 
-    @Preview
+    @Preview(name = "Light Mode",
+        uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Preview(
+        uiMode = Configuration.UI_MODE_NIGHT_YES,
+        showBackground = true,
+        name = "Dark Mode"
+    )
     @Composable
     fun ListItemPreview(@PreviewParameter(AppInfoProvider::class) data: AppInfo) {
         ListItem(

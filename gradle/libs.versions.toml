@@ -7,6 +7,8 @@ kotlin = "2.0.0"
 composeCompiler = "1.5.14"
 compose = "1.6.7"
 composeNavigation = "2.7.7"
+composeMaterial3 = "1.2.1"
+
 androidGradlePlugin = "8.5.0-rc01"
 googleServices = "4.4.1"
 crashlyticsPlugin  = "2.9.4"
@@ -62,7 +64,7 @@ mockito  = "3.3.3"
 [libraries]
 compose_runtime = {module = "androidx.compose.runtime:runtime", version.ref = "compose"}
 compose_ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-compose_material = { module = "androidx.compose.material:material", version.ref = "compose" }
+compose_material3 = { module = "androidx.compose.material3:material3", version.ref = "composeMaterial3" }
 compose_tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 compose_livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
 compose_compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composeCompiler"}
@@ -141,5 +143,3 @@ firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref="cr
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltPlugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 
-[bundles]
-compose = ["compose.ui", "compose.material", "compose.tooling", "compose.runtime"]

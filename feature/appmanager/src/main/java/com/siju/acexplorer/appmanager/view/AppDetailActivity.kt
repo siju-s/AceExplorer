@@ -83,6 +83,7 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_detail_ui)
 
+
         setupUI()
         initListeners()
         initObservers()

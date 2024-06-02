@@ -46,4 +46,8 @@ object SdkHelper {
     val isAtleastAndroid11: Boolean
         get() = Build.VERSION.SDK_INT >= 30
 
+    @get:ChecksSdkIntAtLeast(api = Build.VERSION_CODES.S)
+    val isAtleastAndroid12: Boolean
+        get() = Build.VERSION.SDK_INT >= 31
+
 }

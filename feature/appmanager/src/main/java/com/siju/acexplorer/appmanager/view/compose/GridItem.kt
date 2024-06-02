@@ -10,8 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,8 +31,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.siju.acexplorer.appmanager.types.AppInfo
+import com.siju.acexplorer.appmanager.view.compose.components.BodyText
 import com.siju.acexplorer.appmanager.viewmodel.AppMgr
-import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
 import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.theme.LocalDim
 import com.siju.acexplorer.common.theme.itemSelectionDark
@@ -105,10 +104,10 @@ fun GridItem(
                     .align(Alignment.TopStart)
                     .padding(top = LocalDim.current.space80 + LocalDim.current.spaceSmall)
             ) {
-                Text(text = data.name, maxLines = 2)
-                Text(text = data.packageName, maxLines = 2)
+                BodyText(text = data.name, maxLines = 2)
+                BodyText(text = data.packageName, maxLines = 2)
                 if (viewMode == ViewMode.GALLERY) {
-                    Text(text = Formatter.formatFileSize(LocalContext.current, data.size), maxLines = 2)
+                    BodyText(text = Formatter.formatFileSize(LocalContext.current, data.size), maxLines = 2)
                 }
             }
 

@@ -83,7 +83,7 @@ dependencies {
 
     api(libs.compose.runtime)
     api(libs.compose.ui)
-    api(libs.compose.material)
+    api(libs.compose.material3)
     api(libs.compose.tooling)
     api(libs.compose.livedata)
     api(libs.compose.compiler)

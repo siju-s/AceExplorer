@@ -14,8 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +37,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.siju.acexplorer.appmanager.R
 import com.siju.acexplorer.appmanager.types.AppInfo
+import com.siju.acexplorer.appmanager.view.compose.components.BodyText
 import com.siju.acexplorer.appmanager.viewmodel.AppMgr
 import com.siju.acexplorer.common.theme.LocalDim
 import com.siju.acexplorer.common.theme.itemSelectionDark
@@ -67,7 +67,7 @@ fun ListItem(
     val bgColor = getBackgroundColor(selectedPos)
 
     Surface(
-        color = bgColor, modifier = modifier.combinedClickable(
+         color = bgColor, modifier = modifier.combinedClickable(
             onClick = {
                 if (appMgr.isActionModeActive()) {
                     selectedPos = !selectedPos
@@ -110,8 +110,8 @@ fun ListItem(
                     .align(Alignment.CenterStart)
                     .padding(start = LocalDim.current.space50 + LocalDim.current.spaceSmall)
             ) {
-                Text(text = data.name)
-                Text(text = data.packageName)
+                BodyText(data.name)
+                BodyText(data.packageName)
             }
             Spacer(Modifier.fillMaxSize(1f))
 
@@ -126,8 +126,9 @@ fun ListItem(
                 )
             }
 
-            Text(
-                text = DateUtils.convertDate(data.installDate), modifier = Modifier
+            BodyText(
+                text = DateUtils.convertDate(data.installDate),
+                modifier = Modifier
                     .wrapContentHeight()
                     .align(Alignment.BottomEnd)
             )
@@ -136,6 +137,8 @@ fun ListItem(
 
     }
 }
+
+
 
 @Composable
 private fun getSelectionDrawable(selectedPos: Boolean) =
