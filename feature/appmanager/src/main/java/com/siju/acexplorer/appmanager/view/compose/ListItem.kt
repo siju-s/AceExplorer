@@ -22,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -37,11 +36,11 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.siju.acexplorer.appmanager.R
 import com.siju.acexplorer.appmanager.types.AppInfo
+import com.siju.acexplorer.appmanager.view.compose.LazyItemUtils.getBackgroundColor
+import com.siju.acexplorer.appmanager.view.compose.LazyItemUtils.getSelectionDrawable
 import com.siju.acexplorer.appmanager.view.compose.components.BodyText
 import com.siju.acexplorer.appmanager.viewmodel.AppMgr
 import com.siju.acexplorer.common.theme.LocalDim
-import com.siju.acexplorer.common.theme.itemSelectionDark
-import com.siju.acexplorer.common.theme.transparent
 import com.siju.acexplorer.common.utils.DateUtils
 
 private const val TAG = "ListItem"
@@ -58,7 +57,7 @@ fun ListItem(
 ) {
     Log.d(
         TAG,
-        "ListItem() called with: data = $data, modifier = $modifier, requestManager = $requestManager, selected = $selected, onItemClick = $onItemClick, onItemLongClick = $onItemLongClick"
+        "ListItem() called with: data = $data, theme = ${LocalContext.current.theme}, selected = $selected, onItemClick = $onItemClick, onItemLongClick = $onItemLongClick"
     )
     var visible by remember { mutableStateOf(false) }
     var selectedPos by remember { mutableStateOf(false) }
@@ -67,7 +66,7 @@ fun ListItem(
     val bgColor = getBackgroundColor(selectedPos)
 
     Surface(
-         color = bgColor, modifier = modifier.combinedClickable(
+        color = bgColor, modifier = modifier.combinedClickable(
             onClick = {
                 if (appMgr.isActionModeActive()) {
                     selectedPos = !selectedPos
@@ -136,15 +135,4 @@ fun ListItem(
         }
 
     }
-}
-
-
-
-@Composable
-private fun getSelectionDrawable(selectedPos: Boolean) =
-    if (selectedPos) com.siju.acexplorer.common.R.drawable.ic_select_checked else com.siju.acexplorer.common.R.drawable.ic_select_unchecked
-
-@Composable
-private fun getBackgroundColor(selectedPos: Boolean): Color {
-    return if (selectedPos) itemSelectionDark else transparent
 }
