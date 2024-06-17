@@ -14,6 +14,7 @@ import com.siju.acexplorer.common.utils.SdkHelper
 
 private val DarkColorScheme = darkColorScheme(
     primary = primaryPurple,
+    primaryContainer = primaryContainerDark,
     secondary = primaryPurpleDark,
     onPrimary = accent,
     onSecondary = Color.White,
@@ -24,6 +25,7 @@ private val DarkColorScheme = darkColorScheme(
 
 private val LightColorScheme = lightColorScheme(
     primary = primaryPurple,
+    primaryContainer = primaryContainerLight,
     secondary = primaryPurpleDark,
     onPrimary = accent,
     onSecondary = Color.White,

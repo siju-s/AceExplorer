@@ -5,6 +5,9 @@ import androidx.compose.ui.graphics.Color
 val primaryPurple = Color(0xff73066e)
 val primaryPurpleDark = Color(0xFF800080)
 val accent = Color(0xFFFF4081)
+val primaryContainerDark = Color(0xff212121)
+val primaryContainerLight = Color(0xff73066e)
+
 
 val light_background = Color(0xFFFFFBFF)
 val light_onBackground = Color(0xFF1F1B16)

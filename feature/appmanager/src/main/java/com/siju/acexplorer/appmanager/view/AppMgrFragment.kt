@@ -20,13 +20,24 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.fragment.app.Fragment
@@ -34,7 +45,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.android.material.badge.BadgeDrawable
-import com.google.android.material.badge.BadgeUtils
 import com.siju.acexplorer.appmanager.AppInfoProvider
 import com.siju.acexplorer.appmanager.R
 import com.siju.acexplorer.appmanager.databinding.AppsListContainerBinding
@@ -51,6 +61,7 @@ import com.siju.acexplorer.common.R.string.*
 import com.siju.acexplorer.common.SortDialog
 import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.common.ViewMode
+import com.siju.acexplorer.common.compose.ui.TopAppBarWithSearch
 import com.siju.acexplorer.common.theme.MyApplicationTheme
 import com.siju.acexplorer.common.theme.Theme
 import com.siju.acexplorer.common.utils.ConfigurationHelper
@@ -89,13 +100,13 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = AppsListContainerBinding.inflate(inflater, container, false)
-        _binding!!.appsListContainer.composeView.setContent {
-            MyApplicationTheme(appTheme = Theme.getTheme(requireContext())) {
-                Content(viewModel)
+        return ComposeView(requireContext()).apply {
+            setContent {
+                MyApplicationTheme(appTheme = Theme.getTheme(requireContext())) {
+                    AppContent(viewModel)
+                }
             }
         }
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -109,29 +120,57 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     private fun setupUi() {
-        val viewMode = viewModel.getViewMode()
-        setupToolbar(binding.appBarContainer.toolbarContainer.toolbar, viewMode)
-        this.bottomToolbar = binding.appsListContainer.bottomToolbar
+//        val viewMode = viewModel.getViewMode()
+//        setupToolbar(binding.appBarContainer.toolbarContainer.toolbar, viewMode)
+//        this.bottomToolbar = binding.appsListContainer.bottomToolbar
     }
 
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun Content(viewModel: AppMgrViewModel) {
+    private fun AppContent(viewModel: AppMgrViewModel) {
+        var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
+        var isSearchVisible by remember { mutableStateOf(false) }
+
+        Scaffold(topBar = {
+            TopAppBarWithSearch(title = getString(R.string.app_manager),
+                searchQuery = searchQuery,
+                onSearchQueryChange = { searchQuery = it},
+                isSearchVisible = isSearchVisible,
+                onSearchToggle = {isSearchVisible = !isSearchVisible},
+                onClearSearchQuery = { searchQuery = TextFieldValue("") }
+                )
+        }) { innerPadding ->
+            MainContent(viewModel, innerPadding, searchQuery.text)
+        }
+    }
+
+    @Composable
+    private fun AppMgrFragment.MainContent(
+        viewModel: AppMgrViewModel,
+        innerPadding: PaddingValues,
+        searchText: String
+    ) {
         val viewMode = viewModel.viewMode.observeAsState()
         if (viewMode.value == ViewMode.LIST) {
-            SetupLazyList(viewModel)
+            SetupLazyList(viewModel, innerPadding, searchText)
         } else {
-            SetupLazyGrid(viewModel)
+            SetupLazyGrid(viewModel, innerPadding, searchText)
         }
     }
 
 
     @Composable
-    private fun SetupLazyList(viewModel: AppMgrViewModel) {
+    private fun SetupLazyList(
+        viewModel: AppMgrViewModel,
+        innerPadding: PaddingValues,
+        searchText: String
+    ) {
         val apps = viewModel.filteredAppsList.observeAsState(initial = emptyList())
 
-        LazyColumn {
-            itemsIndexed(apps.value) { index, item ->
+        LazyColumn(Modifier.padding(innerPadding)) {
+            itemsIndexed(apps.value.filter { it.packageName.contains(searchText, ignoreCase = true) ||
+            it.name.contains(searchText, ignoreCase = true)}) { index, item ->
                 println("ITEM :${item.packageName}")
                 ListItem(item, requestManager = Glide.with(requireContext()),
                     selected = viewModel.isSelected(index), onItemClick = {
@@ -147,13 +186,18 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     @Composable
-    private fun SetupLazyGrid(appMgr: AppMgrViewModel) {
+    private fun SetupLazyGrid(
+        appMgr: AppMgrViewModel,
+        innerPadding: PaddingValues,
+        searchText: String
+    ) {
         val apps = viewModel.filteredAppsList.observeAsState(initial = emptyList())
         val viewMode = viewModel.getViewMode()
         val gridColumns = getGridColumns(resources.configuration, viewMode)
 
-        LazyVerticalGrid(columns = GridCells.Fixed(gridColumns)) {
-            itemsIndexed(apps.value) { index, item ->
+        LazyVerticalGrid(modifier = Modifier.padding(innerPadding), columns = GridCells.Fixed(gridColumns)) {
+            itemsIndexed(apps.value.filter { it.packageName.contains(searchText, ignoreCase = true) ||
+                    it.name.contains(searchText, ignoreCase = true)}) { index, item ->
                 println("ITEM SET :${item.packageName}")
                 GridItem(item, requestManager = Glide.with(requireContext()),
                     selected = viewModel.isSelected(index), onItemClick = {
@@ -168,8 +212,10 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         }
     }
 
-    @Preview(name = "Light Mode",
-        uiMode = Configuration.UI_MODE_NIGHT_NO)
+    @Preview(
+        name = "Light Mode",
+        uiMode = Configuration.UI_MODE_NIGHT_NO
+    )
     @Preview(
         uiMode = Configuration.UI_MODE_NIGHT_YES,
         showBackground = true,
@@ -302,20 +348,20 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     private fun showLoadingIndicator() {
-        binding.appsListContainer.swipeRefresh.isRefreshing = true
+//        binding.appsListContainer.swipeRefresh.isRefreshing = true
     }
 
     private fun hideLoadingIndicator() {
-        binding.appsListContainer.swipeRefresh.isRefreshing = false
+//        binding.appsListContainer.swipeRefresh.isRefreshing = false
     }
 
     private fun setToolbarSubtitle(count: Int?) {
-        if (count == 0 || count == null) {
-            toolbar.subtitle = ""
-        } else {
-            toolbar.subtitle =
-                context?.resources?.getQuantityString(RC.plurals.number_of_apps, count, count)
-        }
+//        if (count == 0 || count == null) {
+//            toolbar.subtitle = ""
+//        } else {
+//            toolbar.subtitle =
+//                context?.resources?.getQuantityString(RC.plurals.number_of_apps, count, count)
+//        }
     }
 
     private fun onActionModeStateChanged(actionModeState: ActionModeState) {
@@ -485,30 +531,30 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     @androidx.annotation.OptIn(com.google.android.material.badge.ExperimentalBadgeUtils::class)
     private fun applyBadgeToMenuItem(itemId: Int) {
         val context = context
-        if (menuItemBadge == null) {
-            context?.let {
-                menuItemBadge = BadgeDrawable.create(it)
-                BadgeUtils.attachBadgeDrawable(
-                    menuItemBadge!!,
-                    binding.appBarContainer.toolbarContainer.toolbar,
-                    itemId
-                )
-            }
-        }
+//        if (menuItemBadge == null) {
+//            context?.let {
+//                menuItemBadge = BadgeDrawable.create(it)
+//                BadgeUtils.attachBadgeDrawable(
+//                    menuItemBadge!!,
+//                    binding.appBarContainer.toolbarContainer.toolbar,
+//                    itemId
+//                )
+//            }
+//        }
     }
 
     @SuppressLint("UnsafeExperimentalUsageError")
     @androidx.annotation.OptIn(com.google.android.material.badge.ExperimentalBadgeUtils::class)
     private fun clearBadgeMenuItem(itemId: Int) {
-        val context = context
-        context ?: return
-        menuItemBadge?.let {
-            BadgeUtils.detachBadgeDrawable(
-                it,
-                binding.appBarContainer.toolbarContainer.toolbar,
-                itemId
-            )
-        }
+//        val context = context
+//        context ?: return
+//        menuItemBadge?.let {
+//            BadgeUtils.detachBadgeDrawable(
+//                it,
+//                binding.appBarContainer.toolbarContainer.toolbar,
+//                itemId
+//            )
+//        }
         menuItemBadge = null
     }
 

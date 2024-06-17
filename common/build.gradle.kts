@@ -88,5 +88,8 @@ dependencies {
     api(libs.compose.livedata)
     api(libs.compose.compiler)
     api(libs.compose.navigation)
+    api(libs.androidx.activity.compose)
+    api(libs.androidx.fragment.compose)
+    api(platform(libs.androidx.compose.bom))
 
 }

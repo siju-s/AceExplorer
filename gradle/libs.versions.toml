@@ -5,9 +5,13 @@ compileSdk = "34"
 
 kotlin = "2.0.0"
 composeCompiler = "1.5.14"
-compose = "1.6.7"
+compose = "1.6.8"
 composeNavigation = "2.7.7"
 composeMaterial3 = "1.2.1"
+composeBom = "2024.06.00"
+activityCompose = "1.9.0"
+fragmentCompose = "1.8.0"
+
 
 androidGradlePlugin = "8.5.0"
 googleServices = "4.4.2"
@@ -17,9 +21,9 @@ sonarqube = "3.3"
 hiltPlugin = "2.51.1"
 kspPlugin = "2.0.0-1.0.21"
 
-activityKtx = "1.8.1"
-fragmentKtx = "1.6.2"
-appCompat = "1.6.1"
+activityKtx = "1.9.0"
+fragmentKtx = "1.8.0"
+appCompat = "1.7.0"
 design       = "1.10.0"
 support      = "1.0.0"
 annotation   = "1.8.0"
@@ -62,13 +66,17 @@ junit =    "4.12"
 mockito  = "3.3.3"
 
 [libraries]
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+
 compose_runtime = {module = "androidx.compose.runtime:runtime", version.ref = "compose"}
 compose_ui = { module = "androidx.compose.ui:ui", version.ref = "compose" }
-compose_material3 = { module = "androidx.compose.material3:material3", version.ref = "composeMaterial3" }
-compose_tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-compose_livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "compose" }
+compose_material3 = { module = "androidx.compose.material3:material3" }
+compose_tooling = { module = "androidx.compose.ui:ui-tooling" }
+compose_livedata = { module = "androidx.compose.runtime:runtime-livedata" }
 compose_compiler = { module = "androidx.compose.compiler:compiler", version.ref = "composeCompiler"}
 compose_navigation = { module = "androidx.navigation:navigation-compose", version.ref = "composeNavigation"}
+androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
+androidx-fragment-compose = { group = "androidx.fragment", name = "fragment-compose", version.ref = "fragmentCompose" }
 
 #compose_icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
 activityKtx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
