@@ -138,7 +138,10 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                 onSearchQueryChange = { searchQuery = it},
                 isSearchVisible = isSearchVisible,
                 onSearchToggle = {isSearchVisible = !isSearchVisible},
-                onClearSearchQuery = { searchQuery = TextFieldValue("") }
+                onClearSearchQuery = { searchQuery = TextFieldValue("") },
+                onViewModeSelected = {
+                    viewModel.setSelectedViewMode(it)
+                }
                 )
         }) { innerPadding ->
             MainContent(viewModel, innerPadding, searchQuery.text)
@@ -146,7 +149,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     @Composable
-    private fun AppMgrFragment.MainContent(
+    private fun MainContent(
         viewModel: AppMgrViewModel,
         innerPadding: PaddingValues,
         searchText: String

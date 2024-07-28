@@ -18,11 +18,11 @@ package com.siju.acexplorer.common
 
 import java.security.InvalidParameterException
 
-enum class ViewMode(val value : Int) {
+enum class ViewMode(val value : Int, val resourceId : Int) {
 
-    LIST(0),
-    GRID(1),
-    GALLERY(2);
+    LIST(0, R.string.action_view_list),
+    GRID(1, R.string.action_view_grid),
+    GALLERY(2, R.string.action_view_gallery);
 
     fun getValue(viewMode: ViewMode) = viewMode.value
 
