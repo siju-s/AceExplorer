@@ -30,7 +30,7 @@ object AppUtils {
             val packageInfo = context.packageManager.getPackageArchiveInfo(path,
                     PackageManager.GET_ACTIVITIES)
                     ?: return null
-            appInfo = packageInfo.applicationInfo
+            appInfo = packageInfo.applicationInfo!!
             appInfo.sourceDir = path
             appInfo.publicSourceDir = path
         } catch (e: Exception) {

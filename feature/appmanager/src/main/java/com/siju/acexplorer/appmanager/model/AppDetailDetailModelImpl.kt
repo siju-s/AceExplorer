@@ -61,6 +61,9 @@ class AppDetailDetailModelImpl @Inject constructor(@ApplicationContext val conte
     private fun createAppInfo(packageInfo: PackageInfo): AppDetailInfo {
         val packageName = packageInfo.packageName
         val applicationInfo = packageInfo.applicationInfo
+
+        applicationInfo ?: return NullAppDetailInfo()
+
         val appName = applicationInfo.loadLabel(context.packageManager)
         return AppDetailInfo(packageName, appName.toString(), getInstallerSource(packageName),
                        applicationInfo.enabled,

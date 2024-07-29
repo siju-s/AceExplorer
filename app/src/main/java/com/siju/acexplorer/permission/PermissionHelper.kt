@@ -115,7 +115,10 @@ class PermissionHelper @Inject constructor(private val activity: FragmentActivit
                                         packageInfo: PackageInfo): ArrayList<String> {
         val dangerousPermissions = arrayListOf<String>()
 
-        for (permission in packageInfo.requestedPermissions) {
+        val requestedPermissions = packageInfo.requestedPermissions
+        requestedPermissions ?: return dangerousPermissions
+
+        for (permission in requestedPermissions) {
             val permissionInfo: PermissionInfo
             try {
                 permissionInfo = context.packageManager.getPermissionInfo(permission, 0)

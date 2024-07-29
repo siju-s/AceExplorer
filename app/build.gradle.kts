@@ -33,12 +33,11 @@ android {
             }
 
     }
-
+    compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.siju.acexplorer"
         minSdk = libs.versions.minSdk.get().toInt()
-        compileSdk = libs.versions.compileSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = rootProject.extra["versionCode"] as Int
         versionName = rootProject.extra["versionName"] as String
@@ -171,7 +170,6 @@ dependencies {
     implementation(libs.crashlytics)
 
     implementation(libs.gson)
-//    implementation(libs.play.core)
     implementation(libs.play.app.update)
     implementation(libs.play.review)
 

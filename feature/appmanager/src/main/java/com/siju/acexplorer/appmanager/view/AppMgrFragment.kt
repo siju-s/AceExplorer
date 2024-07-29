@@ -74,7 +74,6 @@ import com.siju.acexplorer.common.R as RC
 class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.OnQueryTextListener {
 
     private var _binding: AppsListContainerBinding? = null
-    private val binding get() = _binding!!
 
     private val viewModel: AppMgrViewModel by viewModels()
     private lateinit var installSourceItem: MenuItem
@@ -369,13 +368,11 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     private fun onActionModeStateChanged(actionModeState: ActionModeState) {
         if (actionModeState == ActionModeState.STARTED) {
-//            adapter.setSelectionMode(true)
             onActionModeStarted()
-        } else {
-//            adapter.setSelectionMode(false)
+        }
+        else if (actionModeState == ActionModeState.ENDED) {
             onActionModeEnd()
         }
-//        adapter.notifyDataSetChanged()
     }
 
     private fun onActionModeStarted() {

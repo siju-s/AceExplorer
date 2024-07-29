@@ -43,6 +43,7 @@ class AppMgrModelImpl @Inject constructor(@ApplicationContext val context: Conte
 
         for (packageInfo in packages) {
             val applicationInfo = packageInfo.applicationInfo
+            applicationInfo ?: continue
             val packageName = applicationInfo.packageName
             val isSystemApp = AppHelper.isSystemPackage(applicationInfo)
 

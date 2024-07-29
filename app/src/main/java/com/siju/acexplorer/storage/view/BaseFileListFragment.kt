@@ -382,19 +382,24 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
             }
         })
 
-        fileListViewModel.actionModeState.observe(viewLifecycleOwner, {
+        fileListViewModel.actionModeState.observe(viewLifecycleOwner) {
             Log.d(TAG, "actionModeState:$it")
             it?.apply {
                 when (it) {
                     ActionModeState.STARTED -> {
                         onActionModeStarted()
                     }
-                    ActionModeState.ENDED   -> {
+
+                    ActionModeState.ENDED -> {
                         onActionModeEnded()
+                    }
+
+                    ActionModeState.NONE -> {
+
                     }
                 }
             }
-        })
+        }
 
         fileListViewModel.selectedFileInfo.observe(viewLifecycleOwner, {
             it?.apply {
