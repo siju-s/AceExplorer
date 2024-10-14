@@ -129,13 +129,12 @@ android {
         }
     }
 
-    kotlin {
-        jvmToolchain(22)
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(22)
+        }
     }
-    compileOptions.apply {
-        sourceCompatibility = JavaVersion.VERSION_22
-        targetCompatibility = JavaVersion.VERSION_22
-    }
+
     lint {
         abortOnError = false
         xmlReport = false
