@@ -113,7 +113,8 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
     private fun setupNavController() {
-        navController = findNavController(R.id.nav_host)
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host) as NavHostFragment
+        navController = navHostFragment.navController
         binding.bottomNavigation.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, dest, _ ->
             Log.d(TAG, "setupNavController: destAdded:$dest")
@@ -295,9 +296,21 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     override fun onResume() {
         super.onResume()
+        Log.d(TAG, "onResume() called")
         permissionHelper.onForeground()
         updateChecker?.onResume()
     }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d(TAG, "onPause() called")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop() called")
+    }
+
 
     override fun onBackPressed() {
         val fragment = getCurrentFragment()
@@ -448,6 +461,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d(TAG, "onDestroy() called")
         updateChecker?.onDestroy()
     }
 
