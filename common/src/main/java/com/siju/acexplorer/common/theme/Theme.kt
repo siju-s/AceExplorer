@@ -16,7 +16,7 @@ private val DarkColorScheme = darkColorScheme(
     primary = primaryPurple,
     primaryContainer = primaryContainerDark,
     secondary = primaryPurpleDark,
-    onPrimary = accent,
+    onPrimary = Color.White,
     onSecondary = Color.White,
     background = dark_background,
     onBackground = dark_onBackground,
@@ -27,7 +27,7 @@ private val LightColorScheme = lightColorScheme(
     primary = primaryPurple,
     primaryContainer = primaryContainerLight,
     secondary = primaryPurpleDark,
-    onPrimary = accent,
+    onPrimary = Color.White,
     onSecondary = Color.White,
     background = light_background,
     onBackground = light_onBackground,
@@ -56,9 +56,6 @@ fun MyApplicationTheme(
             LightColorScheme
         }
         Theme.DARK -> {
-            DarkColorScheme
-        }
-        else -> {
             DarkColorScheme
         }
     }
