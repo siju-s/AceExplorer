@@ -48,9 +48,10 @@ private const val TAG = "ListItem"
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun ListItem(
-    data: AppInfo, modifier: Modifier = Modifier,
-    requestManager: RequestManager = Glide.with(LocalContext.current),
+    data: AppInfo,
     selected: Boolean,
+    modifier: Modifier = Modifier,
+    requestManager: RequestManager = Glide.with(LocalContext.current),
     onItemClick: (AppInfo) -> Unit,
     onItemLongClick: (AppInfo) -> Unit
 ) {
