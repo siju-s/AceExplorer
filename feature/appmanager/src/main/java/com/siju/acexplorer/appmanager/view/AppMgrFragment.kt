@@ -61,12 +61,12 @@ import com.siju.acexplorer.appmanager.view.compose.AppMgrActionModeItems
 import com.siju.acexplorer.appmanager.view.compose.GridItem
 import com.siju.acexplorer.appmanager.view.compose.ListItem
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
-import com.siju.acexplorer.appmanager.viewmodel.MockAppMgrViewModel
 import com.siju.acexplorer.common.ActionModeState
 import com.siju.acexplorer.common.R.string.*
 import com.siju.acexplorer.common.SortDialog
 import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.common.ViewMode
+import com.siju.acexplorer.common.compose.ui.ThemePreviews
 import com.siju.acexplorer.common.compose.ui.TopAppBarWithSearch
 import com.siju.acexplorer.common.theme.MyApplicationTheme
 import com.siju.acexplorer.common.theme.Theme
@@ -241,15 +241,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         }
     }
 
-    @Preview(
-        name = "Light Mode",
-        uiMode = Configuration.UI_MODE_NIGHT_NO
-    )
-    @Preview(
-        uiMode = Configuration.UI_MODE_NIGHT_YES,
-        showBackground = true,
-        name = "Dark Mode"
-    )
+    @ThemePreviews
     @Composable
     fun ListItemPreview(@PreviewParameter(AppInfoProvider::class) data: AppInfo) {
         ListItem(
@@ -260,7 +252,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         )
     }
 
-    @Preview
+    @ThemePreviews
     @Composable
     fun GridItemPreview(@PreviewParameter(AppInfoProvider::class) data: AppInfo) {
         GridItem(
