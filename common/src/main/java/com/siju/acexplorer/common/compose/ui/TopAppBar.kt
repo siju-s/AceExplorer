@@ -57,11 +57,12 @@ fun TopAppBarWithSearch(
                         onSearchToggle()
                     }
                 )
-                OverflowMenu {
+                OverflowMenu { dismissMenu ->
                     ViewMode.entries.forEach { viewMode ->
                         DropdownMenuItem(
                             text = { Text(text = LocalContext.current.getString(viewMode.resourceId)) },
                             onClick = {
+                                dismissMenu()
                                 onViewModeSelected(viewMode)
                             }
                         )

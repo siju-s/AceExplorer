@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import com.siju.acexplorer.common.R
 
 @Composable
-fun OverflowMenu(content: @Composable () -> Unit) {
+fun OverflowMenu(content: @Composable (dismissMenu: () -> Unit) -> Unit) {
     var showMenu by remember { mutableStateOf(false) }
 
     IconButton(onClick = {
@@ -29,6 +29,6 @@ fun OverflowMenu(content: @Composable () -> Unit) {
         expanded = showMenu,
         onDismissRequest = { showMenu = false }
     ) {
-        content()
+        content { showMenu = false }
     }
 }
