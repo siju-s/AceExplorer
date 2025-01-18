@@ -138,8 +138,8 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                 TopAppBarWithSearch(title = getString(R.string.app_manager),
                     actionModeEnabled = actionModeState == ActionModeState.STARTED,
                     searchQuery = searchQuery,
-                    onSearchQueryChange = { searchQuery = it },
                     isSearchVisible = isSearchVisible,
+                    onSearchQueryChange = { searchQuery = it },
                     onSearchToggle = { isSearchVisible = !isSearchVisible },
                     onClearSearchQuery = { searchQuery = TextFieldValue("") },
                     onViewModeSelected = {
@@ -155,6 +155,9 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                                     viewModel.onSelectAllClicked()
                                 })
                         }
+                    },
+                    onNavigationClick = {
+                        viewModel.endActionMode()
                     }
                 )
             }) { innerPadding ->

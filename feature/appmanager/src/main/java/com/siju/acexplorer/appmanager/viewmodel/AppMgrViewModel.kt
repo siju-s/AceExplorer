@@ -174,7 +174,10 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
         _refreshList.postValue(Event(true))
     }
 
-    fun isSelected(pos: Int) = multiSelection.isSelected(pos)
+    fun endActionMode() {
+        clearSelection()
+        _actionModeState.postValue(ActionModeState.ENDED)
+    }
 
     override fun isActionModeActive() = actionModeState.value == ActionModeState.STARTED
 
