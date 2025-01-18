@@ -18,9 +18,9 @@ import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -86,6 +86,8 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     val viewMode : LiveData<ViewMode> = _viewMode
 
     private val _searchQuery = MutableStateFlow("")
+    private val _sortClicked = MutableSharedFlow<SortMode>()
+    val sortClicked : SharedFlow<SortMode> = _sortClicked
 
     init {
         multiSelection.setListener(this)
@@ -134,11 +136,19 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
 
     fun saveViewMode(viewMode: ViewMode) = model.saveViewMode(viewMode)
 
+    fun onSortClicked() {
+        viewModelScope.launch(Dispatchers.Main) {
+            _sortClicked.emit(getSortMode())
+        }
+    }
+
     fun onSortClicked(sortMode: SortMode) {
         val list = _appsList.value
         viewModelScope.launch(Dispatchers.Default) {
             list?.let {
-                _appsList.postValue(SortHelper.sort(it, sortMode))
+                val sortedList = ArrayList(SortHelper.sort(it, sortMode))
+                _appsList.postValue(sortedList)
+                _filteredAppsList.postValue(sortedList)
             }
         }
         sortModeData.saveSortMode(sortMode)

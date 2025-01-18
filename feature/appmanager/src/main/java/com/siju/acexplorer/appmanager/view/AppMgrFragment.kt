@@ -14,7 +14,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -41,14 +40,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
 import com.google.android.material.badge.BadgeDrawable
 import com.siju.acexplorer.appmanager.AppInfoProvider
 import com.siju.acexplorer.appmanager.R
@@ -62,7 +61,7 @@ import com.siju.acexplorer.appmanager.view.compose.GridItem
 import com.siju.acexplorer.appmanager.view.compose.ListItem
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
 import com.siju.acexplorer.common.ActionModeState
-import com.siju.acexplorer.common.R.string.*
+import com.siju.acexplorer.common.R.string.msg_operation_failed
 import com.siju.acexplorer.common.SortDialog
 import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.common.ViewMode
@@ -73,6 +72,8 @@ import com.siju.acexplorer.common.theme.Theme
 import com.siju.acexplorer.common.utils.ConfigurationHelper
 import com.siju.acexplorer.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import com.siju.acexplorer.common.R as RC
 
 
@@ -123,46 +124,62 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
     }
 
-
     @Composable
     private fun AppContent(viewModel: AppMgrViewModel) {
         var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
-        var isSearchVisible by remember { mutableStateOf(false) }
-        val actionModeState by viewModel.actionModeState.observeAsState()
 
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.statusBars),
             topBar = {
-                TopAppBarWithSearch(title = getString(R.string.app_manager),
-                    actionModeEnabled = actionModeState == ActionModeState.STARTED,
-                    searchQuery = searchQuery,
-                    isSearchVisible = isSearchVisible,
-                    onSearchQueryChange = { searchQuery = it },
-                    onSearchToggle = { isSearchVisible = !isSearchVisible },
-                    onClearSearchQuery = { searchQuery = TextFieldValue("") },
-                    onViewModeSelected = {
-                        viewModel.setSelectedViewMode(it)
-                    },
-                    actionModeContent = {
-                        if (actionModeState == ActionModeState.STARTED) {
-                            AppMgrActionModeItems(doneClicked =
-                            {
-
-                            },
-                                selectAllClicked = {
-                                    viewModel.onSelectAllClicked()
-                                })
-                        }
-                    },
-                    onNavigationClick = {
-                        viewModel.endActionMode()
-                    }
-                )
-            }) { innerPadding ->
+                TopAppBar(viewModel, searchQuery) { query->
+                    searchQuery = query
+                }
+            })
+        { innerPadding ->
             MainContent(viewModel, innerPadding, searchQuery.text)
         }
+    }
+
+    @Composable
+    private fun TopAppBar(
+        viewModel: AppMgrViewModel,
+        searchQuery:TextFieldValue,
+        onSearchQueryChanged: (TextFieldValue) -> Unit)
+    {
+        var isSearchVisible by remember { mutableStateOf(false) }
+        val actionModeState by viewModel.actionModeState.observeAsState()
+
+        TopAppBarWithSearch(title = getString(R.string.app_manager),
+            actionModeEnabled = actionModeState == ActionModeState.STARTED,
+            searchQuery = searchQuery,
+            isSearchVisible = isSearchVisible,
+            onSearchQueryChange = { onSearchQueryChanged(it) },
+            onSearchToggle = { isSearchVisible = !isSearchVisible },
+            onClearSearchQuery = { onSearchQueryChanged(TextFieldValue("")) },
+            actionModeContent = {
+                if (actionModeState == ActionModeState.STARTED) {
+                    AppMgrActionModeItems(doneClicked =
+                    {
+
+                    },
+                        selectAllClicked = {
+                            viewModel.onSelectAllClicked()
+                        })
+                }
+            },
+            onNavigationClick = {
+                viewModel.endActionMode()
+            },
+            onMenuItemClicked = { menuItem ->
+                if (menuItem is com.siju.acexplorer.common.compose.data.MenuItem.ViewMode) {
+                    viewModel.setSelectedViewMode(menuItem.viewMode)
+                } else if (menuItem is com.siju.acexplorer.common.compose.data.MenuItem.Sort) {
+                    viewModel.onSortClicked()
+                }
+            }
+        )
     }
 
     @Composable
@@ -196,7 +213,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             itemsIndexed(apps.filter {
                 it.packageName.contains(searchText, ignoreCase = true) ||
                         it.name.contains(searchText, ignoreCase = true)
-            }, key = { _, item -> item.packageName } ) { index, item ->
+            }, key = { _, item -> item.packageName }) { index, item ->
                 val selected = selectedItems.contains(index)
 
                 println("ITEM :${item.packageName} selected:$selected")
@@ -291,6 +308,17 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     private fun initObservers() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.sortClicked.collect { sortMode ->
+                    context?.let { SortDialog.show(it, sortMode, object : SortDialog.Listener {
+                        override fun onPositiveButtonClick(sortMode: SortMode) {
+                            viewModel.onSortClicked(sortMode)
+                        }
+                    }) }
+                }
+            }
+        }
         viewModel.appsList.observe(viewLifecycleOwner) {
             it?.let {
                 Log.d("AppFrag", "initObservers: ${it.size}")
@@ -420,39 +448,12 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     }
 
     private fun setupMenuItems(menu: Menu, viewMode: ViewMode) {
-        searchItem = menu.findItem(RC.id.action_search)
-        setupSearchView()
         menu.findItem(RC.id.action_apps_user).isChecked = true
         menu.findItem(RC.id.action_source_all).isChecked = true
         installSourceItem = menu.findItem(RC.id.action_installed_source)
         allSourceItem = menu.findItem(RC.id.action_source_all)
         userSourceItem = menu.findItem(RC.id.action_apps_user)
         toggleViewModeMenuItemState(viewMode, menu)
-    }
-
-    private fun setupSearchView() {
-        searchView = searchItem.actionView as SearchView
-        searchView?.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
-        searchView?.imeOptions = EditorInfo.IME_ACTION_SEARCH
-        searchView?.setOnQueryTextListener(this)
-        searchView?.queryHint = searchView?.context?.getString(RC.string.search_name_or_package)
-        searchView?.maxWidth = Int.MAX_VALUE
-        searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
-            override fun onMenuItemActionExpand(item: MenuItem): Boolean {
-                return true
-            }
-
-            override fun onMenuItemActionCollapse(item: MenuItem): Boolean {
-                return true
-            }
-        })
-        searchView?.setOnSearchClickListener {
-            viewModel.onSearchActive()
-        }
-        searchView?.setOnCloseListener {
-            viewModel.onSearchInactive()
-            false
-        }
     }
 
     private fun toggleViewModeMenuItemState(viewMode: ViewMode, menu: Menu) {
