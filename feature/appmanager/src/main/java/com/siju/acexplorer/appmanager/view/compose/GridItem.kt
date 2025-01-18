@@ -12,10 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -31,9 +27,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.siju.acexplorer.appmanager.types.AppInfo
 import com.siju.acexplorer.appmanager.view.compose.LazyItemUtils.getBackgroundColor
-import com.siju.acexplorer.appmanager.view.compose.LazyItemUtils.getSelectionDrawable
 import com.siju.acexplorer.appmanager.view.compose.components.BodyText
-import com.siju.acexplorer.appmanager.viewmodel.AppMgr
 import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.theme.LocalDim
 
@@ -42,39 +36,28 @@ private const val TAG = "ListItem"
 @OptIn(ExperimentalFoundationApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun GridItem(
-    data: AppInfo, modifier: Modifier = Modifier,
-    requestManager: RequestManager = Glide.with(LocalContext.current),
+    data: AppInfo,
     selected: Boolean,
+    modifier: Modifier = Modifier,
+    requestManager: RequestManager = Glide.with(LocalContext.current),
+    viewMode: ViewMode = ViewMode.GRID,
     onItemClick: (AppInfo) -> Unit,
-    onItemLongClick: (AppInfo) -> Unit,
-    appMgr: AppMgr,
-    viewMode: ViewMode = ViewMode.GRID
+    onItemLongClick: (AppInfo) -> Unit
 ) {
     Log.d(
         TAG,
-        "GridItem() called with: data = $data, theme = ${LocalContext.current.theme}, selected = $selected, onItemClick = $onItemClick, onItemLongClick = $onItemLongClick"
+        "GridItem() called with: data = $data, selected = $selected"
     )
-    var visible by remember { mutableStateOf(false) }
-    var selectedPos by remember { mutableStateOf(false) }
-    val drawableResource = getSelectionDrawable(selectedPos)
     val haptics = LocalHapticFeedback.current
-    val bgColor = getBackgroundColor(selectedPos)
+    val bgColor = getBackgroundColor(selected)
 
     Surface(
         color = bgColor, modifier = modifier.combinedClickable(
             onClick = {
-                if (appMgr.isActionModeActive()) {
-                    selectedPos = !selectedPos
-                    visible = !visible
-                }
-                println("onclick Visible :$visible")
                 onItemClick(data)
             },
             onLongClick = {
                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                visible = !appMgr.isActionModeActive()
-                selectedPos = !selectedPos
-                println("longclick Visible :$visible")
                 onItemLongClick(data)
             })
     ) {
@@ -113,10 +96,10 @@ fun GridItem(
                 }
             }
 
-            if (visible) {
+            if (selected) {
                 Image(
-                    painterResource(id = drawableResource),
-                    contentDescription = "Select",
+                    painterResource(id = com.siju.acexplorer.common.R.drawable.ic_select_checked),
+                    contentDescription = "Selected",
                     modifier = Modifier
                         .width(20.dp)
                         .height(20.dp)

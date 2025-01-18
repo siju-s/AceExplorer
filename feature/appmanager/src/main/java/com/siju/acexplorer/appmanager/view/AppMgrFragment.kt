@@ -168,31 +168,29 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         innerPadding: PaddingValues,
         searchText: String
     ) {
-        val viewMode = viewModel.viewMode.observeAsState()
+        val apps by viewModel.filteredAppsList.observeAsState(initial = emptyList())
         val selectedItems by viewModel.getSelectedItems().collectAsState()
+        val viewMode by viewModel.viewMode.observeAsState()
 
         println("Selected items ${selectedItems.size}")
 
-        if (viewMode.value == ViewMode.LIST) {
-            SetupLazyList(viewModel, innerPadding, searchText, selectedItems)
+        if (viewMode == ViewMode.LIST) {
+            AppsList(apps, innerPadding, searchText, selectedItems)
         } else {
-            SetupLazyGrid(viewModel, innerPadding, searchText)
+            AppsGrid(apps, innerPadding, searchText, selectedItems)
         }
     }
 
 
     @Composable
-    private fun SetupLazyList(
-        viewModel: AppMgrViewModel,
+    private fun AppsList(
+        apps: List<AppInfo>,
         innerPadding: PaddingValues,
         searchText: String,
         selectedItems: Set<Int>
     ) {
-        val apps = viewModel.filteredAppsList.observeAsState(initial = emptyList())
-        val context = LocalContext.current
-
         LazyColumn(Modifier.padding(innerPadding)) {
-            itemsIndexed(apps.value.filter {
+            itemsIndexed(apps.filter {
                 it.packageName.contains(searchText, ignoreCase = true) ||
                         it.name.contains(searchText, ignoreCase = true)
             }, key = { _, item -> item.packageName } ) { index, item ->
@@ -200,8 +198,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
                 println("ITEM :${item.packageName} selected:$selected")
                 ListItem(item,
-                    requestManager = Glide.with(context),
-                    selected = selected,
+                    selected,
                     onItemClick = {
                         onItemClick(it, index)
                     }, onItemLongClick = {
@@ -210,16 +207,15 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                 )
             }
         }
-
     }
 
     @Composable
-    private fun SetupLazyGrid(
-        appMgr: AppMgrViewModel,
+    private fun AppsGrid(
+        apps: List<AppInfo>,
         innerPadding: PaddingValues,
-        searchText: String
+        searchText: String,
+        selectedItems: Set<Int>
     ) {
-        val apps = viewModel.filteredAppsList.observeAsState(initial = emptyList())
         val viewMode = viewModel.getViewMode()
         val gridColumns = getGridColumns(resources.configuration, viewMode)
 
@@ -227,17 +223,18 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             modifier = Modifier.padding(innerPadding),
             columns = GridCells.Fixed(gridColumns)
         ) {
-            itemsIndexed(apps.value.filter {
+            itemsIndexed(apps.filter {
                 it.packageName.contains(searchText, ignoreCase = true) ||
                         it.name.contains(searchText, ignoreCase = true)
             }) { index, item ->
-                GridItem(item, requestManager = Glide.with(requireContext()),
-                    selected = viewModel.isSelected(index), onItemClick = {
+                val selected = selectedItems.contains(index)
+                GridItem(item,
+                    selected,
+                    onItemClick = {
                         onItemClick(it, index)
                     }, onItemLongClick = {
                         onItemLongClicked(index)
                     },
-                    appMgr = appMgr,
                     viewMode = viewMode
                 )
             }
@@ -271,7 +268,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             selected = false,
             onItemClick = { },
             onItemLongClick = { },
-            appMgr = MockAppMgrViewModel(),
             viewMode = ViewMode.GALLERY
         )
     }
