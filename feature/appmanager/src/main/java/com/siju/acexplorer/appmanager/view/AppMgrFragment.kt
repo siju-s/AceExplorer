@@ -21,15 +21,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +41,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -52,6 +57,7 @@ import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.appmanager.types.AppInfo
+import com.siju.acexplorer.appmanager.view.compose.AppMgrActionModeItems
 import com.siju.acexplorer.appmanager.view.compose.GridItem
 import com.siju.acexplorer.appmanager.view.compose.ListItem
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
@@ -111,38 +117,47 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupUi()
         initObservers()
         fetchData(AppType.USER_APP)
         registerPackageReceiver()
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
     }
 
-    private fun setupUi() {
-//        val viewMode = viewModel.getViewMode()
-//        setupToolbar(binding.appBarContainer.toolbarContainer.toolbar, viewMode)
-//        this.bottomToolbar = binding.appsListContainer.bottomToolbar
-    }
 
-
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun AppContent(viewModel: AppMgrViewModel) {
         var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
         var isSearchVisible by remember { mutableStateOf(false) }
+        val actionModeState by viewModel.actionModeState.observeAsState()
 
-        Scaffold(topBar = {
-            TopAppBarWithSearch(title = getString(R.string.app_manager),
-                searchQuery = searchQuery,
-                onSearchQueryChange = { searchQuery = it},
-                isSearchVisible = isSearchVisible,
-                onSearchToggle = {isSearchVisible = !isSearchVisible},
-                onClearSearchQuery = { searchQuery = TextFieldValue("") },
-                onViewModeSelected = {
-                    viewModel.setSelectedViewMode(it)
-                }
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .windowInsetsPadding(WindowInsets.statusBars),
+            topBar = {
+                TopAppBarWithSearch(title = getString(R.string.app_manager),
+                    actionModeEnabled = actionModeState == ActionModeState.STARTED,
+                    searchQuery = searchQuery,
+                    onSearchQueryChange = { searchQuery = it },
+                    isSearchVisible = isSearchVisible,
+                    onSearchToggle = { isSearchVisible = !isSearchVisible },
+                    onClearSearchQuery = { searchQuery = TextFieldValue("") },
+                    onViewModeSelected = {
+                        viewModel.setSelectedViewMode(it)
+                    },
+                    actionModeContent = {
+                        if (actionModeState == ActionModeState.STARTED) {
+                            AppMgrActionModeItems(doneClicked =
+                            {
+
+                            },
+                                selectAllClicked = {
+                                    viewModel.onSelectAllClicked()
+                                })
+                        }
+                    }
                 )
-        }) { innerPadding ->
+            }) { innerPadding ->
             MainContent(viewModel, innerPadding, searchQuery.text)
         }
     }
@@ -154,8 +169,12 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         searchText: String
     ) {
         val viewMode = viewModel.viewMode.observeAsState()
+        val selectedItems by viewModel.getSelectedItems().collectAsState()
+
+        println("Selected items ${selectedItems.size}")
+
         if (viewMode.value == ViewMode.LIST) {
-            SetupLazyList(viewModel, innerPadding, searchText)
+            SetupLazyList(viewModel, innerPadding, searchText, selectedItems)
         } else {
             SetupLazyGrid(viewModel, innerPadding, searchText)
         }
@@ -166,21 +185,28 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     private fun SetupLazyList(
         viewModel: AppMgrViewModel,
         innerPadding: PaddingValues,
-        searchText: String
+        searchText: String,
+        selectedItems: Set<Int>
     ) {
         val apps = viewModel.filteredAppsList.observeAsState(initial = emptyList())
+        val context = LocalContext.current
 
         LazyColumn(Modifier.padding(innerPadding)) {
-            itemsIndexed(apps.value.filter { it.packageName.contains(searchText, ignoreCase = true) ||
-            it.name.contains(searchText, ignoreCase = true)}) { index, item ->
-                println("ITEM :${item.packageName}")
-                ListItem(item, requestManager = Glide.with(requireContext()),
-                    selected = viewModel.isSelected(index), onItemClick = {
+            itemsIndexed(apps.value.filter {
+                it.packageName.contains(searchText, ignoreCase = true) ||
+                        it.name.contains(searchText, ignoreCase = true)
+            }, key = { _, item -> item.packageName } ) { index, item ->
+                val selected = selectedItems.contains(index)
+
+                println("ITEM :${item.packageName} selected:$selected")
+                ListItem(item,
+                    requestManager = Glide.with(context),
+                    selected = selected,
+                    onItemClick = {
                         onItemClick(it, index)
                     }, onItemLongClick = {
                         onItemLongClicked(index)
-                    },
-                    appMgr = viewModel
+                    }
                 )
             }
         }
@@ -197,10 +223,14 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         val viewMode = viewModel.getViewMode()
         val gridColumns = getGridColumns(resources.configuration, viewMode)
 
-        LazyVerticalGrid(modifier = Modifier.padding(innerPadding), columns = GridCells.Fixed(gridColumns)) {
-            itemsIndexed(apps.value.filter { it.packageName.contains(searchText, ignoreCase = true) ||
-                    it.name.contains(searchText, ignoreCase = true)}) { index, item ->
-                println("ITEM SET :${item.packageName}")
+        LazyVerticalGrid(
+            modifier = Modifier.padding(innerPadding),
+            columns = GridCells.Fixed(gridColumns)
+        ) {
+            itemsIndexed(apps.value.filter {
+                it.packageName.contains(searchText, ignoreCase = true) ||
+                        it.name.contains(searchText, ignoreCase = true)
+            }) { index, item ->
                 GridItem(item, requestManager = Glide.with(requireContext()),
                     selected = viewModel.isSelected(index), onItemClick = {
                         onItemClick(it, index)
@@ -229,8 +259,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             data = data,
             selected = false,
             onItemClick = { },
-            onItemLongClick = { },
-            appMgr = MockAppMgrViewModel()
+            onItemLongClick = { }
         )
     }
 
@@ -253,14 +282,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     private fun onItemClick(appInfo: AppInfo, pos: Int) {
         viewModel.onItemClicked(appInfo, pos)
-    }
-
-    private fun setupToolbar(toolbar: Toolbar, viewMode: ViewMode) {
-        this.toolbar = toolbar
-        toolbar.title = getString(R.string.app_manager)
-        toolbar.inflateMenu(RC.menu.app_manager)
-        toolbar.setOnMenuItemClickListener(this)
-        setupMenuItems(toolbar.menu, viewMode)
     }
 
     private fun setupActionModeToolbar() {
@@ -301,16 +322,16 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 //                adapter.onDataLoaded(it)
             }
         }
-        viewModel.actionModeState.observe(viewLifecycleOwner) {
-            it?.let {
-                onActionModeStateChanged(it)
-            }
-        }
-        viewModel.selectedItemCount.observe(viewLifecycleOwner) {
-            it?.let {
-                setToolbarSubtitle(it)
-            }
-        }
+//        viewModel.actionModeState.observe(viewLifecycleOwner) {
+//            it?.let {
+//                onActionModeStateChanged(it)
+//            }
+//        }
+//        viewModel.selectedItemCount.observe(viewLifecycleOwner) {
+//            it?.let {
+//                setToolbarSubtitle(it)
+//            }
+//        }
         viewModel.multiOperationData.observe(viewLifecycleOwner) {
             it?.let {
                 for (item in it) {
@@ -369,8 +390,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     private fun onActionModeStateChanged(actionModeState: ActionModeState) {
         if (actionModeState == ActionModeState.STARTED) {
             onActionModeStarted()
-        }
-        else if (actionModeState == ActionModeState.ENDED) {
+        } else if (actionModeState == ActionModeState.ENDED) {
             onActionModeEnd()
         }
     }
@@ -384,7 +404,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 
     private fun onActionModeEnd() {
         clearActionModeToolbar()
-        setupToolbar(toolbar, viewModel.getViewMode())
+//        setupToolbar(toolbar, viewModel.getViewMode())
         hideBottomToolbar()
         setToolbarSubtitle(viewModel.appsList.value?.size)
     }

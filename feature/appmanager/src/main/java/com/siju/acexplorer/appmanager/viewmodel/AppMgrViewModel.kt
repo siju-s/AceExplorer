@@ -128,6 +128,8 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
         _appsSourceFilteredList.postValue(list as ArrayList<AppInfo>)
     }
 
+    fun getSelectedItems() = multiSelection.getSelectedItems()
+
     fun getViewMode() = model.getViewMode()
 
     fun saveViewMode(viewMode: ViewMode) = model.saveViewMode(viewMode)
@@ -174,7 +176,6 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
 
     fun isSelected(pos: Int) = multiSelection.isSelected(pos)
 
-
     override fun isActionModeActive() = actionModeState.value == ActionModeState.STARTED
 
     fun onSelectAllClicked() {
@@ -200,7 +201,7 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     fun onDeleteClicked() {
         val items = multiSelection.getSelectedItems()
         val appsToDelete = arrayListOf<AppInfo>()
-        for (value in items.keyIterator())  {
+        for (value in items.value.iterator())  {
             _appsList.value?.get(value)?.let { appsToDelete.add(it) }
         }
         _multiOperationData.postValue(appsToDelete)

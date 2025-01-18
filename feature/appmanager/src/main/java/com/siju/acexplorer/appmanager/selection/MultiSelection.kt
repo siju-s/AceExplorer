@@ -2,6 +2,7 @@ package com.siju.acexplorer.appmanager.selection
 
 import android.util.SparseBooleanArray
 import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.StateFlow
 
 interface MultiSelection {
 
@@ -13,7 +14,7 @@ interface MultiSelection {
     fun setListener(listener : Listener)
     fun isSelected(position: Int) : Boolean
     fun getSelectedItemCount() : Int
-    fun getSelectedItems(): SparseBooleanArray
+    fun getSelectedItems(): StateFlow<Set<Int>>
 
     interface Listener {
         fun onSelectionChanged(position: Int)

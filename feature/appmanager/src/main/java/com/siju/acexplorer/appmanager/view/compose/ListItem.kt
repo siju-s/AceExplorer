@@ -52,34 +52,22 @@ fun ListItem(
     requestManager: RequestManager = Glide.with(LocalContext.current),
     selected: Boolean,
     onItemClick: (AppInfo) -> Unit,
-    onItemLongClick: (AppInfo) -> Unit,
-    appMgr: AppMgr
+    onItemLongClick: (AppInfo) -> Unit
 ) {
     Log.d(
         TAG,
-        "ListItem() called with: data = $data, theme = ${LocalContext.current.theme}, selected = $selected, onItemClick = $onItemClick, onItemLongClick = $onItemLongClick"
+        "ListItem() called with: data = $data, selected = $selected"
     )
-    var visible by remember { mutableStateOf(false) }
-    var selectedPos by remember { mutableStateOf(false) }
-    val drawableResource = getSelectionDrawable(selectedPos)
     val haptics = LocalHapticFeedback.current
-    val bgColor = getBackgroundColor(selectedPos)
+    val bgColor = getBackgroundColor(selected)
 
     Surface(
         color = bgColor, modifier = modifier.combinedClickable(
             onClick = {
-                if (appMgr.isActionModeActive()) {
-                    selectedPos = !selectedPos
-                    visible = !visible
-                }
-                println("onclick Visible :$visible")
                 onItemClick(data)
             },
             onLongClick = {
                 haptics.performHapticFeedback(HapticFeedbackType.LongPress)
-                visible = !appMgr.isActionModeActive()
-                selectedPos = !selectedPos
-                println("longclick Visible :$visible")
                 onItemLongClick(data)
             })
     ) {
@@ -114,10 +102,10 @@ fun ListItem(
             }
             Spacer(Modifier.fillMaxSize(1f))
 
-            if (visible) {
+            if (selected) {
                 Image(
-                    painterResource(id = drawableResource),
-                    contentDescription = "Select",
+                    painterResource(id = com.siju.acexplorer.common.R.drawable.ic_select_checked),
+                    contentDescription = "Selected",
                     modifier = Modifier
                         .width(20.dp)
                         .height(20.dp)
