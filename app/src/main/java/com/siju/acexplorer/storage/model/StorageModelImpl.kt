@@ -67,7 +67,7 @@ class StorageModelImpl @Inject constructor(@ApplicationContext val context: Cont
         return RecentTimeData.getRecentTimeData(data)
     }
 
-    override fun getViewMode(): ViewMode = viewModeInfo.getViewMode()
+    override fun getViewMode(): ViewMode = viewModeInfo.getViewMode().value
 
     override fun getImageViewMode(): ViewMode {
         return if (sharedPreferences.contains(PREFS_VIEW_MODE_IMAGE)) {

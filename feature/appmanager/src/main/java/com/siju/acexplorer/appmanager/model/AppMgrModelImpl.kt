@@ -9,13 +9,15 @@ import com.siju.acexplorer.appmanager.types.AppInfo
 import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.ViewModeData
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 import java.util.*
 import javax.inject.Inject
 
 class AppMgrModelImpl @Inject constructor(@ApplicationContext val context: Context, private val viewModeData: ViewModeData) : AppMgrModel {
 
-    override fun getViewMode(): ViewMode {
+    override fun getViewMode(): StateFlow<ViewMode> {
         return viewModeData.getViewMode()
     }
 

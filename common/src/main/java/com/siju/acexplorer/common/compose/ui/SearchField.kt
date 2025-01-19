@@ -16,18 +16,18 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
-import com.siju.acexplorer.common.R
 
 @Composable
 fun SearchField(
     searchQuery: TextFieldValue,
+    placeholderText: Int,
     onSearchQueryChange: (TextFieldValue) -> Unit,
     focusRequester: FocusRequester
 ) {
     TextField(
         value = searchQuery,
         onValueChange = onSearchQueryChange,
-        placeholder = { Text(stringResource(id = R.string.search_name_or_package)) },
+        placeholder = { Text(stringResource(id = placeholderText)) },
         modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
         singleLine = true,
         colors = TextFieldDefaults.colors(

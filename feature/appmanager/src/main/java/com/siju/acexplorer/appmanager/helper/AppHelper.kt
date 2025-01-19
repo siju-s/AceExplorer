@@ -65,10 +65,10 @@ object AppHelper {
     fun getInstallerSourceName(context: Context, packageName: String?): String {
         return when (packageName) {
             null -> context.getString(com.siju.acexplorer.common.R.string.unknown)
-            PACKAGE_NAME_PLAYSTORE -> context.getString(com.siju.acexplorer.common.R.string.play_store)
+            PACKAGE_NAME_PLAYSTORE -> context.getString(R.string.play_store)
             PACKAGE_NAME_AMAZON_APPSTORE -> context.getString(
-                com.siju.acexplorer.common.R.string.amazon_play_store)
-            else -> context.getString(com.siju.acexplorer.common.R.string.unknown)
+                R.string.amazon_play_store)
+            else -> context.getString(R.string.unknown_source)
         }
     }
 

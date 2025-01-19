@@ -22,17 +22,7 @@
     <string name="action_view_list">List view</string>
     <string name="action_view_grid">Grid view</string>
     <string name="action_view_gallery">Gallery view</string>
-    <string name="user_apps">Installed apps</string>
-    <string name="all_apps">All apps</string>
-    <string name="preinstalled_apps">Preinstalled apps</string>
-    <string name="source_from">Installed from</string>
-    <string name="source_all">All</string>
-    <string name="unknown_source">Unknown source</string>
-    <string name="play_store" translatable="false">Play store</string>
-    <string name="filter">Filter</string>
-    <string name="search_name_or_package">App or package name</string>
     <string name="app_manager">App manager</string>
     <string name="package_name">Package name</string>
-    <string name="amazon_play_store" translatable="false">Amazon app store</string>
     <string name="action_more">More</string>
 </resources>

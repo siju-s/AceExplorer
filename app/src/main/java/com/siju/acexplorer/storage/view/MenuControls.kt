@@ -210,7 +210,7 @@ class MenuControls(val fragment: BaseFileListFragment, val view: View, categoryF
         searchView?.imeOptions = EditorInfo.IME_FLAG_NO_EXTRACT_UI
         searchView?.imeOptions = EditorInfo.IME_ACTION_SEARCH
         searchView?.setOnQueryTextListener(this)
-        searchView?.queryHint = searchView?.context?.getString(RC.string.search_name_or_package)
+        searchView?.queryHint = searchView?.context?.getString(com.siju.acexplorer.common.R.string.action_search)
         searchView?.maxWidth = Int.MAX_VALUE
         searchItem.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
             override fun onMenuItemActionExpand(item: MenuItem): Boolean {

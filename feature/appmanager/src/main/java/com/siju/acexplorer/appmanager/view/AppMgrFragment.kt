@@ -10,14 +10,12 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -59,37 +57,38 @@ import com.siju.acexplorer.appmanager.types.AppInfo
 import com.siju.acexplorer.appmanager.view.compose.AppMgrActionModeItems
 import com.siju.acexplorer.appmanager.view.compose.GridItem
 import com.siju.acexplorer.appmanager.view.compose.ListItem
+import com.siju.acexplorer.appmanager.view.compose.custom.menu.AppMgrOverflowMenuItems
+import com.siju.acexplorer.appmanager.view.compose.data.AppMgrMenuItem
 import com.siju.acexplorer.appmanager.viewmodel.AppMgrViewModel
 import com.siju.acexplorer.common.ActionModeState
 import com.siju.acexplorer.common.R.string.msg_operation_failed
 import com.siju.acexplorer.common.SortDialog
 import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.common.ViewMode
+import com.siju.acexplorer.common.compose.data.IconSource
 import com.siju.acexplorer.common.compose.ui.ThemePreviews
 import com.siju.acexplorer.common.compose.ui.TopAppBarWithSearch
+import com.siju.acexplorer.common.compose.ui.custom.EnumDropdownMenu
+import com.siju.acexplorer.common.compose.ui.menu.DropdownMenuTrailingIcon
+import com.siju.acexplorer.common.compose.ui.menu.ExpandableMenu
 import com.siju.acexplorer.common.theme.MyApplicationTheme
 import com.siju.acexplorer.common.theme.Theme
 import com.siju.acexplorer.common.utils.ConfigurationHelper
 import com.siju.acexplorer.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import com.siju.acexplorer.common.R as RC
 
 
 @AndroidEntryPoint
-class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.OnQueryTextListener {
+class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
 
     private var _binding: AppsListContainerBinding? = null
 
     private val viewModel: AppMgrViewModel by viewModels()
-    private lateinit var installSourceItem: MenuItem
-    private lateinit var allSourceItem: MenuItem
     private lateinit var userSourceItem: MenuItem
 
     private var menuItemBadge: BadgeDrawable? = null
-    private var searchView: SearchView? = null
-    private lateinit var searchItem: MenuItem
     private lateinit var toolbar: Toolbar
     private lateinit var bottomToolbar: Toolbar
     private var packageReceiverRegistered = false
@@ -133,7 +132,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.statusBars),
             topBar = {
-                TopAppBar(viewModel, searchQuery) { query->
+                TopAppBar(viewModel, searchQuery) { query ->
                     searchQuery = query
                 }
             })
@@ -145,24 +144,43 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     @Composable
     private fun TopAppBar(
         viewModel: AppMgrViewModel,
-        searchQuery:TextFieldValue,
-        onSearchQueryChanged: (TextFieldValue) -> Unit)
-    {
+        searchQuery: TextFieldValue,
+        onSearchQueryChanged: (TextFieldValue) -> Unit
+    ) {
         var isSearchVisible by remember { mutableStateOf(false) }
         val actionModeState by viewModel.actionModeState.observeAsState()
+        val viewMode by viewModel.viewMode.collectAsState()
 
         TopAppBarWithSearch(title = getString(R.string.app_manager),
             actionModeEnabled = actionModeState == ActionModeState.STARTED,
             searchQuery = searchQuery,
+            searchPlaceholderText = R.string.search_name_or_package,
             isSearchVisible = isSearchVisible,
             onSearchQueryChange = { onSearchQueryChanged(it) },
             onSearchToggle = { isSearchVisible = !isSearchVisible },
             onClearSearchQuery = { onSearchQueryChanged(TextFieldValue("")) },
+            menuItems = {
+                ExpandableMenu(
+                    IconSource.Painter(com.siju.acexplorer.common.R.drawable.ic_filter),
+                    R.string.filter
+                ) { dismissMenu ->
+                    AppsTypeMenuItem(
+                        viewModel.getAppType(),
+                        viewModel.getAppSource(),
+                        dismissMenu
+                    ) { menuItem ->
+                        if (menuItem is AppMgrMenuItem.AppType) {
+                            viewModel.fetchPackages(menuItem.appType)
+                        } else if (menuItem is AppMgrMenuItem.AppSource) {
+                            viewModel.filterAppBySource(menuItem.source)
+                        }
+                    }
+                }
+            },
             actionModeContent = {
                 if (actionModeState == ActionModeState.STARTED) {
-                    AppMgrActionModeItems(doneClicked =
-                    {
-
+                    AppMgrActionModeItems(doneClicked = {
+                        viewModel.endActionMode()
                     },
                         selectAllClicked = {
                             viewModel.onSelectAllClicked()
@@ -172,11 +190,13 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
             onNavigationClick = {
                 viewModel.endActionMode()
             },
-            onMenuItemClicked = { menuItem ->
-                if (menuItem is com.siju.acexplorer.common.compose.data.MenuItem.ViewMode) {
-                    viewModel.setSelectedViewMode(menuItem.viewMode)
-                } else if (menuItem is com.siju.acexplorer.common.compose.data.MenuItem.Sort) {
-                    viewModel.onSortClicked()
+            overflowMenuItems = { dismissMenu ->
+                AppMgrOverflowMenuItems(viewMode, dismissMenu = dismissMenu) { menuItem ->
+                    if (menuItem is AppMgrMenuItem.ViewMode) {
+                        viewModel.setSelectedViewMode(menuItem.viewMode)
+                    } else if (menuItem is AppMgrMenuItem.Sort) {
+                        viewModel.onSortClicked()
+                    }
                 }
             }
         )
@@ -190,7 +210,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
     ) {
         val apps by viewModel.filteredAppsList.observeAsState(initial = emptyList())
         val selectedItems by viewModel.getSelectedItems().collectAsState()
-        val viewMode by viewModel.viewMode.observeAsState()
+        val viewMode by viewModel.viewMode.collectAsState()
 
         println("Selected items ${selectedItems.size}")
 
@@ -236,7 +256,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         searchText: String,
         selectedItems: Set<Int>
     ) {
-        val viewMode = viewModel.getViewMode()
+        val viewMode by viewModel.viewMode.collectAsState()
         val gridColumns = getGridColumns(resources.configuration, viewMode)
 
         LazyVerticalGrid(
@@ -258,6 +278,39 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                     viewMode = viewMode
                 )
             }
+        }
+    }
+
+    @Composable
+    fun AppsTypeMenuItem(
+        selectedAppType: AppType,
+        selectedAppSource: AppSource,
+        dismissMenu: () -> Unit,
+        onMenuItemClicked: (AppMgrMenuItem) -> Unit
+    ) {
+        var showSubMenu by remember { mutableStateOf(false) }
+
+        if (!showSubMenu) {
+            EnumDropdownMenu(selectedItem = selectedAppType,
+                enumEntries = AppType.entries.toTypedArray(),
+                resourceIdProvider = { it.resourceId },
+                dismissMenu = dismissMenu,
+                onMenuItemClicked = { appType ->
+                    onMenuItemClicked(AppMgrMenuItem.AppType(appType))
+                }
+            )
+            DropdownMenuTrailingIcon(R.string.source_from) {
+                showSubMenu = true
+            }
+        } else {
+            EnumDropdownMenu(selectedItem = selectedAppSource,
+                enumEntries = AppSource.entries.filter { it != AppSource.SYSTEM }.toTypedArray(),
+                resourceIdProvider = { it.resourceId },
+                dismissMenu = dismissMenu,
+                onMenuItemClicked = { appType ->
+                    onMenuItemClicked(AppMgrMenuItem.AppSource(appType))
+                }
+            )
         }
     }
 
@@ -311,11 +364,13 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.sortClicked.collect { sortMode ->
-                    context?.let { SortDialog.show(it, sortMode, object : SortDialog.Listener {
-                        override fun onPositiveButtonClick(sortMode: SortMode) {
-                            viewModel.onSortClicked(sortMode)
-                        }
-                    }) }
+                    context?.let {
+                        SortDialog.show(it, sortMode, object : SortDialog.Listener {
+                            override fun onPositiveButtonClick(sortMode: SortMode) {
+                                viewModel.onSortClicked(sortMode)
+                            }
+                        })
+                    }
                 }
             }
         }
@@ -380,13 +435,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                 activity?.onBackPressed()
             }
         }
-        viewModel.closeSearch.observe(viewLifecycleOwner) {
-            it?.getContentIfNotHandled()?.let {
-                if (it) {
-                    searchView?.isIconified = true
-                }
-            }
-        }
     }
 
     private fun showLoadingIndicator() {
@@ -404,14 +452,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 //            toolbar.subtitle =
 //                context?.resources?.getQuantityString(RC.plurals.number_of_apps, count, count)
 //        }
-    }
-
-    private fun onActionModeStateChanged(actionModeState: ActionModeState) {
-        if (actionModeState == ActionModeState.STARTED) {
-            onActionModeStarted()
-        } else if (actionModeState == ActionModeState.ENDED) {
-            onActionModeEnd()
-        }
     }
 
     private fun onActionModeStarted() {
@@ -447,43 +487,17 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
         viewModel.fetchPackages(appType)
     }
 
-    private fun setupMenuItems(menu: Menu, viewMode: ViewMode) {
-        menu.findItem(RC.id.action_apps_user).isChecked = true
-        menu.findItem(RC.id.action_source_all).isChecked = true
-        installSourceItem = menu.findItem(RC.id.action_installed_source)
-        allSourceItem = menu.findItem(RC.id.action_source_all)
-        userSourceItem = menu.findItem(RC.id.action_apps_user)
-        toggleViewModeMenuItemState(viewMode, menu)
-    }
-
-    private fun toggleViewModeMenuItemState(viewMode: ViewMode, menu: Menu) {
-        when (viewMode) {
-            ViewMode.LIST -> menu.findItem(RC.id.action_view_list).isChecked = true
-            ViewMode.GRID -> menu.findItem(RC.id.action_view_grid).isChecked = true
-            ViewMode.GALLERY -> menu.findItem(RC.id.action_view_gallery).isChecked = true
-        }
-    }
-
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {
             RC.id.action_apps_system -> {
-                installSourceItem.isEnabled = false
-                allSourceItem.isChecked = true
-                fetchData(AppType.SYSTEM_APP)
                 applyBadgeToMenuItem(RC.id.action_filter)
             }
 
             RC.id.action_apps_user -> {
-                allSourceItem.isChecked = true
-                installSourceItem.isEnabled = true
-                fetchData(AppType.USER_APP)
                 clearBadgeMenuItem(RC.id.action_filter)
             }
 
             RC.id.action_apps_all -> {
-                allSourceItem.isChecked = true
-                installSourceItem.isEnabled = true
-                fetchData(AppType.ALL_APPS)
                 applyBadgeToMenuItem(RC.id.action_filter)
             }
 
@@ -495,28 +509,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
                     clearBadgeMenuItem(RC.id.action_installed_source)
                 }
                 onAppSourceClicked(AppSource.ALL)
-            }
-
-            RC.id.action_view_list -> {
-                viewModel.setSelectedViewMode(ViewMode.LIST)
-            }
-
-            RC.id.action_view_grid -> {
-                viewModel.setSelectedViewMode(ViewMode.GRID)
-            }
-
-            RC.id.action_view_gallery -> {
-                viewModel.setSelectedViewMode(ViewMode.GALLERY)
-            }
-
-            RC.id.action_sort -> {
-                context?.let {
-                    SortDialog.show(it, viewModel.getSortMode(), sortListener, true)
-                }
-            }
-
-            com.siju.acexplorer.common.R.id.action_select_all -> {
-                viewModel.onSelectAllClicked()
             }
 
             R.id.action_delete -> {
@@ -568,21 +560,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener, SearchView.O
 //            )
 //        }
         menuItemBadge = null
-    }
-
-    override fun onQueryTextSubmit(query: String?): Boolean {
-        return false
-    }
-
-    override fun onQueryTextChange(newText: String): Boolean {
-        viewModel.updateSearchQuery(newText)
-        return true
-    }
-
-    private val sortListener = object : SortDialog.Listener {
-        override fun onPositiveButtonClick(sortMode: SortMode) {
-            viewModel.onSortClicked(sortMode)
-        }
     }
 
     override fun onDestroyView() {

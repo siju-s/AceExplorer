@@ -2,7 +2,7 @@ package com.siju.acexplorer.common.compose.ui
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -12,18 +12,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import com.siju.acexplorer.common.R
-import com.siju.acexplorer.common.ViewMode
-import com.siju.acexplorer.common.compose.data.MenuItem
+import com.siju.acexplorer.common.compose.data.IconSource
+import com.siju.acexplorer.common.compose.ui.menu.ExpandableMenu
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,12 +28,14 @@ fun TopAppBarWithSearch(
     actionModeEnabled: Boolean,
     searchQuery: TextFieldValue,
     isSearchVisible: Boolean,
-    onMenuItemClicked:(MenuItem) -> Unit,
+    searchPlaceholderText: Int,
     onSearchQueryChange: (TextFieldValue) -> Unit,
     onSearchToggle: () -> Unit,
     onClearSearchQuery: () -> Unit,
+    onNavigationClick: () -> Unit,
     actionModeContent: @Composable () -> Unit = {},
-    onNavigationClick: () -> Unit
+    menuItems: @Composable () -> Unit = {},
+    overflowMenuItems: @Composable (dismissMenu: () -> Unit) -> Unit = {}
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
@@ -47,6 +45,7 @@ fun TopAppBarWithSearch(
             if (isSearchVisible) {
                 SearchField(
                     searchQuery = searchQuery,
+                    placeholderText = searchPlaceholderText,
                     onSearchQueryChange = onSearchQueryChange,
                     focusRequester = focusRequester
                 )
@@ -68,8 +67,12 @@ fun TopAppBarWithSearch(
                         onSearchToggle()
                     }
                 )
-                OverflowMenu { dismissMenu ->
-                    MenuItems(dismissMenu, onMenuItemClicked)
+                menuItems()
+                ExpandableMenu(
+                    IconSource.Vector(Icons.Outlined.MoreVert),
+                    R.string.action_more
+                ) { dismissMenu ->
+                    overflowMenuItems(dismissMenu)
                 }
             }
             actionModeContent()
@@ -91,39 +94,4 @@ fun TopAppBarWithSearch(
             actionIconContentColor = MaterialTheme.colorScheme.onPrimary,
         ),
     )
-}
-
-@Composable
-private fun MenuItems(
-    dismissMenu: () -> Unit,
-    onMenuItemClicked:(MenuItem) -> Unit
-) {
-    val context = LocalContext.current
-    var showSubMenu by remember { mutableStateOf(false) }
-
-    if (!showSubMenu) {
-        DropdownMenuItem(
-            text = { Text(text = stringResource(R.string.action_view)) },
-            onClick = {
-                showSubMenu = true
-            }
-        )
-        DropdownMenuItem(
-            text = { Text(text = stringResource(R.string.action_sort)) },
-            onClick = {
-                dismissMenu()
-                onMenuItemClicked(MenuItem.Sort)
-            }
-        )
-    } else {
-        ViewMode.entries.forEach { viewMode ->
-            DropdownMenuItem(
-                text = { Text(text = context.getString(viewMode.resourceId)) },
-                onClick = {
-                    dismissMenu()
-                    onMenuItemClicked(MenuItem.ViewMode(viewMode))
-                }
-            )
-        }
-    }
 }

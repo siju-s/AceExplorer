@@ -80,7 +80,6 @@
     <string name="error">Error</string>
     <string name="dialog_title_picker">Choose music file</string>
     <string name="browse">Browse</string>
-    <string name="action_more">More</string>
     <string name="directory">Directory</string>
     <string name="operation">Operation</string>
     <string name="error_unsupported">Not supported</string>

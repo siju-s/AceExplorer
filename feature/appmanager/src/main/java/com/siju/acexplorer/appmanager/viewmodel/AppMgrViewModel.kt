@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -82,12 +83,13 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     private var appType = AppType.USER_APP
     private var searchActive = false
 
-    private val _viewMode = MutableLiveData(model.getViewMode())
-    val viewMode : LiveData<ViewMode> = _viewMode
+    private val _viewMode = model.getViewMode()
+    val viewMode : StateFlow<ViewMode> = _viewMode
 
     private val _searchQuery = MutableStateFlow("")
     private val _sortClicked = MutableSharedFlow<SortMode>()
     val sortClicked : SharedFlow<SortMode> = _sortClicked
+    private var appSource = AppSource.ALL
 
     init {
         multiSelection.setListener(this)
@@ -127,14 +129,19 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
             }
         }
         list ?: return
-        _appsSourceFilteredList.postValue(list as ArrayList<AppInfo>)
+        this.appSource = appSource
+        val newList = list as ArrayList<AppInfo>
+        _appsSourceFilteredList.postValue(newList)
+        _filteredAppsList.postValue(newList)
     }
 
     fun getSelectedItems() = multiSelection.getSelectedItems()
 
-    fun getViewMode() = model.getViewMode()
+    private fun saveViewMode(viewMode: ViewMode) = model.saveViewMode(viewMode)
 
-    fun saveViewMode(viewMode: ViewMode) = model.saveViewMode(viewMode)
+    fun getAppType() = appType
+
+    fun getAppSource() = appSource
 
     fun onSortClicked() {
         viewModelScope.launch(Dispatchers.Main) {
@@ -256,7 +263,6 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     }
 
     fun setSelectedViewMode(viewMode: ViewMode) {
-        _viewMode.value = viewMode
         saveViewMode(viewMode)
     }
 }
