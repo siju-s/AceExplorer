@@ -13,20 +13,21 @@ import androidx.compose.ui.platform.LocalContext
 import com.siju.acexplorer.common.utils.SdkHelper
 
 private val DarkColorScheme = darkColorScheme(
-    primary = primaryPurple,
-    primaryContainer = primaryContainerDark,
-    secondary = primaryPurpleDark,
+    primary = purple,
+    primaryContainer = gray,
+    secondary = purpleDark,
     onPrimary = Color.White,
     onSecondary = Color.White,
-    background = dark_background,
+    background = black,
     onBackground = dark_onBackground,
+    surface = black,
     onSurface = textColorDark
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = primaryPurple,
+    primary = purple,
     primaryContainer = primaryContainerLight,
-    secondary = primaryPurpleDark,
+    secondary = purpleDark,
     onPrimary = Color.White,
     onSecondary = Color.White,
     background = light_background,
