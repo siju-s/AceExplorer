@@ -117,7 +117,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         super.onViewCreated(view, savedInstanceState)
 
         initObservers()
-        fetchData(AppType.USER_APP)
+        viewModel.fetchPackages(AppType.USER_APP)
         registerPackageReceiver()
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
     }
@@ -149,6 +149,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         var isSearchVisible by remember { mutableStateOf(false) }
         val actionModeState by viewModel.actionModeState.observeAsState()
         val viewMode by viewModel.viewMode.collectAsState()
+        var showBadge by remember { mutableStateOf(false) }
 
         TopAppBarWithSearch(title = getString(R.string.app_manager),
             actionModeEnabled = actionModeState == ActionModeState.STARTED,
@@ -161,7 +162,8 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
             menuItems = {
                 ExpandableMenu(
                     IconSource.Painter(com.siju.acexplorer.common.R.drawable.ic_filter),
-                    R.string.filter
+                    R.string.filter,
+                    showBadge = showBadge
                 ) { dismissMenu ->
                     AppsTypeMenuItem(
                         viewModel.getAppType(),
@@ -169,8 +171,10 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
                         dismissMenu
                     ) { menuItem ->
                         if (menuItem is AppMgrMenuItem.AppType) {
+                            showBadge = menuItem.appType != AppType.USER_APP
                             viewModel.fetchPackages(menuItem.appType)
                         } else if (menuItem is AppMgrMenuItem.AppSource) {
+                            showBadge = menuItem.source != AppSource.ALL
                             viewModel.filterAppBySource(menuItem.source)
                         }
                     }
@@ -344,21 +348,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         viewModel.onItemClicked(appInfo, pos)
     }
 
-    private fun setupActionModeToolbar() {
-        toolbar.menu.clear()
-        toolbar.setNavigationIcon(com.siju.acexplorer.common.R.drawable.ic_back_white)
-        toolbar.inflateMenu(com.siju.acexplorer.common.R.menu.action_mode)
-        toolbar.setOnMenuItemClickListener(this)
-        toolbar.setNavigationOnClickListener {
-            activity?.onBackPressed()
-        }
-    }
-
-    private fun clearActionModeToolbar() {
-        toolbar.menu.clear()
-        toolbar.navigationIcon = null
-    }
-
     private fun initObservers() {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -373,38 +362,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
                 }
             }
         }
-        viewModel.appsList.observe(viewLifecycleOwner) {
-            it?.let {
-                Log.d("AppFrag", "initObservers: ${it.size}")
-                hideLoadingIndicator()
-//                binding.appsListContainer.appsList.layoutManager?.scrollToPosition(0)
-                setToolbarSubtitle(it.size)
-//                adapter.onDataLoaded(it)
-            }
-        }
-//        viewModel.updateList.observe(viewLifecycleOwner) {
-//            it?.getContentIfNotHandled()?.let {
-//                if (it) {
-//                    adapter.notifyDataSetChanged()
-//                }
-//            }
-//        }
-        viewModel.appsSourceFilteredList.observe(viewLifecycleOwner) {
-            it?.let {
-                setToolbarSubtitle(it.size)
-//                adapter.onDataLoaded(it)
-            }
-        }
-//        viewModel.actionModeState.observe(viewLifecycleOwner) {
-//            it?.let {
-//                onActionModeStateChanged(it)
-//            }
-//        }
-//        viewModel.selectedItemCount.observe(viewLifecycleOwner) {
-//            it?.let {
-//                setToolbarSubtitle(it)
-//            }
-//        }
+
         viewModel.multiOperationData.observe(viewLifecycleOwner) {
             it?.let {
                 for (item in it) {
@@ -434,31 +392,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
                 activity?.onBackPressed()
             }
         }
-    }
-
-    private fun showLoadingIndicator() {
-//        binding.appsListContainer.swipeRefresh.isRefreshing = true
-    }
-
-    private fun hideLoadingIndicator() {
-//        binding.appsListContainer.swipeRefresh.isRefreshing = false
-    }
-
-    private fun setToolbarSubtitle(count: Int?) {
-//        if (count == 0 || count == null) {
-//            toolbar.subtitle = ""
-//        } else {
-//            toolbar.subtitle =
-//                context?.resources?.getQuantityString(RC.plurals.number_of_apps, count, count)
-//        }
-    }
-
-
-
-
-    private fun fetchData(appType: AppType) {
-        showLoadingIndicator()
-        viewModel.fetchPackages(appType)
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
@@ -508,7 +441,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
     @SuppressLint("UnsafeExperimentalUsageError")
     @androidx.annotation.OptIn(com.google.android.material.badge.ExperimentalBadgeUtils::class)
     private fun applyBadgeToMenuItem(itemId: Int) {
-        val context = context
+//        val context = context
 //        if (menuItemBadge == null) {
 //            context?.let {
 //                menuItemBadge = BadgeDrawable.create(it)
