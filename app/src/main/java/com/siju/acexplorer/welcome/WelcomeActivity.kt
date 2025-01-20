@@ -21,15 +21,21 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
+import androidx.activity.ComponentActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.viewpager.widget.ViewPager
 import androidx.viewpager.widget.ViewPager.OnPageChangeListener
 import com.siju.acexplorer.R
 import com.siju.acexplorer.main.AceActivity
 import com.siju.acexplorer.utils.PrefManager
 
-class WelcomeActivity : AppCompatActivity(), View.OnClickListener, OnPageChangeListener {
+class WelcomeActivity : ComponentActivity(), View.OnClickListener, OnPageChangeListener {
     private lateinit var viewPager: ViewPager
     private lateinit var dotsLayout: LinearLayout
     private lateinit var skipButton: Button
@@ -49,11 +55,13 @@ class WelcomeActivity : AppCompatActivity(), View.OnClickListener, OnPageChangeL
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         prefManager = PrefManager(this)
 
         if (prefManager.isFirstTimeLaunch) {
             setContentView(R.layout.activity_welcome)
             initializeViews()
+            handleWindowInsets()
         }
         else {
             launchHomeScreen()
@@ -87,6 +95,15 @@ class WelcomeActivity : AppCompatActivity(), View.OnClickListener, OnPageChangeL
         viewPager.currentItem = 0
         viewPager.addOnPageChangeListener(this)
         addBottomDots()
+    }
+
+    private fun handleWindowInsets() {
+        ViewCompat.setOnApplyWindowInsetsListener(skipButton) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
+            view.updatePadding(bottom = insets.bottom)
+            nextButton.updatePadding(bottom = insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
     }
 
     private fun addBottomDots() {
