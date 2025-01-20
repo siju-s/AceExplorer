@@ -1,4 +1,4 @@
-package com.siju.acexplorer.appmanager.view.compose
+package com.siju.acexplorer.appmanager.view.compose.custom.menu
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -11,8 +11,8 @@ import com.siju.acexplorer.common.R
 fun AppMgrActionModeItems(doneClicked: () -> Unit, selectAllClicked: () -> Unit) {
     IconButton(onClick = doneClicked) {
         Icon(
-            painter = painterResource(R.drawable.ic_done_white),
-            contentDescription = stringResource(R.string.msg_ok),
+            painter = painterResource(R.drawable.ic_delete_white),
+            contentDescription = stringResource(R.string.action_delete),
         )
     }
     IconButton(onClick = selectAllClicked) {

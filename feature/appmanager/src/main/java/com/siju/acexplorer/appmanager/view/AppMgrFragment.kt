@@ -54,7 +54,7 @@ import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.AppHelper
 import com.siju.acexplorer.appmanager.types.AppInfo
-import com.siju.acexplorer.appmanager.view.compose.AppMgrActionModeItems
+import com.siju.acexplorer.appmanager.view.compose.custom.menu.AppMgrActionModeItems
 import com.siju.acexplorer.appmanager.view.compose.GridItem
 import com.siju.acexplorer.appmanager.view.compose.ListItem
 import com.siju.acexplorer.appmanager.view.compose.custom.menu.AppMgrOverflowMenuItems
@@ -90,7 +90,6 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
 
     private var menuItemBadge: BadgeDrawable? = null
     private lateinit var toolbar: Toolbar
-    private lateinit var bottomToolbar: Toolbar
     private var packageReceiverRegistered = false
 
     private val uninstallResultLauncher =
@@ -180,7 +179,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
             actionModeContent = {
                 if (actionModeState == ActionModeState.STARTED) {
                     AppMgrActionModeItems(doneClicked = {
-                        viewModel.endActionMode()
+                        viewModel.onDeleteClicked()
                     },
                         selectAllClicked = {
                             viewModel.onSelectAllClicked()
@@ -454,33 +453,8 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
 //        }
     }
 
-    private fun onActionModeStarted() {
-        setToolbarSubtitle(0)
-        setupActionModeToolbar()
-        setupBottomToolbar()
-        showBottomToolbar()
-    }
 
-    private fun onActionModeEnd() {
-        clearActionModeToolbar()
-//        setupToolbar(toolbar, viewModel.getViewMode())
-        hideBottomToolbar()
-        setToolbarSubtitle(viewModel.appsList.value?.size)
-    }
 
-    private fun setupBottomToolbar() {
-        bottomToolbar.menu.clear()
-        bottomToolbar.inflateMenu(R.menu.app_action_mode_bottom)
-        bottomToolbar.setOnMenuItemClickListener(this)
-    }
-
-    private fun showBottomToolbar() {
-        bottomToolbar.visibility = View.VISIBLE
-    }
-
-    private fun hideBottomToolbar() {
-        bottomToolbar.visibility = View.GONE
-    }
 
     private fun fetchData(appType: AppType) {
         showLoadingIndicator()
