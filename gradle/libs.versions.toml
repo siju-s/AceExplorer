@@ -20,6 +20,8 @@ safeArgsPlugin = "2.7.7"
 sonarqube = "3.3"
 hiltPlugin = "2.51.1"
 kspPlugin = "2.0.0-1.0.21"
+firebasePerfPlugin="1.4.2"
+
 
 activityKtx = "1.9.3"
 fragmentKtx = "1.8.5"
@@ -43,6 +45,7 @@ swiperefresh     = "1.1.0"
 pagination       = "3.2.1"
 hilt             = "2.51.1"
 
+firebaseBom  = "33.7.0"
 analytics    = "21.5.0"
 crashlytics  = "18.6.0"
 coroutine      = "1.7.3"
@@ -113,6 +116,8 @@ hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt
 hilt_compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
 exif = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exif" }
 
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref="firebaseBom"}
+firebase-perf = {group="com.google.firebase", name="firebase-perf"}
 analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx", version.ref = "analytics" }
 crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx", version.ref = "crashlytics" }
 stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib-jdk7", version.ref = "kotlin" }
@@ -149,4 +154,4 @@ sonarqube = { id = "org.sonarqube", version.ref = "sonarqube" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref="crashlyticsPlugin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltPlugin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+firebase-perf = {id="com.google.firebase.firebase-perf", version.ref ="firebasePerfPlugin"}

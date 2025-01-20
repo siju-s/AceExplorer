@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.sonarqube)
     alias(libs.plugins.hilt)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.firebase.perf)
 
 }
 
@@ -165,6 +166,8 @@ dependencies {
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.perf)
     implementation(libs.analytics)
     implementation(libs.crashlytics)
 

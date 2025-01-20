@@ -25,6 +25,7 @@ plugins {
     alias(libs.plugins.sonarqube) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.firebase.perf) apply  false
 }
 
 
