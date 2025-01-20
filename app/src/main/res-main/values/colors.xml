@@ -23,7 +23,7 @@
     <!-- Light Theme -->
 
     <!-- Dark Theme -->
-    <color name="dark_background">#292929</color>
+    <color name="dark_background">#FF292929</color>
     <color name="dark_overlay">#595959</color>
 
     <color name="color_text">#5D6A77</color>

@@ -28,7 +28,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.Preference
@@ -82,8 +81,8 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         reviewManager = ReviewManager(this)
-
         setContentView(binding.root)
+        handleWindowInsets(binding.contentMain.navHost)
 
         setupNavController()
         setupPermission()

@@ -17,7 +17,16 @@ package com.siju.acexplorer.base.view
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.Bundle
+import android.view.View
+import android.view.Window
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
+import com.siju.acexplorer.R
+import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.utils.LocaleHelper
 
 @SuppressLint("Registered")
@@ -26,5 +35,36 @@ open class BaseActivity : AppCompatActivity() {
     override fun attachBaseContext(newBase: Context) {
         val context = LocaleHelper.setLanguage(newBase)
         super.attachBaseContext(context)
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
+        super.onCreate(savedInstanceState)
+        setStatusBarColor(window, resources.getColor(R.color.dark_background, theme))
+    }
+
+    @Suppress("DEPRECATION")
+    private fun setStatusBarColor(window: Window, color: Int) {
+        if (SdkHelper.isAtleastAndroid15) {
+            window.decorView.setOnApplyWindowInsetsListener { view, insets ->
+                view.setBackgroundColor(color)
+                insets
+            }
+        } else {
+            window.statusBarColor = color
+        }
+    }
+
+    fun handleWindowInsets(root: View) {
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, windowInsets ->
+            val bars = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+            view.updatePadding(
+                left = bars.left,
+                top = bars.top,
+                right = bars.right,
+                bottom = bars.bottom
+            )
+            WindowInsetsCompat.CONSUMED
+        }
     }
 }

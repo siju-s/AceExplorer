@@ -42,4 +42,7 @@ object SdkHelper {
     val isAtleastAPI33: Boolean
         get() = Build.VERSION.SDK_INT >= 33
 
+    val isAtleastAndroid15: Boolean
+        get() = Build.VERSION.SDK_INT >= 35
+
 }
