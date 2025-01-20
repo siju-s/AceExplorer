@@ -18,7 +18,7 @@ import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.common.utils.ConfigurationHelper
 import com.siju.acexplorer.common.view.custom.CustomGridLayoutManager
-import com.siju.acexplorer.extensions.showToast
+import com.siju.acexplorer.common.extensions.showToast
 import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SdkHelper

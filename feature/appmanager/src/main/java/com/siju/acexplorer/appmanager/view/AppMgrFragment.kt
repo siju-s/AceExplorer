@@ -8,7 +8,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -74,7 +73,7 @@ import com.siju.acexplorer.common.compose.ui.menu.ExpandableMenu
 import com.siju.acexplorer.common.theme.MyApplicationTheme
 import com.siju.acexplorer.common.theme.Theme
 import com.siju.acexplorer.common.utils.ConfigurationHelper
-import com.siju.acexplorer.extensions.showToast
+import com.siju.acexplorer.common.extensions.showToast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.siju.acexplorer.common.R as RC
@@ -249,13 +248,11 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
                 it.packageName.contains(searchText, ignoreCase = true) ||
                         it.name.contains(searchText, ignoreCase = true)
             }, key = { _, item -> item.packageName }) { index, item ->
-                val selected = selectedItems.contains(index)
-
-                println("ITEM :${item.packageName} selected:$selected")
+                println("ITEM :${item.packageName}")
                 ListItem(item,
-                    selected,
+                    selectedItems.contains(index),
                     onItemClick = {
-                        onItemClick(it, index)
+                        onItemClick(item, index)
                     }, onItemLongClick = {
                         onItemLongClicked(index)
                     }

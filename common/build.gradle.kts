@@ -79,6 +79,7 @@ dependencies {
     api(libs.glide.runtime)
     api(libs.glide.compose)
     ksp(libs.glide.compiler)
+    api(libs.coil.compose)
     api(libs.fastScrollRecyclerview)
 
     api(libs.compose.runtime)

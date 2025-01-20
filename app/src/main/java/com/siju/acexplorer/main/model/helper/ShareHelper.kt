@@ -23,7 +23,7 @@ import android.net.Uri
 import android.webkit.MimeTypeMap
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
-import com.siju.acexplorer.extensions.canHandleIntent
+import com.siju.acexplorer.common.extensions.canHandleIntent
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.model.groups.CategoryHelper.checkIfFileCategory

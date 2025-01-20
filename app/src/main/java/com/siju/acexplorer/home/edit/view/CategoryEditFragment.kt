@@ -30,7 +30,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
 import com.siju.acexplorer.databinding.CategoryEditBinding
-import com.siju.acexplorer.extensions.showToast
+import com.siju.acexplorer.common.extensions.showToast
 import com.siju.acexplorer.home.edit.model.CategoryEditModelImpl
 import com.siju.acexplorer.home.edit.viewmodel.CategoryEditViewModel
 import com.siju.acexplorer.storage.view.custom.helper.SimpleItemTouchHelperCallback

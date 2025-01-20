@@ -51,6 +51,7 @@ coroutine      = "1.7.3"
 gson = "2.9.0"
 glide = "4.16.0"
 glide_compose = "1.0.0-beta01"
+coil = "3.0.4"
 apacheCompress = "1.21"
 ratethisapp = "1.2.0"
 floatingButton     = "1.10.1"
@@ -122,7 +123,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 glide_runtime = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide_compiler = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" }
 glide_compose = { group = "com.github.bumptech.glide", name = "compose", version.ref = "glide_compose" }
-
+coil-compose = {group = "io.coil-kt.coil3", name="coil-compose", version.ref = "coil"}
 apacheCompress = { group = "org.apache.commons", name = "commons-compress", version.ref = "apacheCompress" }
 floatingButton = { group = "com.getbase", name = "floatingactionbutton", version.ref = "floatingButton" }
 #rateApp = { group = "io.github.kobakei", name = "ratethisapp", version.ref = "ratethisapp" }

@@ -52,7 +52,7 @@ import com.siju.acexplorer.common.SortMode
 import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.databinding.MainListBinding
-import com.siju.acexplorer.extensions.showToast
+import com.siju.acexplorer.common.extensions.showToast
 import com.siju.acexplorer.home.view.CategoryMenuHelper
 import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.StorageUtils

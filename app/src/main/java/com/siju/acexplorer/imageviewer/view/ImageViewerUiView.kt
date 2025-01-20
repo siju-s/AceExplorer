@@ -24,7 +24,7 @@ import androidx.preference.PreferenceManager
 import androidx.viewpager.widget.ViewPager
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
-import com.siju.acexplorer.extensions.showToast
+import com.siju.acexplorer.common.extensions.showToast
 import com.siju.acexplorer.helper.MediaScannerHelper
 import com.siju.acexplorer.helper.SafHelper
 import com.siju.acexplorer.imageviewer.SAF_REQUEST_ID

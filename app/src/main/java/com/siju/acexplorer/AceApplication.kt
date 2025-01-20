@@ -17,6 +17,11 @@
 package com.siju.acexplorer
 
 import android.app.Application
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.request.crossfade
+import com.siju.acexplorer.common.coil.AppIconFetcher
 import com.siju.acexplorer.common.theme.Theme
 import dagger.hilt.android.HiltAndroidApp
 
@@ -24,7 +29,7 @@ private const val RATE_APP_CRITERIA_INSTALL_DAYS = 7
 private const val RATE_APP_CRITERIA_LAUNCH_TIMES = 25
 
 @HiltAndroidApp
-class AceApplication : Application() {
+class AceApplication : Application(), SingletonImageLoader.Factory {
 
     override fun onCreate() {
         super.onCreate()
@@ -43,4 +48,12 @@ class AceApplication : Application() {
             private set
     }
 
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
+        return ImageLoader.Builder(context)
+            .crossfade(true)
+            .components {
+                add(AppIconFetcher.Factory(context))
+            }
+            .build()
+    }
 }
