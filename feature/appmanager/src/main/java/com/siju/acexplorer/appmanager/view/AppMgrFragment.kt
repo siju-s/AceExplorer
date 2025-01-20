@@ -125,33 +125,46 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
     @Composable
     private fun AppContent(viewModel: AppMgrViewModel) {
         var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
+        val apps by viewModel.filteredAppsList.observeAsState(initial = emptyList())
+        val selectedItems by viewModel.getSelectedItems().collectAsState()
+        val viewMode by viewModel.viewMode.collectAsState()
 
         Scaffold(
             modifier = Modifier
                 .fillMaxSize()
                 .windowInsetsPadding(WindowInsets.statusBars),
             topBar = {
-                TopAppBar(viewModel, searchQuery) { query ->
+                TopAppBar(viewModel, apps.size, selectedItems.size, viewMode, searchQuery) { query ->
                     searchQuery = query
                 }
             })
         { innerPadding ->
-            MainContent(viewModel, innerPadding, searchQuery.text)
+            MainContent(apps, selectedItems, viewMode, innerPadding, searchQuery.text)
         }
     }
 
     @Composable
     private fun TopAppBar(
         viewModel: AppMgrViewModel,
+        appsSize: Int,
+        selectedItemsSize: Int,
+        viewMode: ViewMode,
         searchQuery: TextFieldValue,
         onSearchQueryChanged: (TextFieldValue) -> Unit
     ) {
         var isSearchVisible by remember { mutableStateOf(false) }
         val actionModeState by viewModel.actionModeState.observeAsState()
-        val viewMode by viewModel.viewMode.collectAsState()
         var showBadge by remember { mutableStateOf(false) }
 
+        val appsCountText = if (actionModeState == ActionModeState.STARTED) {
+            resources.getQuantityString(com.siju.acexplorer.common.R.plurals.number_of_apps, selectedItemsSize, selectedItemsSize)
+        }
+        else {
+            resources.getQuantityString(com.siju.acexplorer.common.R.plurals.number_of_apps, appsSize, appsSize)
+        }
+
         TopAppBarWithSearch(title = getString(R.string.app_manager),
+            subtitle = appsCountText,
             actionModeEnabled = actionModeState == ActionModeState.STARTED,
             searchQuery = searchQuery,
             searchPlaceholderText = R.string.search_name_or_package,
@@ -207,13 +220,12 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
 
     @Composable
     private fun MainContent(
-        viewModel: AppMgrViewModel,
+        apps: List<AppInfo>,
+        selectedItems: Set<Int>,
+        viewMode: ViewMode,
         innerPadding: PaddingValues,
         searchText: String
     ) {
-        val apps by viewModel.filteredAppsList.observeAsState(initial = emptyList())
-        val selectedItems by viewModel.getSelectedItems().collectAsState()
-        val viewMode by viewModel.viewMode.collectAsState()
 
         println("Selected items ${selectedItems.size}")
 

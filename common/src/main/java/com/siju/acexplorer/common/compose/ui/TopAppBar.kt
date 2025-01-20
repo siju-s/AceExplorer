@@ -1,5 +1,6 @@
 package com.siju.acexplorer.common.compose.ui
 
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
 import androidx.compose.material.icons.outlined.MoreVert
@@ -25,6 +26,7 @@ import com.siju.acexplorer.common.compose.ui.menu.ExpandableMenu
 @Composable
 fun TopAppBarWithSearch(
     title: String,
+    subtitle:String,
     actionModeEnabled: Boolean,
     searchQuery: TextFieldValue,
     isSearchVisible: Boolean,
@@ -53,7 +55,10 @@ fun TopAppBarWithSearch(
                     focusRequester.requestFocus()
                 }
             } else {
-                Text(title)
+                Column {
+                    Text(title, style = MaterialTheme.typography.titleLarge)
+                    Text(subtitle, style = MaterialTheme.typography.labelLarge)
+                }
             }
         },
         actions = {

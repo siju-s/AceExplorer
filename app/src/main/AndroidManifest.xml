@@ -48,6 +48,10 @@
         tools:targetApi="q">
 
         <meta-data
+            android:name="firebase_performance_logcat_enabled"
+            android:value="true" />
+
+        <meta-data
             android:name="google_analytics_adid_collection_enabled"
             android:value="false" />
 
