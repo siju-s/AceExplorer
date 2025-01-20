@@ -20,13 +20,20 @@ import android.app.Application
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
+import coil3.disk.DiskCache
+import coil3.disk.directory
+import coil3.memory.MemoryCache
 import coil3.request.crossfade
 import com.siju.acexplorer.common.coil.AppIconFetcher
+import com.siju.acexplorer.common.coil.AppIconKeyer
 import com.siju.acexplorer.common.theme.Theme
 import dagger.hilt.android.HiltAndroidApp
 
 private const val RATE_APP_CRITERIA_INSTALL_DAYS = 7
 private const val RATE_APP_CRITERIA_LAUNCH_TIMES = 25
+
+private const val COIL_CACHE_SIZE_BYTES = 5 * 1024 * 1024L
+private const val COIL_CACHE_DIR = "image_cache"
 
 @HiltAndroidApp
 class AceApplication : Application(), SingletonImageLoader.Factory {
@@ -50,9 +57,21 @@ class AceApplication : Application(), SingletonImageLoader.Factory {
 
     override fun newImageLoader(context: PlatformContext): ImageLoader {
         return ImageLoader.Builder(context)
+            .memoryCache {
+                MemoryCache.Builder()
+                    .maxSizePercent(context, 0.20)
+                    .build()
+            }
+            .diskCache {
+                DiskCache.Builder()
+                    .directory(cacheDir.resolve(COIL_CACHE_DIR))
+                    .maxSizeBytes(COIL_CACHE_SIZE_BYTES)
+                    .build()
+            }
             .crossfade(true)
             .components {
                 add(AppIconFetcher.Factory(context))
+                add(AppIconKeyer())
             }
             .build()
     }
