@@ -3,7 +3,7 @@ minSdk = "30" #Android 11
 targetSdk = "35" # Android 15
 compileSdk = "35"
 
-kotlin = "2.0.0"
+kotlin = "2.1.0"
 composeCompiler = "1.5.15"
 compose = "1.7.6"
 composeNavigation = "2.8.5"
