@@ -57,30 +57,18 @@ dependencies {
     api(libs.fragmentKtx)
     api(libs.preference)
     api(libs.annotation)
-
-
     api(libs.viewModelKtx)
     api(libs.lifecycle.liveData)
     api(libs.lifecycle.runtime)
-
     ksp(libs.lifecycle.compiler)
-
     api(libs.recyclerView)
     api(libs.design)
     api(libs.swipeRefresh)
     api(libs.constraintLayout)
     api(libs.palette)
-
     api(libs.navigation)
     api(libs.navigation.ui)
-//    api(libs.navigation.navfeature)
     api(libs.exif)
-
-    api(libs.glide.runtime)
-    api(libs.glide.compose)
-    ksp(libs.glide.compiler)
-    api(libs.coil.compose)
-    api(libs.fastScrollRecyclerview)
 
     api(libs.compose.runtime)
     api(libs.compose.ui)
@@ -93,4 +81,9 @@ dependencies {
     api(libs.androidx.fragment.compose)
     api(platform(libs.androidx.compose.bom))
 
+    api(libs.glide.runtime)
+    api(libs.glide.compose)
+    ksp(libs.glide.compiler)
+    api(libs.coil.compose)
+    api(libs.fastScrollRecyclerview)
 }

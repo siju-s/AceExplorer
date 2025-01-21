@@ -1,69 +1,68 @@
 [versions]
-minSdk = "30" #Android 11
-targetSdk = "35" # Android 15
+minSdk     = "30" #Android 11
+targetSdk  = "35" # Android 15
 compileSdk = "35"
 
-kotlin = "2.1.0"
-composeCompiler = "1.5.15"
-compose = "1.7.6"
+# Plugins
+androidGradlePlugin = "8.7.3"
+googleServices      = "4.4.2"
+crashlyticsPlugin   = "3.0.2"
+safeArgsPlugin      = "2.8.5"
+sonarqube           = "3.3"
+hiltPlugin          = "2.51.1"
+kspPlugin           = "2.1.0-1.0.29"
+firebasePerfPlugin  = "1.4.2"
+
+kotlin          = "2.1.0"
+coroutine       = "1.9.0"
+
+compose           = "1.7.6"
+composeCompiler   = "1.5.15"
 composeNavigation = "2.8.5"
-composeBom = "2025.01.00"
-activityCompose = "1.10.0"
-fragmentCompose = "1.8.5"
+composeBom        = "2025.01.00"
+activityCompose   = "1.10.0"
+fragmentCompose   = "1.8.5"
 
-androidGradlePlugin = "8.7.2"
-googleServices = "4.4.2"
-crashlyticsPlugin  = "3.0.1"
-safeArgsPlugin = "2.7.7"
-sonarqube = "3.3"
-hiltPlugin = "2.51.1"
-kspPlugin = "2.0.0-1.0.21"
-firebasePerfPlugin="1.4.2"
-
-
-activityKtx = "1.9.3"
-fragmentKtx = "1.8.5"
-appCompat = "1.7.0"
-design       = "1.10.0"
-support      = "1.0.0"
-annotation   = "1.8.0"
-recyclerview = "1.3.2"
-preference   = "1.2.1"
-viewpager    = "1.0.0"
-lifecycle    = "2.6.2"
-room         = "2.6.1"
-playAppUpdate     = "2.1.0"
-playAppReview     = "2.0.1"
-
-
-navigation   = "2.7.7"
-constraintLayout = "2.1.4"
-exif             = "1.3.6"
+activityKtx      = "1.10.0"
+fragmentKtx      = "1.8.5"
+appCompat        = "1.7.0"
+design           = "1.12.0"
+support          = "1.0.0"
+annotation       = "1.9.1"
+recyclerview     = "1.4.0"
+preference       = "1.2.1"
+viewpager        = "1.1.0"
+lifecycle        = "2.8.7"
+room             = "2.6.1"
+navigation       = "2.8.5"
+constraintLayout = "2.2.0"
+exif             = "1.3.7"
 swiperefresh     = "1.1.0"
-pagination       = "3.2.1"
+pagination       = "3.3.5"
 hilt             = "2.51.1"
 
-firebaseBom  = "33.7.0"
-analytics    = "21.5.0"
-crashlytics  = "18.6.0"
-coroutine      = "1.7.3"
+firebaseBom  = "33.8.0"
+analytics    = "22.2.0"
+crashlytics  = "19.4.0"
+
+playAppUpdate     = "2.1.0"
+playAppReview     = "2.0.2"
 
 # External libraries
-gson = "2.9.0"
-glide = "4.16.0"
-glide_compose = "1.0.0-beta01"
-coil = "3.0.4"
-apacheCompress = "1.21"
-ratethisapp = "1.2.0"
+gson               = "2.10.1"
+glide              = "4.16.0"
+glide_compose      = "1.0.0-beta01"
+coil               = "3.0.4"
+apacheCompress     = "1.21"
 floatingButton     = "1.10.1"
-leakCanary          = "2.6"
-photoView           = "2.3.0"
+leakCanary         = "2.14"
+photoView          = "2.3.0"
 fastscrollRecycler = "2.0.1"
 rootTools          = "5.0"
 rootShell          = "1.6"
 
 # Test libraries
-junit =    "4.12"
+junit    = "4.13.2"
 mockito  = "3.3.3"
 
 [libraries]
@@ -79,7 +78,6 @@ compose_navigation = { module = "androidx.navigation:navigation-compose", versio
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-fragment-compose = { group = "androidx.fragment", name = "fragment-compose", version.ref = "fragmentCompose" }
 
-#compose_icons = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
 activityKtx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 fragmentKtx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragmentKtx" }
 appCompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appCompat" }
@@ -103,7 +101,6 @@ room_runtime = { group = "androidx.room", name = "room-runtime", version.ref = "
 room_compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 play_app_update = { group = "com.google.android.play", name = "app-update", version.ref = "playAppUpdate" }
 play_review = { group = "com.google.android.play", name = "review", version.ref = "playAppReview" }
-
 
 navigation = { group = "androidx.navigation", name = "navigation-fragment-ktx", version.ref = "navigation" }
 navigation_ui = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigation" }
@@ -129,7 +126,6 @@ glide_compose = { group = "com.github.bumptech.glide", name = "compose", version
 coil-compose = {group = "io.coil-kt.coil3", name="coil-compose", version.ref = "coil"}
 apacheCompress = { group = "org.apache.commons", name = "commons-compress", version.ref = "apacheCompress" }
 floatingButton = { group = "com.getbase", name = "floatingactionbutton", version.ref = "floatingButton" }
-#rateApp = { group = "io.github.kobakei", name = "ratethisapp", version.ref = "ratethisapp" }
 leakCanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakCanary" }
 photoView = { group = "com.github.chrisbanes", name = "PhotoView", version.ref = "photoView" }
 fastScrollRecyclerview = { group = "com.simplecityapps", name = "recyclerview-fastscroll", version.ref = "fastscrollRecycler" }

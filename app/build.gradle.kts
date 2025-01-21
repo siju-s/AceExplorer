@@ -148,21 +148,15 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.aar"))))
-    implementation(libs.root.tools) {
-        exclude(module = "RootShell")
-    }
+
     implementation(project(":common"))
     implementation(project(":feature:appmanager"))
-
-    implementation(libs.root.shell)
 
     implementation(libs.viewpager)
     implementation(libs.cardView)
     implementation(libs.pagination)
-
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
-
     implementation(libs.room.runtime)
     ksp(libs.room.compiler)
 
@@ -170,20 +164,20 @@ dependencies {
     implementation(libs.firebase.perf)
     implementation(libs.analytics)
     implementation(libs.crashlytics)
-
     implementation(libs.gson)
     implementation(libs.play.app.update)
     implementation(libs.play.review)
 
-   implementation(libs.apacheCompress)
+    implementation(libs.apacheCompress)
+    implementation(libs.root.tools) {
+        exclude(module = "RootShell")
+    }
+    implementation(libs.root.shell)
     implementation(libs.floatingButton)
-//    implementation(libs.rateApp)
     implementation(libs.photoView)
-
     ksp(libs.glide.compiler)
 
-
-//    debugImplementation(Libraries.ExternalLibs.leakCanary)
+    debugImplementation(libs.leakCanary)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockito)
