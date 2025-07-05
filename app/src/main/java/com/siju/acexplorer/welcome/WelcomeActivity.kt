@@ -98,10 +98,9 @@ class WelcomeActivity : ComponentActivity(), View.OnClickListener, OnPageChangeL
     }
 
     private fun handleWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(skipButton) { view, windowInsets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rootContainer)) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
             view.updatePadding(bottom = insets.bottom)
-            nextButton.updatePadding(bottom = insets.bottom)
             WindowInsetsCompat.CONSUMED
         }
     }

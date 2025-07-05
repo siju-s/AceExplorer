@@ -42,14 +42,16 @@ internal class WelcomePagerAdapter(private val context: Context, private val res
     }
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
-        val itemView = LayoutInflater.from(context).inflate(R.layout.intro_pager_item,
+        val itemView = LayoutInflater.from(context).inflate(R.layout.welcome_item,
                 container, false)
         val imageView = itemView.findViewById<ImageView>(R.id.imageIntro)
         val textHeader = itemView.findViewById<TextView>(R.id.textIntroHeader)
         val textContent = itemView.findViewById<TextView>(R.id.textIntro)
+
         itemView.setBackgroundColor(bgColors[position])
         textHeader.text = headerText[position]
         textContent.text = text[position]
+
         Glide.with(context).load(resources[position])
                 .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC))
                 .into(imageView)

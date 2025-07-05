@@ -22,10 +22,10 @@
 
     <ImageView
         android:id="@+id/imageIntro"
+        android:layout_marginTop="@dimen/welcome_image_padding"
         android:layout_width="@dimen/intro_img_height"
         android:layout_height="@dimen/intro_img_height"
-        android:contentDescription="@string/image"
-        android:layout_marginTop="@dimen/padding_50" />
+        android:contentDescription="@string/image" />
 
     <TextView
         android:id="@+id/textIntroHeader"
