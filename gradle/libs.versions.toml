@@ -4,7 +4,7 @@ targetSdk  = "35" # Android 15
 compileSdk = "35"
 
 # Plugins
-androidGradlePlugin = "8.7.3"
+androidGradlePlugin = "8.11.0"
 googleServices      = "4.4.2"
 crashlyticsPlugin   = "3.0.2"
 safeArgsPlugin      = "2.8.5"
