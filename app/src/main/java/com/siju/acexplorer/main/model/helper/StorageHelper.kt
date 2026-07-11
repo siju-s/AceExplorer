@@ -25,7 +25,9 @@ object StorageHelper {
                 name = path
             }
             else -> {
-                name = file.name
+                // Removable USB/SD volume - prefer its human-readable label (e.g. "VR")
+                // over the raw volume-id folder name (e.g. "BC2E-FA6D").
+                name = StorageUtils.getRemovableVolumeLabel(path) ?: file.name
                 icon = R.drawable.ic_ext_white
                 storageType = StorageUtils.StorageType.EXTERNAL
             }

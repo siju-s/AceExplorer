@@ -4,7 +4,7 @@ targetSdk  = "35" # Android 15
 compileSdk = "35"
 
 # Plugins
-androidGradlePlugin = "8.11.0"
+androidGradlePlugin = "8.13.0"
 googleServices      = "4.4.2"
 crashlyticsPlugin   = "3.0.2"
 safeArgsPlugin      = "2.8.5"
@@ -59,7 +59,7 @@ leakCanary         = "2.14"
 photoView          = "2.3.0"
 fastscrollRecycler = "2.0.1"
 rootTools          = "5.0"
-rootShell          = "1.6"
+rootShell          = "1.4" # 1.6 no longer served by jitpack (404); 1.4 is the newest available
 
 # Test libraries
 junit    = "4.13.2"

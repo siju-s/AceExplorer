@@ -21,7 +21,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import android.os.storage.StorageManager
-import android.os.storage.StorageVolume
 import android.text.TextUtils
 import androidx.documentfile.provider.DocumentFile
 import androidx.preference.PreferenceManager
@@ -154,39 +153,70 @@ object StorageUtils {
     val extSdCardPaths: Array<String>
         get() {
             val context = AceApplication.appContext
-            val paths = ArrayList<String>()
-            listExFATDrives()
+            val paths = LinkedHashSet<String>()
 
-            populateExternalFilesDirPaths(context, paths)
+            // Modern removable volumes (USB OTG drives, SD cards) via StorageManager.
+            // These are read+write accessible with the MANAGE_EXTERNAL_STORAGE permission.
+            for (removablePath in getRemovableVolumePaths()) {
+                paths.add(removablePath)
+            }
+
+            // Legacy fallback for secondary storage that StorageManager may not report.
+            // Removable volumes come solely from StorageManager above (mounted-only), so a
+            // removable-looking legacy path is skipped - otherwise an unmounted drive whose
+            // stale /storage/<id> mount point still exists would linger in the list.
+            val legacyPaths = ArrayList<String>()
+            populateExternalFilesDirPaths(context, legacyPaths)
+            for (legacyPath in legacyPaths) {
+                if (isRemovableLookingPath(legacyPath)) {
+                    continue
+                }
+                if (paths.none { isSameVolume(it, legacyPath) }) {
+                    paths.add(legacyPath)
+                }
+            }
 
             val file = File(STORAGE_SDCARD1)
-            if (file.exists() && file.canExecute() && !paths.contains(file.absolutePath)) {
+            if (file.exists() && file.canExecute() && paths.none { isSameVolume(it, STORAGE_SDCARD1) }) {
                 paths.add(STORAGE_SDCARD1)
             }
             return paths.toTypedArray()
         }
 
-    fun listExFATDrives(): List<String> {
+    /**
+     * Paths of all currently mounted removable volumes (USB OTG drives, SD cards),
+     * as reported by [StorageManager]. Filesystem type (FAT32/exFAT) is irrelevant -
+     * any volume the OS has mounted is browsable and editable through java.io.File.
+     */
+    fun getRemovableVolumePaths(): List<String> {
         val context = AceApplication.appContext
-        val exFATDrives = mutableListOf<String>()
-
         val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
-        val storageVolumes = storageManager.storageVolumes
-
-        for (storageVolume in storageVolumes) {
-            if (storageVolume.isRemovable && isExFAT(storageVolume)) {
-                val path = storageVolume.directory!!.absolutePath
-                exFATDrives.add(path)
-            }
-        }
-
-        return exFATDrives
+        return storageManager.storageVolumes
+                .filter { it.isRemovable && it.state == Environment.MEDIA_MOUNTED }
+                .mapNotNull { it.directory?.absolutePath }
     }
 
-    private fun isExFAT(storageVolume: StorageVolume): Boolean {
-        // Check if the filesystem type is exFAT
-        val fsType = storageVolume.uuid ?: ""
-        return fsType.equals("exfat", ignoreCase = true)
+    /**
+     * Human-readable label for a removable volume path (e.g. "VR", "SanDisk"), falling
+     * back to null when the path is not a known removable volume.
+     */
+    fun getRemovableVolumeLabel(path: String): String? {
+        val context = AceApplication.appContext
+        val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager
+        return storageManager.storageVolumes
+                .firstOrNull { it.directory?.absolutePath == path }
+                ?.getDescription(context)
+    }
+
+    // Two paths point at the same physical volume when they share the trailing volume id.
+    private fun isSameVolume(pathA: String, pathB: String) =
+            pathA.substringAfterLast('/') == pathB.substringAfterLast('/')
+
+    // Removable volumes mount under /mnt/media_rw or /storage/<id>, where <id> is the
+    // FAT/exFAT serial (e.g. "BC2E-FA6D"). Such volumes are tracked via StorageManager.
+    private val fatVolumeId = Regex("[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}")
+    private fun isRemovableLookingPath(path: String): Boolean {
+        return path.startsWith("/mnt/media_rw/") || fatVolumeId.matches(path.substringAfterLast('/'))
     }
 
     private fun populateExternalFilesDirPaths(context: Context, paths: ArrayList<String>) {

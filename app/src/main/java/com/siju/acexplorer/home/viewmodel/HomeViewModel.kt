@@ -60,6 +60,11 @@ class HomeViewModel @Inject constructor(private val homeModel: HomeModel) : View
         }
     }
 
+    /** Re-reads the storage list, e.g. when a removable drive is attached or detached. */
+    fun refreshStorageList() {
+        fetchStorageList()
+    }
+
     fun fetchCount(categoryInfoList: ArrayList<HomeLibraryInfo>) {
         uiScope.launch(Dispatchers.IO) {
             categoryInfoList.forEachIndexed { index, homeLibraryInfo ->

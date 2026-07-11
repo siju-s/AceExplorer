@@ -41,7 +41,18 @@ class StorageFetcher(private val context: Context) {
 
     fun getStorageList(): ArrayList<StorageItem> {
         val storagePaths = StorageUtils.storageDirectories
-        return populateStorageList(storagePaths)
+        val storageList = populateStorageList(storagePaths)
+        // Internal first, then external drives, then root - stable within each group.
+        storageList.sortBy { storageOrder(it.storageType) }
+        return storageList
+    }
+
+    private fun storageOrder(storageType: StorageUtils.StorageType): Int {
+        return when (storageType) {
+            StorageUtils.StorageType.INTERNAL -> 0
+            StorageUtils.StorageType.EXTERNAL -> 1
+            StorageUtils.StorageType.ROOT -> 2
+        }
     }
 
     private fun populateStorageList(storagePaths: List<String>, onlyExternal : Boolean = false): ArrayList<StorageItem> {

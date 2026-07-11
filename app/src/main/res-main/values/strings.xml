@@ -26,6 +26,9 @@
     <string name="nav_menu_docs">Documents</string>
     <string name="downloads">Downloads</string>
     <string name="nav_header_storages">Storages</string>
+    <string name="storage_section_internal">Internal Storage</string>
+    <string name="storage_section_external">External Drives</string>
+    <string name="drive_unavailable">Drive no longer available</string>
     <string name="nav_header_favourites">Favorites</string>
     <string name="nav_header_collections">Library</string>
     <string name="unlock_full_version">Unlock full version</string>

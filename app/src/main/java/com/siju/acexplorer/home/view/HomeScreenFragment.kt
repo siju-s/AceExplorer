@@ -16,11 +16,16 @@
 
 package com.siju.acexplorer.home.view
 
+import android.content.Context
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.storage.StorageManager
+import android.os.storage.StorageVolume
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -30,10 +35,13 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.databinding.HomescreenBinding
 import com.siju.acexplorer.home.viewmodel.HomeViewModel
 import com.siju.acexplorer.main.helper.UpdateChecker
+import com.siju.acexplorer.main.model.StorageItem
+import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
 private const val TAG = "HomeScreenFragment"
 
@@ -48,6 +56,21 @@ class HomeScreenFragment : Fragment() {
     private var searchItem: MenuItem? = null
     private var _binding: HomescreenBinding? = null
     private val binding get() = _binding!!
+
+    private val storageManager by lazy {
+        requireContext().getSystemService(Context.STORAGE_SERVICE) as StorageManager
+    }
+
+    // Refreshes the storage list when a removable drive (USB OTG / SD card) changes
+    // state - mounted or unmounted - so it appears/disappears without leaving the screen.
+    // StorageVolumeCallback (API 30+) is reliable across OEMs, unlike the legacy
+    // ACTION_MEDIA_* broadcasts whose data scheme some devices do not populate.
+    private val storageVolumeCallback = object : StorageManager.StorageVolumeCallback() {
+        override fun onStateChanged(volume: StorageVolume) {
+            Log.d(TAG, "storage volume state changed: ${volume.state}")
+            homeViewModel.refreshStorageList()
+        }
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -102,7 +125,7 @@ class HomeScreenFragment : Fragment() {
         homeViewModel.storage.observe(viewLifecycleOwner, {
             it?.apply {
                 mainViewModel.setStorageList(it)
-                storageAdapter.submitList(it)
+                storageAdapter.submitList(buildStorageRows(it))
             }
         })
 
@@ -155,9 +178,31 @@ class HomeScreenFragment : Fragment() {
     private fun setupStorageList() {
         val storageList = binding.storage.storageList
         storageAdapter = HomeStorageAdapter { storageItem ->
-            loadList(storageItem.path, storageItem.category)
+            onStorageClicked(storageItem)
         }
         storageList.adapter = storageAdapter
+        val layoutManager = storageList.layoutManager as GridLayoutManager
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            // Section headers span the full width; storage cards take a single column.
+            override fun getSpanSize(position: Int): Int {
+                return if (storageAdapter.isHeader(position)) layoutManager.spanCount else 1
+            }
+        }
+    }
+
+    private fun buildStorageRows(items: List<StorageItem>): List<StorageRow> {
+        val rows = ArrayList<StorageRow>()
+        val internal = items.filter { it.storageType == StorageUtils.StorageType.INTERNAL }
+        val external = items.filter { it.storageType != StorageUtils.StorageType.INTERNAL }
+        if (internal.isNotEmpty()) {
+            rows.add(StorageRow.Header(getString(R.string.storage_section_internal)))
+            internal.forEach { rows.add(StorageRow.Item(it)) }
+        }
+        if (external.isNotEmpty()) {
+            rows.add(StorageRow.Header(getString(R.string.storage_section_external)))
+            external.forEach { rows.add(StorageRow.Item(it)) }
+        }
+        return rows
     }
 
     private fun setupCategoryAdapter() {
@@ -168,6 +213,18 @@ class HomeScreenFragment : Fragment() {
             layoutManager = gridLayoutManager
             adapter = categoryAdapter
         }
+    }
+
+    private fun onStorageClicked(storageItem: StorageItem) {
+        // A removable drive may have been unmounted since the list was drawn; opening its
+        // dead path would crash the file list. Verify it is still readable first.
+        val file = File(storageItem.path)
+        if (!file.exists() || !file.canRead()) {
+            Toast.makeText(requireContext(), R.string.drive_unavailable, Toast.LENGTH_SHORT).show()
+            homeViewModel.refreshStorageList()
+            return
+        }
+        loadList(storageItem.path, storageItem.category)
     }
 
     private fun loadList(path: String?, category: Category) {
@@ -215,6 +272,19 @@ class HomeScreenFragment : Fragment() {
 
     private fun navigateToSearchScreen() {
         mainViewModel.navigateToSearch()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        storageManager.registerStorageVolumeCallback(
+                ContextCompat.getMainExecutor(requireContext()), storageVolumeCallback)
+        // A drive may have been mounted/unmounted while this screen was in the background.
+        homeViewModel.refreshStorageList()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        storageManager.unregisterStorageVolumeCallback(storageVolumeCallback)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
