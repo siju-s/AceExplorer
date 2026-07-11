@@ -275,8 +275,8 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         mainViewModel.permissionStatus.observe(viewLifecycleOwner, { permissionStatus ->
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> {
-                    fileListViewModel.loadData(path,
-                                               category)
+                    fileListViewModel.loadInitialData(path,
+                                                      category)
                 }
                 else -> {
                 }

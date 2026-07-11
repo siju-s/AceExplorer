@@ -4,6 +4,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.analytics.Analytics
@@ -48,9 +49,14 @@ import kotlin.collections.ArrayList
 
 private const val TAG = "FileListViewModel"
 private const val ZIP_EXT = ".zip"
+private const val STATE_CURRENT_DIRECTORY = "current_directory"
+private const val STATE_CATEGORY = "current_category"
 
 @HiltViewModel
-class FileListViewModel @Inject constructor(private val storageModel: StorageModel) : ViewModel() {
+class FileListViewModel @Inject constructor(
+        private val storageModel: StorageModel,
+        private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private var zipViewer: ZipViewer? = null
     var apkPath: String? = null
@@ -215,6 +221,14 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
         this.searchScreen = searchScreen
     }
 
+    fun loadInitialData(path: String?, category: Category) {
+        val restoredPath = savedStateHandle.get<String>(STATE_CURRENT_DIRECTORY) ?: path
+        val restoredCategory = savedStateHandle.get<String>(STATE_CATEGORY)?.let {
+            runCatching { Category.valueOf(it) }.getOrNull()
+        } ?: category
+        loadData(restoredPath, restoredCategory)
+    }
+
     fun  loadData(path: String?, category: Category, fromSearch: Boolean = false) {
         Log.d(this.javaClass.name, "loadData: path $path , category $category")
         val newCategory = if (fromSearch) {
@@ -341,12 +355,14 @@ class FileListViewModel @Inject constructor(private val storageModel: StorageMod
 
     fun setCategory(category: Category) {
         this.category = category
+        savedStateHandle[STATE_CATEGORY] = category.name
         showFab.postValue(canShowFab(category))
         operationPresenter.category = category
     }
 
     private fun setCurrentDir(currentDir: String?) {
         this.currentDir = currentDir
+        savedStateHandle[STATE_CURRENT_DIRECTORY] = currentDir
         operationPresenter.currentDir = currentDir
     }
 
