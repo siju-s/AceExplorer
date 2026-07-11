@@ -7,6 +7,7 @@ import android.util.Log
 import com.siju.acexplorer.AceApplication
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.main.model.HiddenFileHelper
+import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.groups.Category.FILES
@@ -72,7 +73,13 @@ class FileDataFetcher : DataFetcher {
             val fileInfoArrayList: ArrayList<FileInfo>
             val file = File(path)
             fileInfoArrayList = if (file.canRead()) {
-                getAndroid11NonRootedListMedia(file, showHidden, ringtonePicker)
+                // Removable volumes (USB OTG / SD) are not indexed by MediaStore, so the
+                // MediaStore-backed listing returns nothing for them - list directly instead.
+                if (StorageUtils.isOnRemovableVolume(path)) {
+                    getNonRootedList(file, showHidden, ringtonePicker)
+                } else {
+                    getAndroid11NonRootedListMedia(file, showHidden, ringtonePicker)
+                }
             } else {
                 RootHelper.getRootedList(path, root, showHidden)
             }

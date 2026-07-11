@@ -197,6 +197,14 @@ object StorageUtils {
     }
 
     /**
+     * True when [path] lives on a mounted removable volume. Such volumes are not indexed
+     * by MediaStore, so their contents must be listed directly via java.io.File.
+     */
+    fun isOnRemovableVolume(path: String): Boolean {
+        return getRemovableVolumePaths().any { path == it || path.startsWith("$it/") }
+    }
+
+    /**
      * Human-readable label for a removable volume path (e.g. "VR", "SanDisk"), falling
      * back to null when the path is not a known removable volume.
      */
