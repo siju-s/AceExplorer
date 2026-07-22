@@ -139,7 +139,7 @@ class InfoFragment : BottomSheetDialogFragment() {
         nameText?.text = fileInfo.fileName
 
         val dateText = sheetView?.findViewById<TextView>(R.id.textDateModified)
-        bindDate(dateText, category, fileInfo)
+        bindDate(dateText, fileInfo)
 
         val sizeText = sheetView?.findViewById<TextView>(R.id.textFileSize)
         sizeText?.text = Formatter.formatFileSize(context, fileInfo.size)
@@ -241,14 +241,9 @@ class InfoFragment : BottomSheetDialogFragment() {
         activity.supportActionBar?.title = ""
     }
 
-    private fun bindDate(dateText: TextView?, category: Category?,
-                         fileInfo: FileInfo) {
+    private fun bindDate(dateText: TextView?, fileInfo: FileInfo) {
         dateText?.let {
-            val dateMs = if (CategoryHelper.isDateInMs(category)) {
-                fileInfo.date
-            } else {
-                fileInfo.date * 1000
-            }
+            val dateMs = if (fileInfo.date >= 10_000_000_000L) fileInfo.date else fileInfo.date * 1000
             it.text = FileUtils.convertDate(dateMs)
         }
     }

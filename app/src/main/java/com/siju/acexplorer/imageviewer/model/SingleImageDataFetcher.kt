@@ -5,10 +5,13 @@ import android.database.Cursor
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
+import com.siju.acexplorer.BuildConfig
 import com.siju.acexplorer.common.types.FileInfo
 import com.siju.acexplorer.helper.MediaStoreColumnHelper
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.main.model.helper.UriHelper
+import java.io.File
 
 // DATA field is required to check path. Works fine till Android 12 even though deprecated
 @Suppress("Deprecation")
@@ -17,7 +20,12 @@ object SingleImageDataFetcher {
     fun fetchData(context: Context, uri: Uri): FileInfo? {
         Log.d(this.javaClass.simpleName, "fetchData:uri=$uri, authority:${uri.authority}, schem:${uri.scheme}")
         val cursor = fetchImageDetail(context, uri)
-        return getImageData(cursor)
+        val sourceFile = if (uri.authority == BuildConfig.APPLICATION_ID + ".fileprovider") {
+            UriHelper.getUriPath(uri)?.let(::File)
+        } else {
+            null
+        }
+        return getImageData(cursor, sourceFile)
     }
 
     fun getImageInfo(context: Context, path: String): FileInfo? {
@@ -68,17 +76,20 @@ object SingleImageDataFetcher {
         return context.contentResolver.query(uri, null, null, null, null)
     }
 
-    private fun getImageData(cursor: Cursor?): FileInfo? {
+    private fun getImageData(cursor: Cursor?, sourceFile: File? = null): FileInfo? {
         if (cursor == null) {
             return null
         }
         val titleIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
         val sizeIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.SIZE)
+        val dateIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATE_MODIFIED)
         if (cursor.moveToFirst()) {
             val size = cursor.getLong(sizeIndex)
             val fileName = cursor.getString(titleIndex)
+            val date = sourceFile?.takeIf(File::exists)?.lastModified()
+                    ?: if (dateIndex >= 0) cursor.getLong(dateIndex) else 0L
             cursor.close()
-            return FileInfo(Category.IMAGE, -1, -1, fileName, null, 0, size,
+            return FileInfo(Category.IMAGE, -1, -1, fileName, sourceFile?.absolutePath, date, size,
                     null)
         }
         return null

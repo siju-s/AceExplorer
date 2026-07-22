@@ -8,14 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.ExifData
@@ -38,7 +31,7 @@ class ExifAdapter(private val exif: ArrayList<ExifData>, private val latLong: Do
         return when (viewtype) {
             VIEW_MAIN -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.info_exif_item, parent, false)
-                ViewHolder(ComposeView(view.context))
+                ViewHolder(view)
             }
             else      -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.info_exif_gps, parent, false)
@@ -68,22 +61,13 @@ class ExifAdapter(private val exif: ArrayList<ExifData>, private val latLong: Do
 
     }
 
-    class ViewHolder(val view: ComposeView) : RecyclerView.ViewHolder(view) {
-//        private val labelText: TextView = view.findViewById(R.id.textLabel)
-//        private val valueText: TextView = view.findViewById(R.id.textLabelValue)
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        private val labelText: TextView = view.findViewById(R.id.textLabel)
+        private val valueText: TextView = view.findViewById(R.id.textLabelValue)
 
         fun bind(tag: String, value: String) {
-//            labelText.text = tag
-//            valueText.text = value
-            view.setContent {
-                MaterialTheme {
-                    Row(modifier = Modifier.fillMaxSize()) {
-                        Text(tag, style = TextStyle(fontStyle = FontStyle.Italic))
-                        Text(value)
-                    }
-                }
-
-            }
+            labelText.text = tag
+            valueText.text = value
         }
     }
 

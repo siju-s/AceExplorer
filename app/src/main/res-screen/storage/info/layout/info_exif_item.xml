@@ -1,37 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:weightSum="1"
-    android:orientation="horizontal">
-    
-    <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/compose_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    android:layout_marginTop="12dp">
 
-<!--    <TextView-->
-<!--        android:id="@+id/textLabel"-->
-<!--        style="@style/InfoItem"-->
-<!--        android:layout_weight=".3"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="@dimen/margin_16"-->
-<!--        android:textStyle="bold"-->
-<!--        tools:text="Title" />-->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/exifLabelGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.32" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/textLabelValue"-->
-<!--        style="@style/InfoItemDetail"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_weight=".7"-->
-<!--        android:layout_marginEnd="@dimen/margin_16"-->
-<!--        android:layout_marginTop="@dimen/margin_16"-->
-<!--        android:layout_marginStart="@dimen/margin_16"-->
-<!--        tools:text="Subtitle" />-->
+    <TextView
+        android:id="@+id/textLabel"
+        style="@style/InfoItem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginEnd="8dp"
+        android:textStyle="bold"
+        app:layout_constraintBaseline_toBaselineOf="@+id/textLabelValue"
+        app:layout_constraintEnd_toStartOf="@+id/exifLabelGuideline"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Orientation" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/textLabelValue"
+        style="@style/InfoItemDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/margin_16"
+        android:textIsSelectable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/exifLabelGuideline"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="0°" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
