@@ -101,10 +101,34 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
     private val fileListViewModel: FileListViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
 
-    private lateinit var filesList: FilesList
-    private lateinit var floatingView: FloatingView
-    private lateinit var navigationView: NavigationView
-    private lateinit var menuControls: MenuControls
+    private var filesListBacking: FilesList? = null
+    private var floatingViewBacking: FloatingView? = null
+    private var navigationViewBacking: NavigationView? = null
+    private var menuControlsBacking: MenuControls? = null
+
+    private var filesList: FilesList
+        get() = checkNotNull(filesListBacking)
+        set(value) {
+            filesListBacking = value
+        }
+
+    private var floatingView: FloatingView
+        get() = checkNotNull(floatingViewBacking)
+        set(value) {
+            floatingViewBacking = value
+        }
+
+    private var navigationView: NavigationView
+        get() = checkNotNull(navigationViewBacking)
+        set(value) {
+            navigationViewBacking = value
+        }
+
+    private var menuControls: MenuControls
+        get() = checkNotNull(menuControlsBacking)
+        set(value) {
+            menuControlsBacking = value
+        }
 
     private var categoryMenuHelper: CategoryMenuHelper? = null
     private var path: String? = null
@@ -156,6 +180,11 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
     }
 
     override fun onDestroyView() {
+        fileListViewModel.clearNavigationView()
+        filesListBacking = null
+        floatingViewBacking = null
+        navigationViewBacking = null
+        menuControlsBacking = null
         super.onDestroyView()
         _binding = null
     }
@@ -285,7 +314,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
 
         fileListViewModel.fileData.observe(viewLifecycleOwner, {
             it?.apply {
-                if (::filesList.isInitialized) {
+                if (filesListBacking != null) {
                     filesList.onDataLoaded(it, fileListViewModel.category, fileListViewModel.isZipMode())
                 }
             }
@@ -299,7 +328,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
 
         fileListViewModel.recentFileData.observe(viewLifecycleOwner, {
             it?.apply {
-                if (::filesList.isInitialized) {
+                if (filesListBacking != null) {
                     filesList.onRecentDataLoaded(it.first, it.second)
                 }
             }
@@ -315,7 +344,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         mainViewModel.refreshGridCols.observe(viewLifecycleOwner, {
             it?.apply {
                 Log.d(TAG, "refreshGridCols pane:${it.first}, reload:${it.second}, this:${this@BaseFileListFragment is FileListFragment}")
-                if (::filesList.isInitialized && shouldRefreshPane(it.first, it.second)) {
+                if (filesListBacking != null && shouldRefreshPane(it.first, it.second)) {
                     filesList.refreshGridColumns(fileListViewModel.getViewMode(category))
                     mainViewModel.setRefreshDone(it.first)
                 }
@@ -355,11 +384,11 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         })
 
         fileListViewModel.viewMode.observe(viewLifecycleOwner, {
-            if (::filesList.isInitialized) {
+            if (filesListBacking != null) {
                 filesList.onViewModeChanged(it)
                 refreshGridCols()
             }
-            if (::menuControls.isInitialized) {
+            if (menuControlsBacking != null) {
                 menuControls.onViewModeChanged(it)
             }
         })
@@ -1236,7 +1265,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         }
 
         private fun refreshDataOnTabSelected() {
-            if (::filesList.isInitialized) {
+            if (filesListBacking != null) {
                 val viewMode = fileListViewModel.getViewMode(category)
                 filesList.onViewModeChanged(viewMode)
                 filesList.onSortModeChanged(mainViewModel.getSortMode())

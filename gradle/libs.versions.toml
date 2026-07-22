@@ -1,7 +1,7 @@
 [versions]
 minSdk     = "30" #Android 11
-targetSdk  = "35" # Android 15
-compileSdk = "35"
+targetSdk  = "36" # Android 16
+compileSdk = "36"
 
 # Plugins
 androidGradlePlugin = "8.13.0"

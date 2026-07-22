@@ -25,6 +25,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
@@ -77,6 +78,12 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
 
     private var updateChecker: UpdateChecker? = null
 
+    private val backPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            handleBackPressed()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -85,6 +92,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
         handleWindowInsets(binding.contentMain.navHost)
 
         setupNavController()
+        onBackPressedDispatcher.addCallback(this, backPressedCallback)
         setupPermission()
         handleIntent(intent)
         initObservers()
@@ -311,9 +319,9 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     }
 
 
-    override fun onBackPressed() {
+    private fun handleBackPressed() {
         val fragment = getCurrentFragment()
-        Log.d(TAG, "onBackPressed: getCurrentFrag:$fragment")
+        Log.d(TAG, "handleBackPressed: getCurrentFrag:$fragment")
         when (fragment) {
             is BaseFileListFragment -> when (val focusedFragment = getCurrentFocusFragment(fragment)) {
                 is DualPaneFragment -> {
@@ -326,7 +334,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
             is CategoryFragment -> {
                 val backPressed = fragment.onBackPressed()
                 if (backPressed) {
-                    super.onBackPressed()
+                    dispatchDefaultBack()
                 }
             }
             is SearchFragment -> onSearchBackPress(fragment)
@@ -338,8 +346,14 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
                 clearBackStack(R.id.navigation_settings)
                 switchToHomeScreen()
             }
-            else -> super.onBackPressed()
+            else -> dispatchDefaultBack()
         }
+    }
+
+    private fun dispatchDefaultBack() {
+        backPressedCallback.isEnabled = false
+        onBackPressedDispatcher.onBackPressed()
+        backPressedCallback.isEnabled = true
     }
 
     private fun switchToHomeScreen() {
@@ -349,7 +363,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     private fun onDualPaneBackPress(focusedFragment: DualPaneFragment) {
         val backPressNotHandled = focusedFragment.onBackPressed()
         if (backPressNotHandled) {
-            super.onBackPressed()
+            dispatchDefaultBack()
             disableDualPane()
         }
     }
@@ -357,7 +371,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     private fun onSinglePaneBackPress(focusedFragment: FileListFragment) {
         val backPressNotHandled = focusedFragment.onBackPressed()
         if (backPressNotHandled) {
-            super.onBackPressed()
+            dispatchDefaultBack()
             disableDualPane()
         }
     }
@@ -365,7 +379,7 @@ class AceActivity : BaseActivity(), MainCommunicator, PreferenceFragmentCompat.O
     private fun onSearchBackPress(fragment: SearchFragment) {
         val backPressNotHandled = fragment.onBackPressed()
         if (backPressNotHandled) {
-            super.onBackPressed()
+            dispatchDefaultBack()
         }
     }
 

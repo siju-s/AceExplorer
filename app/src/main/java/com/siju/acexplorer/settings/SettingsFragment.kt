@@ -339,11 +339,16 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
+        handler.removeCallbacksAndMessages(null)
+        updateChecker?.setUpdateCallback(null)
         if (registeredNetworkCallback) {
             registeredNetworkCallback = false
             networkHelper?.unregisterNetworkRequest(connectivityManager)
         }
+        networkHelper = null
+        connectivityManager = null
+        updatePreference = null
+        super.onDestroyView()
     }
 
     companion object {

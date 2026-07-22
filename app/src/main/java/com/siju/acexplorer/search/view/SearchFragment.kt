@@ -48,9 +48,27 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
     private val searchViewModel: SearchViewModel by viewModels()
     private val fileListViewModel: FileListViewModel by viewModels()
 
-    private lateinit var filesList: RecyclerView
-    private lateinit var recentSearchAdapter: RecentSearchAdapter
-    private lateinit var searchSuggestions: SearchSuggestions
+    private var filesListBacking: RecyclerView? = null
+    private var recentSearchAdapterBacking: RecentSearchAdapter? = null
+    private var searchSuggestionsBacking: SearchSuggestions? = null
+
+    private var filesList: RecyclerView
+        get() = checkNotNull(filesListBacking)
+        set(value) {
+            filesListBacking = value
+        }
+
+    private var recentSearchAdapter: RecentSearchAdapter
+        get() = checkNotNull(recentSearchAdapterBacking)
+        set(value) {
+            recentSearchAdapterBacking = value
+        }
+
+    private var searchSuggestions: SearchSuggestions
+        get() = checkNotNull(searchSuggestionsBacking)
+        set(value) {
+            searchSuggestionsBacking = value
+        }
 
     private var fileListAdapter: FileListAdapter? = null
     private var searchView: SearchView? = null
@@ -137,7 +155,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
         searchViewModel.searchResult.observe(viewLifecycleOwner, {
             it?.apply {
                 val searchView = this@SearchFragment.searchView
-                if (::filesList.isInitialized && searchView != null) {
+                if (filesListBacking != null && searchView != null) {
                     Log.d("SearchFragment", " Search result:${it.size}")
                     if (searchView.query.isEmpty()) {
                         searchSuggestions.showChipGroup()
@@ -155,7 +173,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
         fileListViewModel.fileData.observe(viewLifecycleOwner, {
             it?.apply {
                 showSearchList()
-                if (::filesList.isInitialized) {
+                if (filesListBacking != null) {
                     fileListAdapter?.submitList(it)
                     fileListAdapter?.notifyDataSetChanged()
                 }
@@ -165,7 +183,7 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
         fileListViewModel.recentFileData.observe(viewLifecycleOwner, {
             it?.apply {
                 showSearchList()
-                if (::filesList.isInitialized) {
+                if (filesListBacking != null) {
                     fileListAdapter?.submitList(RecentDataConverter.getRecentItemListWithoutHeader(it.second))
                 }
             }
@@ -448,5 +466,17 @@ class SearchFragment : Fragment(), SearchView.OnQueryTextListener, FileListHelpe
         }
     }
 
+    override fun onDestroyView() {
+        searchView?.setOnQueryTextListener(null)
+        filesListBacking?.adapter = null
+        fileListAdapter?.submitList(emptyList())
+        fileListAdapter = null
+        filesListBacking = null
+        recentSearchAdapterBacking = null
+        searchSuggestionsBacking = null
+        searchView = null
+        binding = null
+        super.onDestroyView()
+    }
 
 }

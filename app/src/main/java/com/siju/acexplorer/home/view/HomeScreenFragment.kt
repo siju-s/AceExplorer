@@ -72,6 +72,8 @@ class HomeScreenFragment : Fragment() {
         }
     }
 
+    private var isStorageVolumeCallbackRegistered = false
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?): View {
@@ -276,15 +278,29 @@ class HomeScreenFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        storageManager.registerStorageVolumeCallback(
-                ContextCompat.getMainExecutor(requireContext()), storageVolumeCallback)
+        registerStorageVolumeCallback()
         // A drive may have been mounted/unmounted while this screen was in the background.
         homeViewModel.refreshStorageList()
     }
 
     override fun onStop() {
+        unregisterStorageVolumeCallback()
         super.onStop()
-        storageManager.unregisterStorageVolumeCallback(storageVolumeCallback)
+    }
+
+    private fun registerStorageVolumeCallback() {
+        if (!isStorageVolumeCallbackRegistered) {
+            storageManager.registerStorageVolumeCallback(
+                    ContextCompat.getMainExecutor(requireContext()), storageVolumeCallback)
+            isStorageVolumeCallbackRegistered = true
+        }
+    }
+
+    private fun unregisterStorageVolumeCallback() {
+        if (isStorageVolumeCallbackRegistered) {
+            storageManager.unregisterStorageVolumeCallback(storageVolumeCallback)
+            isStorageVolumeCallbackRegistered = false
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -298,6 +314,8 @@ class HomeScreenFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        unregisterStorageVolumeCallback()
+        searchItem = null
         super.onDestroyView()
         _binding = null
     }

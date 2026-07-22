@@ -16,7 +16,7 @@ import com.siju.acexplorer.main.model.groups.Category
 
 class ToolsFragment : Fragment() {
 
-    private lateinit var toolsList: RecyclerView
+    private var toolsList: RecyclerView? = null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -31,7 +31,7 @@ class ToolsFragment : Fragment() {
         setupToolbar(view)
 
         context?.let { context ->
-            toolsList.adapter = Adapter(context) {
+            toolsList?.adapter = Adapter(context) {
                 val actions = ToolsFragmentDirections.actionNavigationToolsToAppMgr()
                 findNavController().navigate(actions)
             }
@@ -42,6 +42,12 @@ class ToolsFragment : Fragment() {
     private fun setupToolbar(view: View) {
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         toolbar.title = view.context.getString(R.string.tab_tools)
+    }
+
+    override fun onDestroyView() {
+        toolsList?.adapter = null
+        toolsList = null
+        super.onDestroyView()
     }
 
     private class Adapter(context: Context, private val clickListener: (ToolsInfo) -> Unit) : RecyclerView.Adapter<Adapter.Holder>() {

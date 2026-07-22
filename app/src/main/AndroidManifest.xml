@@ -23,6 +23,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- For starting foreground service on Android 9 and above -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <!-- To install apps -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
@@ -42,7 +43,6 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/BaseDeviceTheme"
-        android:requestLegacyExternalStorage="true"
         tools:ignore="GoogleAppIndexingWarning">
 
         <meta-data
@@ -118,9 +118,15 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".storage.model.task.CreateZipService" />
-        <service android:name=".storage.model.task.CopyService" />
-        <service android:name=".storage.model.task.ExtractService" />
+        <service
+            android:name=".storage.model.task.CreateZipService"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".storage.model.task.CopyService"
+            android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".storage.model.task.ExtractService"
+            android:foregroundServiceType="dataSync" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

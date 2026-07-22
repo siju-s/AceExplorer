@@ -19,7 +19,7 @@ import com.siju.acexplorer.main.AceActivity
 
 const val REQUEST_CODE_UPDATE = 300
 
-class UpdateChecker(val context: Context, val activity: AceActivity, private var updateCallback: UpdateCallback) {
+class UpdateChecker(val context: Context, val activity: AceActivity, private var updateCallback: UpdateCallback?) {
     private val appUpdateManager = AppUpdateManagerFactory.create(context)
     private var isUpdateAvailable = false
     private var updateStatus = InstallStatus.UNKNOWN
@@ -33,19 +33,19 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
         Log.d(this.javaClass.simpleName, "installStateUpdatedListener:updateStatus:$updateStatus")
         isUpdateAvailable = when (installStatus) {
             InstallStatus.DOWNLOADED -> {
-                updateCallback.onUpdateDownloaded(appUpdateManager)
+                updateCallback?.onUpdateDownloaded(appUpdateManager)
                 true
             }
             InstallStatus.INSTALLED -> {
-                updateCallback.onUpdateInstalled()
+                updateCallback?.onUpdateInstalled()
                 false
             }
             InstallStatus.DOWNLOADING -> {
-                updateCallback.onUpdateDownloading()
+                updateCallback?.onUpdateDownloading()
                 true
             }
             InstallStatus.CANCELED -> {
-                updateCallback.onUpdateCancelledByUser()
+                updateCallback?.onUpdateCancelledByUser()
                 true
             }
             else -> {
@@ -61,7 +61,7 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
         appUpdateManager.registerListener(installStateUpdatedListener)
     }
 
-    fun setUpdateCallback(updateCallback: UpdateCallback) {
+    fun setUpdateCallback(updateCallback: UpdateCallback?) {
         this.updateCallback = updateCallback
     }
 
@@ -79,7 +79,7 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
             if (it.installStatus() == InstallStatus.DOWNLOADED) {
                 updateStatus = InstallStatus.DOWNLOADED
                 isUpdateAvailable = true
-                updateCallback.onUpdateDownloaded(appUpdateManager)
+                updateCallback?.onUpdateDownloaded(appUpdateManager)
             }
         }
     }
@@ -90,7 +90,7 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
         updateStatus = appUpdateInfo.installStatus()
         Log.d(this.javaClass.simpleName, "requestUpdate:updateStatus:$updateStatus")
         if (!userInitiated && viewModel.hasUserCancelledUpdate()) {
-            updateCallback.onUpdateCancelledByUser()
+            updateCallback?.onUpdateCancelledByUser()
         } else {
             startUpdateFlow(appUpdateInfo)
         }
@@ -123,7 +123,7 @@ class UpdateChecker(val context: Context, val activity: AceActivity, private var
     fun isUpdateDownloaded() = updateStatus == InstallStatus.DOWNLOADED
 
     fun onUpdateSnackbarDismissed() {
-        updateCallback.onUpdateSnackbarDismissed()
+        updateCallback?.onUpdateSnackbarDismissed()
     }
 
     fun showUpdateSnackbar(view: View?) {

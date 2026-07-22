@@ -23,11 +23,12 @@ import android.view.Window
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.siju.acexplorer.R
 import com.siju.acexplorer.main.model.helper.SdkHelper
 import com.siju.acexplorer.utils.LocaleHelper
+import com.siju.acexplorer.common.R as CommonR
 
 @SuppressLint("Registered")
 open class BaseActivity : AppCompatActivity() {
@@ -40,7 +41,11 @@ open class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        setStatusBarColor(window, resources.getColor(R.color.dark_background, theme))
+        setStatusBarColor(window, resources.getColor(CommonR.color.colorPrimaryDark, theme))
+        WindowCompat.getInsetsController(window, window.decorView).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
     }
 
     @Suppress("DEPRECATION")
@@ -56,15 +61,19 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun handleWindowInsets(root: View) {
+        val initialLeft = root.paddingLeft
+        val initialTop = root.paddingTop
+        val initialRight = root.paddingRight
         ViewCompat.setOnApplyWindowInsetsListener(root) { view, windowInsets ->
-            val bars = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+            val bars = windowInsets.getInsets(
+                    WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout())
             view.updatePadding(
-                left = bars.left,
-                top = bars.top,
-                right = bars.right,
-                bottom = bars.bottom
+                left = initialLeft + bars.left,
+                top = initialTop + bars.top,
+                right = initialRight + bars.right
             )
             WindowInsetsCompat.CONSUMED
         }
+        ViewCompat.requestApplyInsets(root)
     }
 }

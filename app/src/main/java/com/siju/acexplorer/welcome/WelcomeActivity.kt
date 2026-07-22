@@ -23,10 +23,8 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.viewpager.widget.ViewPager
@@ -54,6 +52,7 @@ class WelcomeActivity : ComponentActivity(), View.OnClickListener, OnPageChangeL
     private var dotsCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         prefManager = PrefManager(this)
@@ -98,11 +97,15 @@ class WelcomeActivity : ComponentActivity(), View.OnClickListener, OnPageChangeL
     }
 
     private fun handleWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.rootContainer)) { view, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.navigationBars())
-            view.updatePadding(bottom = insets.bottom)
-            WindowInsetsCompat.CONSUMED
+        val root = findViewById<View>(R.id.rootContainer)
+        val initialTop = root.paddingTop
+        val initialBottom = root.paddingBottom
+        ViewCompat.setOnApplyWindowInsetsListener(root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(top = initialTop + insets.top, bottom = initialBottom + insets.bottom)
+            windowInsets
         }
+        ViewCompat.requestApplyInsets(root)
     }
 
     private fun addBottomDots() {

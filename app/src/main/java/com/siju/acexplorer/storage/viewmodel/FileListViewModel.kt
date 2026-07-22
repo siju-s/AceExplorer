@@ -396,6 +396,10 @@ class FileListViewModel @Inject constructor(
         this.navigationView = navigationView
     }
 
+    fun clearNavigationView() {
+        navigationView = null
+    }
+
     private fun setInitialDir(path: String?, category: Category) {
         navigation.setInitialDir(path, category)
     }
