@@ -15,23 +15,16 @@
  */
 package com.siju.acexplorer.base.view
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.view.Window
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import com.siju.acexplorer.main.model.helper.SdkHelper
+import com.siju.acexplorer.common.view.EdgeToEdgeActivity
 import com.siju.acexplorer.utils.LocaleHelper
-import com.siju.acexplorer.common.R as CommonR
 
-@SuppressLint("Registered")
-open class BaseActivity : AppCompatActivity() {
+open class BaseActivity : EdgeToEdgeActivity() {
 
     override fun attachBaseContext(newBase: Context) {
         val context = LocaleHelper.setLanguage(newBase)
@@ -39,25 +32,7 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-        setStatusBarColor(window, resources.getColor(CommonR.color.colorPrimaryDark, theme))
-        WindowCompat.getInsetsController(window, window.decorView).apply {
-            isAppearanceLightStatusBars = false
-            isAppearanceLightNavigationBars = false
-        }
-    }
-
-    @Suppress("DEPRECATION")
-    private fun setStatusBarColor(window: Window, color: Int) {
-        if (SdkHelper.isAtleastAndroid15) {
-            window.decorView.setOnApplyWindowInsetsListener { view, insets ->
-                view.setBackgroundColor(color)
-                insets
-            }
-        } else {
-            window.statusBarColor = color
-        }
     }
 
     fun handleWindowInsets(root: View) {

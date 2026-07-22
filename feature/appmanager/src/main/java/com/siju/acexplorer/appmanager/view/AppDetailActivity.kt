@@ -20,9 +20,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.palette.graphics.Palette
 import com.bumptech.glide.Glide
 import com.bumptech.glide.Priority
@@ -39,8 +41,8 @@ import com.siju.acexplorer.appmanager.model.PermissionInfo
 import com.siju.acexplorer.appmanager.viewmodel.AppDetailViewModel
 import com.siju.acexplorer.common.utils.SdkHelper
 import com.siju.acexplorer.common.utils.ToolbarHelper
+import com.siju.acexplorer.common.view.EdgeToEdgeActivity
 import dagger.hilt.android.AndroidEntryPoint
-import com.siju.acexplorer.common.R.menu.*
 import com.siju.acexplorer.common.R.string.*
 
 
@@ -48,7 +50,7 @@ private const val URL_STORE = "https://play.google" + ".com/store/apps/details?i
 private const val EXTRA_PACKAGE_NAME = "packageName"
 
 @AndroidEntryPoint
-class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
+class AppDetailActivity : EdgeToEdgeActivity(), View.OnClickListener {
 
     private val viewModel: AppDetailViewModel by viewModels()
 
@@ -82,6 +84,7 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.app_detail_ui)
+        handleWindowInsets()
 
 
         setupUI()
@@ -117,6 +120,26 @@ class AppDetailActivity : AppCompatActivity(), View.OnClickListener {
         setupToolbar()
         findViewsById()
         initListeners()
+    }
+
+    private fun handleWindowInsets() {
+        val root = findViewById<View>(R.id.appDetailRoot)
+        val appBar = findViewById<View>(R.id.appDetailAppBar)
+        val initialLeft = root.paddingLeft
+        val initialRight = root.paddingRight
+        val initialBottom = root.paddingBottom
+        val initialTop = appBar.paddingTop
+        ViewCompat.setOnApplyWindowInsetsListener(root) { _, windowInsets ->
+            val systemBars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            root.updatePadding(
+                left = initialLeft + systemBars.left,
+                right = initialRight + systemBars.right,
+                bottom = initialBottom + systemBars.bottom
+            )
+            appBar.updatePadding(top = initialTop + systemBars.top)
+            windowInsets
+        }
+        ViewCompat.requestApplyInsets(root)
     }
 
     private fun setupData(packageName: String?) {

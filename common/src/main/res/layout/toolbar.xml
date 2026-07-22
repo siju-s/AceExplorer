@@ -20,7 +20,7 @@
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="@dimen/actionbar_height"
-    android:background="@color/colorPrimary"
+    android:background="@color/toolbarBackground"
     android:theme="@style/ToolbarTheme"
     app:titleTextAppearance="@style/ToolbarTitle"
     app:subtitleTextAppearance="@style/ToolbarSubtitle"

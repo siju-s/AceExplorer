@@ -2,7 +2,10 @@
 <resources>
    <color name="white">#FFFFFFFF</color>
    <color name="colorPrimary">#73066e</color>
-   <color name="colorPrimaryDark">#800080</color>
+    <color name="colorPrimaryDark">#800080</color>
+    <color name="statusBarBackground">@color/colorPrimaryDark</color>
+    <color name="toolbarBackground">@color/colorPrimary</color>
+    <color name="navigationPathBackground">@color/colorPrimary</color>
    <color name="colorAccent">#FF4081</color>
    <color name="whiteOverlay">#F3F3F3</color>
    <color name="blue">#1e91d0</color>

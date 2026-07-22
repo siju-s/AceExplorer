@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="statusBarBackground">#FF292929</color>
+    <color name="toolbarBackground">#FF292929</color>
+    <color name="navigationPathBackground">#FF292929</color>
     <color name="actionModeItemSelected">#696969</color>
 </resources>
