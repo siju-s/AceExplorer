@@ -107,7 +107,7 @@ class CreateZipService : Service() {
         return PendingIntent.getService(context,
                 NOTIFICATION_ID,
                 cancelIntent,
-                PendingIntent.FLAG_UPDATE_CURRENT)
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
 
@@ -364,4 +364,3 @@ class CreateZipService : Service() {
         notificationManager?.cancel(NOTIFICATION_ID)
     }
 }
-

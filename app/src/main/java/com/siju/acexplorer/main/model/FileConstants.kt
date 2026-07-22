@@ -35,6 +35,7 @@ object FileConstants {
     const val EXT_CSV = "csv"
     const val EXT_PPT = "ppt"
     const val EXT_PPTX = "pptx"
+    const val EXT_EPUB = "epub"
     const val EXT_ZIP = "zip"
     const val EXT_TAR = "tar"
     const val EXT_TGZ = "tgz"

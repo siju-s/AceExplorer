@@ -95,6 +95,7 @@ class OperationProgress {
 
         dialogView.apply {
             textFileName = findViewById(R.id.textFileName)
+            textFileFromPath = findViewById(R.id.textFileFromPath)
             textFileToPath = findViewById(R.id.textFileToPath)
             textFileCount = findViewById(R.id.textFilesLeft)
             textProgress = findViewById(R.id.textProgressPercent)
@@ -147,10 +148,11 @@ class OperationProgress {
         progressDialog?.setCancelable(false)
         textFileName = dialogView.findViewById(R.id.textFileName)
         textFileFromPath = dialogView.findViewById(R.id.textFileFromPath)
+        val textFileToPath = dialogView.findViewById<TextView>(R.id.textFileToPath)
         val textFromPlaceHolder = dialogView.findViewById<TextView>(R.id.textFileFromPlaceHolder)
-        dialogView.findViewById<View>(R.id.textFileToPlaceHolder).visibility = View.GONE
 
         textFromPlaceHolder.visibility = View.GONE
+        textFileFromPath?.visibility = View.GONE
         textFileCount = dialogView.findViewById(R.id.textFilesLeft)
         textProgress = dialogView.findViewById(R.id.textProgressPercent)
         progressBarPaste = dialogView.findViewById(R.id.progressBarPaste)
@@ -167,7 +169,7 @@ class OperationProgress {
         copiedFileInfo = files
         copiedFilesSize = copiedFileInfo.size
         Logger.log(TAG, "Totalfiles=$copiedFilesSize")
-        textFileFromPath?.text = destinationPath
+        textFileToPath.text = destinationPath
         textProgress?.setText(R.string.zero_percent)
 
         positiveButton.setOnClickListener {
@@ -201,8 +203,6 @@ class OperationProgress {
         textFileName = dialogView.findViewById(R.id.textFileName)
         textFileFromPath = dialogView.findViewById(R.id.textFileFromPath)
         val textFileToPath = dialogView.findViewById<TextView>(R.id.textFileToPath)
-        val textFromPlaceHolder = dialogView.findViewById<TextView>(R.id.textFileFromPlaceHolder)
-        textFromPlaceHolder.visibility = View.GONE
         textFileCount = dialogView.findViewById(R.id.textFilesLeft)
         textProgress = dialogView.findViewById(R.id.textProgressPercent)
         progressBarPaste = dialogView.findViewById(R.id.progressBarPaste)
@@ -218,7 +218,7 @@ class OperationProgress {
         textFileFromPath?.text = zipFilePath
         textFileToPath.text = destinationPath
 
-        textFileName?.text = title
+        textFileName?.visibility = View.GONE
         textProgress?.text = "0%"
 
         positiveButton.setOnClickListener { progressDialog?.dismiss() }

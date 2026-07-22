@@ -41,6 +41,7 @@ class OtherDocFilesFetcher : DataFetcher {
         val xlxs = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_XLXS)
         val ppt = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PPT)
         val pptx = MimeTypeMap.getSingleton().getMimeTypeFromExtension(FileConstants.EXT_PPTX)
+        val epub = "application/epub+zip"
 
         selection += MediaStore.Files.FileColumns.MIME_TYPE + " IN " + "(" + "'" + doc + "'" + "," +
                 "'" + docx + "'" + "," +
@@ -49,7 +50,8 @@ class OtherDocFilesFetcher : DataFetcher {
                 "'" + xls + "'" + "," +
                 "'" + xlxs + "'" + "," +
                 "'" + ppt + "'" + "," +
-                "'" + pptx + "'" + " )"
+                "'" + pptx + "'" + "," +
+                "'" + epub + "'" + " )"
         return context.contentResolver.query(uri, null, selection, null,
                 null)
     }

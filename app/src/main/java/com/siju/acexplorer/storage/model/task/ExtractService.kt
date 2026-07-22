@@ -112,7 +112,7 @@ class ExtractService : Service() {
         val cancelIntent = Intent(context, ExtractService::class.java)
         cancelIntent.action = OperationProgress.ACTION_STOP
         return PendingIntent.getService(context, NOTIFICATION_ID, cancelIntent,
-                                        PendingIntent.FLAG_UPDATE_CURRENT)
+                                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
 
 
@@ -465,5 +465,4 @@ class ExtractService : Service() {
         }
     }
 }
-
 

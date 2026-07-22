@@ -12,6 +12,8 @@ import java.util.*
 
 object DocumentUtils {
 
+    private const val MIME_TYPE_EPUB = "application/epub+zip"
+
     fun getMediaTypeNone(): String {
         return MediaStore.Files.FileColumns.MEDIA_TYPE + " = " + MediaStore.Files.FileColumns.MEDIA_TYPE_NONE
     }
@@ -36,7 +38,8 @@ object DocumentUtils {
                 + "'" + xls + "'" + ","
                 + "'" + xlxs + "'" + ","
                 + "'" + ppt + "'" + ","
-                + "'" + pptx + "'" + " )")
+                + "'" + pptx + "'" + ","
+                + "'" + MIME_TYPE_EPUB + "'" + " )")
     }
 
     fun getCompressedMimeType(): String {
@@ -57,7 +60,7 @@ object DocumentUtils {
                 extension == FileConstants.EXT_DOCX || extension == FileConstants.EXT_CSV ||
                 extension == FileConstants.EXT_XLS || extension == FileConstants.EXT_XLXS ||
                 extension == FileConstants.EXT_PDF || extension == FileConstants.EXT_PPT ||
-                extension == FileConstants.EXT_PPTX
+                extension == FileConstants.EXT_PPTX || extension == FileConstants.EXT_EPUB
     }
 
     fun getMediaStoreImageMediaType() : String {
