@@ -30,12 +30,13 @@ import com.siju.acexplorer.databinding.ItemSmbFileBinding
 import java.util.Date
 
 class SmbFileAdapter(
-    private val onItemClicked: (SmbEntry) -> Unit
+    private val onItemClicked: (SmbEntry) -> Unit,
+    private val onItemLongClicked: (SmbEntry) -> Unit
 ) : ListAdapter<SmbEntry, SmbFileAdapter.SmbFileViewHolder>(DiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SmbFileViewHolder {
         val binding = ItemSmbFileBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SmbFileViewHolder(binding, onItemClicked)
+        return SmbFileViewHolder(binding, onItemClicked, onItemLongClicked)
     }
 
     override fun onBindViewHolder(holder: SmbFileViewHolder, position: Int) {
@@ -44,7 +45,8 @@ class SmbFileAdapter(
 
     class SmbFileViewHolder(
         private val binding: ItemSmbFileBinding,
-        private val onItemClicked: (SmbEntry) -> Unit
+        private val onItemClicked: (SmbEntry) -> Unit,
+        private val onItemLongClicked: (SmbEntry) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(entry: SmbEntry) = with(binding) {
@@ -68,6 +70,10 @@ class SmbFileAdapter(
                 else -> icon.setImageResource(R.drawable.ic_doc)
             }
             root.setOnClickListener { onItemClicked(entry) }
+            root.setOnLongClickListener {
+                onItemLongClicked(entry)
+                true
+            }
         }
 
         private fun SmbEntry.isVideo(): Boolean = name.substringAfterLast('.', "")

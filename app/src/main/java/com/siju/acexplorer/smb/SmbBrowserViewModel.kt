@@ -17,6 +17,7 @@
 package com.siju.acexplorer.smb
 
 import android.app.Application
+import android.net.Uri
 import android.media.MediaDataSource
 import android.media.MediaMetadataRetriever
 import androidx.lifecycle.LiveData
@@ -45,6 +46,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
+import androidx.documentfile.provider.DocumentFile
 import java.security.MessageDigest
 import java.util.EnumSet
 import javax.inject.Inject
@@ -64,6 +66,17 @@ data class SmbOpenedFile(
     val imageIndex: Int = 0
 )
 
+enum class SmbTransferDirection { UPLOAD, DOWNLOAD }
+
+data class SmbTransferState(
+    val direction: SmbTransferDirection,
+    val name: String,
+    val copiedBytes: Long,
+    val totalBytes: Long
+) {
+    val percent: Int get() = if (totalBytes > 0) ((copiedBytes * 100) / totalBytes).toInt() else 0
+}
+
 data class SmbUiState(
     val loading: Boolean = false,
     val connected: Boolean = false,
@@ -78,6 +91,7 @@ data class SmbUiState(
     val discoveringServers: Boolean = false,
     val hasScannedServers: Boolean = false,
     val lanShares: List<String> = emptyList(),
+    val transfer: SmbTransferState? = null,
     val error: String? = null
 )
 
@@ -100,6 +114,7 @@ class SmbBrowserViewModel @Inject constructor(
     private var thumbnailJob: Job? = null
     private var openFileJob: Job? = null
     private var disconnectJob: Job? = null
+    private var transferJob: Job? = null
     private val shareEnumerator = SmbShareEnumerator()
 
     fun connect(
@@ -112,16 +127,16 @@ class SmbBrowserViewModel @Inject constructor(
     ) {
         cancelScheduledDisconnect()
         openFileJob?.cancel()
+        _state.update {
+            it.copy(
+                loading = true,
+                connected = false,
+                error = null,
+                entries = emptyList(),
+                lanShares = emptyList()
+            )
+        }
         viewModelScope.launch(Dispatchers.IO) {
-            _state.update {
-                it.copy(
-                    loading = true,
-                    connected = false,
-                    error = null,
-                    entries = emptyList(),
-                    lanShares = emptyList()
-                )
-            }
             closeConnection()
             val attemptedSavedPassword = password.isEmpty() &&
                 savedServer?.encryptedPassword?.isNotEmpty() == true
@@ -174,7 +189,7 @@ class SmbBrowserViewModel @Inject constructor(
                         shareName = "",
                         path = "",
                         entries = emptyList(),
-                        error = if (attemptedSavedPassword) {
+                        error = if (attemptedSavedPassword && error.isAuthenticationFailure()) {
                             "Saved password may be outdated. Enter a new password or clear credentials."
                         } else {
                             error.userMessage()
@@ -194,16 +209,16 @@ class SmbBrowserViewModel @Inject constructor(
     ) {
         cancelScheduledDisconnect()
         openFileJob?.cancel()
+        _state.update {
+            it.copy(
+                loading = true,
+                connected = false,
+                error = null,
+                entries = emptyList(),
+                lanShares = emptyList()
+            )
+        }
         viewModelScope.launch(Dispatchers.IO) {
-            _state.update {
-                it.copy(
-                    loading = true,
-                    connected = false,
-                    error = null,
-                    entries = emptyList(),
-                    lanShares = emptyList()
-                )
-            }
             closeConnection()
             val attemptedSavedPassword = password.isEmpty() &&
                 savedServer?.encryptedPassword?.isNotEmpty() == true
@@ -250,7 +265,7 @@ class SmbBrowserViewModel @Inject constructor(
                     it.copy(
                         loading = false,
                         savedServers = serverStore.load(),
-                        error = if (attemptedSavedPassword) {
+                        error = if (attemptedSavedPassword && error.isAuthenticationFailure()) {
                             "Saved password may be outdated. Enter a new password or clear credentials."
                         } else {
                             error.userMessage()
@@ -340,7 +355,7 @@ class SmbBrowserViewModel @Inject constructor(
     }
 
     fun scheduleDisconnect() {
-        if (!_state.value.connected || disconnectJob?.isActive == true) return
+        if (!_state.value.connected || _state.value.transfer != null || disconnectJob?.isActive == true) return
         disconnectJob = viewModelScope.launch {
             delay(DISCONNECT_TIMEOUT_MS)
             disconnect()
@@ -430,6 +445,125 @@ class SmbBrowserViewModel @Inject constructor(
             }
         }
     }
+
+    fun upload(uri: Uri, displayName: String, size: Long) {
+        if (_state.value.shareName.isBlank()) return
+        transferJob?.cancel()
+        transferJob = viewModelScope.launch(Dispatchers.IO) {
+            try {
+                openTransferShare().use { transferShare ->
+                    val remotePath = remotePath(
+                        _state.value.path,
+                        uniqueRemoteName(transferShare, displayName)
+                    )
+                    application.contentResolver.openInputStream(uri)?.use { input ->
+                        transferShare.openFile(
+                            remotePath,
+                            EnumSet.of(AccessMask.GENERIC_WRITE),
+                            null,
+                            SMB2ShareAccess.ALL,
+                            SMB2CreateDisposition.FILE_CREATE,
+                            null
+                        ).use { remoteFile ->
+                            remoteFile.outputStream.use { output ->
+                                copyWithProgress(
+                                    input,
+                                    output,
+                                    SmbTransferDirection.UPLOAD,
+                                    displayName,
+                                    size
+                                )
+                            }
+                        }
+                    } ?: throw IOException("Could not read selected file")
+                }
+                reopenCurrentShare()
+                loadDirectory(_state.value.path)
+                _state.update { it.copy(transfer = null) }
+            } catch (error: Exception) {
+                _state.update { it.copy(transfer = null, error = error.userMessage()) }
+            }
+        }
+    }
+
+    fun download(entry: SmbEntry, destinationTree: Uri) {
+        if (entry.isDirectory) return
+        transferJob?.cancel()
+        transferJob = viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val directory = DocumentFile.fromTreeUri(application, destinationTree)
+                    ?: throw IOException("Selected folder is unavailable")
+                val destination = directory.createFile(
+                    application.contentResolver.getType(destinationTree) ?: "application/octet-stream",
+                    uniqueDocumentName(directory, entry.name)
+                ) ?: throw IOException("Could not create destination file")
+                openTransferShare().use { transferShare ->
+                    transferShare.openFile(
+                        entry.path,
+                        EnumSet.of(AccessMask.GENERIC_READ),
+                        null,
+                        SMB2ShareAccess.ALL,
+                        SMB2CreateDisposition.FILE_OPEN,
+                        null
+                    ).use { remoteFile ->
+                        remoteFile.inputStream.use { input ->
+                            application.contentResolver.openOutputStream(destination.uri)?.use { output ->
+                                copyWithProgress(
+                                    input,
+                                    output,
+                                    SmbTransferDirection.DOWNLOAD,
+                                    entry.name,
+                                    entry.size
+                                )
+                            } ?: throw IOException("Could not write destination file")
+                        }
+                    }
+                }
+                reopenCurrentShare()
+                _state.update { it.copy(transfer = null) }
+            } catch (error: Exception) {
+                _state.update { it.copy(transfer = null, error = error.userMessage()) }
+            }
+        }
+    }
+
+    private fun copyWithProgress(
+        input: java.io.InputStream,
+        output: java.io.OutputStream,
+        direction: SmbTransferDirection,
+        name: String,
+        totalBytes: Long
+    ) {
+        val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
+        var copied = 0L
+        while (true) {
+            val read = input.read(buffer)
+            if (read < 0) break
+            output.write(buffer, 0, read)
+            copied += read
+            _state.update { it.copy(transfer = SmbTransferState(direction, name, copied, totalBytes)) }
+        }
+    }
+
+    private fun uniqueRemoteName(share: DiskShare, name: String): String {
+        val currentNames = share.list(_state.value.path).map { it.fileName }.toSet()
+        return uniqueName(name) { it in currentNames }
+    }
+
+    private fun uniqueDocumentName(directory: DocumentFile, name: String): String =
+        uniqueName(name) { candidate -> directory.findFile(candidate) != null }
+
+    private fun uniqueName(name: String, exists: (String) -> Boolean): String {
+        if (!exists(name)) return name
+        val base = name.substringBeforeLast('.', name)
+        val extension = name.substringAfterLast('.', "").takeIf { it != name }.orEmpty()
+        var index = 1
+        while (exists("$base ($index)${if (extension.isEmpty()) "" else ".$extension"}")) index++
+        return "$base ($index)${if (extension.isEmpty()) "" else ".$extension"}"
+    }
+
+    private fun remotePath(parent: String, name: String): String =
+        listOf(parent, name).filter { it.isNotBlank() }.joinToString("\\")
 
     fun consumeOpenedFile() {
         _openedFile.value = null
@@ -601,6 +735,16 @@ class SmbBrowserViewModel @Inject constructor(
 
     private fun requireShare(): DiskShare = diskShare ?: throw IOException("Not connected to a shared folder")
 
+    private fun openTransferShare(): DiskShare =
+        requireSession().connectShare(_state.value.shareName) as? DiskShare
+            ?: throw IOException("Selected share is not a file share")
+
+    private fun reopenCurrentShare() {
+        thumbnailJob?.cancel()
+        runCatching { diskShare?.close() }
+        diskShare = openTransferShare()
+    }
+
     private fun requireSession(): Session = session ?: throw IOException("Connection to server was closed")
 
     private fun remoteCacheDirectory(): File = File(application.cacheDir, "smb").apply { mkdirs() }
@@ -629,8 +773,21 @@ class SmbBrowserViewModel @Inject constructor(
         super.onCleared()
     }
 
-    private fun Throwable.userMessage(): String = message?.takeIf { it.isNotBlank() }
-        ?: "Could not connect to the SMB server"
+    private fun Throwable.userMessage(): String {
+        val detail = message.orEmpty()
+        return when {
+            detail.contains("connection refused", ignoreCase = true) ||
+                detail.contains("failed to connect", ignoreCase = true) ->
+                "SMB file sharing is unavailable. Turn on File Sharing on the server, then try again."
+            detail.isNotBlank() -> detail
+            else -> "Could not connect to the SMB server"
+        }
+    }
+
+    private fun Throwable.isAuthenticationFailure(): Boolean =
+        message.orEmpty().contains("logon", ignoreCase = true) ||
+            message.orEmpty().contains("authentication", ignoreCase = true) ||
+            message.orEmpty().contains("STATUS_LOGON_FAILURE", ignoreCase = true)
 
     private companion object {
         const val MAX_PREVIEW_SOURCE_BYTES = 100L * 1024L * 1024L

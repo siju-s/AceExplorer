@@ -17,11 +17,15 @@
 package com.siju.acexplorer.smb
 
 import android.os.Bundle
+import android.content.Intent
+import android.provider.OpenableColumns
 import android.text.InputType
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -45,6 +49,33 @@ class SmbBrowserFragment : Fragment() {
     private lateinit var adapter: SmbFileAdapter
     private lateinit var serverAdapter: SmbServerAdapter
     private lateinit var nearbyServerAdapter: SmbNearbyServerAdapter
+    private var pendingDownload: SmbEntry? = null
+    private var requestedServer: SmbSavedServer? = null
+    private var lastShownError: String? = null
+    private var openingSavedDrive = false
+
+    private val uploadPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val data = result.data ?: return@registerForActivityResult
+        val uri = data.data ?: return@registerForActivityResult
+        requireContext().contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE), null, null, null)
+            ?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val name = cursor.getString(0) ?: "upload"
+                    val size = cursor.getLong(1)
+                    viewModel.upload(uri, name, size)
+                }
+            }
+    }
+
+    private val downloadFolderPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val uri = result.data?.data ?: return@registerForActivityResult
+        requireContext().contentResolver.takePersistableUriPermission(
+            uri,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        )
+        pendingDownload?.let { viewModel.download(it, uri) }
+        pendingDownload = null
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,10 +88,12 @@ class SmbBrowserFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requestedServer = savedServerFromArguments()
         setupToolbar()
         setupList()
         observeState()
         binding.connectButton.setOnClickListener { showConnectDialog() }
+        binding.uploadButton.setOnClickListener { launchUploadPicker() }
         binding.disconnectButton.setOnClickListener { showDisconnectDialog() }
         binding.scanNearbyButton.setOnClickListener { viewModel.discoverServers() }
         binding.swipeRefresh.setOnRefreshListener { viewModel.refresh() }
@@ -73,16 +106,18 @@ class SmbBrowserFragment : Fragment() {
             }
         )
         if (savedInstanceState == null) {
-            savedServerFromArguments()?.let(::connectSavedServer) ?: run {
-                viewModel.showConnectionPicker()
-                viewModel.discoverServers()
+            requestedServer?.let(::connectSavedServer) ?: run {
+                if (!viewModel.state.value.connected) {
+                    viewModel.showConnectionPicker()
+                    viewModel.discoverServers()
+                }
             }
         }
     }
 
     private fun setupToolbar() {
         binding.toolbarContainer.toolbar.apply {
-            title = getString(R.string.smb_title)
+            title = requestedServer?.displayName() ?: getString(R.string.smb_title)
             setNavigationIcon(R.drawable.ic_left_arrow)
             setNavigationOnClickListener {
                 navigateUp()
@@ -91,9 +126,10 @@ class SmbBrowserFragment : Fragment() {
     }
 
     private fun setupList() {
-        adapter = SmbFileAdapter { entry ->
-            if (entry.isDirectory) viewModel.openDirectory(entry) else viewModel.openFile(entry)
-        }
+        adapter = SmbFileAdapter(
+            onItemClicked = { entry -> if (entry.isDirectory) viewModel.openDirectory(entry) else viewModel.openFile(entry) },
+            onItemLongClicked = ::chooseDownloadFolder
+        )
         binding.filesList.layoutManager = LinearLayoutManager(requireContext())
         binding.filesList.adapter = adapter
         serverAdapter = SmbServerAdapter { server ->
@@ -130,6 +166,10 @@ class SmbBrowserFragment : Fragment() {
     }
 
     private fun render(state: SmbUiState) = with(binding) {
+        toolbarContainer.toolbar.title = when {
+            state.connected -> state.shareName.takeIf { it.isNotBlank() } ?: state.host
+            else -> requestedServer?.displayName() ?: getString(R.string.smb_title)
+        }
         swipeRefresh.isRefreshing = state.loading && state.connected
         loading.visibility = if (state.loading && !state.connected) View.VISIBLE else View.GONE
         path.visibility = if (state.connected) View.VISIBLE else View.GONE
@@ -149,6 +189,28 @@ class SmbBrowserFragment : Fragment() {
         )
         connectButton.visibility = if (state.connected) View.GONE else View.VISIBLE
         disconnectButton.visibility = if (state.connected) View.VISIBLE else View.GONE
+        uploadButton.visibility = if (state.connected && state.shareName.isNotBlank()) View.VISIBLE else View.GONE
+        transferStatus.visibility = if (state.connected) View.VISIBLE else View.GONE
+        transferStatus.text = state.transfer?.let { transfer ->
+            if (transfer.direction == SmbTransferDirection.UPLOAD) {
+                getString(R.string.smb_transfer_uploading, transfer.name, transfer.percent)
+            } else {
+                getString(R.string.smb_transfer_downloading, transfer.name, transfer.percent)
+            }
+        } ?: state.error ?: if (state.loading) getString(R.string.smb_status_connecting) else getString(R.string.smb_status_connected)
+        if (state.error != null && state.error != lastShownError) {
+            lastShownError = state.error
+            root.post {
+                Toast.makeText(requireContext(), state.error, Toast.LENGTH_LONG).show()
+                if (openingSavedDrive) {
+                    openingSavedDrive = false
+                    findNavController().navigateUp()
+                }
+            }
+        } else if (state.error == null) {
+            lastShownError = null
+        }
+        if (state.connected) openingSavedDrive = false
         emptyText.visibility = if (!state.loading && (
             state.error != null ||
                 !(state.connected && hasEntries || hasSavedServers || state.nearbyServers.isNotEmpty())
@@ -278,6 +340,23 @@ class SmbBrowserFragment : Fragment() {
             .show()
     }
 
+    private fun launchUploadPicker() {
+        uploadPicker.launch(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            type = "*/*"
+            addCategory(Intent.CATEGORY_OPENABLE)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        })
+    }
+
+    private fun chooseDownloadFolder(entry: SmbEntry) {
+        if (entry.isDirectory) return
+        pendingDownload = entry
+        downloadFolderPicker.launch(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
+            putExtra("android.provider.extra.INITIAL_URI", android.net.Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADownload"))
+        })
+    }
+
     private fun savedServerFromArguments(): SmbSavedServer? {
         val host = arguments?.getString(ARG_SAVED_HOST).orEmpty()
         val connectionType = arguments?.getString(ARG_SAVED_CONNECTION_TYPE)
@@ -292,6 +371,7 @@ class SmbBrowserFragment : Fragment() {
     }
 
     private fun connectSavedServer(server: SmbSavedServer) {
+        openingSavedDrive = true
         if (viewModel.hasUsableSavedPassword(server)) {
             viewModel.connectSaved(server)
         } else if (server.connectionType == SmbConnectionType.LAN) {
@@ -299,6 +379,12 @@ class SmbBrowserFragment : Fragment() {
         } else {
             showConnectDialog(server)
         }
+    }
+
+    private fun SmbSavedServer.displayName(): String = when (connectionType) {
+        SmbConnectionType.LAN -> username.takeIf { it.isNotBlank() }?.let { "$it@$host" } ?: host
+        SmbConnectionType.MANUAL_SMB -> listOf(host, shareName).filter { it.isNotBlank() }.joinToString("/")
+        null -> listOf(host, shareName).filter { it.isNotBlank() }.joinToString("/")
     }
 
     override fun onStart() {

@@ -24,12 +24,15 @@ import android.os.storage.StorageVolume
 import android.util.Log
 import android.view.*
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.siju.acexplorer.R
@@ -42,10 +45,13 @@ import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.smb.SmbSavedServer
+import com.siju.acexplorer.smb.SmbBrowserViewModel
 import com.siju.acexplorer.smb.SmbServerStore
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 import java.lang.ref.WeakReference
+import kotlinx.coroutines.launch
 
 private const val TAG = "HomeScreenFragment"
 
@@ -54,11 +60,14 @@ class HomeScreenFragment : Fragment() {
 
     private val mainViewModel: MainViewModel by activityViewModels()
     private val homeViewModel: HomeViewModel by viewModels()
+    private val smbBrowserViewModel: SmbBrowserViewModel by activityViewModels()
     private lateinit var categoryAdapter: HomeLibAdapter
     private lateinit var storageAdapter: HomeStorageAdapter
 
     private var searchItem: MenuItem? = null
     private var storageItems: List<StorageItem> = emptyList()
+    private var pendingNetworkServer: SmbSavedServer? = null
+    private var networkConnectionDialog: AlertDialog? = null
     private var _binding: HomescreenBinding? = null
     private val binding get() = _binding!!
 
@@ -126,6 +135,30 @@ class HomeScreenFragment : Fragment() {
                 navigateToRecent()
             }
         })
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                smbBrowserViewModel.state.collect { state ->
+                    if (pendingNetworkServer == null) return@collect
+                    when {
+                        state.connected -> {
+                            pendingNetworkServer = null
+                            networkConnectionDialog?.dismiss()
+                            networkConnectionDialog = null
+                            findNavController().navigate(
+                                HomeScreenFragmentDirections.actionNavigationHomeToSmbBrowserFragment()
+                            )
+                        }
+                        !state.loading && state.error != null -> {
+                            pendingNetworkServer = null
+                            networkConnectionDialog?.dismiss()
+                            networkConnectionDialog = null
+                            Toast.makeText(requireContext(), state.error, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+            }
+        }
 
         homeViewModel.categories.observe(viewLifecycleOwner, { categoryList ->
             Log.d(TAG, "categories: ${categoryList.size}")
@@ -229,14 +262,14 @@ class HomeScreenFragment : Fragment() {
     }
 
     private fun openSavedNetworkLocation(server: SmbSavedServer) {
-        findNavController().navigate(
-            R.id.action_navigation_home_to_smbBrowserFragment,
-            bundleOf(
-                ARG_SAVED_HOST to server.host,
-                ARG_SAVED_SHARE to server.shareName,
-                ARG_SAVED_CONNECTION_TYPE to server.connectionType.name
-            )
-        )
+        pendingNetworkServer = server
+        networkConnectionDialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(server.host)
+            .setMessage(R.string.smb_status_connecting)
+            .setView(android.widget.ProgressBar(requireContext()))
+            .setCancelable(false)
+            .show()
+        smbBrowserViewModel.connectSaved(server)
     }
 
     private fun renderStorageRows() {
@@ -353,13 +386,9 @@ class HomeScreenFragment : Fragment() {
     override fun onDestroyView() {
         unregisterStorageVolumeCallback()
         searchItem = null
+        networkConnectionDialog?.dismiss()
+        networkConnectionDialog = null
         super.onDestroyView()
         _binding = null
-    }
-
-    private companion object {
-        const val ARG_SAVED_HOST = "saved_network_host"
-        const val ARG_SAVED_SHARE = "saved_network_share"
-        const val ARG_SAVED_CONNECTION_TYPE = "saved_network_connection_type"
     }
 }
