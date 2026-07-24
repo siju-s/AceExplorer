@@ -27,6 +27,7 @@ import com.siju.acexplorer.imageviewer.ImageViewerDataHolder
 import com.siju.acexplorer.imageviewer.KEY_POS
 import com.siju.acexplorer.main.model.groups.CategoryHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper
+import java.io.File
 import java.util.*
 
 
@@ -99,6 +100,21 @@ object ViewHelper {
 
         val granted = UriHelper.canGrantUriPermission(context, intent)
         if (granted) {
+            context.startActivity(intent)
+        }
+    }
+
+    fun openImageFiles(context: Context, files: List<File>, selectedIndex: Int) {
+        if (files.isEmpty()) return
+        val uriList = ArrayList(files.map { UriHelper.createContentUri(context, it.absolutePath) })
+        val pathList = ArrayList(files.map { it.absolutePath })
+        val safeIndex = selectedIndex.coerceIn(uriList.indices)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(uriList[safeIndex], "image/*")
+        intent.putExtra(KEY_POS, safeIndex)
+        ImageViewerDataHolder.getInstance()?.setUriList(uriList)
+        ImageViewerDataHolder.getInstance()?.setPathList(pathList)
+        if (UriHelper.canGrantUriPermission(context, intent)) {
             context.startActivity(intent)
         }
     }

@@ -26,6 +26,7 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -40,8 +41,11 @@ import com.siju.acexplorer.main.model.StorageUtils
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.viewmodel.MainViewModel
 import com.siju.acexplorer.permission.PermissionHelper
+import com.siju.acexplorer.smb.SmbSavedServer
+import com.siju.acexplorer.smb.SmbServerStore
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
+import java.lang.ref.WeakReference
 
 private const val TAG = "HomeScreenFragment"
 
@@ -54,6 +58,7 @@ class HomeScreenFragment : Fragment() {
     private lateinit var storageAdapter: HomeStorageAdapter
 
     private var searchItem: MenuItem? = null
+    private var storageItems: List<StorageItem> = emptyList()
     private var _binding: HomescreenBinding? = null
     private val binding get() = _binding!!
 
@@ -65,10 +70,14 @@ class HomeScreenFragment : Fragment() {
     // state - mounted or unmounted - so it appears/disappears without leaving the screen.
     // StorageVolumeCallback (API 30+) is reliable across OEMs, unlike the legacy
     // ACTION_MEDIA_* broadcasts whose data scheme some devices do not populate.
-    private val storageVolumeCallback = object : StorageManager.StorageVolumeCallback() {
+    private val storageVolumeCallback by lazy { StorageVolumeCallback(homeViewModel) }
+
+    private class StorageVolumeCallback(homeViewModel: HomeViewModel) : StorageManager.StorageVolumeCallback() {
+        private val homeViewModel = WeakReference(homeViewModel)
+
         override fun onStateChanged(volume: StorageVolume) {
             Log.d(TAG, "storage volume state changed: ${volume.state}")
-            homeViewModel.refreshStorageList()
+            homeViewModel.get()?.refreshStorageList()
         }
     }
 
@@ -127,7 +136,8 @@ class HomeScreenFragment : Fragment() {
         homeViewModel.storage.observe(viewLifecycleOwner, {
             it?.apply {
                 mainViewModel.setStorageList(it)
-                storageAdapter.submitList(buildStorageRows(it))
+                storageItems = it
+                renderStorageRows()
             }
         })
 
@@ -179,15 +189,21 @@ class HomeScreenFragment : Fragment() {
 
     private fun setupStorageList() {
         val storageList = binding.storage.storageList
-        storageAdapter = HomeStorageAdapter { storageItem ->
-            onStorageClicked(storageItem)
-        }
+        storageAdapter = HomeStorageAdapter(
+            clickListener = ::onStorageClicked,
+            networkLocationsClickListener = {
+                findNavController().navigate(
+                    HomeScreenFragmentDirections.actionNavigationHomeToSmbBrowserFragment()
+                )
+            },
+            networkServerClickListener = ::openSavedNetworkLocation
+        )
         storageList.adapter = storageAdapter
         val layoutManager = storageList.layoutManager as GridLayoutManager
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             // Section headers span the full width; storage cards take a single column.
             override fun getSpanSize(position: Int): Int {
-                return if (storageAdapter.isHeader(position)) layoutManager.spanCount else 1
+                return if (storageAdapter.isFullWidth(position)) layoutManager.spanCount else 1
             }
         }
     }
@@ -204,7 +220,27 @@ class HomeScreenFragment : Fragment() {
             rows.add(StorageRow.Header(getString(R.string.storage_section_external)))
             external.forEach { rows.add(StorageRow.Item(it)) }
         }
+        rows.add(StorageRow.Header(getString(R.string.storage_section_network)))
+        SmbServerStore(requireContext()).load().forEach { server ->
+            rows.add(StorageRow.NetworkServer(server))
+        }
+        rows.add(StorageRow.AddNetworkLocation)
         return rows
+    }
+
+    private fun openSavedNetworkLocation(server: SmbSavedServer) {
+        findNavController().navigate(
+            R.id.action_navigation_home_to_smbBrowserFragment,
+            bundleOf(
+                ARG_SAVED_HOST to server.host,
+                ARG_SAVED_SHARE to server.shareName,
+                ARG_SAVED_CONNECTION_TYPE to server.connectionType.name
+            )
+        )
+    }
+
+    private fun renderStorageRows() {
+        storageAdapter.submitList(buildStorageRows(storageItems))
     }
 
     private fun setupCategoryAdapter() {
@@ -281,6 +317,7 @@ class HomeScreenFragment : Fragment() {
         registerStorageVolumeCallback()
         // A drive may have been mounted/unmounted while this screen was in the background.
         homeViewModel.refreshStorageList()
+        renderStorageRows()
     }
 
     override fun onStop() {
@@ -318,5 +355,11 @@ class HomeScreenFragment : Fragment() {
         searchItem = null
         super.onDestroyView()
         _binding = null
+    }
+
+    private companion object {
+        const val ARG_SAVED_HOST = "saved_network_host"
+        const val ARG_SAVED_SHARE = "saved_network_share"
+        const val ARG_SAVED_CONNECTION_TYPE = "saved_network_connection_type"
     }
 }

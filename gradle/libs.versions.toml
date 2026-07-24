@@ -58,6 +58,7 @@ floatingButton     = "1.10.1"
 leakCanary         = "2.14"
 photoView          = "2.3.0"
 fastscrollRecycler = "2.0.1"
+smbj               = "0.14.0"
 rootTools          = "5.0"
 rootShell          = "1.4" # 1.6 no longer served by jitpack (404); 1.4 is the newest available
 
@@ -129,6 +130,7 @@ floatingButton = { group = "com.getbase", name = "floatingactionbutton", version
 leakCanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakCanary" }
 photoView = { group = "com.github.chrisbanes", name = "PhotoView", version.ref = "photoView" }
 fastScrollRecyclerview = { group = "com.simplecityapps", name = "recyclerview-fastscroll", version.ref = "fastscrollRecycler" }
+smbj = { group = "com.hierynomus", name = "smbj", version.ref = "smbj" }
 root_tools = { group = "com.github.Stericson", name = "RootTools", version.ref = "rootTools" }
 root_shell = { group = "com.github.Stericson", name = "RootShell", version.ref = "rootShell" }
 

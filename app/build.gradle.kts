@@ -175,6 +175,7 @@ dependencies {
     implementation(libs.root.shell)
     implementation(libs.floatingButton)
     implementation(libs.photoView)
+    implementation(libs.smbj)
     ksp(libs.glide.compiler)
 
     debugImplementation(libs.leakCanary)

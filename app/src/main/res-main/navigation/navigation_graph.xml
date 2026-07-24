@@ -25,6 +25,9 @@
         <action
             android:id="@+id/action_navigation_home_to_category_edit"
             app:destination="@id/category_edit" />
+        <action
+            android:id="@+id/action_navigation_home_to_smbBrowserFragment"
+            app:destination="@id/smbBrowserFragment" />
     </fragment>
 
     <fragment
@@ -100,5 +103,11 @@
         android:id="@+id/aboutFragment"
         android:name="com.siju.acexplorer.settings.AboutFragment"
         android:label="AboutFragment" />
+
+    <fragment
+        android:id="@+id/smbBrowserFragment"
+        android:name="com.siju.acexplorer.smb.SmbBrowserFragment"
+        android:label="SMB Browser"
+        tools:layout="@layout/fragment_smb_browser" />
 
 </navigation>
