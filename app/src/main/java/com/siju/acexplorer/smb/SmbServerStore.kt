@@ -17,6 +17,7 @@
 package com.siju.acexplorer.smb
 
 import android.content.Context
+import android.net.Uri
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -32,6 +33,28 @@ data class SmbSavedServer(
 enum class SmbConnectionType {
     MANUAL_SMB,
     LAN
+}
+
+/** Stable picker value. Credentials never leave [SmbServerStore]. */
+object SmbDestination {
+    private const val PREFIX = "ace-smb-destination:"
+
+    fun encode(server: SmbSavedServer): String = PREFIX + Uri.encode(
+        listOf(server.host, server.shareName, server.connectionType.name).joinToString("\n")
+    )
+
+    fun decode(value: String?): SmbSavedServer? {
+        if (value?.startsWith(PREFIX) != true) return null
+        val values = Uri.decode(value.removePrefix(PREFIX)).split('\n')
+        val connectionType = values.getOrNull(2)
+            ?.let { runCatching { SmbConnectionType.valueOf(it) }.getOrNull() }
+            ?: return null
+        return SmbSavedServer(
+            host = values.getOrNull(0).orEmpty(),
+            shareName = values.getOrNull(1).orEmpty(),
+            connectionType = connectionType
+        )
+    }
 }
 
 class SmbServerStore(context: Context) {
@@ -69,7 +92,7 @@ class SmbServerStore(context: Context) {
             }
             .toMutableList()
         servers.add(0, savedServer)
-        preferences.edit().putString(SAVED_SERVERS_KEY, Gson().toJson(servers)).apply()
+        persist(servers)
     }
 
     fun passwordFor(server: SmbSavedServer): String? = server.encryptedPassword
@@ -88,7 +111,24 @@ class SmbServerStore(context: Context) {
                 it
             }
         }
-        preferences.edit().putString(SAVED_SERVERS_KEY, Gson().toJson(servers)).apply()
+        persist(servers)
+    }
+
+    fun remove(server: SmbSavedServer) {
+        val servers = load().filterNot { saved -> saved.matches(server) }
+        persist(servers)
+    }
+
+    private fun SmbSavedServer.matches(other: SmbSavedServer): Boolean =
+        host.equals(other.host, ignoreCase = true) &&
+            connectionType == other.connectionType &&
+            (connectionType == SmbConnectionType.LAN || shareName == other.shareName)
+
+    /** Keep save/remove operations ordered; async writes can otherwise restore a removed server. */
+    private fun persist(servers: List<SmbSavedServer>) {
+        preferences.edit()
+            .putString(SAVED_SERVERS_KEY, Gson().toJson(servers))
+            .commit()
     }
 
     private companion object {

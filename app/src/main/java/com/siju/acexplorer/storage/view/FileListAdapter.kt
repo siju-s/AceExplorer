@@ -29,6 +29,8 @@ import com.siju.acexplorer.main.model.groups.CategoryHelper.isMusicCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.isRecentCategory
 import com.siju.acexplorer.main.model.groups.CategoryHelper.shouldHideGalleryThumb
 import com.siju.acexplorer.main.model.helper.FileUtils
+import com.siju.acexplorer.smb.SmbConnectionType
+import com.siju.acexplorer.smb.SmbDestination
 import com.siju.acexplorer.ui.peekandpop.PeekPopView
 import com.siju.acexplorer.utils.ThumbnailUtils.displayThumb
 import java.util.*
@@ -337,7 +339,12 @@ class FileListAdapter internal constructor(var viewMode: ViewMode, private val c
         private fun bindPickerView(fileInfo: FileInfo) {
             imageIcon.setImageResource(fileInfo.icon)
             textFileName.text = fileInfo.fileName
-            textNoOfFileOrSize.text = fileInfo.filePath
+            val networkLocation = SmbDestination.decode(fileInfo.filePath)
+            textNoOfFileOrSize.text = when (networkLocation?.connectionType) {
+                SmbConnectionType.LAN -> itemView.context.getString(R.string.smb_lan_connection)
+                SmbConnectionType.MANUAL_SMB -> itemView.context.getString(R.string.smb_server)
+                null -> fileInfo.filePath
+            }
         }
 
         private fun bindGenericMusic(context: Context, fileInfo: FileInfo, pos: Int, peekPopView: PeekPopView?) {

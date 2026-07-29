@@ -21,6 +21,8 @@ import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.view.KEY_PICKER_TYPE
 import com.siju.acexplorer.storage.modules.picker.view.RINGTONE_TYPE
 import com.siju.acexplorer.common.theme.Theme
+import com.siju.acexplorer.smb.SmbDestination
+import com.siju.acexplorer.smb.SmbServerStore
 import java.io.File
 import javax.inject.Inject
 
@@ -83,6 +85,24 @@ class PickerModelImpl @Inject constructor(): PickerModel {
             }
             val picker = FileInfo.createPicker(Category.PICKER, name, path, icon)
             storageList.add(picker)
+        }
+        SmbServerStore(context).load().forEach { server ->
+            val name = when (server.connectionType) {
+                com.siju.acexplorer.smb.SmbConnectionType.LAN -> {
+                    server.username.takeIf { it.isNotBlank() }?.let { "$it@${server.host}" } ?: server.host
+                }
+                com.siju.acexplorer.smb.SmbConnectionType.MANUAL_SMB -> {
+                    listOf(server.host, server.shareName).filter { it.isNotBlank() }.joinToString("/")
+                }
+            }
+            storageList.add(
+                FileInfo.createPicker(
+                    Category.PICKER,
+                    name,
+                    SmbDestination.encode(server),
+                    R.drawable.ic_smb_server
+                )
+            )
         }
         return storageList
     }

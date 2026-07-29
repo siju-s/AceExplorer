@@ -28,6 +28,10 @@ class OperationPresenterImpl(private val viewModel: FileListViewModel, private v
 
     override fun getMultiSelectionOpData() = _multiSelectionOperationData
 
+    override fun consumeMultiSelectionOperation() {
+        _multiSelectionOperationData.value = null
+    }
+
     override fun getPasteOpData() = pasteOpPresenter._pasteOpData
 
     override fun getSingleOpData() = _singleOpData

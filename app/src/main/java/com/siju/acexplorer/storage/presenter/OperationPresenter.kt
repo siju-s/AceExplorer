@@ -18,6 +18,7 @@ interface OperationPresenter {
 
     fun handleMenuItemClick(itemId : Int)
     fun getMultiSelectionOpData() : LiveData<Pair<Operations, ArrayList<FileInfo>>>
+    fun consumeMultiSelectionOperation()
     fun getPasteOpData(): LiveData<PasteOpData>
     fun getSingleOpData(): LiveData<Pair<Operations, FileInfo>>
     fun getNoOpData(): MutableLiveData<Pair<Operations, String>>

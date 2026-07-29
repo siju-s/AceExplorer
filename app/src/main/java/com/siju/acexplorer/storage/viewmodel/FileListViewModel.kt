@@ -956,6 +956,10 @@ class FileListViewModel @Inject constructor(
         }
     }
 
+    fun consumeCopyOperation() {
+        operationPresenter.consumeMultiSelectionOperation()
+    }
+
     fun cutTo(destDir: String?) {
         destDir?.let {
             operationPresenter.onPaste(Operations.CUT, destDir)

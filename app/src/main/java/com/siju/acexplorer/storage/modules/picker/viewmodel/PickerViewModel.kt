@@ -10,6 +10,7 @@ import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.modules.picker.model.PickerModel
 import com.siju.acexplorer.storage.modules.picker.model.PickerResultAction
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
+import com.siju.acexplorer.smb.SmbDestination
 import com.siju.acexplorer.utils.ScrollInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -134,6 +135,9 @@ class PickerViewModel @Inject constructor(val model: PickerModel) : ViewModel(),
     fun handleItemClick(fileInfo: FileInfo) {
         val filePath = fileInfo.filePath
         when {
+            SmbDestination.decode(filePath) != null -> {
+                filePath?.let(model::onOkButtonClicked)
+            }
             filePath != null && File(filePath).isDirectory -> {
                 setRootStorageList(false)
                 _directoryClicked.postValue(true)

@@ -35,6 +35,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentResultListener
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -77,6 +78,8 @@ import com.siju.acexplorer.storage.modules.picker.view.COPY_REQUEST_KEY
 import com.siju.acexplorer.storage.modules.picker.view.CUT_REQUEST_KEY
 import com.siju.acexplorer.storage.modules.picker.view.EXTRACT_REQUEST_KEY
 import com.siju.acexplorer.storage.modules.picker.view.PickerFragment
+import com.siju.acexplorer.smb.SmbDestination
+import com.siju.acexplorer.smb.SmbSavedServer
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
 import com.siju.acexplorer.storage.viewmodel.FileListViewModel
 import com.siju.acexplorer.utils.InstallHelper
@@ -999,6 +1002,22 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
         }
     }
 
+    private fun openNetworkCopyDestination(server: SmbSavedServer) {
+        val sourcePaths = fileListViewModel.multiSelectionOpData.value?.second
+            ?.mapNotNull { it.filePath }
+            ?.let(::ArrayList)
+            ?: return
+        fileListViewModel.consumeCopyOperation()
+        (parentFragmentManager.findFragmentByTag(TAG_DIALOG) as? DialogFragment)?.dismissNow()
+        val args = Bundle().apply {
+            putString("saved_network_host", server.host)
+            putString("saved_network_share", server.shareName)
+            putString("saved_network_connection_type", server.connectionType.name)
+            putStringArrayList("copy_source_paths", sourcePaths)
+        }
+        findNavController().navigate(R.id.smbBrowserFragment, args)
+    }
+
     private fun showCutToDialog() {
         activity?.let {
             val dialogFragment = PickerFragment.newInstance(PickerType.CUT)
@@ -1132,7 +1151,8 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
 
             COPY_REQUEST_KEY    -> {
                     val destDir = result.getString(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
-                    fileListViewModel.copyTo(destDir)
+                    SmbDestination.decode(destDir)?.let(::openNetworkCopyDestination)
+                        ?: fileListViewModel.copyTo(destDir)
             }
 
             CUT_REQUEST_KEY     -> {

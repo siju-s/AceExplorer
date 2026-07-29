@@ -34,13 +34,21 @@ class SmbFileAdapter(
     private val onItemLongClicked: (SmbEntry) -> Unit
 ) : ListAdapter<SmbEntry, SmbFileAdapter.SmbFileViewHolder>(DiffCallback) {
 
+    var selectedPath: String? = null
+        set(value) {
+            if (field == value) return
+            field = value
+            notifyDataSetChanged()
+        }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SmbFileViewHolder {
         val binding = ItemSmbFileBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return SmbFileViewHolder(binding, onItemClicked, onItemLongClicked)
     }
 
     override fun onBindViewHolder(holder: SmbFileViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val entry = getItem(position)
+        holder.bind(entry, entry.path == selectedPath)
     }
 
     class SmbFileViewHolder(
@@ -49,7 +57,8 @@ class SmbFileAdapter(
         private val onItemLongClicked: (SmbEntry) -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(entry: SmbEntry) = with(binding) {
+        fun bind(entry: SmbEntry, selected: Boolean) = with(binding) {
+            root.isActivated = selected
             name.text = entry.name
             detail.text = if (entry.isDirectory) {
                 root.context.getString(R.string.smb_folder)

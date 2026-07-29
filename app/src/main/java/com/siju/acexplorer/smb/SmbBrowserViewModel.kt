@@ -35,6 +35,9 @@ import com.hierynomus.smbj.auth.AuthenticationContext
 import com.hierynomus.smbj.connection.Connection
 import com.hierynomus.smbj.session.Session
 import com.hierynomus.smbj.share.DiskShare
+import com.siju.acexplorer.R
+import com.siju.acexplorer.main.model.helper.FileOperations
+import com.siju.acexplorer.main.model.helper.FileUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -46,7 +49,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.IOException
-import androidx.documentfile.provider.DocumentFile
 import java.security.MessageDigest
 import java.util.EnumSet
 import javax.inject.Inject
@@ -66,7 +68,7 @@ data class SmbOpenedFile(
     val imageIndex: Int = 0
 )
 
-enum class SmbTransferDirection { UPLOAD, DOWNLOAD }
+enum class SmbTransferDirection { UPLOAD, COPY_TO_DEVICE }
 
 data class SmbTransferState(
     val direction: SmbTransferDirection,
@@ -76,6 +78,8 @@ data class SmbTransferState(
 ) {
     val percent: Int get() = if (totalBytes > 0) ((copiedBytes * 100) / totalBytes).toInt() else 0
 }
+
+private data class TransferProgress(var copiedBytes: Long = 0)
 
 data class SmbUiState(
     val loading: Boolean = false,
@@ -92,6 +96,7 @@ data class SmbUiState(
     val hasScannedServers: Boolean = false,
     val lanShares: List<String> = emptyList(),
     val transfer: SmbTransferState? = null,
+    val completion: String? = null,
     val error: String? = null
 )
 
@@ -111,6 +116,7 @@ class SmbBrowserViewModel @Inject constructor(
     private var connection: Connection? = null
     private var session: Session? = null
     private var diskShare: DiskShare? = null
+    private var activePassword: CharArray? = null
     private var thumbnailJob: Job? = null
     private var openFileJob: Job? = null
     private var disconnectJob: Job? = null
@@ -156,6 +162,7 @@ class SmbBrowserViewModel @Inject constructor(
                 connection = newConnection
                 session = newSession
                 diskShare = newShare
+                setActivePassword(resolvedPassword)
                 serverStore.save(
                     SmbSavedServer(
                         host = host.trim(),
@@ -234,6 +241,7 @@ class SmbBrowserViewModel @Inject constructor(
                 client = newClient
                 connection = newConnection
                 session = newSession
+                setActivePassword(resolvedPassword)
                 val lanServer = SmbSavedServer(
                     host = host.trim(),
                     username = username.trim(),
@@ -394,6 +402,25 @@ class SmbBrowserViewModel @Inject constructor(
         }
     }
 
+    fun openPath(path: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (diskShare == null) return@launch
+            _state.update { it.copy(loading = true, error = null) }
+            loadDirectory(path)
+        }
+    }
+
+    fun openNetworkRoot() {
+        if (
+            _state.value.connectionType == SmbConnectionType.LAN &&
+            _state.value.shareName.isNotBlank()
+        ) {
+            openLanRoot()
+        } else {
+            openPath("")
+        }
+    }
+
     fun navigateUp(): Boolean {
         val currentPath = _state.value.path
         if (currentPath.isBlank()) {
@@ -451,7 +478,7 @@ class SmbBrowserViewModel @Inject constructor(
         transferJob?.cancel()
         transferJob = viewModelScope.launch(Dispatchers.IO) {
             try {
-                openTransferShare().use { transferShare ->
+                withTransferShare { transferShare ->
                     val remotePath = remotePath(
                         _state.value.path,
                         uniqueRemoteName(transferShare, displayName)
@@ -471,56 +498,68 @@ class SmbBrowserViewModel @Inject constructor(
                                     output,
                                     SmbTransferDirection.UPLOAD,
                                     displayName,
-                                    size
+                                    size,
+                                    TransferProgress()
                                 )
                             }
                         }
                     } ?: throw IOException("Could not read selected file")
                 }
-                reopenCurrentShare()
                 loadDirectory(_state.value.path)
-                _state.update { it.copy(transfer = null) }
+                _state.update { it.copy(transfer = null, completion = application.getString(R.string.smb_copy_complete)) }
             } catch (error: Exception) {
                 _state.update { it.copy(transfer = null, error = error.userMessage()) }
             }
         }
     }
 
-    fun download(entry: SmbEntry, destinationTree: Uri) {
-        if (entry.isDirectory) return
+    fun copyToDevice(entry: SmbEntry, destinationPath: String) {
         transferJob?.cancel()
         transferJob = viewModelScope.launch(Dispatchers.IO) {
             try {
-                val directory = DocumentFile.fromTreeUri(application, destinationTree)
-                    ?: throw IOException("Selected folder is unavailable")
-                val destination = directory.createFile(
-                    application.contentResolver.getType(destinationTree) ?: "application/octet-stream",
-                    uniqueDocumentName(directory, entry.name)
-                ) ?: throw IOException("Could not create destination file")
-                openTransferShare().use { transferShare ->
-                    transferShare.openFile(
-                        entry.path,
-                        EnumSet.of(AccessMask.GENERIC_READ),
-                        null,
-                        SMB2ShareAccess.ALL,
-                        SMB2CreateDisposition.FILE_OPEN,
-                        null
-                    ).use { remoteFile ->
-                        remoteFile.inputStream.use { input ->
-                            application.contentResolver.openOutputStream(destination.uri)?.use { output ->
-                                copyWithProgress(
-                                    input,
-                                    output,
-                                    SmbTransferDirection.DOWNLOAD,
-                                    entry.name,
-                                    entry.size
-                                )
-                            } ?: throw IOException("Could not write destination file")
-                        }
+                val destinationDirectory = File(destinationPath)
+                if (!destinationDirectory.isDirectory) throw IOException("Selected folder is unavailable")
+                withTransferShare { transferShare ->
+                    val destination = destinationDirectory.uniqueChild(entry.name)
+                    try {
+                        transferShare.copyEntryToDevice(
+                            entry,
+                            destination,
+                            transferShare.totalSize(entry),
+                            TransferProgress()
+                        )
+                    } catch (error: Exception) {
+                        destination.deleteRecursively()
+                        throw error
                     }
                 }
-                reopenCurrentShare()
-                _state.update { it.copy(transfer = null) }
+                _state.update { it.copy(transfer = null, completion = application.getString(R.string.smb_copy_complete)) }
+            } catch (error: Exception) {
+                _state.update { it.copy(transfer = null, error = error.userMessage()) }
+            }
+        }
+    }
+
+    fun copyFromDevice(sourcePaths: List<String>) {
+        if (_state.value.shareName.isBlank()) return
+        transferJob?.cancel()
+        transferJob = viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val sources = sourcePaths.map(::File).filter(File::exists)
+                if (sources.isEmpty()) throw IOException("Selected files are unavailable")
+                withTransferShare { transferShare ->
+                    val totalBytes = sources.sumOf(::deviceEntrySize)
+                    val progress = TransferProgress()
+                    sources.forEach { source ->
+                        val destination = remotePath(
+                            _state.value.path,
+                            uniqueRemoteName(transferShare, source.name)
+                        )
+                        transferShare.copyDeviceEntry(source, destination, totalBytes, progress)
+                    }
+                }
+                loadDirectory(_state.value.path)
+                _state.update { it.copy(transfer = null, completion = application.getString(R.string.smb_copy_complete)) }
             } catch (error: Exception) {
                 _state.update { it.copy(transfer = null, error = error.userMessage()) }
             }
@@ -532,16 +571,18 @@ class SmbBrowserViewModel @Inject constructor(
         output: java.io.OutputStream,
         direction: SmbTransferDirection,
         name: String,
-        totalBytes: Long
+        totalBytes: Long,
+        progress: TransferProgress
     ) {
         val buffer = ByteArray(DEFAULT_BUFFER_SIZE)
-        var copied = 0L
         while (true) {
             val read = input.read(buffer)
             if (read < 0) break
             output.write(buffer, 0, read)
-            copied += read
-            _state.update { it.copy(transfer = SmbTransferState(direction, name, copied, totalBytes)) }
+            progress.copiedBytes += read
+            _state.update {
+                it.copy(transfer = SmbTransferState(direction, name, progress.copiedBytes, totalBytes))
+            }
         }
     }
 
@@ -549,9 +590,6 @@ class SmbBrowserViewModel @Inject constructor(
         val currentNames = share.list(_state.value.path).map { it.fileName }.toSet()
         return uniqueName(name) { it in currentNames }
     }
-
-    private fun uniqueDocumentName(directory: DocumentFile, name: String): String =
-        uniqueName(name) { candidate -> directory.findFile(candidate) != null }
 
     private fun uniqueName(name: String, exists: (String) -> Boolean): String {
         if (!exists(name)) return name
@@ -567,6 +605,10 @@ class SmbBrowserViewModel @Inject constructor(
 
     fun consumeOpenedFile() {
         _openedFile.value = null
+    }
+
+    fun consumeCompletion() {
+        _state.update { it.copy(completion = null) }
     }
 
     private fun loadDirectory(path: String) {
@@ -735,17 +777,130 @@ class SmbBrowserViewModel @Inject constructor(
 
     private fun requireShare(): DiskShare = diskShare ?: throw IOException("Not connected to a shared folder")
 
-    private fun openTransferShare(): DiskShare =
-        requireSession().connectShare(_state.value.shareName) as? DiskShare
-            ?: throw IOException("Selected share is not a file share")
-
-    private fun reopenCurrentShare() {
-        thumbnailJob?.cancel()
-        runCatching { diskShare?.close() }
-        diskShare = openTransferShare()
+    private inline fun <T> withTransferShare(block: (DiskShare) -> T): T {
+        val state = _state.value
+        val password = activePassword?.copyOf()
+            ?: throw IOException("Connection to server was closed")
+        val transferClient = SMBClient()
+        var transferConnection: Connection? = null
+        var transferSession: Session? = null
+        var transferShare: DiskShare? = null
+        try {
+            transferConnection = transferClient.connect(state.host)
+            transferSession = transferConnection.authenticate(
+                AuthenticationContext(state.username, password, "")
+            )
+            transferShare = transferSession.connectShare(state.shareName) as? DiskShare
+                ?: throw IOException("Selected share is not a file share")
+            return block(transferShare)
+        } finally {
+            runCatching { transferShare?.close() }
+            runCatching { transferSession?.close() }
+            runCatching { transferConnection?.close() }
+            runCatching { transferClient.close() }
+            password.fill('\u0000')
+        }
     }
 
     private fun requireSession(): Session = session ?: throw IOException("Connection to server was closed")
+
+    private fun DiskShare.totalSize(entry: SmbEntry): Long =
+        if (!entry.isDirectory) entry.size else list(entry.path)
+            .asSequence()
+            .filter { it.fileName != "." && it.fileName != ".." }
+            .map { it.toSmbEntry(entry.path) }
+            .sumOf { child -> totalSize(child) }
+
+    private fun DiskShare.copyEntryToDevice(
+        entry: SmbEntry,
+        destination: File,
+        totalBytes: Long,
+        progress: TransferProgress
+    ) {
+        if (entry.isDirectory) {
+            if (!FileOperations.mkdir(destination)) throw IOException("Could not create ${destination.name}")
+            list(entry.path)
+                .asSequence()
+                .filter { it.fileName != "." && it.fileName != ".." }
+                .map { it.toSmbEntry(entry.path) }
+                .forEach { child ->
+                    copyEntryToDevice(child, File(destination, child.name), totalBytes, progress)
+                }
+            return
+        }
+        openFile(
+            entry.path,
+            EnumSet.of(AccessMask.GENERIC_READ),
+            null,
+            SMB2ShareAccess.ALL,
+            SMB2CreateDisposition.FILE_OPEN,
+            null
+        ).use { remoteFile ->
+            remoteFile.inputStream.use { input ->
+                if (!FileOperations.mkfile(destination)) {
+                    throw IOException("Could not create ${destination.name}")
+                }
+                val output = FileUtils.getOutputStream(destination, application)
+                    ?: throw IOException("Could not write ${destination.name}")
+                output.use {
+                    copyWithProgress(
+                        input,
+                        it,
+                        SmbTransferDirection.COPY_TO_DEVICE,
+                        entry.name,
+                        totalBytes,
+                        progress
+                    )
+                }
+            }
+        }
+    }
+
+    private fun DiskShare.copyDeviceEntry(
+        source: File,
+        destinationPath: String,
+        totalBytes: Long,
+        progress: TransferProgress
+    ) {
+        if (source.isDirectory) {
+            mkdir(destinationPath)
+            source.listFiles().orEmpty().forEach { child ->
+                copyDeviceEntry(child, remotePath(destinationPath, child.name), totalBytes, progress)
+            }
+            return
+        }
+        openFile(
+            destinationPath,
+            EnumSet.of(AccessMask.GENERIC_WRITE),
+            null,
+            SMB2ShareAccess.ALL,
+            SMB2CreateDisposition.FILE_CREATE,
+            null
+        ).use { remoteFile ->
+            source.inputStream().use { input ->
+                remoteFile.outputStream.use { output ->
+                    copyWithProgress(
+                        input,
+                        output,
+                        SmbTransferDirection.UPLOAD,
+                        source.name,
+                        totalBytes,
+                        progress
+                    )
+                }
+            }
+        }
+    }
+
+    private fun deviceEntrySize(file: File): Long =
+        if (file.isFile) file.length() else file.listFiles().orEmpty().sumOf(::deviceEntrySize)
+
+    private fun File.uniqueChild(name: String): File = File(this, uniqueName(name) { File(this, it).exists() })
+
+    private fun setActivePassword(password: String) {
+        activePassword?.fill('\u0000')
+        activePassword = password.toCharArray()
+    }
 
     private fun remoteCacheDirectory(): File = File(application.cacheDir, "smb").apply { mkdirs() }
 
@@ -763,6 +918,8 @@ class SmbBrowserViewModel @Inject constructor(
         connection = null
         runCatching { client?.close() }
         client = null
+        activePassword?.fill('\u0000')
+        activePassword = null
     }
 
     override fun onCleared() {

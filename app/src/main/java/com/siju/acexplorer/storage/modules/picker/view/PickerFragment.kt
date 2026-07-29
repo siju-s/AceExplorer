@@ -60,6 +60,7 @@ private const val DELAY_SCROLL_UPDATE_MS = 100L
 const val EXTRACT_REQUEST_KEY = "Extract"
 const val COPY_REQUEST_KEY = "Copy"
 const val CUT_REQUEST_KEY = "Cut"
+const val KEY_PICKER_REQUEST_KEY = "picker_request_key"
 const val REQUEST_KEY = "key"
 
 @AndroidEntryPoint
@@ -213,7 +214,7 @@ class PickerFragment : DialogFragment() {
                         setTitle(getString(R.string.dialog_title_browse))
                     }
                     PickerType.COPY -> {
-                        okButton.text = getString(R.string.action_copy)
+                        okButton.text = getString(R.string.action_paste)
                         toolbar.title = getString(R.string.dialog_title_browse)
                         onStorageListScreen()
                     }
@@ -351,13 +352,16 @@ class PickerFragment : DialogFragment() {
 
     private fun onOkButtonResult(pickerResultAction: PickerResultAction) {
         val requestKey = getRequestCode(arguments?.getSerializable(KEY_PICKER_TYPE) as PickerType)
+        val fragmentManager = parentFragmentManager
+        // Close first: result listeners may navigate away immediately.
+        dismissNow()
         pickerResultAction.data?.extras?.let {
-            setFragmentResult(requestKey, it)
+            fragmentManager.setFragmentResult(requestKey, it)
         }
-        dialog?.dismiss()
     }
 
     private fun getRequestCode(pickerType: PickerType) : String {
+        arguments?.getString(KEY_PICKER_REQUEST_KEY)?.let { return it }
         return when(pickerType) {
             PickerType.COPY -> COPY_REQUEST_KEY
             PickerType.CUT -> CUT_REQUEST_KEY
@@ -461,13 +465,18 @@ class PickerFragment : DialogFragment() {
 
     companion object {
 
-        fun newInstance(pickerType: PickerType, ringtoneType: Int = -1): PickerFragment {
+        fun newInstance(
+            pickerType: PickerType,
+            ringtoneType: Int = -1,
+            requestKey: String? = null
+        ): PickerFragment {
             val dialogFragment = PickerFragment()
             dialogFragment.setStyle(STYLE_NORMAL, R.style.BaseDeviceTheme)
             val args = Bundle()
             with(args) {
                 putSerializable(KEY_PICKER_TYPE, pickerType)
                 putInt(RINGTONE_TYPE, ringtoneType)
+                requestKey?.let { putString(KEY_PICKER_REQUEST_KEY, it) }
             }
             dialogFragment.arguments = args
             return dialogFragment

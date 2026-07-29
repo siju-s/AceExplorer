@@ -14,54 +14,9 @@
             layout="@layout/toolbar" />
     </com.google.android.material.appbar.AppBarLayout>
 
-    <TextView
-        android:id="@+id/path"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="middle"
-        android:maxLines="1"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="12dp"
-        android:paddingBottom="2dp"
-        android:textAppearance="?attr/textAppearanceBody2"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/connectionType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="10dp"
-        android:textAppearance="?attr/textAppearanceCaption"
-        android:visibility="gone" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/uploadButton"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:text="@string/smb_upload"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/transferStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingBottom="8dp"
-        android:textAppearance="?attr/textAppearanceCaption"
-        android:visibility="gone" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/disconnectButton"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:text="@string/smb_disconnect"
-        android:visibility="gone" />
+    <include
+        android:id="@+id/listNavigation"
+        layout="@layout/list_navigation" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefresh"
@@ -165,4 +120,11 @@
                 android:visibility="gone" />
         </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.siju.acexplorer.common.view.custom.SplitToolbar
+        android:id="@+id/toolbar_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/actionbar_height"
+        android:background="@color/bottom_toolbar_bg"
+        android:visibility="gone" />
 </LinearLayout>

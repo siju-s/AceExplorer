@@ -17,13 +17,14 @@
 package com.siju.acexplorer.smb
 
 import android.os.Bundle
-import android.content.Intent
-import android.provider.OpenableColumns
 import android.text.InputType
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -32,11 +33,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.siju.acexplorer.R
 import com.siju.acexplorer.databinding.DialogSmbConnectBinding
 import com.siju.acexplorer.databinding.FragmentSmbBrowserBinding
 import com.siju.acexplorer.main.model.helper.ViewHelper
+import com.siju.acexplorer.storage.modules.picker.model.PickerModelImpl
+import com.siju.acexplorer.storage.modules.picker.types.PickerType
+import com.siju.acexplorer.storage.modules.picker.view.PickerFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -49,33 +54,13 @@ class SmbBrowserFragment : Fragment() {
     private lateinit var adapter: SmbFileAdapter
     private lateinit var serverAdapter: SmbServerAdapter
     private lateinit var nearbyServerAdapter: SmbNearbyServerAdapter
-    private var pendingDownload: SmbEntry? = null
+    private var selectedEntry: SmbEntry? = null
+    private var pendingCopy: SmbEntry? = null
     private var requestedServer: SmbSavedServer? = null
     private var lastShownError: String? = null
     private var openingSavedDrive = false
-
-    private val uploadPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val data = result.data ?: return@registerForActivityResult
-        val uri = data.data ?: return@registerForActivityResult
-        requireContext().contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME, OpenableColumns.SIZE), null, null, null)
-            ?.use { cursor ->
-                if (cursor.moveToFirst()) {
-                    val name = cursor.getString(0) ?: "upload"
-                    val size = cursor.getLong(1)
-                    viewModel.upload(uri, name, size)
-                }
-            }
-    }
-
-    private val downloadFolderPicker = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val uri = result.data?.data ?: return@registerForActivityResult
-        requireContext().contentResolver.takePersistableUriPermission(
-            uri,
-            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-        )
-        pendingDownload?.let { viewModel.download(it, uri) }
-        pendingDownload = null
-    }
+    private var copyDestinationPaths: ArrayList<String>? = null
+    private var lastShownCompletion: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -89,12 +74,20 @@ class SmbBrowserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         requestedServer = savedServerFromArguments()
+        copyDestinationPaths = arguments?.getStringArrayList(ARG_COPY_SOURCE_PATHS)
         setupToolbar()
         setupList()
+        setupSelectionToolbar()
         observeState()
-        binding.connectButton.setOnClickListener { showConnectDialog() }
-        binding.uploadButton.setOnClickListener { launchUploadPicker() }
-        binding.disconnectButton.setOnClickListener { showDisconnectDialog() }
+        parentFragmentManager.setFragmentResultListener(SMB_COPY_REQUEST_KEY, viewLifecycleOwner) { _, result ->
+            val destination = result.getString(PickerModelImpl.KEY_PICKER_SELECTED_PATH)
+            pendingCopy?.let { entry -> destination?.let { viewModel.copyToDevice(entry, it) } }
+            pendingCopy = null
+        }
+        binding.connectButton.setOnClickListener {
+            viewModel.showConnectionPicker()
+            showConnectDialog()
+        }
         binding.scanNearbyButton.setOnClickListener { viewModel.discoverServers() }
         binding.swipeRefresh.setOnRefreshListener { viewModel.refresh() }
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -123,15 +116,28 @@ class SmbBrowserFragment : Fragment() {
         toolbar.apply {
             title = requestedServer?.displayName() ?: getString(R.string.smb_title)
             setNavigationOnClickListener {
-                navigateUp()
+                if (selectedEntry != null) clearSelection() else navigateUp()
+            }
+            menu.add(0, MENU_DISCONNECT, 0, R.string.smb_disconnect)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER)
+            setOnMenuItemClickListener { item ->
+                if (item.itemId == MENU_DISCONNECT) {
+                    showDisconnectDialog()
+                    true
+                } else {
+                    false
+                }
             }
         }
     }
 
     private fun setupList() {
         adapter = SmbFileAdapter(
-            onItemClicked = { entry -> if (entry.isDirectory) viewModel.openDirectory(entry) else viewModel.openFile(entry) },
-            onItemLongClicked = ::chooseDownloadFolder
+            onItemClicked = { entry ->
+                if (selectedEntry != null) selectEntry(entry)
+                else if (entry.isDirectory) viewModel.openDirectory(entry) else viewModel.openFile(entry)
+            },
+            onItemLongClicked = ::selectEntry
         )
         binding.filesList.layoutManager = LinearLayoutManager(requireContext())
         binding.filesList.adapter = adapter
@@ -149,6 +155,33 @@ class SmbBrowserFragment : Fragment() {
         }
         binding.nearbyServersList.layoutManager = LinearLayoutManager(requireContext())
         binding.nearbyServersList.adapter = nearbyServerAdapter
+    }
+
+    private fun setupSelectionToolbar() {
+        binding.toolbarBottom.apply {
+            inflateMenu(R.menu.action_mode_bottom)
+            menu.findItem(R.id.action_edit).isVisible = false
+            menu.findItem(R.id.action_cut).isVisible = false
+            menu.findItem(R.id.action_delete).isVisible = false
+            menu.findItem(R.id.action_delete_fav).isVisible = false
+            menu.findItem(R.id.action_share).isVisible = false
+            menu.findItem(R.id.action_info).isVisible = false
+            menu.findItem(R.id.action_permissions).isVisible = false
+            menu.findItem(R.id.action_archive).isVisible = false
+            menu.findItem(R.id.action_extract).isVisible = false
+            menu.findItem(R.id.action_fav).isVisible = false
+            menu.findItem(R.id.action_hide).isVisible = false
+            setOnMenuItemClickListener { item ->
+                if (item.itemId == R.id.action_copy) {
+                    if (copyDestinationPaths == null) {
+                        showCopyDestination()
+                    } else {
+                        viewModel.copyFromDevice(copyDestinationPaths.orEmpty())
+                    }
+                    true
+                } else false
+            }
+        }
     }
 
     private fun observeState() {
@@ -169,13 +202,28 @@ class SmbBrowserFragment : Fragment() {
     }
 
     private fun render(state: SmbUiState) = with(binding) {
+        val connectionStatus = state.transfer?.let { transfer ->
+            if (transfer.direction == SmbTransferDirection.UPLOAD) {
+                getString(R.string.smb_transfer_uploading, transfer.name, transfer.percent)
+            } else {
+                getString(R.string.smb_transfer_copying, transfer.name, transfer.percent)
+            }
+        } ?: state.error ?: if (state.loading) getString(R.string.smb_status_connecting) else getString(R.string.smb_status_connected)
         toolbarContainer.toolbar.title = when {
-            state.connected -> state.shareName.takeIf { it.isNotBlank() } ?: state.host
+            state.connected -> state.username.takeIf { it.isNotBlank() }
+                ?.let { "$it@${state.host}" }
+                ?: state.host
             else -> requestedServer?.displayName() ?: getString(R.string.smb_title)
         }
+        toolbarContainer.toolbar.subtitle = state.connectionType?.let { type ->
+            val label = getString(
+                if (type == SmbConnectionType.LAN) R.string.smb_lan_connection else R.string.smb_server
+            )
+            "$label · $connectionStatus"
+        }
+        toolbarContainer.toolbar.menu.findItem(MENU_DISCONNECT)?.isVisible = state.connected
         swipeRefresh.isRefreshing = state.loading && state.connected
         loading.visibility = if (state.loading && !state.connected) View.VISIBLE else View.GONE
-        path.visibility = if (state.connected) View.VISIBLE else View.GONE
         val hasEntries = state.entries.isNotEmpty()
         filesList.visibility = if (state.connected && hasEntries) View.VISIBLE else View.GONE
         offlineContent.visibility = if (state.connected || state.loading) View.GONE else View.VISIBLE
@@ -191,16 +239,20 @@ class SmbBrowserFragment : Fragment() {
             if (state.hasScannedServers) R.string.smb_rescan_nearby else R.string.smb_scan_nearby
         )
         connectButton.visibility = if (state.connected) View.GONE else View.VISIBLE
-        disconnectButton.visibility = if (state.connected) View.VISIBLE else View.GONE
-        uploadButton.visibility = if (state.connected && state.shareName.isNotBlank()) View.VISIBLE else View.GONE
-        transferStatus.visibility = if (state.connected) View.VISIBLE else View.GONE
-        transferStatus.text = state.transfer?.let { transfer ->
-            if (transfer.direction == SmbTransferDirection.UPLOAD) {
-                getString(R.string.smb_transfer_uploading, transfer.name, transfer.percent)
-            } else {
-                getString(R.string.smb_transfer_downloading, transfer.name, transfer.percent)
-            }
-        } ?: state.error ?: if (state.loading) getString(R.string.smb_status_connecting) else getString(R.string.smb_status_connected)
+        renderBreadcrumb(state)
+        if (state.completion != null && copyDestinationPaths != null) {
+            copyDestinationPaths = null
+        }
+        toolbarBottom.visibility = if (
+            copyDestinationPaths != null && state.connected && state.shareName.isNotBlank()
+        ) {
+            toolbarBottom.menu.findItem(R.id.action_copy)?.title = getString(R.string.action_paste)
+            View.VISIBLE
+        } else if (selectedEntry != null) {
+            View.VISIBLE
+        } else {
+            View.GONE
+        }
         if (state.error != null && state.error != lastShownError) {
             lastShownError = state.error
             root.post {
@@ -212,6 +264,15 @@ class SmbBrowserFragment : Fragment() {
             }
         } else if (state.error == null) {
             lastShownError = null
+        }
+        if (state.completion != null && state.completion != lastShownCompletion) {
+            lastShownCompletion = state.completion
+            root.post {
+                Toast.makeText(requireContext(), state.completion, Toast.LENGTH_SHORT).show()
+                viewModel.consumeCompletion()
+            }
+        } else if (state.completion == null) {
+            lastShownCompletion = null
         }
         if (state.connected) openingSavedDrive = false
         emptyText.visibility = if (!state.loading && (
@@ -228,24 +289,6 @@ class SmbBrowserFragment : Fragment() {
             state.hasScannedServers -> getString(R.string.smb_no_nearby_servers)
             else -> getString(R.string.smb_connect_hint)
         }
-        path.text = if (state.connected) {
-            val server = state.username.takeIf { it.isNotBlank() }
-                ?.let { "$it@${state.host}" }
-                ?: state.host
-            listOf(server, state.shareName, state.path)
-                .filter { it.isNotBlank() }
-                .joinToString("/")
-        } else {
-            getString(R.string.smb_title)
-        }
-        connectionType.visibility = if (state.connected) View.VISIBLE else View.GONE
-        connectionType.setText(
-            if (state.connectionType == SmbConnectionType.LAN) {
-                R.string.smb_lan_connection
-            } else {
-                R.string.smb_server
-            }
-        )
     }
 
     private fun showConnectDialog(server: SmbSavedServer? = null) {
@@ -343,21 +386,68 @@ class SmbBrowserFragment : Fragment() {
             .show()
     }
 
-    private fun launchUploadPicker() {
-        uploadPicker.launch(Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-            type = "*/*"
-            addCategory(Intent.CATEGORY_OPENABLE)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        })
+    private fun selectEntry(entry: SmbEntry) {
+        selectedEntry = entry
+        adapter.selectedPath = entry.path
+        binding.toolbarBottom.visibility = View.VISIBLE
     }
 
-    private fun chooseDownloadFolder(entry: SmbEntry) {
-        if (entry.isDirectory) return
-        pendingDownload = entry
-        downloadFolderPicker.launch(Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION)
-            putExtra("android.provider.extra.INITIAL_URI", android.net.Uri.parse("content://com.android.externalstorage.documents/tree/primary%3ADownload"))
-        })
+    private fun clearSelection() {
+        selectedEntry = null
+        adapter.selectedPath = null
+        binding.toolbarBottom.visibility = View.GONE
+    }
+
+    private fun showCopyDestination() {
+        val entry = selectedEntry ?: return
+        pendingCopy = entry
+        clearSelection()
+        viewModel.cancelScheduledDisconnect()
+        PickerFragment.newInstance(
+            pickerType = PickerType.COPY,
+            requestKey = SMB_COPY_REQUEST_KEY
+        ).show(parentFragmentManager, SMB_COPY_PICKER_TAG)
+    }
+
+    private fun renderBreadcrumb(state: SmbUiState) {
+        binding.listNavigation.scrollNavigation.visibility = if (state.connected) View.VISIBLE else View.GONE
+        if (!state.connected) return
+        binding.listNavigation.navButtonsContainer.removeAllViews()
+        addBreadcrumbHome()
+        if (state.shareName.isBlank()) return
+        addBreadcrumbArrow()
+        addBreadcrumbPart(state.shareName) { viewModel.openPath("") }
+        var path = ""
+        state.path.split('\\').filter { it.isNotBlank() }.forEach { part ->
+            path = listOf(path, part).filter { it.isNotBlank() }.joinToString("\\")
+            val targetPath = path
+            addBreadcrumbArrow()
+            addBreadcrumbPart(part) { viewModel.openPath(targetPath) }
+        }
+        binding.listNavigation.scrollNavigation.post {
+            binding.listNavigation.scrollNavigation.fullScroll(android.widget.HorizontalScrollView.FOCUS_RIGHT)
+        }
+    }
+
+    private fun addBreadcrumbHome() {
+        val button = layoutInflater.inflate(R.layout.navigation_button, null) as ImageButton
+        button.setImageResource(R.drawable.ic_home_white_48)
+        button.contentDescription = getString(R.string.smb_title)
+        button.setOnClickListener { viewModel.openNetworkRoot() }
+        binding.listNavigation.navButtonsContainer.addView(button)
+    }
+
+    private fun addBreadcrumbPart(label: String, action: () -> Unit) {
+        val button = layoutInflater.inflate(R.layout.material_button, null) as MaterialButton
+        button.text = label
+        button.setOnClickListener { action() }
+        binding.listNavigation.navButtonsContainer.addView(button)
+    }
+
+    private fun addBreadcrumbArrow() {
+        binding.listNavigation.navButtonsContainer.addView(
+            layoutInflater.inflate(R.layout.navigation_arrow, null)
+        )
     }
 
     private fun savedServerFromArguments(): SmbSavedServer? {
@@ -409,6 +499,9 @@ class SmbBrowserFragment : Fragment() {
         const val ARG_SAVED_HOST = "saved_network_host"
         const val ARG_SAVED_SHARE = "saved_network_share"
         const val ARG_SAVED_CONNECTION_TYPE = "saved_network_connection_type"
+        const val ARG_COPY_SOURCE_PATHS = "copy_source_paths"
+        const val SMB_COPY_REQUEST_KEY = "SmbCopy"
+        const val SMB_COPY_PICKER_TAG = "smb_copy_picker"
+        const val MENU_DISCONNECT = 1
     }
 }
-import androidx.appcompat.app.AppCompatActivity
