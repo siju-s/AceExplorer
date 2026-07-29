@@ -86,6 +86,9 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     private val _viewMode = model.getViewMode()
     val viewMode : StateFlow<ViewMode> = _viewMode
 
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
+
     private val _searchQuery = MutableStateFlow("")
     private val _sortClicked = MutableSharedFlow<SortMode>()
     val sortClicked : SharedFlow<SortMode> = _sortClicked
@@ -101,38 +104,37 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
 
     fun fetchPackages(appType: AppType) {
         println("fetchPackages apptype:$appType")
+        if (this.appType != appType) {
+            appSource = AppSource.ALL
+        }
         this.appType = appType
+        clearSelection()
+        _isLoading.value = true
         viewModelScope.launch(Dispatchers.IO) {
-            val result = when(appType) {
-                AppType.ALL_APPS -> model.getAllApps()
-                AppType.USER_APP -> model.getUserApps()
-                AppType.SYSTEM_APP -> model.getSystemApps()
+            try {
+                val result = when(appType) {
+                    AppType.ALL_APPS -> model.getAllApps()
+                    AppType.USER_APP -> model.getUserApps()
+                    AppType.SYSTEM_APP -> model.getSystemApps()
+                }
+                val list = SortHelper.sort(result, getSortMode())
+                _appsList.postValue(list)
+                _filteredAppsList.postValue(filterBySource(list, appSource))
+            } finally {
+                _isLoading.value = false
             }
-            val list = SortHelper.sort(result, getSortMode())
-            _filteredAppsList.postValue(list)
-            _appsList.postValue(list)
         }
     }
 
     fun filterAppBySource(appSource: AppSource) {
         println("filterAppBySource $appSource")
-        val list = appsList.value?.filter {
-            when (appSource) {
-                AppSource.ALL             -> it.source == AppSource.PLAYSTORE ||
-                        it.source == AppSource.AMAZON_APPSTORE ||
-                        it.source == AppSource.UNKNOWN
-
-                AppSource.PLAYSTORE       -> it.source == AppSource.PLAYSTORE
-                AppSource.AMAZON_APPSTORE -> it.source == AppSource.AMAZON_APPSTORE
-                AppSource.UNKNOWN         -> it.source == AppSource.UNKNOWN
-                AppSource.SYSTEM          -> it.source == AppSource.SYSTEM
-            }
-        }
+        val list = appsList.value
         list ?: return
         this.appSource = appSource
-        val newList = list as ArrayList<AppInfo>
+        val newList = filterBySource(list, appSource)
         _appsSourceFilteredList.postValue(newList)
         _filteredAppsList.postValue(newList)
+        clearSelection()
     }
 
     fun getSelectedItems() = multiSelection.getSelectedItems()
@@ -155,7 +157,7 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
             list?.let {
                 val sortedList = ArrayList(SortHelper.sort(it, sortMode))
                 _appsList.postValue(sortedList)
-                _filteredAppsList.postValue(sortedList)
+                _filteredAppsList.postValue(filterBySource(sortedList, appSource))
             }
         }
         sortModeData.saveSortMode(sortMode)
@@ -163,16 +165,16 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
 
     fun getSortMode() = sortModeData.getSortMode()
 
-    fun onItemLongClicked(pos: Int) {
+    fun onItemLongClicked(packageName: String) {
         if (!isActionModeActive()) {
             _actionModeState.postValue(ActionModeState.STARTED)
         }
-        multiSelection.toggleSelection(pos)
+        multiSelection.toggleSelection(packageName)
     }
 
-    fun onItemClicked(appInfo: AppInfo, pos: Int) {
+    fun onItemClicked(appInfo: AppInfo) {
         if (isActionModeActive()) {
-            multiSelection.toggleSelection(pos)
+            multiSelection.toggleSelection(appInfo.packageName)
         }
         else {
             _navigateToAppDetail.postValue(Event(Pair(appInfo, true)))
@@ -199,7 +201,7 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     override fun isActionModeActive() = actionModeState.value == ActionModeState.STARTED
 
     fun onSelectAllClicked() {
-        val list = _appsList.value
+        val list = _filteredAppsList.value
         list?.let {
             if (multiSelection.getSelectedItemCount() < list.size) {
                 selectAllItems(list)
@@ -211,7 +213,7 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     }
 
     private fun selectAllItems(list: ArrayList<AppInfo>) {
-        multiSelection.selectAll(list.size)
+        multiSelection.selectAll(list.map(AppInfo::packageName))
     }
 
     private fun clearSelection() {
@@ -221,9 +223,10 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     fun onDeleteClicked() {
         val items = multiSelection.getSelectedItems()
         val appsToDelete = arrayListOf<AppInfo>()
-        for (value in items.value.iterator())  {
-            _appsList.value?.get(value)?.let { appsToDelete.add(it) }
-        }
+        val selectedPackages = items.value
+        _appsList.value
+            ?.filter { it.packageName in selectedPackages }
+            ?.let(appsToDelete::addAll)
         _multiOperationData.postValue(appsToDelete)
         _actionModeState.postValue(ActionModeState.ENDED)
         multiSelection.clearSelection()
@@ -264,5 +267,17 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
 
     fun setSelectedViewMode(viewMode: ViewMode) {
         saveViewMode(viewMode)
+    }
+
+    private fun filterBySource(apps: List<AppInfo>, source: AppSource): ArrayList<AppInfo> {
+        return ArrayList(apps.filter {
+            when (source) {
+                AppSource.ALL -> true
+                AppSource.PLAYSTORE -> it.source == AppSource.PLAYSTORE
+                AppSource.AMAZON_APPSTORE -> it.source == AppSource.AMAZON_APPSTORE
+                AppSource.UNKNOWN -> it.source == AppSource.UNKNOWN
+                AppSource.SYSTEM -> it.source == AppSource.SYSTEM
+            }
+        })
     }
 }

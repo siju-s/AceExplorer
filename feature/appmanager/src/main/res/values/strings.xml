@@ -20,4 +20,5 @@
     <string name="amazon_play_store" translatable="false">Amazon app store</string>
     <string name="filter">Filter</string>
     <string name="search_name_or_package">App or package name</string>
+    <string name="loading_apps">Loading apps</string>
 </resources>

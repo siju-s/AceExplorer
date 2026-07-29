@@ -1,20 +1,19 @@
 package com.siju.acexplorer.appmanager.selection
 
-import android.util.SparseBooleanArray
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.flow.StateFlow
 
 interface MultiSelection {
 
     fun selectedItemCount() : LiveData<Int>
-    fun toggleSelection(position : Int)
-    fun selectAll(size : Int)
+    fun toggleSelection(packageName: String)
+    fun selectAll(packageNames: Collection<String>)
     fun clearSelection()
     fun isSelectionMode() : Boolean
     fun setListener(listener : Listener)
-    fun isSelected(position: Int) : Boolean
+    fun isSelected(packageName: String): Boolean
     fun getSelectedItemCount() : Int
-    fun getSelectedItems(): StateFlow<Set<Int>>
+    fun getSelectedItems(): StateFlow<Set<String>>
 
     interface Listener {
         fun onSelectionChanged(position: Int)

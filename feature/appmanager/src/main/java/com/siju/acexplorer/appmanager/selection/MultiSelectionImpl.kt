@@ -9,8 +9,8 @@ import javax.inject.Inject
 
 class MultiSelectionImpl @Inject constructor() : MultiSelection {
     private val selectedItemCount = MutableLiveData<Int>()
-    private val _selectedItems = MutableStateFlow(setOf<Int>())
-    private val selectedItems : StateFlow<Set<Int>> = _selectedItems
+    private val _selectedItems = MutableStateFlow(setOf<String>())
+    private val selectedItems : StateFlow<Set<String>> = _selectedItems
     private lateinit var listener : MultiSelection.Listener
 
     override fun setListener(listener: MultiSelection.Listener) {
@@ -21,12 +21,12 @@ class MultiSelectionImpl @Inject constructor() : MultiSelection {
         return selectedItemCount
     }
 
-    override fun toggleSelection(position: Int) {
+    override fun toggleSelection(packageName: String) {
         _selectedItems.update { selected ->
-            if (selected.contains(position)) {
-                selected - position
+            if (selected.contains(packageName)) {
+                selected - packageName
             } else {
-                selected + position
+                selected + packageName
             }
         }
         updateSelectionCount()
@@ -45,8 +45,8 @@ class MultiSelectionImpl @Inject constructor() : MultiSelection {
         }
     }
 
-    override fun selectAll(size: Int) {
-        _selectedItems.value = (0 until size).toSet()
+    override fun selectAll(packageNames: Collection<String>) {
+        _selectedItems.value = packageNames.toSet()
         updateSelectionCount()
         listener.onAllItemsSelected()
     }
@@ -63,11 +63,11 @@ class MultiSelectionImpl @Inject constructor() : MultiSelection {
         return _selectedItems.value.size
     }
 
-    override fun isSelected(position: Int): Boolean {
-        return _selectedItems.value.contains(position)
+    override fun isSelected(packageName: String): Boolean {
+        return _selectedItems.value.contains(packageName)
     }
 
-    override fun getSelectedItems(): StateFlow<Set<Int>> {
+    override fun getSelectedItems(): StateFlow<Set<String>> {
         return selectedItems
     }
 }

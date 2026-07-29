@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -28,6 +29,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -127,6 +131,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         val apps by viewModel.filteredAppsList.observeAsState(initial = emptyList())
         val selectedItems by viewModel.getSelectedItems().collectAsState()
         val viewMode by viewModel.viewMode.collectAsState()
+        val isLoading by viewModel.isLoading.collectAsState()
 
         Scaffold(
             modifier = Modifier
@@ -138,7 +143,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
                 }
             })
         { innerPadding ->
-            MainContent(apps, selectedItems, viewMode, innerPadding, searchQuery.text)
+            MainContent(apps, selectedItems, viewMode, innerPadding, searchQuery.text, isLoading)
         }
     }
 
@@ -220,18 +225,34 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
     @Composable
     private fun MainContent(
         apps: List<AppInfo>,
-        selectedItems: Set<Int>,
+        selectedItems: Set<String>,
         viewMode: ViewMode,
         innerPadding: PaddingValues,
-        searchText: String
+        searchText: String,
+        isLoading: Boolean
     ) {
-
-        println("Selected items ${selectedItems.size}")
-
-        if (viewMode == ViewMode.LIST) {
+        if (isLoading) {
+            LoadingContent(innerPadding)
+        } else if (viewMode == ViewMode.LIST) {
             AppsList(apps, innerPadding, searchText, selectedItems)
         } else {
             AppsGrid(apps, innerPadding, searchText, selectedItems)
+        }
+    }
+
+    @Composable
+    private fun LoadingContent(innerPadding: PaddingValues) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentAlignment = androidx.compose.ui.Alignment.Center
+        ) {
+            CircularProgressIndicator()
+            Text(
+                text = getString(R.string.loading_apps),
+                modifier = Modifier.padding(top = 96.dp)
+            )
         }
     }
 
@@ -241,20 +262,19 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         apps: List<AppInfo>,
         innerPadding: PaddingValues,
         searchText: String,
-        selectedItems: Set<Int>
+        selectedItems: Set<String>
     ) {
         LazyColumn(Modifier.padding(innerPadding)) {
             itemsIndexed(apps.filter {
                 it.packageName.contains(searchText, ignoreCase = true) ||
                         it.name.contains(searchText, ignoreCase = true)
-            }, key = { _, item -> item.packageName }) { index, item ->
-                println("ITEM :${item.packageName}")
+            }, key = { _, item -> item.packageName }) { _, item ->
                 ListItem(item,
-                    selectedItems.contains(index),
+                    selectedItems.contains(item.packageName),
                     onItemClick = {
-                        onItemClick(item, index)
+                        onItemClick(item)
                     }, onItemLongClick = {
-                        onItemLongClicked(index)
+                        onItemLongClicked(item.packageName)
                     }
                 )
             }
@@ -266,7 +286,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         apps: List<AppInfo>,
         innerPadding: PaddingValues,
         searchText: String,
-        selectedItems: Set<Int>
+        selectedItems: Set<String>
     ) {
         val viewMode by viewModel.viewMode.collectAsState()
         val gridColumns = getGridColumns(resources.configuration, viewMode)
@@ -278,14 +298,14 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
             itemsIndexed(apps.filter {
                 it.packageName.contains(searchText, ignoreCase = true) ||
                         it.name.contains(searchText, ignoreCase = true)
-            }) { index, item ->
-                val selected = selectedItems.contains(index)
+            }) { _, item ->
+                val selected = selectedItems.contains(item.packageName)
                 GridItem(item,
                     selected,
                     onItemClick = {
-                        onItemClick(it, index)
+                        onItemClick(it)
                     }, onItemLongClick = {
-                        onItemLongClicked(index)
+                        onItemLongClicked(item.packageName)
                     },
                     viewMode = viewMode
                 )
@@ -349,12 +369,12 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         )
     }
 
-    private fun onItemLongClicked(pos: Int) {
-        viewModel.onItemLongClicked(pos)
+    private fun onItemLongClicked(packageName: String) {
+        viewModel.onItemLongClicked(packageName)
     }
 
-    private fun onItemClick(appInfo: AppInfo, pos: Int) {
-        viewModel.onItemClicked(appInfo, pos)
+    private fun onItemClick(appInfo: AppInfo) {
+        viewModel.onItemClicked(appInfo)
     }
 
     private fun initObservers() {
