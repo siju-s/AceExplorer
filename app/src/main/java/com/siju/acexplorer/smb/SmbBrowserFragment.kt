@@ -116,9 +116,12 @@ class SmbBrowserFragment : Fragment() {
     }
 
     private fun setupToolbar() {
-        binding.toolbarContainer.toolbar.apply {
+        val toolbar = binding.toolbarContainer.toolbar
+        val activity = requireActivity() as AppCompatActivity
+        activity.setSupportActionBar(toolbar)
+        activity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        toolbar.apply {
             title = requestedServer?.displayName() ?: getString(R.string.smb_title)
-            setNavigationIcon(R.drawable.ic_left_arrow)
             setNavigationOnClickListener {
                 navigateUp()
             }
@@ -408,3 +411,4 @@ class SmbBrowserFragment : Fragment() {
         const val ARG_SAVED_CONNECTION_TYPE = "saved_network_connection_type"
     }
 }
+import androidx.appcompat.app.AppCompatActivity

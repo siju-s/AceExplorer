@@ -41,7 +41,6 @@ import com.siju.acexplorer.logging.Logger
 import com.siju.acexplorer.main.MainCommunicator
 import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.FileConstants
-import com.siju.acexplorer.main.model.root.RootUtils
 import com.siju.acexplorer.common.theme.CURRENT_THEME
 import com.siju.acexplorer.common.theme.PREFS_THEME
 import com.siju.acexplorer.common.theme.Theme
@@ -96,29 +95,10 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
 
         preferences = context?.let { PreferenceManager.getDefaultSharedPreferences(it) }
 
-        setupRootPref()
         setupLanguagePreference()
         setupThemePref()
         setupAnalyticsPref()
         setupResetFavPref()
-    }
-
-    private fun setupRootPref() {
-        val rootPreference = findPreference(PREF_ROOT) as CheckBoxPreference?
-        rootPreference?.setOnPreferenceClickListener { _ ->
-            onRootPrefClicked(rootPreference.isChecked, rootPreference)
-            true
-        }
-    }
-
-    private fun onRootPrefClicked(newValue: Boolean, rootPreference: CheckBoxPreference) {
-        if (newValue) {
-            val rooted = RootUtils.hasRootAccess()
-            Log.d("Settings", " rooted:$rooted")
-            rootPreference.isChecked = rooted
-        } else {
-            rootPreference.isChecked = false
-        }
     }
 
     private fun setupLanguagePreference() {

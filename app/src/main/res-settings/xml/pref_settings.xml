@@ -38,12 +38,6 @@
         app:iconSpaceReserved="false"
         app:title="@string/pref_title_disable_dual" />
 
-    <CheckBoxPreference
-        app:key="prefRooted"
-        app:layout="@layout/prefs_checkbox"
-        app:iconSpaceReserved="false"
-        app:title="@string/enable_root" />
-
     <Preference
         app:key="prefsReset"
         app:layout="@layout/prefs_settings_item"
