@@ -93,6 +93,10 @@ class SmbServerStore(context: Context) {
 
     private companion object {
         const val SAVED_SERVERS_KEY = "smb_saved_servers"
-        val SERVER_LIST_TYPE = object : TypeToken<List<SmbSavedServer>>() {}.type
+        // Avoid an anonymous TypeToken subclass: R8 strips its generic signature in release builds.
+        val SERVER_LIST_TYPE = TypeToken.getParameterized(
+            List::class.java,
+            SmbSavedServer::class.java
+        ).type
     }
 }
