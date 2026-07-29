@@ -11,42 +11,62 @@ import com.siju.acexplorer.main.model.helper.FileUtils
 import com.siju.acexplorer.main.model.helper.RootHelper
 import java.io.File
 import java.util.*
+import java.util.concurrent.atomic.AtomicLong
 import kotlin.collections.ArrayList
 
 class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) {
-    private var cancelSearch = false
-    private var time1 : Long = 0
-    private var searchData = ArrayList<FileInfo>()
+    private val searchGeneration = AtomicLong(0)
 
 
-    fun fetchData(path: String?, query: String) {
-        //TODO 30 Jan 2020 Should use coroutine cancel somehow instead of a flag here
-        time1 = System.currentTimeMillis()
-        Log.d("SearchDataFetcher", "fetchData query:$query, cancel:$cancelSearch")
-        searchData = ArrayList()
-        cancelSearch = false
-        path?.let {
-            searchFile(path, query)
+    fun fetchData(paths: List<String>, query: String) {
+        val generation = searchGeneration.incrementAndGet()
+        val startedAt = System.currentTimeMillis()
+        val searchData = ArrayList<FileInfo>()
+        Log.d("SearchDataFetcher", "fetchData query:$query")
+        paths.forEach { path ->
+            if (!isCancelled(generation)) {
+                searchFile(path, query, generation, searchData)
+            }
         }
+        Log.d(
+            "SearchDataFetcher",
+            "Search completed, size : ${searchData.size}, time:${System.currentTimeMillis() - startedAt}"
+        )
     }
 
-    private fun searchFile(path: String, query: String) {
+    private fun searchFile(
+        path: String,
+        query: String,
+        generation: Long,
+        searchData: ArrayList<FileInfo>
+    ) {
         val file = File(path)
         if (file.canRead()) {
-            getMatchingFiles(file, query, DataFetcher.canShowHiddenFiles(AceApplication.appContext))
+            getMatchingFiles(
+                file,
+                query,
+                DataFetcher.canShowHiddenFiles(AceApplication.appContext),
+                generation,
+                searchData
+            )
         }
-        Log.d("SearchDataFetcher", "Search completed, size : ${searchData.size},  time:${System.currentTimeMillis() - time1}")
     }
 
     fun cancelSearch() {
-        cancelSearch = true
+        searchGeneration.incrementAndGet()
     }
 
-    private fun getMatchingFiles(sourceFile: File, query: String, showHidden: Boolean) {
+    private fun getMatchingFiles(
+        sourceFile: File,
+        query: String,
+        showHidden: Boolean,
+        generation: Long,
+        searchData: ArrayList<FileInfo>
+    ) {
         val listFiles = sourceFile.listFiles() ?: return
         for (file in listFiles) {
-            if (cancelSearch) {
-                break
+            if (isCancelled(generation)) {
+                return
             }
 //            Log.d("SearchDataFetcher", "getMatchingFiles : file:${file.name}, query:$query, cancel:$cancelSearch")
             if (isSearchResultFound(file, query)) {
@@ -73,25 +93,31 @@ class SearchDataFetcher(private val searchResultCallback: SearchResultCallback) 
                 val date = file.lastModified()
                 val fileInfo = FileInfo(category, file.name, filePath, date, size,
                         isDirectory, extension, RootHelper.parseFilePermission(file), false)
-                createSearchData(fileInfo)
+                createSearchData(fileInfo, generation, searchData)
                 if (isDirectory) {
-                    getMatchingFiles(file, query, DataFetcher.canShowHiddenFiles(AceApplication.appContext))
+                    getMatchingFiles(file, query, showHidden, generation, searchData)
                 }
             } else {
                 if (file.isDirectory) {
-                    getMatchingFiles(file, query, DataFetcher.canShowHiddenFiles(AceApplication.appContext))
+                    getMatchingFiles(file, query, showHidden, generation, searchData)
                 }
             }
         }
     }
 
-    private fun createSearchData(fileInfo: FileInfo) {
-        if (cancelSearch) {
+    private fun createSearchData(
+        fileInfo: FileInfo,
+        generation: Long,
+        searchData: ArrayList<FileInfo>
+    ) {
+        if (isCancelled(generation)) {
             return
         }
         searchData.add(fileInfo)
-        searchResultCallback.onSearchResultFound(searchData)
+        searchResultCallback.onSearchResultFound(ArrayList(searchData))
     }
+
+    private fun isCancelled(generation: Long): Boolean = generation != searchGeneration.get()
     private fun isSearchResultFound(file: File, query: String) =
             file.name.lowercase(Locale.getDefault()).contains(query.lowercase(Locale.getDefault()))
 

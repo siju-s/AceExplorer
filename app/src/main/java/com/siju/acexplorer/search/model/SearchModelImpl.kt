@@ -25,10 +25,10 @@ class SearchModelImpl @Inject constructor(@ApplicationContext val context: Conte
 
     private val searchDataFetcher = SearchDataFetcher(this)
 
-    override fun searchData(path : String, query : String, category: Category) {
+    override fun searchData(paths: List<String>, query: String, category: Category) {
         searchDataFetcher.cancelSearch()
         _searchResult.postValue(ArrayList())
-        searchDataFetcher.fetchData(path, query)
+        searchDataFetcher.fetchData(paths, query)
     }
 
     override fun cancelSearch() {

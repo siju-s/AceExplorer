@@ -31,6 +31,7 @@
     <string name="storage_section_network">Network locations</string>
     <string name="network_locations">Network locations</string>
     <string name="network_locations_hint">Connect to LAN or SMB servers</string>
+    <string name="smb_copy_complete">Copy complete</string>
     <string name="drive_unavailable">Drive no longer available</string>
     <string name="smb_connect">Connect to Mac or SMB server</string>
     <string name="smb_title">Network files</string>
@@ -65,6 +66,7 @@
     <string name="smb_choose_download_folder">Choose download folder</string>
     <string name="smb_transfer_uploading">Uploading %1$s: %2$d%%</string>
     <string name="smb_transfer_downloading">Downloading %1$s: %2$d%%</string>
+    <string name="smb_transfer_copying">Copying %1$s: %2$d%%</string>
     <string name="smb_status_connected">Connected</string>
     <string name="smb_status_connecting">Connecting</string>
     <string name="nav_header_favourites">Favorites</string>
@@ -237,6 +239,12 @@
     <string name="search_type_other"> Other</string>
     <string name="search_clear">Clear</string>
     <string name="recently_searched">Recently searched</string>
+    <string name="search_hint">Search files</string>
+    <string name="search_quick_access">Quick access</string>
+    <string name="search_browse_by_type">Browse by type</string>
+    <string name="search_common_folders">Common folders</string>
+    <string name="search_empty_title">Find files faster</string>
+    <string name="search_empty_summary">Search files across your phone.</string>
     <string name="tab_home">Home</string>
     <string name="tab_tools">Tools</string>
     <string name="tab_settings">Settings</string>

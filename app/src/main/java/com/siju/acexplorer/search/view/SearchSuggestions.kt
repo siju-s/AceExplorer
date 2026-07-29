@@ -27,11 +27,12 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
     private val folderChipGroup = binding.searchContainer.commonSearchChipGroup
     private val categoryChipGroup = binding.searchContainer.categoriesChipGroup
 
-    private var chipCamera: Chip? = null
-    private var chipScreenshot: Chip? = null
-    private var chipWhatsapp: Chip? = null
-    private var chipTelegram: Chip? = null
+    private val chipCamera = binding.searchContainer.chipCamera
+    private val chipScreenshot = binding.searchContainer.chipScreenshot
+    private val chipWhatsapp = binding.searchContainer.chipWhatsapp
+    private val chipTelegram = binding.searchContainer.chipTelegram
     private var clearAll = false
+    private var hasActiveSuggestion = false
 
     private val checkedChipList = arrayListOf<Chip?>()
 
@@ -50,20 +51,19 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
     }
 
     private fun addCommonSearchItems() {
-        chipCamera = addDirectory(DIRECTORY_CAMERA, SearchUtils.getCameraDirectory())
-        chipScreenshot = addDirectory(DIRECTORY_SCREENSHOTS, SearchUtils.getScreenshotDirectory())
-        chipWhatsapp = addDirectory(DIRECTORY_WHATSAPP, SearchUtils.getWhatsappDirectory())
-        chipTelegram = addDirectory(DIRECTORY_TELEGRAM, SearchUtils.getTelegramDirectory())
+        addDirectory(chipCamera, DIRECTORY_CAMERA, SearchUtils.getCameraDirectory())
+        addDirectory(chipScreenshot, DIRECTORY_SCREENSHOTS, SearchUtils.getScreenshotDirectory())
+        addDirectory(chipWhatsapp, DIRECTORY_WHATSAPP, SearchUtils.getWhatsappDirectory())
+        addDirectory(chipTelegram, DIRECTORY_TELEGRAM, SearchUtils.getTelegramDirectory())
     }
 
-    private fun addDirectory(name: String, path: String?): Chip? {
-        path ?: return null
-        if (File(path).exists()) {
-            val chip = createChip(name, path)
-            addChip(chip)
-            return chip
+    private fun addDirectory(chip: Chip, name: String, path: String?) {
+        val directoryExists = path != null && File(path).exists()
+        chip.visibility = if (directoryExists) View.VISIBLE else View.GONE
+        if (directoryExists) {
+            chip.text = name
+            chip.tag = path
         }
-        return null
     }
 
     fun hideSuggestions() {
@@ -79,22 +79,12 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
         chipRecent.visibility = View.VISIBLE
     }
 
-    private fun createChip(name: String, path: String?): Chip {
-        val chip = Chip(binding.root.context)
-        chip.text = name
-        chip.isClickable = true
-        chip.isCheckable = true
-        chip.tag = path
-        return chip
-    }
-
-    private fun addChip(chip: Chip) {
-        folderChipGroup.addView(chip)
-    }
-
     private fun initChipListener() {
-        chipRecent.setOnCheckedChangeListener { _, _ ->
+        chipRecent.setOnCheckedChangeListener { _, isChecked ->
             if (!clearAll) {
+                if (isChecked) {
+                    hasActiveSuggestion = true
+                }
                 onChipSelected(chipRecent.id)
             }
         }
@@ -102,6 +92,7 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
         categoryChipGroup.setOnCheckedChangeListener { _, checkedChipId ->
             Log.d(TAG, "categoryChipGroup, pos:$checkedChipId, count :${categoryChipGroup.childCount}, $checkedChipId")
             if (!clearAll) {
+                updateSelectionState(checkedChipId)
                 if (isDocAndCamOrScreenChecked()) {
                     folderChipGroup.clearCheck()
                     checkedChipList.remove(chipCamera)
@@ -112,8 +103,8 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
         }
 
         folderChipGroup.setOnCheckedChangeListener { _, checkedChipId ->
-            Log.d(TAG, "Folder chip group, pos:$checkedChipId, count :${folderChipGroup.childCount}, chipCamera:${chipCamera?.id}")
             if (!clearAll) {
+                updateSelectionState(checkedChipId)
                 if (isDocAndCamOrScreenChecked()) {
                     chipDocuments.isChecked = false
                     checkedChipList.remove(chipDocuments)
@@ -123,10 +114,14 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
         }
     }
 
+    private fun updateSelectionState(checkedChipId: Int) {
+        hasActiveSuggestion = checkedChipId != View.NO_ID || !hasNoChipChecked()
+    }
+
     private fun isDocAndCamOrScreenChecked() = chipDocuments.isChecked && isCameraOrScreenshotSelected()
 
     private fun isCameraOrScreenshotSelected() : Boolean =
-       chipCamera?.isChecked == true || chipScreenshot?.isChecked == true
+       chipCamera.isChecked || chipScreenshot.isChecked
 
     private fun onChipGroupCheckedListener(checkedChipId: Int) {
         if (checkedChipId == -1) {
@@ -166,6 +161,9 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
     }
 
     private fun onChipSelected(checkedChipId: Int) {
+        if (checkedChipId != View.NO_ID) {
+            hasActiveSuggestion = true
+        }
         handleSelectedChipId(checkedChipId)
         fragment.onSearchSuggestionClicked()
 
@@ -270,9 +268,9 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
 
     private fun getSelectedFolderChipPath(): String? {
         return when {
-            chipCamera?.isChecked == true -> chipCamera?.tag as String
-            chipScreenshot?.isChecked == true -> chipScreenshot?.tag as String
-            chipWhatsapp?.isChecked == true -> getWhatsappMediaPath()
+            chipCamera.isChecked || chipScreenshot.isChecked ->
+                (if (chipCamera.isChecked) chipCamera else chipScreenshot).tag as String?
+            chipWhatsapp.isChecked -> getWhatsappMediaPath()
             else -> getTelegramMediaPath()
         }
     }
@@ -326,12 +324,13 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
     }
 
     fun isNoneChecked(): Boolean {
-        return !chipRecent.isChecked && !isAnyFolderItemChecked() && !isAnyCategoryChecked()
+        return !hasActiveSuggestion && hasNoChipChecked()
     }
 
+    private fun hasNoChipChecked() = !chipRecent.isChecked && !isAnyFolderItemChecked() && !isAnyCategoryChecked()
+
     private fun isAnyFolderItemChecked(): Boolean {
-        return chipCamera?.isChecked == true || chipScreenshot?.isChecked == true || chipWhatsapp?.isChecked == true
-                || chipTelegram?.isChecked == true
+        return chipCamera.isChecked || chipScreenshot.isChecked || chipWhatsapp.isChecked || chipTelegram.isChecked
     }
 
     private fun isAnyCategoryChecked(): Boolean {
@@ -340,10 +339,11 @@ class SearchSuggestions(val binding: SearchMainBinding, private val fragment: Se
     }
 
     fun clearAllCheckedItems() {
-        if (isNoneChecked()) {
+        if (!hasActiveSuggestion && hasNoChipChecked()) {
             return
         }
         clearAll = true
+        hasActiveSuggestion = false
         categoryChipGroup.clearCheck()
         folderChipGroup.clearCheck()
         chipRecent.isChecked = false

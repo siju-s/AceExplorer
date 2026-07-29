@@ -14,7 +14,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 private const val TAG = "SearchViewModel"
@@ -25,6 +27,7 @@ class SearchViewModel @Inject constructor(private val searchModel: SearchModel) 
 
     private val viewModelJob = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private var searchJob: Job? = null
 
     val searchResult : LiveData<ArrayList<FileInfo>>
     val recentSearchList : LiveData<ArrayList<String>>
@@ -36,14 +39,18 @@ class SearchViewModel @Inject constructor(private val searchModel: SearchModel) 
     }
 
     fun search(path : String?, query : String?, category: Category = Category.FILES) {
+        searchJob?.cancel()
+        searchModel.cancelSearch()
         if (query != null && query.isNotBlank() && query.length >= MIN_CHAR_QUERY) {
             Log.d(TAG, "Search query:$query")
-            var rootPath = path
-            if (rootPath == null) {
-                rootPath = StorageUtils.internalStorage
-            }
-            uiScope.launch(Dispatchers.IO) {
-                searchModel.searchData(rootPath, query, category)
+            val rootPaths = path?.let(::listOf) ?: (
+                listOf(StorageUtils.internalStorage) + StorageUtils.storageDirectories
+            ).distinct()
+            searchJob = uiScope.launch {
+                delay(250)
+                withContext(Dispatchers.IO) {
+                    searchModel.searchData(rootPaths, query, category)
+                }
             }
         }
         else if (query.isNullOrBlank()){
