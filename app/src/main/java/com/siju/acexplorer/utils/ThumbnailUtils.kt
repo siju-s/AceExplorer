@@ -26,6 +26,7 @@ object ThumbnailUtils {
     private val AUDIO_URI = Uri.parse("content://media/external/audio/albumart")
 
     fun displayThumb(context: Context, fileInfo: FileInfo, category: Category?, imageIcon: ImageView, imageThumbIcon: ImageView?, uri : Uri? = null) {
+        imageIcon.tag = null
         val filePath = fileInfo.filePath
         val fileName = fileInfo.fileName
         val isDirectory = fileInfo.isDirectory
@@ -202,7 +203,8 @@ object ThumbnailUtils {
             FileConstants.EXT_DOC, FileConstants.EXT_DOCX -> imageIcon.setImageResource(R.drawable.ic_doc)
             FileConstants.EXT_XLS, FileConstants.EXT_XLXS, FileConstants.EXT_CSV -> imageIcon.setImageResource(R.drawable.ic_xls)
             FileConstants.EXT_PPT, FileConstants.EXT_PPTX -> imageIcon.setImageResource(R.drawable.ic_ppt)
-            FileConstants.EXT_PDF -> imageIcon.setImageResource(R.drawable.ic_pdf)
+            FileConstants.EXT_PDF -> PdfThumbnailLoader.load(path, imageIcon)
+            FileConstants.EXT_EPUB -> EpubThumbnailLoader.load(path, imageIcon)
             FileConstants.EXT_TEXT -> imageIcon.setImageResource(R.drawable.ic_txt)
             FileConstants.EXT_HTML -> imageIcon.setImageResource(R.drawable.ic_html)
             FileConstants.EXT_ZIP -> imageIcon.setImageResource(R.drawable.ic_file_zip)
