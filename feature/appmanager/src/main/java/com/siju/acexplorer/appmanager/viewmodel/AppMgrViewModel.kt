@@ -9,6 +9,7 @@ import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.SortHelper
 import com.siju.acexplorer.appmanager.model.AppMgrModel
+import com.siju.acexplorer.appmanager.permissions.SensitivePermissionCategory
 import com.siju.acexplorer.appmanager.selection.MultiSelection
 import com.siju.acexplorer.appmanager.types.AppInfo
 import com.siju.acexplorer.common.ActionModeState
@@ -98,19 +99,25 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     private val _sortClicked = MutableSharedFlow<SortMode>()
     val sortClicked : SharedFlow<SortMode> = _sortClicked
     private var appSource = AppSource.ALL
+    private var activePermission: SensitivePermissionCategory? = null
+    private val _permissionDashboardVisible = MutableStateFlow(false)
+    val permissionDashboardVisible: StateFlow<Boolean> = _permissionDashboardVisible
 
     init {
         multiSelection.setListener(this)
     }
 
     fun fetchPackagesCurrentType() {
-        fetchPackages(appType)
+        fetchPackages(appType, preservePermissionFilter = true)
     }
 
-    fun fetchPackages(appType: AppType) {
+    fun fetchPackages(appType: AppType, preservePermissionFilter: Boolean = false) {
         println("fetchPackages apptype:$appType")
         if (this.appType != appType) {
             appSource = AppSource.ALL
+        }
+        if (!preservePermissionFilter) {
+            activePermission = null
         }
         this.appType = appType
         clearSelection()
@@ -125,7 +132,10 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
                 }
                 val list = SortHelper.sort(result, getSortMode())
                 _appsList.postValue(list)
-                _filteredAppsList.postValue(filterBySource(list, appSource))
+                val visibleApps = activePermission
+                    ?.let { permission -> ArrayList(list.filter(permission::isGrantedBy)) }
+                    ?: filterBySource(list, appSource)
+                _filteredAppsList.postValue(visibleApps)
             } finally {
                 _isLoading.value = false
             }
@@ -137,6 +147,7 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
         val list = appsList.value
         list ?: return
         this.appSource = appSource
+        activePermission = null
         val newList = filterBySource(list, appSource)
         _appsSourceFilteredList.postValue(newList)
         _filteredAppsList.postValue(newList)
@@ -150,6 +161,32 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     fun getAppType() = appType
 
     fun getAppSource() = appSource
+
+    fun getActivePermission() = activePermission
+
+    fun showPermissionDashboard() {
+        _permissionDashboardVisible.value = true
+    }
+
+    fun hidePermissionDashboard() {
+        _permissionDashboardVisible.value = false
+        activePermission = null
+        appsList.value?.let { _filteredAppsList.postValue(filterBySource(it, appSource)) }
+    }
+
+    fun filterByPermission(category: SensitivePermissionCategory) {
+        val apps = appsList.value ?: return
+        activePermission = category
+        appSource = AppSource.ALL
+        _permissionDashboardVisible.value = false
+        clearSelection()
+        _filteredAppsList.postValue(ArrayList(apps.filter(category::isGrantedBy)))
+    }
+
+    fun returnToPermissionDashboard() {
+        activePermission = null
+        _permissionDashboardVisible.value = true
+    }
 
     fun onSortClicked() {
         viewModelScope.launch(Dispatchers.Main) {
@@ -245,7 +282,13 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
     }
 
     fun handleBackPress() {
-        if (isActionModeActive()) {
+        if (activePermission != null) {
+            returnToPermissionDashboard()
+        }
+        else if (_permissionDashboardVisible.value) {
+            hidePermissionDashboard()
+        }
+        else if (isActionModeActive()) {
             multiSelection.clearSelection()
             _actionModeState.postValue(ActionModeState.ENDED)
         }

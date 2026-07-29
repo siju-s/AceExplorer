@@ -18,9 +18,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,9 +32,18 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -40,6 +53,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -57,6 +71,7 @@ import com.siju.acexplorer.appmanager.databinding.AppsListContainerBinding
 import com.siju.acexplorer.appmanager.filter.AppSource
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.AppHelper
+import com.siju.acexplorer.appmanager.permissions.SensitivePermissionCategory
 import com.siju.acexplorer.appmanager.types.AppInfo
 import com.siju.acexplorer.appmanager.view.compose.custom.menu.AppMgrActionModeItems
 import com.siju.acexplorer.appmanager.view.compose.GridItem
@@ -126,13 +141,25 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         activity?.onBackPressedDispatcher?.addCallback(viewLifecycleOwner, backPressedCallback)
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun AppContent(viewModel: AppMgrViewModel) {
         var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
         val apps by viewModel.filteredAppsList.observeAsState(initial = emptyList())
+        val allApps by viewModel.appsList.observeAsState(initial = emptyList())
         val selectedItems by viewModel.getSelectedItems().collectAsState()
         val viewMode by viewModel.viewMode.collectAsState()
         val isLoading by viewModel.isLoading.collectAsState()
+        val permissionDashboardVisible by viewModel.permissionDashboardVisible.collectAsState()
+
+        if (permissionDashboardVisible) {
+            PermissionDashboard(allApps) { category -> viewModel.filterByPermission(category) }
+            return
+        }
+        viewModel.getActivePermission()?.let { category ->
+            PermissionAppsScreen(category, apps, selectedItems)
+            return
+        }
 
         Scaffold(
             modifier = Modifier
@@ -145,6 +172,111 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
             })
         { innerPadding ->
             MainContent(apps, selectedItems, viewMode, innerPadding, searchQuery.text, isLoading)
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun PermissionDashboard(
+        apps: List<AppInfo>,
+        onPermissionSelected: (SensitivePermissionCategory) -> Unit
+    ) {
+        Scaffold(
+            modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+            topBar = {
+                TopAppBar(
+                    title = { Text(getString(R.string.permission_dashboard)) },
+                    navigationIcon = {
+                        IconButton(onClick = viewModel::hidePermissionDashboard) {
+                            Icon(Icons.AutoMirrored.Outlined.ArrowBack, getString(R.string.navigate_back))
+                        }
+                    }
+                )
+            }
+        ) { innerPadding ->
+            LazyColumn(
+                modifier = Modifier.padding(innerPadding),
+                contentPadding = PaddingValues(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                item {
+                    Text(
+                        text = getString(R.string.permission_dashboard_message),
+                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
+                    )
+                }
+                items(SensitivePermissionCategory.entries) { category ->
+                    val count = apps.count(category::isGrantedBy)
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onPermissionSelected(category) }
+                    ) {
+                        androidx.compose.foundation.layout.Column(Modifier.padding(16.dp)) {
+                            Text(
+                                text = getString(category.titleRes),
+                                style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(Modifier.height(4.dp))
+                            Text(
+                                text = getString(category.descriptionRes),
+                                style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                text = resources.getQuantityString(
+                                    com.siju.acexplorer.common.R.plurals.number_of_apps,
+                                    count,
+                                    count
+                                ),
+                                style = androidx.compose.material3.MaterialTheme.typography.labelLarge
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun PermissionAppsScreen(
+        category: SensitivePermissionCategory,
+        apps: List<AppInfo>,
+        selectedItems: Set<String>
+    ) {
+        Scaffold(
+            modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+            topBar = {
+                TopAppBar(
+                    title = {
+                        androidx.compose.foundation.layout.Column {
+                            Text("${getString(category.titleRes)} ${getString(R.string.permission_access_suffix)}")
+                            Text(
+                                resources.getQuantityString(
+                                    com.siju.acexplorer.common.R.plurals.number_of_apps,
+                                    apps.size,
+                                    apps.size
+                                ),
+                                style = androidx.compose.material3.MaterialTheme.typography.labelLarge
+                            )
+                        }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = viewModel::returnToPermissionDashboard) {
+                            Icon(Icons.AutoMirrored.Outlined.ArrowBack, getString(R.string.navigate_back))
+                        }
+                    }
+                )
+            }
+        ) { innerPadding ->
+            AppsList(
+                apps = apps,
+                innerPadding = innerPadding,
+                searchText = "",
+                selectedItems = selectedItems,
+                allowSelection = false
+            )
         }
     }
 
@@ -166,7 +298,10 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         }
         else {
             val count = resources.getQuantityString(com.siju.acexplorer.common.R.plurals.number_of_apps, appsSize, appsSize)
-            "$count • ${getString(viewModel.getAppType().resourceId)}"
+            val filterName = viewModel.getActivePermission()
+                ?.let { "${getString(it.titleRes)} ${getString(R.string.permission_access_suffix)}" }
+                ?: getString(viewModel.getAppType().resourceId)
+            "$count • $filterName"
         }
 
         TopAppBarWithSearch(title = getString(R.string.app_manager),
@@ -178,6 +313,11 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
             onSearchQueryChange = { onSearchQueryChanged(it) },
             onSearchToggle = { isSearchVisible = !isSearchVisible },
             onClearSearchQuery = { onSearchQueryChanged(TextFieldValue("")) },
+            additionalActions = {
+                IconButton(onClick = viewModel::showPermissionDashboard) {
+        Icon(painterResource(R.drawable.ic_shield), getString(R.string.permission_dashboard))
+                }
+            },
             menuItems = {
                 ExpandableMenu(
                     IconSource.Painter(com.siju.acexplorer.common.R.drawable.ic_filter),
@@ -264,7 +404,8 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         apps: List<AppInfo>,
         innerPadding: PaddingValues,
         searchText: String,
-        selectedItems: Set<String>
+        selectedItems: Set<String>,
+        allowSelection: Boolean = true
     ) {
         val visibleApps = remember(apps, searchText) {
             apps.filter {
@@ -279,7 +420,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
                     onItemClick = {
                         onItemClick(item)
                     }, onItemLongClick = {
-                        onItemLongClicked(item.packageName)
+                        if (allowSelection) onItemLongClicked(item.packageName)
                     }
                 )
             }
@@ -442,6 +583,7 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
             .setPositiveButton(R.string.uninstall) { _, _ -> viewModel.confirmUninstall(apps) }
             .show()
     }
+
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {
         when (item?.itemId) {

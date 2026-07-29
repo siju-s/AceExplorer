@@ -2,6 +2,8 @@ package com.siju.acexplorer.appmanager.model
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import com.siju.acexplorer.appmanager.extensions.getInstallerPackage
 import com.siju.acexplorer.appmanager.filter.AppType
 import com.siju.acexplorer.appmanager.helper.AppHelper
@@ -40,7 +42,7 @@ class AppMgrModelImpl @Inject constructor(@ApplicationContext val context: Conte
     // Querying applications allowed since it's a file manager app @see https://support.google.com/googleplay/android-developer/answer/10158779#zippy=%2Cpermitted-uses-of-the-query-all-packages-permission
     @SuppressLint("QueryPermissionsNeeded")
     private fun getAppPackageInfo(context: Context, appType: AppType): ArrayList<AppInfo> {
-        val packages = context.packageManager.getInstalledPackages(0)
+        val packages = context.packageManager.getInstalledPackages(PackageManager.GET_PERMISSIONS)
         val appsList = ArrayList<AppInfo>()
 
         for (packageInfo in packages) {
@@ -70,10 +72,19 @@ class AppMgrModelImpl @Inject constructor(@ApplicationContext val context: Conte
                     size,
                     packageInfo.firstInstallTime,
                     packageInfo.lastUpdateTime,
-                    packageInfo.versionName
+                    packageInfo.versionName,
+                    packageInfo.grantedPermissions()
                 )
             )
         }
         return appsList
+    }
+
+    private fun PackageInfo.grantedPermissions(): Set<String> {
+        val permissions = requestedPermissions ?: return emptySet()
+        val flags = requestedPermissionsFlags ?: return emptySet()
+        return permissions.indices
+            .filter { flags[it] and PackageInfo.REQUESTED_PERMISSION_GRANTED != 0 }
+            .mapTo(mutableSetOf()) { permissions[it] }
     }
 }
