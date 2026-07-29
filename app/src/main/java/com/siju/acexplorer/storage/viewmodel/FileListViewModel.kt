@@ -978,6 +978,7 @@ class FileListViewModel @Inject constructor(
                 AppType.ALL_APPS   -> it.systemApp || !it.systemApp
                 AppType.USER_APP   -> !it.systemApp
                 AppType.SYSTEM_APP -> it.systemApp
+                AppType.RECENTLY_UPDATED -> false
             }
         }
         _fileData.postValue(list as ArrayList<FileInfo>)

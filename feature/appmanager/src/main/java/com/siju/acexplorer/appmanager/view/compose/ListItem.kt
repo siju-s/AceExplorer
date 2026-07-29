@@ -1,19 +1,19 @@
 package com.siju.acexplorer.appmanager.view.compose
 
+import android.text.format.Formatter
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
@@ -32,6 +33,7 @@ import com.siju.acexplorer.appmanager.R
 import com.siju.acexplorer.appmanager.types.AppInfo
 import com.siju.acexplorer.appmanager.view.compose.LazyItemUtils.getBackgroundColor
 import com.siju.acexplorer.appmanager.view.compose.components.BodyText
+import com.siju.acexplorer.appmanager.view.compose.components.SupportingText
 import com.siju.acexplorer.common.extensions.getAppInfo
 import com.siju.acexplorer.common.theme.LocalDim
 import com.siju.acexplorer.common.utils.DateUtils
@@ -65,25 +67,36 @@ fun ListItem(
             modifier = Modifier
                 .defaultMinSize(minHeight = dimensionResource(id = R.dimen.app_list_item_min_height))
                 .padding(LocalDim.current.spaceSmall)
-                .height(IntrinsicSize.Min)
         ) {
-            AsyncImage(
-                model = imageModel,
-                placeholder = painterResource(com.siju.acexplorer.common.R.drawable.ic_apk_green),
-                contentDescription = "App icon",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(50.dp)
-            )
-            Column(
-                Modifier
-                    .align(Alignment.CenterStart)
-                    .padding(start = LocalDim.current.space50 + LocalDim.current.spaceSmall)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                BodyText(data.name)
-                BodyText(data.packageName)
+                AsyncImage(
+                    model = imageModel,
+                    placeholder = painterResource(com.siju.acexplorer.common.R.drawable.ic_apk_green),
+                    contentDescription = "App icon",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.size(50.dp)
+                )
+                Column(Modifier.width(200.dp)) {
+                    BodyText(data.name)
+                    BodyText(
+                        stringResource(
+                            R.string.app_version,
+                            data.versionName ?: stringResource(R.string.version_unknown)
+                        )
+                    )
+                    SupportingText(
+                        stringResource(R.string.app_updated, DateUtils.convertShortDate(data.updatedDate))
+                    )
+                }
             }
-            Spacer(Modifier.fillMaxSize(1f))
+            BodyText(
+                Formatter.formatFileSize(LocalContext.current, data.size),
+                modifier = Modifier.align(Alignment.CenterEnd)
+            )
 
             if (selected) {
                 Image(
@@ -92,17 +105,9 @@ fun ListItem(
                     modifier = Modifier
                         .width(20.dp)
                         .height(20.dp)
-                        .zIndex(1f),
+                    .zIndex(1f),
                 )
             }
-
-            BodyText(
-                text = DateUtils.convertDate(data.installDate),
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .align(Alignment.BottomEnd)
-            )
-
         }
 
     }

@@ -9,4 +9,8 @@ object DateUtils {
         val date = Date(dateInMs)
         return df2.format(date)
     }
+
+    fun convertShortDate(dateInMs: Long): String {
+        return SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date(dateInMs))
+    }
 }

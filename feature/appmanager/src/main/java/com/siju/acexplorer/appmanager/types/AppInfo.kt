@@ -10,5 +10,6 @@ data class AppInfo(val name : String,
                    val apkDir : String,
                    val size : Long,
                    val installDate : Long,
-                   val updatedDate : Long
+                   val updatedDate : Long,
+                   val versionName: String?
                    )

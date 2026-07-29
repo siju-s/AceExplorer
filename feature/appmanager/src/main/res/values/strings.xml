@@ -21,4 +21,13 @@
     <string name="filter">Filter</string>
     <string name="search_name_or_package">App or package name</string>
     <string name="loading_apps">Loading apps</string>
+    <string name="recently_updated">Recently updated</string>
+    <string name="version_unknown">Unknown version</string>
+    <string name="app_version">Version %1$s</string>
+    <string name="app_updated">Updated %1$s</string>
+    <string name="uninstall_apps_title">Uninstall apps?</string>
+    <plurals name="uninstall_apps_message">
+        <item quantity="one">Uninstall %d selected app?</item>
+        <item quantity="other">Uninstall %d selected apps?</item>
+    </plurals>
 </resources>

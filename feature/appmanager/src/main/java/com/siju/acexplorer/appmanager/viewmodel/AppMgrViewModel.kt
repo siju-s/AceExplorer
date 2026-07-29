@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltViewModel
@@ -62,6 +63,10 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
 
     val multiOperationData : LiveData<ArrayList<AppInfo>>
     get() = _multiOperationData
+
+    private val _uninstallConfirmation = MutableLiveData<Event<List<AppInfo>>>()
+    val uninstallConfirmation: LiveData<Event<List<AppInfo>>>
+        get() = _uninstallConfirmation
 
     private val _navigateToAppDetail = MutableLiveData<Event<Pair<AppInfo, Boolean>>>()
 
@@ -116,6 +121,7 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
                     AppType.ALL_APPS -> model.getAllApps()
                     AppType.USER_APP -> model.getUserApps()
                     AppType.SYSTEM_APP -> model.getSystemApps()
+                    AppType.RECENTLY_UPDATED -> model.getAllApps().filterRecentlyUpdated()
                 }
                 val list = SortHelper.sort(result, getSortMode())
                 _appsList.postValue(list)
@@ -227,7 +233,13 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
         _appsList.value
             ?.filter { it.packageName in selectedPackages }
             ?.let(appsToDelete::addAll)
-        _multiOperationData.postValue(appsToDelete)
+        if (appsToDelete.isNotEmpty()) {
+            _uninstallConfirmation.postValue(Event(appsToDelete))
+        }
+    }
+
+    fun confirmUninstall(apps: List<AppInfo>) {
+        _multiOperationData.postValue(ArrayList(apps))
         _actionModeState.postValue(ActionModeState.ENDED)
         multiSelection.clearSelection()
     }
@@ -279,5 +291,10 @@ class AppMgrViewModel @Inject constructor(private val model: AppMgrModel,
                 AppSource.SYSTEM -> it.source == AppSource.SYSTEM
             }
         })
+    }
+
+    private fun List<AppInfo>.filterRecentlyUpdated(): ArrayList<AppInfo> {
+        val cutoff = System.currentTimeMillis() - TimeUnit.DAYS.toMillis(30)
+        return ArrayList(filter { it.updatedDate >= cutoff })
     }
 }

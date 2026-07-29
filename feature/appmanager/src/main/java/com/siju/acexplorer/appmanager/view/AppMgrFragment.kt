@@ -50,6 +50,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.badge.BadgeDrawable
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.siju.acexplorer.appmanager.AppInfoProvider
 import com.siju.acexplorer.appmanager.R
 import com.siju.acexplorer.appmanager.databinding.AppsListContainerBinding
@@ -164,7 +165,8 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
             resources.getQuantityString(com.siju.acexplorer.common.R.plurals.number_of_apps, selectedItemsSize, selectedItemsSize)
         }
         else {
-            resources.getQuantityString(com.siju.acexplorer.common.R.plurals.number_of_apps, appsSize, appsSize)
+            val count = resources.getQuantityString(com.siju.acexplorer.common.R.plurals.number_of_apps, appsSize, appsSize)
+            "$count • ${getString(viewModel.getAppType().resourceId)}"
         }
 
         TopAppBarWithSearch(title = getString(R.string.app_manager),
@@ -264,11 +266,14 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
         searchText: String,
         selectedItems: Set<String>
     ) {
-        LazyColumn(Modifier.padding(innerPadding)) {
-            itemsIndexed(apps.filter {
+        val visibleApps = remember(apps, searchText) {
+            apps.filter {
                 it.packageName.contains(searchText, ignoreCase = true) ||
-                        it.name.contains(searchText, ignoreCase = true)
-            }, key = { _, item -> item.packageName }) { _, item ->
+                    it.name.contains(searchText, ignoreCase = true)
+            }
+        }
+        LazyColumn(Modifier.padding(innerPadding)) {
+            itemsIndexed(visibleApps, key = { _, item -> item.packageName }) { _, item ->
                 ListItem(item,
                     selectedItems.contains(item.packageName),
                     onItemClick = {
@@ -290,15 +295,18 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
     ) {
         val viewMode by viewModel.viewMode.collectAsState()
         val gridColumns = getGridColumns(resources.configuration, viewMode)
+        val visibleApps = remember(apps, searchText) {
+            apps.filter {
+                it.packageName.contains(searchText, ignoreCase = true) ||
+                    it.name.contains(searchText, ignoreCase = true)
+            }
+        }
 
         LazyVerticalGrid(
             modifier = Modifier.padding(innerPadding),
             columns = GridCells.Fixed(gridColumns)
         ) {
-            itemsIndexed(apps.filter {
-                it.packageName.contains(searchText, ignoreCase = true) ||
-                        it.name.contains(searchText, ignoreCase = true)
-            }) { _, item ->
+            itemsIndexed(visibleApps) { _, item ->
                 val selected = selectedItems.contains(item.packageName)
                 GridItem(item,
                     selected,
@@ -403,6 +411,9 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
                 }
             }
         }
+        viewModel.uninstallConfirmation.observe(viewLifecycleOwner) { event ->
+            event.getContentIfNotHandled()?.let(::showUninstallConfirmation)
+        }
         viewModel.navigateToAppDetail.observe(viewLifecycleOwner) {
             it?.getContentIfNotHandled()?.let {
                 val directions =
@@ -421,6 +432,15 @@ class AppMgrFragment : Fragment(), Toolbar.OnMenuItemClickListener {
                 activity?.onBackPressed()
             }
         }
+    }
+
+    private fun showUninstallConfirmation(apps: List<AppInfo>) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.uninstall_apps_title)
+            .setMessage(resources.getQuantityString(R.plurals.uninstall_apps_message, apps.size, apps.size))
+            .setNegativeButton(android.R.string.cancel, null)
+            .setPositiveButton(R.string.uninstall) { _, _ -> viewModel.confirmUninstall(apps) }
+            .show()
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean {

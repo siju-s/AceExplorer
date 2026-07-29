@@ -61,7 +61,17 @@ class AppMgrModelImpl @Inject constructor(@ApplicationContext val context: Conte
             val appName = applicationInfo.loadLabel(context.packageManager).toString()
 
             appsList.add(
-                AppInfo(appName, packageName, appType, source, sourceDir, size, packageInfo.firstInstallTime, packageInfo.lastUpdateTime)
+                AppInfo(
+                    appName,
+                    packageName,
+                    appType,
+                    source,
+                    sourceDir,
+                    size,
+                    packageInfo.firstInstallTime,
+                    packageInfo.lastUpdateTime,
+                    packageInfo.versionName
+                )
             )
         }
         return appsList
