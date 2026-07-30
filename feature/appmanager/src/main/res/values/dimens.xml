@@ -14,5 +14,7 @@
     <dimen name="app_gallery_item_text_min_height">36dp</dimen>
     <dimen name="app_gallery_item_sel_margin">8dp</dimen>
     <dimen name="app_grid_item_sel_margin">8dp</dimen>
+    <dimen name="app_detail_label_width">130dp</dimen>
+    <dimen name="app_detail_section_spacing">14dp</dimen>
 
 </resources>

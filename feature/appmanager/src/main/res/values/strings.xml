@@ -4,6 +4,15 @@
     <string name="permissions">Permissions</string>
     <string name="app_detail">App detail</string>
     <string name="uninstall">Uninstall</string>
+    <string name="app_size">App size</string>
+    <string name="app_details">App details</string>
+    <string name="app_size_description">Installed app files</string>
+    <string name="show_app_details">Show app details</string>
+    <string name="hide_app_details">Hide app details</string>
+    <string name="app_enabled">Enabled</string>
+    <string name="app_disabled">Disabled</string>
+    <string name="no_permissions_requested">No permissions requested</string>
+    <string name="permissions_requested">%1$d permissions requested</string>
     <string name="package_name">Package name</string>
     <string name="installed_source">Source</string>
     <string name="min_sdk">Min OS Version</string>
@@ -40,6 +49,57 @@
     <string name="permission_location_description">Can access your device location</string>
     <string name="permission_sms_description">Can read, send, or receive text messages</string>
     <string name="permission_contacts_description">Can read or modify your contacts</string>
+    <string name="permission_group_network">Network access</string>
+    <string name="permission_group_files">Files and media</string>
+    <string name="permission_group_notifications">Notifications</string>
+    <string name="permission_group_background">Background activity</string>
+    <string name="permission_group_other">Other</string>
+
+    <string name="app_detail_section_identity">Identity</string>
+    <string name="app_detail_section_install">Install</string>
+    <string name="app_detail_section_build">Build</string>
+    <string name="app_detail_section_security">Security</string>
+    <string name="app_detail_section_components">Components</string>
+
+    <string name="app_uid">User ID</string>
+    <string name="app_origin">App type</string>
+    <string name="app_origin_user">Installed app</string>
+    <string name="app_origin_system">Preinstalled app</string>
+    <string name="app_origin_updated_system">Updated preinstalled app</string>
+    <string name="process_name">Process</string>
+    <string name="installed_by">Installed by</string>
+    <string name="architecture">Architecture</string>
+    <string name="architecture_format" translatable="false">%1$s (%2$s)</string>
+    <string name="architecture_64_bit">64-bit</string>
+    <string name="architecture_32_bit">32-bit</string>
+    <string name="split_apks">Split APKs</string>
+    <string name="apk_path">APK path</string>
+    <string name="data_folder">Data folder</string>
+    <string name="signing_certificate">Certificate SHA-256</string>
+    <string name="signer_count">Signers</string>
+    <string name="key_rotation">Key rotation</string>
+    <string name="debuggable">Debuggable</string>
+    <string name="backup_allowed">Backup allowed</string>
+    <string name="cleartext_traffic">Cleartext traffic</string>
+    <string name="component_activities">Activities</string>
+    <string name="component_services">Services</string>
+    <string name="component_receivers">Receivers</string>
+    <string name="component_providers">Providers</string>
+    <string name="component_exported">Exported</string>
+    <string name="sdk_with_android_version">%1$d (Android %2$s)</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="copied_to_clipboard">%1$s copied</string>
+
+    <string name="store_play_store" translatable="false">Play Store</string>
+    <string name="store_amazon_appstore" translatable="false">Amazon Appstore</string>
+    <string name="store_galaxy_store" translatable="false">Galaxy Store</string>
+    <string name="store_f_droid" translatable="false">F-Droid</string>
+    <string name="store_app_gallery" translatable="false">AppGallery</string>
+    <string name="app_version_with_code" translatable="false">%1$s (%2$d)</string>
+    <string name="open_in_store">Open in %1$s</string>
+    <string name="find_in_store">Find in %1$s</string>
+
     <plurals name="uninstall_apps_message">
         <item quantity="one">Uninstall %d selected app?</item>
         <item quantity="other">Uninstall %d selected apps?</item>

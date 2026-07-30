@@ -1,24 +1,24 @@
 package com.siju.acexplorer.appmanager.model
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.siju.acexplorer.appmanager.extensions.getInstallerPackage
-import com.siju.acexplorer.appmanager.helper.AppHelper
-import com.siju.acexplorer.common.utils.DateUtils
-import com.siju.acexplorer.common.utils.SdkHelper
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class AppDetailDetailModelImpl @Inject constructor(@ApplicationContext val context: Context) : AppDetailModel {
+private const val BASE_FLAGS = PackageManager.GET_PERMISSIONS or PackageManager.GET_SIGNING_CERTIFICATES
 
-    private val _versionInfo = MutableLiveData<AppVersionInfo>()
+private const val COMPONENT_FLAGS = PackageManager.GET_ACTIVITIES or
+        PackageManager.GET_SERVICES or
+        PackageManager.GET_RECEIVERS or
+        PackageManager.GET_PROVIDERS
 
-    val versionInfo: LiveData<AppVersionInfo>
-        get() = _versionInfo
+class AppDetailDetailModelImpl @Inject constructor(
+    @ApplicationContext val context: Context,
+    private val appDetailInfoMapper: AppDetailInfoMapper
+) : AppDetailModel {
 
     private val _appInfo = MutableLiveData<AppDetailInfo>()
 
@@ -30,64 +30,41 @@ class AppDetailDetailModelImpl @Inject constructor(@ApplicationContext val conte
     val permissionInfo: LiveData<PermissionInfo>
         get() = _permissionInfo
 
-
     override fun fetchPackageInfo(packageName: String) {
-        try {
-            val packageInfo = context.packageManager.getPackageInfo(packageName,
-                                                                    PackageManager.GET_PERMISSIONS)
-            _versionInfo.postValue(createVersionInfo(packageInfo))
-            _appInfo.postValue(createAppInfo(packageInfo))
-            _permissionInfo.postValue(createPermissionInfo(packageInfo))
+        val packageInfo = loadPackageInfo(packageName) ?: return
+        _appInfo.postValue(appDetailInfoMapper.map(packageInfo))
+        _permissionInfo.postValue(createPermissionInfo(packageInfo))
+    }
 
+    /**
+     * Component metadata is fetched on a best effort basis. Apps with thousands of components can
+     * blow past the binder transaction limit, so the query is retried without those flags rather
+     * than failing the whole screen.
+     */
+    @Suppress("DEPRECATION")
+    private fun loadPackageInfo(packageName: String): PackageInfo? {
+        return try {
+            context.packageManager.getPackageInfo(packageName, BASE_FLAGS or COMPONENT_FLAGS)
         }
         catch (e: PackageManager.NameNotFoundException) {
-
+            null
+        }
+        catch (e: RuntimeException) {
+            loadPackageInfoWithoutComponents(packageName)
         }
     }
 
     @Suppress("DEPRECATION")
-    private fun createVersionInfo(packageInfo: PackageInfo): AppVersionInfo {
-        val versionCode = if (SdkHelper.isAtleastPie) {
-            packageInfo.longVersionCode.toInt()
+    private fun loadPackageInfoWithoutComponents(packageName: String): PackageInfo? {
+        return try {
+            context.packageManager.getPackageInfo(packageName, BASE_FLAGS)
         }
-        else {
-            packageInfo.versionCode
+        catch (e: PackageManager.NameNotFoundException) {
+            null
         }
-        val versionName = packageInfo.versionName
-
-        return AppVersionInfo(versionName, versionCode)
-    }
-
-    private fun createAppInfo(packageInfo: PackageInfo): AppDetailInfo {
-        val packageName = packageInfo.packageName
-        val applicationInfo = packageInfo.applicationInfo
-
-        applicationInfo ?: return NullAppDetailInfo()
-
-        val appName = applicationInfo.loadLabel(context.packageManager)
-        return AppDetailInfo(packageName, appName.toString(), getInstallerSource(packageName),
-                       applicationInfo.enabled,
-                       getMinSdkVersion(applicationInfo), applicationInfo.targetSdkVersion,
-                       DateUtils.convertDate(packageInfo.firstInstallTime),
-            DateUtils.convertDate(packageInfo.lastUpdateTime))
     }
 
     private fun createPermissionInfo(packageInfo: PackageInfo): PermissionInfo {
         return PermissionInfo(packageInfo.requestedPermissions)
     }
-
-    private fun getMinSdkVersion(applicationInfo: ApplicationInfo): Int {
-        return if (SdkHelper.isAtleastNougat) {
-            applicationInfo.minSdkVersion
-        }
-        else {
-            0
-        }
-    }
-
-    private fun getInstallerSource(packageName: String): String {
-        return AppHelper.getInstallerSourceName(context, context.packageManager.getInstallerPackage(packageName))
-    }
-
-
 }

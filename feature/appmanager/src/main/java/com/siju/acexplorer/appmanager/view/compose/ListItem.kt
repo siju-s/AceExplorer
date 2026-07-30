@@ -36,6 +36,7 @@ import com.siju.acexplorer.appmanager.view.compose.components.BodyText
 import com.siju.acexplorer.appmanager.view.compose.components.SupportingText
 import com.siju.acexplorer.common.extensions.getAppInfo
 import com.siju.acexplorer.common.theme.LocalDim
+import com.siju.acexplorer.appmanager.helper.InstallTimes
 import com.siju.acexplorer.common.utils.DateUtils
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -88,9 +89,11 @@ fun ListItem(
                             data.versionName ?: stringResource(R.string.version_unknown)
                         )
                     )
-                    SupportingText(
-                        stringResource(R.string.app_updated, DateUtils.convertShortDate(data.updatedDate))
-                    )
+                    if (InstallTimes.isRealInstallTime(data.updatedDate)) {
+                        SupportingText(
+                            stringResource(R.string.app_updated, DateUtils.convertShortDate(data.updatedDate))
+                        )
+                    }
                 }
             }
             BodyText(

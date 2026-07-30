@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/app_detail_section_spacing"
+    android:layout_marginBottom="@dimen/padding_5"
+    android:textAllCaps="true"
+    android:textAppearance="?attr/textAppearanceOverline"
+    android:textStyle="bold" />

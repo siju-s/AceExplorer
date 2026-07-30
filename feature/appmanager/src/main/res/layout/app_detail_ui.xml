@@ -28,13 +28,4 @@
 
     </androidx.core.widget.NestedScrollView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabStore"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/padding_10"
-        android:contentDescription="@string/play_store"
-        android:src="@drawable/ic_store" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

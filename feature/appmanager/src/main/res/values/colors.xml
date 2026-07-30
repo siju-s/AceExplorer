@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fully saturated red. Material's Red 700 (#D32F2F) carries enough green and blue to read
+         as brick or orange on an OLED panel. -->
+    <color name="app_detail_destructive">#D50000</color>
+    <!-- Text-only buttons need their own accent. colorPrimary is a very dark purple, which reads
+         fine as a filled button with white text but drops far below readable contrast when used
+         as text on a dark background. See values-night for the dark variant. -->
+    <color name="app_detail_accent">#73066E</color>
+</resources>
