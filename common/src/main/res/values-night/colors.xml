@@ -4,4 +4,8 @@
     <color name="toolbarBackground">#FF292929</color>
     <color name="navigationPathBackground">#FF292929</color>
     <color name="actionModeItemSelected">#696969</color>
+
+    <!-- Lighter tones so button labels stay readable on the dark dialog surface. -->
+    <color name="dialogButtonColor">#C0AEE0</color>
+    <color name="dialogDestructiveColor">#FF8FB1</color>
 </resources>

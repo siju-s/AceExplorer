@@ -31,6 +31,35 @@
         <item name="android:layout_marginRight">@dimen/dialog_button_margin</item>
     </style>
 
+    <!--
+      Dialogs built by AlertDialog.Builder colour their buttons from ?attr/colorPrimary, which is the
+      dark brand purple and measures 1.06:1 on the dark dialog surface. These overlays point the
+      button bar at the theme-aware dialog colours instead.
+
+      Both overlays are needed: androidx preference dialogs (the Theme picker) go through
+      alertDialogTheme, while MaterialAlertDialogBuilder call sites go through
+      materialAlertDialogTheme.
+    -->
+    <style name="Widget.App.Button.TextButton.Dialog" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/dialogButtonColor</item>
+    </style>
+
+    <style name="Widget.App.Button.TextButton.Dialog.Destructive" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/dialogDestructiveColor</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Dialog.Alert" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Button.TextButton.Dialog</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.App.Button.TextButton.Dialog</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.Button.TextButton.Dialog</item>
+    </style>
+
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.Button.TextButton.Dialog</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.App.Button.TextButton.Dialog</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.Button.TextButton.Dialog</item>
+    </style>
+
     <style name="RadioButtonTextStyle">
         <item name="android:textSize">@dimen/dialog_radio_btn_text_size</item>
         <item name="android:layout_marginLeft">@dimen/dialog_margin</item>

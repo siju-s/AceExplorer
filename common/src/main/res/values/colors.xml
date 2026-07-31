@@ -13,9 +13,17 @@
    <color name="gallery_item_text_background">#30000000</color>
    <color name="bottom_toolbar_bg">@color/colorPrimary</color>
    <color name="fab_bg">#F3F3F3</color>
-   <color name="dialog_positive_color">#1e91d0</color>
-   <color name="dialog_neutral_color">#1e91d0</color>
-   <color name="dialog_negative_color">#FF4081</color>
+   <!--
+     Dialog button labels. These sit on a white surface in the light theme and on a mid grey one in
+     the dark theme, so they need a night variant: a single colour cannot clear 4.5:1 on both.
+   -->
+   <color name="dialogButtonColor">#73066e</color>
+   <color name="dialogDestructiveColor">#C2185B</color>
+
+   <color name="dialog_positive_color">@color/dialogButtonColor</color>
+   <color name="dialog_neutral_color">@color/dialogButtonColor</color>
+   <!-- Cancel is the safe action, so it uses the normal button colour, not the destructive one. -->
+   <color name="dialog_negative_color">@color/dialogButtonColor</color>
 
    <color name="actionModeItemSelected">#33800080</color>
 
