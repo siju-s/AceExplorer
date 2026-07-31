@@ -9,7 +9,6 @@ import com.siju.acexplorer.main.model.FileConstants
 import com.siju.acexplorer.main.model.HiddenFileHelper.constructionNoHiddenFilesArgs
 import com.siju.acexplorer.main.model.data.DataFetcher
 import com.siju.acexplorer.main.model.data.DataFetcher.Companion.canShowHiddenFiles
-import com.siju.acexplorer.main.model.data.doc.DocumentUtils.getMediaTypeNone
 import com.siju.acexplorer.main.model.groups.Category
 import com.siju.acexplorer.main.model.helper.SortHelper
 import java.util.*
@@ -35,7 +34,10 @@ class PdfFetcher : DataFetcher {
         if (!showHidden) {
             selection = constructionNoHiddenFilesArgs() + " AND "
         }
-        selection += getMediaTypeNone() + " AND " + MediaStore.Files.FileColumns.MIME_TYPE + " =?"
+        // Matched on MIME type alone, like the sibling document fetchers. Filtering on
+        // MEDIA_TYPE_NONE returned nothing from Android 11 on, where MediaStore files PDFs as
+        // MEDIA_TYPE_DOCUMENT.
+        selection += MediaStore.Files.FileColumns.MIME_TYPE + " =?"
         val selectionArgs = arrayOf(pdf1)
         return context.contentResolver.query(uri, null, selection, selectionArgs,
                 null)
