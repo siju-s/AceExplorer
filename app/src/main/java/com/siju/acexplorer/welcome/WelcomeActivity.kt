@@ -15,154 +15,87 @@
  */
 package com.siju.acexplorer.welcome
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
+import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
-import androidx.viewpager.widget.ViewPager
-import androidx.viewpager.widget.ViewPager.OnPageChangeListener
-import com.siju.acexplorer.R
+import androidx.activity.viewModels
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.siju.acexplorer.common.theme.MyApplicationTheme
+import com.siju.acexplorer.common.theme.Theme
 import com.siju.acexplorer.main.AceActivity
-import com.siju.acexplorer.utils.PrefManager
+import dagger.hilt.android.AndroidEntryPoint
 
-class WelcomeActivity : ComponentActivity(), View.OnClickListener, OnPageChangeListener {
-    private lateinit var viewPager: ViewPager
-    private lateinit var dotsLayout: LinearLayout
-    private lateinit var skipButton: Button
-    private lateinit var nextButton: Button
+private const val TAG = "WelcomeActivity"
+private const val SCHEMA_PACKAGE = "package"
 
-    private val resIds = intArrayOf(
-            R.raw.library,
-            R.raw.peekpop,
-            R.raw.dragdrop,
-            R.raw.dualpane,
-            R.raw.theme
-    )
-    private lateinit var prefManager: PrefManager
-    private lateinit var adapter: WelcomePagerAdapter
-    private val dots = arrayListOf<ImageView>()
-    private var dotsCount = 0
+@AndroidEntryPoint
+class WelcomeActivity : ComponentActivity() {
+
+    private val viewModel: WelcomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        prefManager = PrefManager(this)
-
-        if (prefManager.isFirstTimeLaunch) {
-            setContentView(R.layout.activity_welcome)
-            initializeViews()
-            handleWindowInsets()
-        }
-        else {
+        if (!viewModel.isFirstLaunch) {
             launchHomeScreen()
+            return
+        }
+
+        setContent {
+            MyApplicationTheme(appTheme = Theme.getTheme(this)) {
+                val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+                LaunchedEffect(uiState.welcomeFinished) {
+                    if (uiState.welcomeFinished) {
+                        launchHomeScreen()
+                    }
+                }
+
+                WelcomeScreen(
+                    hasStorageAccess = uiState.hasStorageAccess,
+                    onGrantStorageAccess = ::requestAllFilesAccess,
+                    onWelcomeComplete = viewModel::onWelcomeCompleted
+                )
+            }
         }
     }
 
-    private fun initializeViews() {
-        viewPager = findViewById(R.id.view_pager)
-        dotsLayout = findViewById(R.id.layoutDots)
-        skipButton = findViewById(R.id.buttonSkip)
-        nextButton = findViewById(R.id.buttonNext)
-        nextButton.setOnClickListener(this)
-        skipButton.setOnClickListener(this)
-        val headerText = arrayOf(getString(R.string.slide_1_title),
-                getString(R.string.slide_2_title),
-                getString(R.string.slide_3_title),
-                getString(R.string.dual_pane_intro_title),
-                getString(R.string.slide_4_title))
-        val text = arrayOf(getString(R.string.slide_1_desc),
-                getString(R.string.slide_2_desc),
-                getString(R.string.slide_3_desc),
-                getString(R.string.dual_pane_intro_subtitle),
-                getString(R.string.slide_4_desc))
-        val bgColors = intArrayOf(ContextCompat.getColor(this, R.color.bg_screen1),
-                ContextCompat.getColor(this, R.color.bg_screen2),
-                ContextCompat.getColor(this, R.color.bg_screen3),
-                ContextCompat.getColor(this, R.color.bg_screen4),
-                ContextCompat.getColor(this, R.color.bg_screen5))
-        adapter = WelcomePagerAdapter(this, resIds, headerText, text, bgColors)
-        viewPager.adapter = adapter
-        viewPager.currentItem = 0
-        viewPager.addOnPageChangeListener(this)
-        addBottomDots()
+    override fun onResume() {
+        super.onResume()
+        // All Files Access is granted in system settings, so the result has to be re-read here
+        // rather than trusting an activity result.
+        viewModel.refreshStorageAccess()
     }
 
-    private fun handleWindowInsets() {
-        val root = findViewById<View>(R.id.rootContainer)
-        val initialTop = root.paddingTop
-        val initialBottom = root.paddingBottom
-        ViewCompat.setOnApplyWindowInsetsListener(root) { view, windowInsets ->
-            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.updatePadding(top = initialTop + insets.top, bottom = initialBottom + insets.bottom)
-            windowInsets
+    private fun requestAllFilesAccess() {
+        val appIntent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).apply {
+            data = Uri.fromParts(SCHEMA_PACKAGE, packageName, null)
         }
-        ViewCompat.requestApplyInsets(root)
-    }
-
-    private fun addBottomDots() {
-        dotsCount = adapter.count
-        for (i in 0 until dotsCount) {
-            val element = ImageView(this)
-            dots.add(element)
-            dots[i].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.intro_unselecteditem))
-            val params = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            )
-            params.setMargins(4, 0, 4, 0)
-            dotsLayout.addView(dots[i], params)
+        try {
+            startActivity(appIntent)
+        } catch (e: ActivityNotFoundException) {
+            // Some OEM builds do not expose the per-app screen. Welcome cannot be dismissed without
+            // the permission, so fall back to the all-apps list rather than stranding the user.
+            Log.w(TAG, "Per-app all files access screen unavailable", e)
+            try {
+                startActivity(Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION))
+            } catch (e: ActivityNotFoundException) {
+                Log.e(TAG, "No all files access settings screen available", e)
+            }
         }
-        dots[0].setImageDrawable(ContextCompat.getDrawable(this, R.drawable.intro_selecteditem))
     }
 
     private fun launchHomeScreen() {
-        prefManager.setFirstTimeLaunch()
-        startActivity(Intent(this@WelcomeActivity, AceActivity::class.java))
+        startActivity(Intent(this, AceActivity::class.java))
         finish()
     }
-
-    override fun onClick(view: View) {
-        when (view.id) {
-            R.id.buttonNext -> {
-                onNextClicked()
-            }
-            R.id.buttonSkip -> launchHomeScreen()
-        }
-    }
-
-    private fun onNextClicked() {
-        val current = viewPager.currentItem
-        if (current + 1 < dotsCount) {
-            viewPager.currentItem = current + 1
-        } else {
-            launchHomeScreen()
-        }
-    }
-
-    override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
-
-    override fun onPageSelected(position: Int) {
-        for (i in 0 until dotsCount) {
-            dots[i].setImageDrawable(ContextCompat.getDrawable(this@WelcomeActivity, R.drawable.intro_unselecteditem))
-        }
-        dots[position].setImageDrawable(ContextCompat.getDrawable(this@WelcomeActivity, R.drawable.intro_selecteditem))
-        if (position + 1 == dotsCount) {
-            nextButton.text = getString(R.string.start)
-            skipButton.visibility = View.GONE
-        } else {
-            nextButton.text = getString(R.string.next)
-            skipButton.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onPageScrollStateChanged(state: Int) {}
 }
