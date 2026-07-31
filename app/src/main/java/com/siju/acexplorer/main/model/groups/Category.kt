@@ -55,7 +55,7 @@ enum class Category(val value: Int) {
     FOLDER_VIDEOS(32),
 
     APP_MANAGER(33),
-    //    TRASH(34),
+    TRASH(34),
     RECENT_IMAGES(35),
     RECENT_AUDIO(36),
     RECENT_VIDEOS(37),

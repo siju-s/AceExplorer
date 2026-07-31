@@ -31,15 +31,29 @@
         tools:ignore="ContentDescription" />
 
 
-    <TextView
-        android:id="@+id/textToolName"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_marginStart="16dp"
         android:layout_toEndOf="@+id/toolImage"
-        android:textSize="16sp"
-        tools:text="File name" />
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textToolName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            tools:text="File name" />
+
+        <TextView
+            android:id="@+id/textToolSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:visibility="gone"
+            tools:text="1.2 GB"
+            tools:visibility="visible" />
+    </LinearLayout>
 
 </RelativeLayout>

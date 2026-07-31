@@ -24,6 +24,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.types.FileInfo
@@ -56,13 +57,14 @@ object DialogHelper {
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
         val checkBoxTrash = dialogView.findViewById<CheckBox>(R.id.checkBoxTrash)
+        // Only offered when the recycle bin is switched on; otherwise deleting stays permanent.
+        checkBoxTrash.isVisible = trashEnabled
         checkBoxTrash.isChecked = trashEnabled
         textTitle.text = title
         positiveButton.text = texts[1]
         negativeButton.text = texts[3]
         positiveButton.setOnClickListener { view ->
-            val isChecked = false
-            deleteDialogListener.onPositiveButtonClick(view, isChecked, files)
+            deleteDialogListener.onPositiveButtonClick(view, checkBoxTrash.isChecked, files)
             alertDialog.dismiss()
         }
         negativeButton.setOnClickListener { alertDialog.dismiss() }
@@ -84,13 +86,13 @@ object DialogHelper {
         val positiveButton = dialogView.findViewById<Button>(R.id.buttonPositive)
         val negativeButton = dialogView.findViewById<Button>(R.id.buttonNegative)
         val checkBoxTrash = dialogView.findViewById<CheckBox>(R.id.checkBoxTrash)
-        checkBoxTrash.isChecked = false
+        // The image viewer deletes through a MediaStore uri, which the recycle bin cannot park.
+        checkBoxTrash.isVisible = false
         textTitle.text = title
         positiveButton.text = texts[1]
         negativeButton.text = texts[3]
         positiveButton.setOnClickListener { view ->
-            val isChecked = false
-            deleteDialogListener.onPositiveButtonClick(view, isChecked, uri)
+            deleteDialogListener.onPositiveButtonClick(view, false, uri)
             alertDialog.dismiss()
         }
         negativeButton.setOnClickListener { alertDialog.dismiss() }

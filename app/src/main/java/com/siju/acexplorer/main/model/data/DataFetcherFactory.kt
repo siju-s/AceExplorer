@@ -1,6 +1,7 @@
 package com.siju.acexplorer.main.model.data
 
 import com.siju.acexplorer.main.model.data.camera.CameraGenericFetcher
+import com.siju.acexplorer.main.model.data.trash.TrashDataFetcher
 import com.siju.acexplorer.main.model.data.doc.CompressedFileFetcher
 import com.siju.acexplorer.main.model.data.doc.DocumentFetcher
 import com.siju.acexplorer.main.model.data.doc.OtherDocFilesFetcher
@@ -86,7 +87,8 @@ object DataFetcherFactory {
             Category.PICKER -> TODO()
             Category.APP_MANAGER -> TODO()
             Category.TOOLS -> TODO()
-//            Category.TRASH -> TODO()
+            // The recycle bin reads from its own store, so this only supplies the tile count.
+            Category.TRASH -> return TrashDataFetcher()
         }
     }
 }

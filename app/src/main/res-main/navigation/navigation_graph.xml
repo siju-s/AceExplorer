@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_navigation_home_to_smbBrowserFragment"
             app:destination="@id/smbBrowserFragment" />
+        <action
+            android:id="@+id/action_navigation_home_to_trash"
+            app:destination="@id/trashFragment" />
     </fragment>
 
     <fragment
@@ -52,7 +55,15 @@
         <action
             android:id="@+id/action_navigation_tools_to_app_mgr"
             app:destination="@id/appmanger_navigation" />
+        <action
+            android:id="@+id/action_navigation_tools_to_trash"
+            app:destination="@id/trashFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/trashFragment"
+        android:name="com.siju.acexplorer.trash.TrashFragment"
+        android:label="TrashFragment" />
 
     <fragment
         android:id="@+id/fileListFragment"

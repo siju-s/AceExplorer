@@ -99,6 +99,7 @@ constraintLayout = { group = "androidx.constraintlayout", name = "constraintlayo
 swipeRefresh = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefresh" }
 pagination = { group = "androidx.paging", name = "paging-runtime", version.ref = "pagination" }
 room_runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room_ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room_compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 play_app_update = { group = "com.google.android.play", name = "app-update", version.ref = "playAppUpdate" }
 play_review = { group = "com.google.android.play", name = "review", version.ref = "playAppReview" }

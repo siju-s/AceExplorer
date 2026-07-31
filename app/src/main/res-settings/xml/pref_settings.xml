@@ -38,6 +38,24 @@
         app:iconSpaceReserved="false"
         app:title="@string/pref_title_disable_dual" />
 
+    <CheckBoxPreference
+        app:defaultValue="true"
+        app:iconSpaceReserved="false"
+        app:key="prefsTrashEnabled"
+        app:layout="@layout/prefs_checkbox"
+        app:summary="@string/pref_summary_trash_enabled"
+        app:title="@string/pref_title_trash_enabled" />
+
+    <ListPreference
+        app:defaultValue="30"
+        app:entries="@array/pref_trash_retention"
+        app:entryValues="@array/pref_trash_retention_values"
+        app:key="prefsTrashRetentionDays"
+        app:layout="@layout/prefs_settings_item"
+        app:negativeButtonText="@null"
+        app:positiveButtonText="@null"
+        app:title="@string/pref_title_trash_retention" />
+
     <Preference
         app:key="prefsReset"
         app:layout="@layout/prefs_settings_item"

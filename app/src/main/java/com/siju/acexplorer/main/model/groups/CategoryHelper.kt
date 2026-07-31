@@ -290,6 +290,7 @@ object CategoryHelper {
             WHATSAPP -> return context.getString(R.string.category_whatsapp)
             TELEGRAM -> return context.getString(R.string.category_telegram)
             LARGE_FILES_OTHER -> return context.getString(R.string.search_type_other)
+            TRASH -> return context.getString(R.string.trash_title)
             else -> return ""
         }
 
@@ -312,6 +313,7 @@ object CategoryHelper {
             SCREENSHOT -> return R.drawable.ic_screenshot
             WHATSAPP -> return R.drawable.ic_whatsapp
             TELEGRAM -> return R.drawable.ic_telegram
+            TRASH -> return R.drawable.ic_library_recycle_bin
             else -> return 0
         }
     }

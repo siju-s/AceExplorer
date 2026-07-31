@@ -189,6 +189,46 @@
     <string name="pref_subs_light">Light</string>
     <string name="pref_subs_dark">Dark</string>
     <string name="device_theme">Device theme</string>
+    <string name="pref_title_trash_enabled">Use Recycle Bin</string>
+    <string name="pref_summary_trash_enabled">Deleted files are kept so you can restore them</string>
+    <string name="pref_title_trash_retention">Keep deleted files for</string>
+    <string name="trash_retention_7_days">7 days</string>
+    <string name="trash_retention_14_days">14 days</string>
+    <string name="trash_retention_30_days">30 days</string>
+
+    <string name="navigate_back">Back</string>
+    <string name="trash_title">Recycle Bin</string>
+    <string name="trash_move_to_trash">Move to Recycle Bin</string>
+    <string name="trash_empty_title">Recycle Bin is empty</string>
+    <string name="trash_empty_summary">Files you delete are kept here so you can restore them.</string>
+    <string name="trash_restore">Restore</string>
+    <string name="trash_delete_forever">Delete forever</string>
+    <string name="trash_empty_action">Empty Recycle Bin</string>
+    <string name="trash_original_location">From %1$s</string>
+    <string name="trash_days_left">%1$d days left</string>
+    <string name="trash_last_day">Last day</string>
+    <plurals name="trash_moved">
+        <item quantity="one">%d item moved to Recycle Bin</item>
+        <item quantity="other">%d items moved to Recycle Bin</item>
+    </plurals>
+    <plurals name="trash_restored">
+        <item quantity="one">%d item restored</item>
+        <item quantity="other">%d items restored</item>
+    </plurals>
+    <plurals name="trash_empty_confirm">
+        <item quantity="one">Delete %1$d item permanently? This frees %2$s.</item>
+        <item quantity="other">Delete %1$d items permanently? This frees %2$s.</item>
+    </plurals>
+    <plurals name="trash_delete_forever_confirm">
+        <item quantity="one">Delete %d item permanently?</item>
+        <item quantity="other">Delete %d items permanently?</item>
+    </plurals>
+    <string name="trash_undo">Undo</string>
+    <string name="trash_too_large">%1$d file(s) were too large to move to the Recycle Bin and were left in place</string>
+    <string name="trash_restore_renamed">%1$s already existed, restored as a copy</string>
+    <string name="trash_restore_failed">%1$d item(s) could not be restored</string>
+    <string name="trash_size_subtitle">%1$s</string>
+
     <string name="pref_title_reset_fav">Reset favorites</string>
     <string name="pref_title_show_hidden">Show Hidden Files</string>
     <string name="pref_title_disable_dual">Dual pane in Landscape</string>

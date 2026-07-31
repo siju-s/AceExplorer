@@ -42,6 +42,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.appmanager.filter.AppSource
@@ -72,6 +73,8 @@ import com.siju.acexplorer.main.viewmodel.Pane
 import com.siju.acexplorer.permission.PermissionHelper
 import com.siju.acexplorer.storage.model.PasteOpData
 import com.siju.acexplorer.storage.model.operations.*
+import com.siju.acexplorer.storage.model.trash.RestoreResult
+import com.siju.acexplorer.storage.model.trash.TrashResult
 import com.siju.acexplorer.storage.modules.picker.model.PickerModelImpl
 import com.siju.acexplorer.storage.modules.picker.types.PickerType
 import com.siju.acexplorer.storage.modules.picker.view.COPY_REQUEST_KEY
@@ -304,6 +307,14 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
 
     @Suppress("ObjectLiteralToLambda")
     private fun initObservers() {
+        fileListViewModel.trashEvent.observe(viewLifecycleOwner) { trashResult ->
+            trashResult?.let(::onFilesTrashed)
+        }
+
+        fileListViewModel.restoreEvent.observe(viewLifecycleOwner) { restoreResult ->
+            restoreResult?.let(::onFilesRestored)
+        }
+
         mainViewModel.permissionStatus.observe(viewLifecycleOwner, { permissionStatus ->
             when (permissionStatus) {
                 is PermissionHelper.PermissionState.Granted -> {
@@ -907,7 +918,54 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
     }
 
     private fun showDeleteDialog(context: Context, files: ArrayList<FileInfo>) {
-        DialogHelper.showDeleteDialog(context, files, false, deleteDialogListener)
+        DialogHelper.showDeleteDialog(context, files, fileListViewModel.isTrashEnabled,
+                                      deleteDialogListener)
+    }
+
+    /**
+     * Offers an immediate way back. Most recoveries happen within seconds of the mistake, so this
+     * matters more than the recycle bin screen itself.
+     */
+    private fun onFilesTrashed(trashResult: TrashResult) {
+        fileListViewModel.refreshList()
+
+        if (trashResult.tooLargeToTrash.isNotEmpty()) {
+            Toast.makeText(context,
+                           getString(R.string.trash_too_large, trashResult.tooLargeToTrash.size),
+                           Toast.LENGTH_LONG).show()
+        }
+        if (trashResult.trashedCount == 0) {
+            return
+        }
+
+        val message = resources.getQuantityString(R.plurals.trash_moved, trashResult.trashedCount,
+                                                  trashResult.trashedCount)
+        showSnackbar(message) { fileListViewModel.undoTrash(trashResult.trashedIds) }
+    }
+
+    private fun onFilesRestored(restoreResult: RestoreResult) {
+        fileListViewModel.refreshList()
+
+        if (restoreResult.failedNames.isNotEmpty()) {
+            Toast.makeText(context,
+                           getString(R.string.trash_restore_failed, restoreResult.failedNames.size),
+                           Toast.LENGTH_LONG).show()
+            return
+        }
+        if (restoreResult.restoredCount == 0) {
+            return
+        }
+        val message = resources.getQuantityString(R.plurals.trash_restored,
+                                                  restoreResult.restoredCount,
+                                                  restoreResult.restoredCount)
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showSnackbar(message: String, undoAction: () -> Unit) {
+        val container = view?.findViewById<View>(R.id.main_content) ?: return
+        Snackbar.make(container, message, Snackbar.LENGTH_LONG)
+            .setAction(R.string.trash_undo) { undoAction() }
+            .show()
     }
 
     private fun showCompressDialog(context: Context, files: ArrayList<FileInfo>) {
@@ -1041,7 +1099,7 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
 
     private val deleteDialogListener = object : DialogHelper.DeleteDialogListener {
         override fun onPositiveButtonClick(view: View, isTrashEnabled: Boolean, filesToDelete: ArrayList<FileInfo>) {
-            fileListViewModel.deleteFiles(filesToDelete)
+            fileListViewModel.deleteFiles(filesToDelete, isTrashEnabled)
         }
 
         override fun onPositiveButtonClick(view: View?, isTrashEnabled: Boolean, filesToDelete: Uri) {

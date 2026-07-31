@@ -15,12 +15,8 @@ private const val TAG = "CategoryListFetcher"
 private const val PREF_NEW_CATEGORY_LAYOUT = "new_category_layout"
 object CategoryListFetcher {
 
-    private val resourceIds = listOf(R.drawable.ic_library_images, R.drawable.ic_library_music,
-            R.drawable.ic_library_videos, R.drawable.ic_library_docs,
-            R.drawable.ic_library_downloads, R.drawable.ic_library_recents)
-    private val labels = arrayOf("Images", "Audio", "Videos", "Docs", "Downloads", "Recent")
     private val defaultCategories = listOf(Category.IMAGE, Category.AUDIO, Category.VIDEO, Category.DOCS,
-            Category.DOWNLOADS, Category.RECENT)
+            Category.DOWNLOADS, Category.RECENT, Category.TRASH)
 
     private val totalCategoryList = arrayOf(Category.IMAGE,
             Category.AUDIO,
@@ -32,7 +28,9 @@ object CategoryListFetcher {
             Category.PDF,
             Category.APPS,
             Category.LARGE_FILES,
-            Category.RECENT)
+            Category.RECENT,
+            // Available to pin from the category editor, but deliberately not a default tile.
+            Category.TRASH)
 
     fun getCategories(context: Context): ArrayList<HomeLibraryInfo> {
         val homeLibraryInfoList = arrayListOf<HomeLibraryInfo>()
@@ -47,10 +45,14 @@ object CategoryListFetcher {
         return homeLibraryInfoList
     }
 
+    /**
+     * Names and icons come from [CategoryHelper] rather than parallel arrays, so a category can be
+     * added to the defaults in one place and its label is localised like every other tile.
+     */
     private fun addDefaultLibs(context: Context, homeLibraryInfoList: ArrayList<HomeLibraryInfo>) {
         val categoryIds = arrayListOf<Int>()
-        for ((index, category) in defaultCategories.withIndex()) {
-            addToList(HomeLibraryInfo(category, labels[index], resourceIds[index], COUNT_ZERO), homeLibraryInfoList)
+        for (category in defaultCategories) {
+            addToList(createCategoryInfo(context, category), homeLibraryInfoList)
             categoryIds.add(category.value)
         }
         saveCategoriesToPrefs(context, categoryIds)

@@ -28,6 +28,10 @@ import com.siju.acexplorer.storage.model.operations.OperationAction
 import com.siju.acexplorer.storage.model.operations.OperationHelper
 import com.siju.acexplorer.storage.model.operations.Operations
 import com.siju.acexplorer.storage.model.operations.PasteConflictCheckData
+import com.siju.acexplorer.storage.model.trash.RestoreResult
+import com.siju.acexplorer.storage.model.trash.TrashPreferences
+import com.siju.acexplorer.storage.model.trash.TrashRepository
+import com.siju.acexplorer.storage.model.trash.TrashResult
 import com.siju.acexplorer.storage.modules.zipviewer.ZipViewerCallback
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewer
 import com.siju.acexplorer.storage.modules.zipviewer.view.ZipViewerFragment
@@ -55,6 +59,8 @@ private const val STATE_CATEGORY = "current_category"
 @HiltViewModel
 class FileListViewModel @Inject constructor(
         private val storageModel: StorageModel,
+        private val trashRepository: TrashRepository,
+        private val trashPreferences: TrashPreferences,
         private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -753,13 +759,37 @@ class FileListViewModel @Inject constructor(
         storageModel.handleSafResult(uri, flags)
     }
 
-    fun deleteFiles(filesToDelete: ArrayList<FileInfo>) {
+    /** True when the delete dialog should offer to keep the files instead of destroying them. */
+    val isTrashEnabled: Boolean
+        get() = trashPreferences.isTrashEnabled
+
+    private val _trashEvent = MutableLiveData<TrashResult>()
+    val trashEvent: LiveData<TrashResult>
+        get() = _trashEvent
+
+    private val _restoreEvent = MutableLiveData<RestoreResult>()
+    val restoreEvent: LiveData<RestoreResult>
+        get() = _restoreEvent
+
+    fun deleteFiles(filesToDelete: ArrayList<FileInfo>, moveToTrash: Boolean) {
         uiScope.launch(Dispatchers.IO) {
             val files = arrayListOf<String>()
             for (fileInfo in filesToDelete) {
                 fileInfo.filePath?.let { it1 -> files.add(it1) }
             }
-            storageModel.deleteFiles(Operations.DELETE, files)
+            if (moveToTrash) {
+                _trashEvent.postValue(trashRepository.moveToTrash(files))
+            }
+            else {
+                storageModel.deleteFiles(Operations.DELETE, files)
+            }
+        }
+    }
+
+    /** Puts back the items from the most recent trash operation, for the undo affordance. */
+    fun undoTrash(trashedIds: List<Long>) {
+        uiScope.launch(Dispatchers.IO) {
+            _restoreEvent.postValue(trashRepository.restore(trashedIds))
         }
     }
 

@@ -174,6 +174,7 @@ class HomeScreenFragment : Fragment() {
             }
         })
 
+
         mainViewModel.permissionStatus.observe(viewLifecycleOwner, { permissionStatus ->
             Log.d(TAG, "initObservers: permstatus:$permissionStatus")
             when (permissionStatus) {
@@ -306,6 +307,11 @@ class HomeScreenFragment : Fragment() {
 
     private fun loadCategory(path: String?, category: Category) {
         Log.d(TAG, "loadCategory() called with: path = $path, category = $category")
+        // The recycle bin is not backed by a media fetcher, so it has its own screen.
+        if (category == Category.TRASH) {
+            findNavController().navigate(HomeScreenFragmentDirections.actionNavigationHomeToTrash())
+            return
+        }
         val action = if (isCategorySplitRequired(category)) {
             HomeScreenFragmentDirections.actionNavigationHomeToCategoryFragment(path, category)
         } else {

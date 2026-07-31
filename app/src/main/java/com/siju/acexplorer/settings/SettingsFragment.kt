@@ -38,6 +38,7 @@ import com.siju.acexplorer.R
 import com.siju.acexplorer.analytics.Analytics
 import com.siju.acexplorer.home.model.FavoriteHelper
 import com.siju.acexplorer.logging.Logger
+import com.siju.acexplorer.storage.model.trash.PREFS_TRASH_RETENTION_DAYS
 import com.siju.acexplorer.main.MainCommunicator
 import com.siju.acexplorer.main.helper.UpdateChecker
 import com.siju.acexplorer.main.model.FileConstants
@@ -99,6 +100,12 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         setupThemePref()
         setupAnalyticsPref()
         setupResetFavPref()
+        setupTrashRetentionPref()
+    }
+
+    /** Shows the chosen retention window under the title, like the other list preferences. */
+    private fun setupTrashRetentionPref() {
+        bindPreferenceSummaryToValue(findPreference<ListPreference>(PREFS_TRASH_RETENTION_DAYS))
     }
 
     private fun setupLanguagePreference() {
