@@ -36,6 +36,7 @@ fun TopAppBarWithSearch(
     onClearSearchQuery: () -> Unit,
     onNavigationClick: () -> Unit,
     actionModeContent: @Composable () -> Unit = {},
+    additionalActions: @Composable () -> Unit = {},
     menuItems: @Composable () -> Unit = {},
     overflowMenuItems: @Composable (dismissMenu: () -> Unit) -> Unit = {}
 ) {
@@ -72,6 +73,7 @@ fun TopAppBarWithSearch(
                         onSearchToggle()
                     }
                 )
+                additionalActions()
                 menuItems()
                 ExpandableMenu(
                     IconSource.Vector(Icons.Outlined.MoreVert),
