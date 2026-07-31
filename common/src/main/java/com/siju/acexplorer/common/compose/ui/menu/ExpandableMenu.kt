@@ -55,7 +55,7 @@ fun ExpandableMenu(
                     Icon(
                         painter = painterResource(iconSource.resId),
                         contentDescription = stringResource(iconContentDescription),
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
 
@@ -63,7 +63,7 @@ fun ExpandableMenu(
                     Icon(
                         imageVector = iconSource.imageVector,
                         contentDescription = stringResource(iconContentDescription),
-                        tint = MaterialTheme.colorScheme.onPrimary
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                 }
             }

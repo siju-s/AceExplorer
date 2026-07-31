@@ -6,6 +6,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -30,13 +31,15 @@ fun SearchField(
         placeholder = { Text(stringResource(id = placeholderText)) },
         modifier = Modifier.fillMaxWidth().focusRequester(focusRequester),
         singleLine = true,
+        // The field is hosted in the top app bar, so its content colour has to follow that bar's
+        // container rather than being pinned to white.
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
-            focusedIndicatorColor = Color.White,
+            focusedIndicatorColor = MaterialTheme.colorScheme.onPrimaryContainer,
             unfocusedIndicatorColor = Color.Transparent,
-            cursorColor = Color.White,
-            focusedTextColor = Color.White
+            cursorColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            focusedTextColor = MaterialTheme.colorScheme.onPrimaryContainer
         )
     )
 }
@@ -50,7 +53,7 @@ fun SearchIcon(
         Icon(
             imageVector = if (isSearchVisible) Icons.Default.Close else Icons.Default.Search,
             contentDescription = if (isSearchVisible) "Close Search" else "Open Search",
-            tint = Color.White
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
         )
     }
 }

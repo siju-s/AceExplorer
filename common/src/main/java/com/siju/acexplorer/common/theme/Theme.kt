@@ -13,10 +13,13 @@ import androidx.compose.ui.platform.LocalContext
 import com.siju.acexplorer.common.utils.SdkHelper
 
 private val DarkColorScheme = darkColorScheme(
-    primary = purple,
+    // A light tone, unlike the light scheme's primary: the tone-30 purple used there measures
+    // 1.75:1 against this near-black background, far below the 4.5:1 needed for text.
+    primary = darkPrimary,
     primaryContainer = gray,
     secondary = purpleDark,
-    onPrimary = Color.White,
+    onPrimary = darkOnPrimary,
+    onPrimaryContainer = dark_onBackground,
     onSecondary = Color.White,
     background = black,
     onBackground = dark_onBackground,
@@ -29,6 +32,7 @@ private val LightColorScheme = lightColorScheme(
     primaryContainer = primaryContainerLight,
     secondary = purpleDark,
     onPrimary = Color.White,
+    onPrimaryContainer = Color.White,
     onSecondary = Color.White,
     background = light_background,
     onBackground = light_onBackground,

@@ -4,6 +4,13 @@ import androidx.compose.ui.graphics.Color
 
 val purple = Color(0xff73066e)
 val purpleDark = Color(0xFF800080)
+
+/**
+ * Dark theme accent. A lighter, less saturated violet than [purple], which is a tone-30 colour and
+ * measures only 1.75:1 against the dark background.
+ */
+val darkPrimary = Color(0xFF9E81CF)
+val darkOnPrimary = Color(0xFF1A004A)
 val accent = Color(0xFFFF4081)
 val primaryContainerLight = Color(0xff73066e)
 
