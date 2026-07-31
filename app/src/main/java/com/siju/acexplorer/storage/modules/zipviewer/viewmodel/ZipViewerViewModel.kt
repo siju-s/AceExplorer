@@ -1,5 +1,6 @@
 package com.siju.acexplorer.storage.modules.zipviewer.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -18,12 +19,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 import java.util.*
 import java.util.zip.ZipEntry
 import java.util.zip.ZipException
 
 private const val DELIMITER_SLASH = "/"
+private const val TAG = "ZipViewerViewModel"
 class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallback: ZipViewerCallback) : ViewModel() {
 
     private val viewModelJob = Job()
@@ -33,7 +37,9 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
     private var scrollDir: String? = null
     var apkPath: String? = null
 
-    private lateinit var zipElements: ArrayList<ZipModel>
+    // Starts empty rather than lateinit: a zip that fails to open never reaches the fetch callback,
+    // and leaving the property unset crashed the back press that follows.
+    private var zipElements: ArrayList<ZipModel> = arrayListOf()
 
     private val _viewFileEvent = MutableLiveData<Pair<String, String?>>()
     val viewFileEvent: LiveData<Pair<String, String?>>
@@ -53,13 +59,35 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
     val zipFailEvent: LiveData<Boolean>
         get() = _zipFailEvent
 
+    private val _zipLoading = MutableLiveData<Boolean>()
+
+    val zipLoading: LiveData<Boolean>
+        get() = _zipLoading
+
+    private var populateJob: Job? = null
+    private var populateFailed = false
+
+    /**
+     * Reads the zip's central directory off the main thread.
+     *
+     * A zip with many entries takes a noticeable time to parse, so this reports loading and
+     * [loadData] waits on [populateJob] rather than racing it for a list that is not filled yet.
+     */
     fun populateTotalZipList(parentZipPath: String) {
-        try {
-            model.populateZipList(parentZipPath)
-        }
-        catch (ex : ZipException) {
-            ex.printStackTrace()
-            setZipFailEvent(true)
+        populateFailed = false
+        _zipLoading.value = true
+        populateJob = uiScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    model.populateZipList(parentZipPath)
+                }
+            }
+            catch (ex: IOException) {
+                Log.e(TAG, "Failed to read zip: $parentZipPath", ex)
+                populateFailed = true
+                _zipLoading.value = false
+                setZipFailEvent(true)
+            }
         }
     }
 
@@ -72,9 +100,23 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
             setNavDirectory(dir)
             addToBackStack(dir)
         }
-          uiScope.launch(Dispatchers.IO) {
-            val data = model.loadData(path, parentZipPath, zipElementsResultCallback)
-            zipViewerCallback.onZipContentsLoaded(data)
+        uiScope.launch {
+            populateJob?.join()
+            if (populateFailed) {
+                return@launch
+            }
+            try {
+                val data = withContext(Dispatchers.IO) {
+                    model.loadData(path, parentZipPath, zipElementsResultCallback)
+                }
+                _zipLoading.value = false
+                zipViewerCallback.onZipContentsLoaded(data)
+            }
+            catch (ex: IOException) {
+                Log.e(TAG, "Failed to list zip contents: $parentZipPath", ex)
+                _zipLoading.value = false
+                setZipFailEvent(true)
+            }
         }
     }
 

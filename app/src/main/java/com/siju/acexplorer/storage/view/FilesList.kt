@@ -8,11 +8,11 @@ import android.util.Log
 import android.view.DragEvent
 import android.view.MotionEvent
 import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.siju.acexplorer.R
 import com.siju.acexplorer.common.ViewMode
 import com.siju.acexplorer.common.types.FileInfo
@@ -46,7 +46,7 @@ class FilesList(private val fileListHelper: FileListHelper,
 
     private lateinit var fileList: FastScrollRecyclerView
     private lateinit var emptyText: TextView
-    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var progressLoading: ProgressBar
 
     private var recentData: ArrayList<RecentTimeData.RecentDataItem>? = null
     private var itemView: View? = null
@@ -63,7 +63,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     private fun initializeViews() {
         fileList = view.findViewById(R.id.recyclerViewFileList)
         emptyText = view.findViewById(R.id.textEmpty)
-//        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
+        progressLoading = view.findViewById(R.id.progressLoading)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -245,7 +245,7 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
     private fun hideLoadingIndicator() {
-//        swipeRefreshLayout.isRefreshing = false
+        progressLoading.visibility = View.GONE
     }
 
     fun onRecentDataLoaded(category: Category, data: ArrayList<RecentTimeData.RecentDataItem>) {
@@ -524,6 +524,12 @@ class FilesList(private val fileListHelper: FileListHelper,
     }
 
     fun showLoadingIndicator() {
-//        swipeRefreshLayout.isRefreshing = true
+        // The empty text would otherwise flash "No files" over the spinner while a listing loads.
+        emptyText.visibility = View.GONE
+        progressLoading.visibility = View.VISIBLE
+    }
+
+    fun hideLoading() {
+        hideLoadingIndicator()
     }
 }

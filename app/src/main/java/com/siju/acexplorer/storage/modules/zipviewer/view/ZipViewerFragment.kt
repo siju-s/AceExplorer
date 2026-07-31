@@ -27,6 +27,7 @@ import com.siju.acexplorer.main.model.helper.UriHelper
 import com.siju.acexplorer.main.model.helper.ViewHelper
 import com.siju.acexplorer.main.view.dialog.DialogHelper.openWith
 import com.siju.acexplorer.storage.modules.zipviewer.ZipViewerCallback
+import com.siju.acexplorer.storage.view.BaseFileListFragment
 import com.siju.acexplorer.storage.modules.zipviewer.model.ZipViewerModelImpl
 import com.siju.acexplorer.storage.modules.zipviewer.viewmodel.ZipViewerViewModel
 import com.siju.acexplorer.storage.modules.zipviewer.viewmodel.ZipViewerViewModelFactory
@@ -73,11 +74,15 @@ class ZipViewerFragment(
                 openInstallScreen(it.second)
             }
         })
+        viewModel.zipLoading.observe(fragment.viewLifecycleOwner, { loading ->
+            (fragment as? BaseFileListFragment)?.setZipLoading(loading)
+        })
+
         viewModel.zipFailEvent.observe(fragment.viewLifecycleOwner, {
             if (it) {
                 val context = fragment.context
                 context?.let {
-                    Toast.makeText(context, context.getString(R.string.zip_open_error), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.zip_open_error), Toast.LENGTH_LONG).show()
                     viewModel.setZipFailEvent(false)
                 }
             }

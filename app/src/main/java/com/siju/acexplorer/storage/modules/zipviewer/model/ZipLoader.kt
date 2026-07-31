@@ -32,11 +32,7 @@ class ZipLoader(val context: Context) {
         if (path?.endsWith("/") == true) {
             path = path.substring(0, path.length - 1)
         }
-        try {
-            traverseZipElements(path, elements, totalZipList)
-        }
-        catch (exception: IOException) {
-        }
+        traverseZipElements(path, elements, totalZipList)
 
         Collections.sort(elements, SortHelper.comparatorByNameZipViewer)
         zipElementsResultCallback?.onZipElementsFetched(elements)
@@ -70,8 +66,10 @@ class ZipLoader(val context: Context) {
             zipFile.close()
         }
         catch (exception : ZipException) {
-             //TODO Handle opening encrypted zip file
-            throw ZipException("Cannot open this file")
+            // Rethrown as is rather than replaced with a generic message: the original text names
+            // the actual problem, such as a missing central directory on a truncated archive.
+            Log.e(TAG, "Cannot open zip: $parentZipPath", exception)
+            throw exception
         }
         finally {
             zipFile?.close()

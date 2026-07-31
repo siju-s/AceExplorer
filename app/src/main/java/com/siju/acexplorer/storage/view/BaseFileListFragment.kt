@@ -118,6 +118,19 @@ abstract class BaseFileListFragment : Fragment(), FileListHelper, FragmentResult
             filesListBacking = value
         }
 
+    /**
+     * Driven by the zip viewer while it reads a zip's central directory, which is slow enough to
+     * need a spinner once an archive has many entries.
+     */
+    fun setZipLoading(loading: Boolean) {
+        if (loading) {
+            filesListBacking?.showLoadingIndicator()
+        }
+        else {
+            filesListBacking?.hideLoading()
+        }
+    }
+
     private var floatingView: FloatingView
         get() = checkNotNull(floatingViewBacking)
         set(value) {
