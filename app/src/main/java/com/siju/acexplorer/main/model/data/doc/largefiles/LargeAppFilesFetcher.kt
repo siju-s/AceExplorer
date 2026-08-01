@@ -42,7 +42,7 @@ class LargeAppFilesFetcher : DataFetcher {
         val where = MediaStore.Files.FileColumns.DATA + " LIKE ?"
         val selectionArgs = arrayOf("%${AppDataFetcher.EXT_APK}")
         selection += DocumentUtils.getMediaTypeNone() + " AND " + MediaStore.Files.FileColumns.SIZE + " > " + LARGE_FILES_MIN_SIZE_MB +
-                where
+                " AND " + where
         return context.contentResolver.query(uri, null, selection, selectionArgs,
                 null)
     }
