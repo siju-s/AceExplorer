@@ -87,23 +87,26 @@ class ZipViewerViewModel(val model: ZipViewerModel, private val zipViewerCallbac
                 populateFailed = true
                 _zipLoading.value = false
                 setZipFailEvent(true)
+                // Leaves zip mode so the caller returns to the folder the zip lives in, rather
+                // than sitting in a zip that was never opened.
+                endZipMode(null)
             }
         }
     }
 
     fun loadData(path : String?, parentZipPath : String) {
         this.parentZipPath = parentZipPath
-        var dir = path
-        if (dir == null) {
-            dir = parentZipPath
-            zipViewerCallback.setInitialDir(dir)
-            setNavDirectory(dir)
-            addToBackStack(dir)
-        }
         uiScope.launch {
             populateJob?.join()
             if (populateFailed) {
                 return@launch
+            }
+            // Navigation is pushed only once the zip is known to be readable, so a broken archive
+            // no longer leaves the breadcrumb pointing inside it.
+            if (path == null) {
+                zipViewerCallback.setInitialDir(parentZipPath)
+                setNavDirectory(parentZipPath)
+                addToBackStack(parentZipPath)
             }
             try {
                 val data = withContext(Dispatchers.IO) {
