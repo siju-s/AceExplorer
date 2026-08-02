@@ -60,6 +60,7 @@ dependencies {
     api(libs.viewModelKtx)
     api(libs.lifecycle.liveData)
     api(libs.lifecycle.runtime)
+    api(libs.lifecycle.runtime.compose)
     ksp(libs.lifecycle.compiler)
     api(libs.recyclerView)
     api(libs.design)

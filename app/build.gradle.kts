@@ -42,7 +42,7 @@ android {
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = rootProject.extra["versionCode"] as Int
         versionName = rootProject.extra["versionName"] as String
-        testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations.addAll(
            setOf("en", "af", "ar", "bg", "da", "de", "el", "es", "fa", "fr", "ga", "hi", "hr", "hu",
                 "hy", "in", "is", "it", "iw", "ja", "ka", "ko", "mk", "nl", "no", "pl", "pt", "ro", "ru",
@@ -179,8 +179,12 @@ dependencies {
     implementation(libs.smbj)
     ksp(libs.glide.compiler)
 
-    debugImplementation(libs.leakCanary)
+//    debugImplementation(libs.leakCanary)
 
     testImplementation(libs.junit)
     testImplementation(libs.mockito)
+    androidTestImplementation("androidx.test:core:1.7.0")
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 }

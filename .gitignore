@@ -74,3 +74,10 @@ fastlane/README.md
 reports/
 *.hprof
 
+
+# Personal learning notes, not part of the project
+LEARNINGS.md
+learnings/
+
+# Contains a registration credential, kept out of the public repo
+app/src/main/assets/adi-registration.properties

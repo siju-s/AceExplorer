@@ -1,7 +1,7 @@
 # More documentation about how to customize your build
 # can be found here:
 # https://docs.fastlane.tools
-fastlane_version "2.68.0"
+fastlane_version "2.237.0"
 
 default_platform :android
 
